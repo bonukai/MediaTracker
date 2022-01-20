@@ -194,6 +194,7 @@ export const PaginatedGridItems: FunctionComponent<{
                         setSortOrder(value);
                         setPage(1);
                       }}
+                      mediaType={args.mediaType}
                     />
                   </div>
                 )}

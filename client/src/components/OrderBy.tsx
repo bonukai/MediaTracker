@@ -1,24 +1,15 @@
-import { MediaItemOrderBy, SortOrder } from 'mediatracker-api';
+import { MediaItemOrderBy, MediaType, SortOrder } from 'mediatracker-api';
 import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { useState } from 'react';
-
-const mediaTypeOrderByString: Record<MediaItemOrderBy, string> = {
-  lastSeen: 'Last seen',
-  mediaType: 'Media type',
-  nextAiring: 'Next airing',
-  releaseDate: 'Release date',
-  status: 'Status',
-  title: 'Title',
-  unseenEpisodes: 'Unseen episodes count',
-};
 
 export const OrderByComponent: FunctionComponent<{
   orderBy: MediaItemOrderBy;
   setOrderBy: (value: MediaItemOrderBy) => void;
   sortOrder: SortOrder;
   setSortOrder: (value: SortOrder) => void;
+  mediaType?: MediaType;
 }> = (props) => {
-  const { orderBy, setOrderBy, sortOrder, setSortOrder } = props;
+  const { orderBy, setOrderBy, sortOrder, setSortOrder, mediaType } = props;
   const [showSortByMenu, setShowSortByMenu] = useState(false);
   const ref = useRef(null);
 
@@ -37,6 +28,18 @@ export const OrderByComponent: FunctionComponent<{
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  const mediaTypeOrderByString: Partial<Record<MediaItemOrderBy, string>> = {
+    lastSeen: 'Last seen',
+    releaseDate: 'Release date',
+    status: 'Status',
+    title: 'Title',
+    ...(mediaType === 'tv'
+      ? { nextAiring: 'Next airing', unseenEpisodes: 'Unseen episodes count' }
+      : {}),
+
+    ...(mediaType === undefined ? { mediaType: 'Media type' } : {}),
+  };
 
   return (
     <div className="flex select-none">
