@@ -2,6 +2,7 @@ import React, { FunctionComponent, useContext } from 'react';
 import { QueryCache, QueryClient, QueryClientProvider } from 'react-query';
 import { HashRouter as Router } from 'react-router-dom';
 import { FetchError } from 'src/api/api';
+import { DarkModeProvider } from 'src/hooks/darkMode';
 
 import { MyRouter } from './Router';
 
@@ -62,7 +63,7 @@ export const App: FunctionComponent = () => {
   }, []);
 
   return (
-    <>
+    <DarkModeProvider>
       <QueryClientProvider client={queryClient}>
         <Router>
           <MyRouter />
@@ -73,6 +74,6 @@ export const App: FunctionComponent = () => {
           Server error: {errorMessage}
         </div>
       )}
-    </>
+    </DarkModeProvider>
   );
 };

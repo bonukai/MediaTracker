@@ -1,45 +1,11 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import clsx from 'clsx';
 
 import { NavLink } from 'react-router-dom';
 import { animated, Transition } from '@react-spring/web';
 
 import { useUser } from 'src/api/user';
-
-const useDarkMode = () => {
-  const [darkMode, setDarkModeValue] = useState<boolean>(
-    localStorage.theme === 'dark'
-  );
-
-  useEffect(() => {
-    const handler = (event: StorageEvent) => {
-      if (event.key === 'theme') {
-        setDarkMode(event.newValue === 'dark');
-      }
-    };
-
-    window.addEventListener('storage', handler);
-
-    return () => window.removeEventListener('storage', handler);
-  }, []);
-
-  const setDarkMode = (value: boolean) => {
-    if (value) {
-      localStorage.theme = 'dark';
-      document.documentElement.classList.add('dark');
-    } else {
-      localStorage.theme = 'light';
-      document.documentElement.classList.remove('dark');
-    }
-
-    setDarkModeValue(value);
-  };
-
-  return {
-    darkMode: darkMode,
-    setDarkMode: setDarkMode,
-  };
-};
+import { useDarkMode } from 'src/hooks/darkMode';
 
 const routes = [
   { path: '/', name: 'Home' },
