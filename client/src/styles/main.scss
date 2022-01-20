@@ -1,0 +1,100 @@
+@import './dark.css';
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+body {
+  overflow-y: scroll;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 16px;
+  color: #333;
+}
+
+main {
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+  transition: 0.1s;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.material-icons {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  padding: 4px;
+}
+
+$horizontalMargin: 10px;
+$pageHorizontalMargin: 15px;
+
+@mixin itemsGridContent($itemWidth, $i) {
+  $totalItemWidth: $horizontalMargin * 2 + $itemWidth;
+
+  .items-grid {
+    width: calc($totalItemWidth * $i);
+    min-width: calc($totalItemWidth * $i);
+    max-width: calc($totalItemWidth * $i);
+
+    .item {
+      width: $itemWidth;
+      margin-right: $horizontalMargin;
+      margin-left: $horizontalMargin;
+      padding: 0;
+    }
+
+    .header {
+      width: 100%;
+      margin-right: $horizontalMargin;
+      margin-left: $horizontalMargin;
+    }
+
+    .footer {
+      width: 100%;
+      margin-right: $horizontalMargin;
+      margin-left: $horizontalMargin;
+    }
+  }
+}
+
+@mixin itemsGrid($itemWidth, $i) {
+  $totalItemWidth: $horizontalMargin * 2 + $itemWidth;
+
+  @if $i == 1 {
+    @media only screen and (max-width: ($totalItemWidth * $i + $pageHorizontalMargin  * 2)) {
+      @include itemsGridContent($itemWidth, $i);
+    }
+  }
+
+  @media only screen and (min-width: ($totalItemWidth * $i + $pageHorizontalMargin  * 2)) {
+    @include itemsGridContent($itemWidth, $i);
+  }
+}
+
+@for $i from 1 through 6 {
+  @include itemsGrid(160px, $i);
+}

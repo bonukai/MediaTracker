@@ -1,0 +1,19 @@
+{
+    "extends": "@tsconfig/recommended/tsconfig.json",
+    "compilerOptions": {
+        "outDir": "build",
+        "module": "CommonJS",
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "target": "ESNext",
+        "strict": false,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "sourceMap": true,
+        "moduleResolution": "node",
+        "baseUrl": "."
+    },
+    "include": ["src", "knexfile.ts"],
+    "exclude": ["node_modules"]
+}

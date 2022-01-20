@@ -1,0 +1,13 @@
+body {
+  @apply dark:bg-neutral-700 dark:text-white;
+}
+
+div {
+  @apply dark:text-white;
+}
+
+input,
+textarea,
+select {
+  @apply dark:bg-[#11191f];
+}

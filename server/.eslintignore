@@ -1,0 +1,7 @@
+webpack.config.js
+jest.config.js
+scripts
+dist
+public
+build
+__tests__\repository\mediaItem\getItems_details\seen.ts
