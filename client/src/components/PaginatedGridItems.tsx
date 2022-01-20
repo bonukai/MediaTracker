@@ -181,7 +181,7 @@ export const PaginatedGridItems: FunctionComponent<{
                     <>{numberOfItemsTotal} items</>
                   )}
                 </div>
-                {showSortOrderControls && (
+                {showSortOrderControls && !searchQuery && (
                   <div className="ml-auto">
                     <OrderByComponent
                       orderBy={orderBy}
