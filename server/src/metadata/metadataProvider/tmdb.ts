@@ -86,6 +86,28 @@ export class TMDbMovie extends metadataProvider({
         return movie;
     }
 
+    async findByImdbId(imdbId: string): Promise<MediaItemForProvider> {
+        const res = await axios.get(
+            `https://api.themoviedb.org/3/find/${imdbId}`,
+            {
+                params: {
+                    api_key: TMDB_API_KEY,
+                    external_source: 'imdb_id',
+                },
+            }
+        );
+
+        if (res.data.movie_results?.length === 0) {
+            return;
+        }
+
+        return {
+            ...this.mapMovie(res.data.movie_results[0]),
+            imdbId: imdbId,
+            needsDetails: true,
+        };
+    }
+
     private mapMovie(item: Partial<TMDbApi.MovieDetailsResponse>) {
         const movie = mapItem(item);
         movie.source = this.name;
@@ -160,6 +182,28 @@ export class TMDbTv extends metadataProvider({
         tvShow.needsDetails = false;
 
         return tvShow;
+    }
+
+    async findByImdbId(imdbId: string): Promise<MediaItemForProvider> {
+        const res = await axios.get(
+            `https://api.themoviedb.org/3/find/${imdbId}`,
+            {
+                params: {
+                    api_key: TMDB_API_KEY,
+                    external_source: 'imdb_id',
+                },
+            }
+        );
+
+        if (res.data.tv_results?.length === 0) {
+            return;
+        }
+
+        return {
+            ...this.mapTvShow(res.data.tv_results[0]),
+            imdbId: imdbId,
+            needsDetails: true,
+        };
     }
 
     private mapTvShow(item: Partial<TMDbApi.TvDetailsResponse>) {
@@ -458,5 +502,10 @@ namespace TMDbApi {
         poster_sizes: string[];
         profile_sizes: string[];
         still_sizes: string[];
+    }
+
+    export interface FindByExternalIds {
+        movie_results: MovieSearchResponse[];
+        tv_results: TvSearchResponse[];
     }
 }
