@@ -121,6 +121,10 @@ export const repository = <T extends object>(args: {
         }
 
         public async createMany(values: Partial<T>[]) {
+            if (values.length === 0) {
+                return;
+            }
+            
             await knex(this.tableName).insert(
                 values.map((value) => this.serialize(this.stripValue(value)))
             );
