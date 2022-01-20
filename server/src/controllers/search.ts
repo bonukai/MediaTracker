@@ -117,13 +117,13 @@ export class SearchController {
                         id: id,
                         lastTimeUpdated: new Date().getTime(),
                         ...item,
-                        posterUrl: item.poster
+                        poster: item.poster
                             ? mediaItemPosterPath(id, 'small')
                             : null,
-                        posterSmallUrl: item.poster
+                        posterSmall: item.poster
                             ? mediaItemPosterPath(id, 'original')
                             : null,
-                        backdropUrl: item.backdrop
+                        backdrop: item.backdrop
                             ? mediaItemBackdropPath(id)
                             : null,
                     };
