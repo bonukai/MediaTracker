@@ -227,7 +227,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
             qb.orWhereIn('audibleId', params.audibleId);
         }
 
-        return qb;
+        return (await qb).map((item) => this.deserialize(item));
     }
 
     public async findByExternalId(params: ExternalIds) {
@@ -252,7 +252,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
             qb.orWhere('audibleId', params.audibleId);
         }
 
-        return qb.first();
+        return this.deserialize(await qb.first());
     }
 
     public async findByTitle(params: {
@@ -284,7 +284,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
             ]);
         }
 
-        return qb.first();
+        return this.deserialize(await qb.first());
     }
 
     public async findByExactTitle(params: {
@@ -311,7 +311,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
             ]);
         }
 
-        return qb.first();
+        return this.deserialize(await qb.first());
     }
 
     public async itemsToPossiblyUpdate(): Promise<MediaItemBase[]> {
