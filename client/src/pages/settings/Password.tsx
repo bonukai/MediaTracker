@@ -27,12 +27,14 @@ export const SettingsPasswordPage = () => {
         <input
           type="password"
           value={newPassword}
+          required
           onChange={(e) => setNewPassword(e.currentTarget.value)}
         />
         <div>Confirm new password</div>
         <input
           type="password"
           value={confirmNewPassword}
+          required
           onChange={(e) => setConfirmNewPassword(e.currentTarget.value)}
         />
         <br />

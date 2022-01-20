@@ -213,6 +213,11 @@ export class UsersController {
 
         const { currentPassword, newPassword } = req.body;
 
+        if (currentPassword.trim().length === 0) {
+            res.sendStatus(400);
+            return;
+        }
+
         const user = await userRepository.findOneWithPassword({ id: userId });
 
         if (user.name === 'demo') {
