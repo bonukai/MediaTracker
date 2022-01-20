@@ -14,6 +14,7 @@ server/temp
 server/.vscode
 server/data.db
 server/test.db
+server/docs/dist
 
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
