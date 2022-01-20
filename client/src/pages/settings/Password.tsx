@@ -21,6 +21,7 @@ export const SettingsPasswordPage = () => {
           type="password"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.currentTarget.value)}
+          required
         />
 
         <div>New password</div>
