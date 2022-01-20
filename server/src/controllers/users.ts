@@ -213,7 +213,7 @@ export class UsersController {
 
         const { currentPassword, newPassword } = req.body;
 
-        if (currentPassword.trim().length === 0) {
+        if (newPassword.trim().length === 0) {
             res.sendStatus(400);
             return;
         }
