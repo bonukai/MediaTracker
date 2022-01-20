@@ -8,6 +8,9 @@ Self hosted platform for tracking movies, tv shows, video games, books and audio
 Username: **demo**\
 Password: **demo**
 
+# API Documentation
+[https://bonukai.github.io/MediaTracker/](https://bonukai.github.io/MediaTracker/)
+
 # Installation
 
 ## Building from source
