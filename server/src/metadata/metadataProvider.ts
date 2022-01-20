@@ -7,6 +7,24 @@ import {
 } from 'src/entity/mediaItem';
 import { metadataProviderCredentialsRepository } from 'src/repository/metadataProviderCredentials';
 
+export abstract class MetadataProvider {
+    async findByImdbId(tmdbId: string): Promise<MediaItemForProvider> {
+        return null;
+    }
+
+    /**
+     * Search for media
+     * @param query
+     */
+    public abstract search(query: string): Promise<MediaItemForProvider[]>;
+
+    /**
+     * Get details for media.
+     * @param mediaItem MediaItem
+     */
+    abstract details(ids: ExternalIds): Promise<MediaItemForProvider>;
+}
+
 export const metadataProvider = <
     Name extends string = string,
     CredentialNames extends ReadonlyArray<string> = []
@@ -15,7 +33,7 @@ export const metadataProvider = <
     mediaType: MediaType;
     credentialNames?: CredentialNames;
 }) => {
-    abstract class MetadataProvider {
+    abstract class _MetadataProvider extends MetadataProvider {
         public readonly name = args.name;
         public readonly mediaType = args.mediaType;
         public readonly credentialNames = args.credentialNames;
@@ -46,21 +64,7 @@ export const metadataProvider = <
                 Object.keys(this.credentials).length
             );
         }
-
-        /**
-         * Search for media
-         * @param query
-         */
-        protected abstract search(
-            query: string
-        ): Promise<MediaItemForProvider[]>;
-
-        /**
-         * Get details for media.
-         * @param mediaItem MediaItem
-         */
-        abstract details(ids: ExternalIds): Promise<MediaItemForProvider>;
     }
 
-    return MetadataProvider;
+    return _MetadataProvider;
 };

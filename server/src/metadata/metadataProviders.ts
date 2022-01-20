@@ -4,6 +4,7 @@ import { IGDB } from 'src/metadata/metadataProvider/igdb';
 import { OpenLibrary } from 'src/metadata/metadataProvider/openlibrary';
 import { TMDbMovie, TMDbTv } from 'src/metadata/metadataProvider/tmdb';
 import _ from 'lodash';
+import { MetadataProvider } from 'src/metadata/metadataProvider';
 
 const providers = <const>[
     new IGDB(),
@@ -43,7 +44,7 @@ class MetadataProviders {
         return this.metadataProviders.has(mediaType);
     }
 
-    public get(mediaType: MediaType, name?: string) {
+    public get(mediaType: MediaType, name?: string): MetadataProvider {
         return name
             ? this.metadataProviders.get(mediaType)?.get(name)
             : this.metadataProviders.get(mediaType)?.values().next().value;
@@ -65,7 +66,7 @@ type ToMetadataProviderCredentialsType<
     Result extends ReadonlyArray<unknown> = []
 > = Input extends readonly []
     ? Result
-    : Input extends readonly [infer First, ...infer Rest]
+    : Input extends readonly [infer First, ...(infer Rest)]
     ? MapType<First> extends never
         ? ToMetadataProviderCredentialsType<Rest, Result>
         : ToMetadataProviderCredentialsType<Rest, [...Result, MapType<First>]>
