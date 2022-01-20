@@ -45,7 +45,10 @@ export const downloadAsset = async (args: {
     );
 
     await fs.ensureDir(path.dirname(imagePath));
-    await sharp(response.data).webp({ quality: 100 }).toFile(imagePath);
+    await sharp(response.data)
+        .resize({ width: 800 })
+        .webp({ quality: 80 })
+        .toFile(imagePath);
 
     await fs.ensureDir(path.dirname(imageSmallPath));
     await sharp(response.data)
