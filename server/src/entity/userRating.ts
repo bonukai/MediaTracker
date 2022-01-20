@@ -30,6 +30,6 @@ export class UserRatingFilters {
     };
 
     public static episodeUserRating = (rating: UserRating) => {
-        return Boolean(!rating.seasonId && rating.episodeId);
+        return Boolean(rating.episodeId);
     };
 }
