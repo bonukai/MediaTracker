@@ -388,9 +388,9 @@ export const DetailsPage: FunctionComponent = () => {
         </>
       )}
 
-      {mediaItem.lastSeen > 0 && (
+      {mediaItem.lastSeenAt > 0 && (
         <div className="mt-3">
-          Last seen at {new Date(mediaItem.lastSeen).toLocaleString()}
+          Last seen at {new Date(mediaItem.lastSeenAt).toLocaleString()}
         </div>
       )}
 

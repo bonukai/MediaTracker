@@ -26,7 +26,7 @@ export const metadataProvider = <
             return this._credentials;
         }
 
-        async loadCredentails() {
+        async loadCredentials() {
             if (!this.credentialNames) {
                 return;
             }

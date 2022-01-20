@@ -10,7 +10,7 @@ import { onlyForAdmin } from 'src/auth';
 /**
  * @openapi_tags MetadataProviderCredentials
  */
-export class MetadataProviderCredentialsControler {
+export class MetadataProviderCredentialsController {
     /**
      * @openapi_operationId get
      */
@@ -46,7 +46,7 @@ export class MetadataProviderCredentialsControler {
             }))
         );
 
-        await metadataProviders.loadCredentails(name);
+        await metadataProviders.loadCredentials(name);
 
         res.send();
     });

@@ -9,7 +9,7 @@ import { userRepository } from 'src/repository/user';
 /**
  * @openapi_tags Configuration
  */
-export class Configurationontroller {
+export class ConfigurationController {
     /**
      * @openapi_operationId update
      */

@@ -27,15 +27,15 @@ class MetadataProviders {
 
     public load = async (): Promise<void> => {
         await Promise.all(
-            providers.map((provider) => provider.loadCredentails())
+            providers.map((provider) => provider.loadCredentials())
         );
     };
 
-    public loadCredentails = async (providerName: string): Promise<void> => {
+    public loadCredentials = async (providerName: string): Promise<void> => {
         await Promise.all(
             providers
                 .filter((provider) => provider.name === providerName)
-                .map((provider) => provider.loadCredentails())
+                .map((provider) => provider.loadCredentials())
         );
     };
 
