@@ -4,9 +4,7 @@
 
 @layer components {
   .btn {
-    @apply inline-block px-4 py-0.5 border rounded dark:border-current border-current hover:shadow shadow-current cursor-pointer select-none transition-all duration-150 
-    
-      hover:shadow-current;
+    @apply inline-block px-4 py-0.5 border rounded dark:border-current border-current hover:shadow shadow-current cursor-pointer select-none transition-all duration-150 hover:shadow-current disabled:shadow-none disabled:cursor-auto dark:disabled:bg-gray-500 disabled:bg-gray-300;
   }
 
   .btn-red {
