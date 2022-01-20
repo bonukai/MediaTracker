@@ -30,10 +30,16 @@ export const MyRouter: FunctionComponent = () => {
         <Route element={<PageLayout />}>
           {user ? (
             <>
-              <Route path="/login" element={<Navigate to="/" />} />
+              <Route
+                path="/login"
+                element={<Navigate to="/" replace={true} />}
+              />
 
               {configuration.enableRegistration && (
-                <Route path="/register" element={<Navigate to="/" />} />
+                <Route
+                  path="/register"
+                  element={<Navigate to="/" replace={true} />}
+                />
               )}
 
               <Route path="/" element={<HomePage />} />
@@ -92,7 +98,10 @@ export const MyRouter: FunctionComponent = () => {
             user ? (
               <NotFound />
             ) : (
-              <Navigate to={configuration.noUsers ? '/register' : '/login'} />
+              <Navigate
+                to={configuration.noUsers ? '/register' : '/login'}
+                replace={true}
+              />
             )
           }
         />

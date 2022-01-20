@@ -1,12 +1,6 @@
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent } from 'react';
 import clsx from 'clsx';
-import {
-  Outlet,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 
 import { useUser } from 'src/api/user';
@@ -20,17 +14,6 @@ import { SettingsSegment } from 'src/components/SettingsSegment';
 
 export const SettingsPage: FunctionComponent = () => {
   const { user } = useUser();
-
-  const navigate = useNavigate();
-
-  useEffect(
-    () =>
-      navigate(user.name !== 'demo' ? 'password' : 'application-tokens', {
-        replace: true,
-      }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
 
   return (
     <>
@@ -58,6 +41,16 @@ export const SettingsPage: FunctionComponent = () => {
               />
             </>
           )}
+
+          <Route
+            path="*"
+            element={
+              <Navigate
+                to={user.name !== 'demo' ? 'password' : 'application-tokens'}
+                replace={true}
+              />
+            }
+          />
         </Route>
       </Routes>
     </>
