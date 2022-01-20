@@ -19,6 +19,7 @@ export const ItemsPage: FunctionComponent<{ mediaType?: MediaType }> = (
       showSearch={true}
       gridItemAppearance={{
         showRating: true,
+        showAddToWatchlistAndMarkAsSeenButtons: true,
         topBar: {
           showFirstUnwatchedEpisodeBadge: true,
           showOnWatchlistIcon: true,

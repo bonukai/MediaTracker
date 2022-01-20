@@ -21,6 +21,7 @@ export type GridItemAppearanceArgs = {
   showNextAiring?: boolean;
   showFirstUnwatchedEpisode?: boolean;
   showRating?: boolean;
+  showAddToWatchlistAndMarkAsSeenButtons?: boolean;
 
   topBar?: {
     showOnWatchlistIcon?: boolean;
@@ -35,8 +36,13 @@ export const GridItem: FunctionComponent<{
   appearance?: GridItemAppearanceArgs;
 }> = (props) => {
   const { mediaItem, mediaType } = props;
-  const { topBar, showNextAiring, showFirstUnwatchedEpisode, showRating } =
-    props.appearance || {};
+  const {
+    topBar,
+    showNextAiring,
+    showFirstUnwatchedEpisode,
+    showRating,
+    showAddToWatchlistAndMarkAsSeenButtons,
+  } = props.appearance || {};
 
   return (
     <div key={mediaItem.id} className="item">
@@ -114,41 +120,45 @@ export const GridItem: FunctionComponent<{
             </div>
           )}
 
-          {!mediaItem.onWatchlist && (
-            <div className="absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full">
-              {canBeOnWatchlist(mediaItem) && (
-                <div
-                  className="my-1 pointer-events-auto btn dark:bg-gray-900 bg-zinc-100"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    addToWatchlist(mediaItem);
-                  }}
-                >
-                  Add to watchlist
+          {showAddToWatchlistAndMarkAsSeenButtons && (
+            <>
+              {!mediaItem.onWatchlist && (
+                <div className="absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full">
+                  {canBeOnWatchlist(mediaItem) && (
+                    <div
+                      className="my-1 pointer-events-auto btn dark:bg-gray-900 bg-zinc-100"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        addToWatchlist(mediaItem);
+                      }}
+                    >
+                      Add to watchlist
+                    </div>
+                  )}
+                  {canBeMarkedAsSeen(mediaItem) && (
+                    <Modal
+                      openModal={(openModal) => (
+                        <>
+                          <div
+                            className="my-1 pointer-events-auto dark:bg-gray-900 bg-zinc-100 btn "
+                            onClick={() => openModal()}
+                          >
+                            Mark as seen
+                          </div>
+                        </>
+                      )}
+                    >
+                      {(closeModal) => (
+                        <SelectSeenDate
+                          mediaItem={mediaItem}
+                          closeModal={closeModal}
+                        />
+                      )}
+                    </Modal>
+                  )}
                 </div>
               )}
-              {canBeMarkedAsSeen(mediaItem) && (
-                <Modal
-                  openModal={(openModal) => (
-                    <>
-                      <div
-                        className="my-1 pointer-events-auto dark:bg-gray-900 bg-zinc-100 btn "
-                        onClick={() => openModal()}
-                      >
-                        Mark as seen
-                      </div>
-                    </>
-                  )}
-                >
-                  {(closeModal) => (
-                    <SelectSeenDate
-                      mediaItem={mediaItem}
-                      closeModal={closeModal}
-                    />
-                  )}
-                </Modal>
-              )}
-            </div>
+            </>
           )}
         </Poster>
 
@@ -182,7 +192,7 @@ export const GridItem: FunctionComponent<{
               )}
               {mediaItem.mediaType !== 'tv' && mediaItem.releaseDate && (
                 <>
-                  {'Relese ' + relativeTimeTo(new Date(mediaItem.releaseDate))}
+                  {'Release ' + relativeTimeTo(new Date(mediaItem.releaseDate))}
                 </>
               )}
             </>
