@@ -121,8 +121,10 @@ export const repository = <T extends object>(args: {
         }
 
         public async createMany(values: Partial<T>[]) {
-            await knex(this.tableName).insert(
-                values.map((value) => this.serialize(this.stripValue(value)))
+            await knex.batchInsert(
+                this.tableName,
+                values.map((value) => this.serialize(this.stripValue(value))),
+                30
             );
         }
 
