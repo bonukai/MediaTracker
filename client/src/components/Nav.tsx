@@ -17,6 +17,7 @@ const routes = [
   { path: '/upcoming', name: 'Upcoming' },
   { path: '/continue-watching', name: 'Continue watching' },
   { path: '/calendar', name: 'Calendar' },
+  { path: '/import', name: 'Import' },
 ];
 
 export const NavComponent: FunctionComponent = () => {

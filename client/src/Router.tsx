@@ -16,11 +16,15 @@ import { RegisterPage } from 'src/pages/Register';
 import { useConfiguration } from 'src/api/configuration';
 import { NotFound } from 'src/pages/NotFound';
 import { SeenHistoryPage } from 'src/pages/SeenHistory';
+import { ImportPage } from 'src/pages/Import';
+import { TraktTvImportPage } from 'src/pages/import/TraktTv';
 
 export const MyRouter: FunctionComponent = () => {
   const { isLoading, user } = useUser();
-  const { configuration, isLoading: isLoadingConfiguration } =
-    useConfiguration();
+  const {
+    configuration,
+    isLoading: isLoadingConfiguration,
+  } = useConfiguration();
 
   if (isLoading || isLoadingConfiguration) return <>{'Loading...'}</>;
 
@@ -78,6 +82,9 @@ export const MyRouter: FunctionComponent = () => {
                 path="/seen-history/:mediaItemId"
                 element={<SeenHistoryPage />}
               />
+
+              <Route path="/import" element={<ImportPage />} />
+              <Route path="/import/trakttv" element={<TraktTvImportPage />} />
             </>
           ) : (
             <>

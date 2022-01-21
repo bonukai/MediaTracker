@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 
 import clsx from 'clsx';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { useSearch } from 'src/api/search';
 import { Items, MediaItemOrderBy, SortOrder } from 'mediatracker-api';
@@ -165,40 +165,51 @@ export const PaginatedGridItems: FunctionComponent<{
               <Search onSearch={setSearchQuery} />
             )}
 
-            {!isLoading && (
+            {!isLoading && !searchQuery && items.length === 0 ? (
               <div className="flex">
-                <div>
-                  {searchQuery ? (
-                    <>
-                      Found {searchResult?.length} items for query{' '}
-                      <span className="italic font-bold ">
-                        {'"'}
-                        {searchQuery}
-                        {'"'}
-                      </span>
-                    </>
-                  ) : (
-                    <>{numberOfItemsTotal} items</>
-                  )}
-                </div>
-                {showSortOrderControls && !searchQuery && (
-                  <div className="ml-auto">
-                    <OrderByComponent
-                      orderBy={orderBy}
-                      setOrderBy={(value) => {
-                        setSortBy(value);
-                        setPage(1);
-                      }}
-                      sortOrder={sortOrder}
-                      setSortOrder={(value) => {
-                        setSortOrder(value);
-                        setPage(1);
-                      }}
-                      mediaType={args.mediaType}
-                    />
+                Search for items or &nbsp;
+                <Link to="/import" className="text-blue-500 underline">
+                  import
+                </Link>
+              </div>
+            ) : (
+              <>
+                {!isLoading && (
+                  <div className="flex">
+                    <div>
+                      {searchQuery ? (
+                        <>
+                          Found {searchResult?.length} items for query{' '}
+                          <span className="italic font-bold ">
+                            {'"'}
+                            {searchQuery}
+                            {'"'}
+                          </span>
+                        </>
+                      ) : (
+                        <>{numberOfItemsTotal} items</>
+                      )}
+                    </div>
+                    {showSortOrderControls && !searchQuery && (
+                      <div className="ml-auto">
+                        <OrderByComponent
+                          orderBy={orderBy}
+                          setOrderBy={(value) => {
+                            setSortBy(value);
+                            setPage(1);
+                          }}
+                          sortOrder={sortOrder}
+                          setSortOrder={(value) => {
+                            setSortOrder(value);
+                            setPage(1);
+                          }}
+                          mediaType={args.mediaType}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
+              </>
             )}
           </div>
           {isLoading ? (
