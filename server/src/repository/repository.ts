@@ -1,25 +1,33 @@
 import _, { Dictionary } from 'lodash';
 import { knex } from 'src/dbconfig';
-import { User } from 'src/entity/user';
 
 const omitUndefinedValues = <T>(
     array: Dictionary<Partial<T>>
 ): Dictionary<Partial<T>> => _.pickBy(array, (v) => v !== undefined);
+
+const BATCH_SIZE = 30;
 
 export const repository = <T extends object>(args: {
     tableName: string;
     primaryColumnName: keyof T;
     columnNames?: ReadonlyArray<keyof T>;
     booleanColumnNames?: ReadonlyArray<keyof T>;
+    uniqueBy?: (value: Partial<T>) => Partial<T>;
 }) => {
-    const { primaryColumnName, tableName, columnNames, booleanColumnNames } =
-        args;
+    const {
+        primaryColumnName,
+        tableName,
+        columnNames,
+        booleanColumnNames,
+        uniqueBy,
+    } = args;
 
     return class Repository {
         public readonly tableName = tableName;
         protected readonly columnNames = columnNames;
         protected readonly primaryColumnName = primaryColumnName;
         protected readonly booleanColumnNames = booleanColumnNames;
+        protected readonly uniqueBy = uniqueBy;
 
         protected serialize(value: Partial<T>): unknown {
             if (!this.booleanColumnNames) {
@@ -111,6 +119,10 @@ export const repository = <T extends object>(args: {
         }
 
         public async create(value: Partial<T>) {
+            if (this.uniqueBy) {
+                return this.createUnique(value, this.uniqueBy);
+            }
+
             const res = await knex(this.tableName)
                 .insert(this.serialize(this.stripValue(value)))
                 .returning(this.primaryColumnName as string);
@@ -120,16 +132,81 @@ export const repository = <T extends object>(args: {
             }
         }
 
+        protected async createUnique(
+            value: Partial<T>,
+            uniqueBy: (value: Partial<T>) => Partial<T>
+        ) {
+            return await knex.transaction(async (trx) => {
+                const existingItem = await trx(this.tableName)
+                    .where(omitUndefinedValues(uniqueBy(value)))
+                    .first();
+
+                if (!existingItem) {
+                    const res = await trx(this.tableName)
+                        .insert(this.serialize(this.stripValue(value)))
+                        .returning(this.primaryColumnName as string);
+
+                    if (res?.length > 0) {
+                        return res[0][this.primaryColumnName];
+                    }
+                }
+            });
+        }
+
         public async createMany(values: Partial<T>[]) {
             if (values.length === 0) {
                 return;
             }
 
+            if (this.uniqueBy) {
+                return this.createManyUnique(values, uniqueBy);
+            }
+
             await knex.batchInsert(
                 this.tableName,
                 values.map((value) => this.serialize(this.stripValue(value))),
-                30
+                BATCH_SIZE
             );
+        }
+
+        protected async createManyUnique(
+            values: Partial<T>[],
+            uniqueBy: (value: Partial<T>) => Partial<T>
+        ) {
+            return await knex.transaction(async (trx) => {
+                const existingItems: Partial<T>[] = _.concat(
+                    ...(await Promise.all(
+                        _.chunk(values, BATCH_SIZE).flatMap((chunk) => {
+                            const qb = trx(this.tableName);
+
+                            for (const value of chunk) {
+                                qb.orWhere(
+                                    omitUndefinedValues(uniqueBy(value))
+                                );
+                            }
+                            return qb;
+                        })
+                    ))
+                );
+
+                const newItems = _.differenceWith(
+                    values,
+                    existingItems,
+                    (a, b) => _.isEqual(uniqueBy(a), uniqueBy(b))
+                );
+
+                if (newItems.length > 0) {
+                    await knex
+                        .batchInsert(
+                            this.tableName,
+                            values.map((value) =>
+                                this.serialize(this.stripValue(value))
+                            ),
+                            BATCH_SIZE
+                        )
+                        .transacting(trx);
+                }
+            });
         }
 
         public async update(value: Partial<T>) {
