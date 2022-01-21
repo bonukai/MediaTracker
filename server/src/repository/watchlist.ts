@@ -50,7 +50,14 @@ class WatchlistRepository extends repository<Watchlist>({
             );
 
             if (newItems.length > 0) {
+                await knex
+                    .batchInsert(
                         this.tableName,
+                        values.map((value) =>
+                            this.serialize(this.stripValue(value))
+                        )
+                    )
+                    .transacting(trx);
             }
         });
     }
