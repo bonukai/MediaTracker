@@ -6,8 +6,8 @@ export const userRatingRepository = new (repository<UserRating>({
     primaryColumnName: 'id',
     uniqueBy: (value) => ({
         mediaItemId: value.mediaItemId,
-        episodeId: value.episodeId,
-        seasonId: value.seasonId,
+        episodeId: value.episodeId || null,
+        seasonId: value.seasonId || null,
         userId: value.userId,
     }),
 }))();

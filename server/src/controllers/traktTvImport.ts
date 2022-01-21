@@ -293,7 +293,6 @@ export class TraktTvImportController {
                                 mediaItemId: res.mediaItemId,
                                 rating: item.rating / 2,
                                 date: new Date(item.rated_at).getTime(),
-                                seasonId: res.season.id,
                                 episodeId: res.episode.id,
                             };
                         })

@@ -27,8 +27,8 @@ export class RatingController {
         const userRating: UserRating = {
             date: new Date().getTime(),
             mediaItemId: mediaItemId,
-            episodeId: episodeId,
-            seasonId: seasonId,
+            episodeId: episodeId || null,
+            seasonId: seasonId || null,
             review: review,
             userId: userId,
             rating: rating,
@@ -38,8 +38,8 @@ export class RatingController {
             where: {
                 userId: userId,
                 mediaItemId: mediaItemId,
-                seasonId: seasonId,
-                episodeId: episodeId,
+                seasonId: seasonId || null,
+                episodeId: episodeId || null,
             },
             value: userRating,
         });
