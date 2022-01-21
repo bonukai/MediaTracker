@@ -118,6 +118,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                         ...season,
                         tvShowId: mediaItem.id,
                     });
+                    season.tvShowId = mediaItem.id;
                 }
 
                 if (season.episodes) {
@@ -125,11 +126,13 @@ class MediaItemRepository extends repository<MediaItemBase>({
                         if (episode.id) {
                             await tvEpisodeRepository.update(episode);
                         } else {
-                            await tvEpisodeRepository.create({
+                            episode.id = await tvEpisodeRepository.create({
                                 ...episode,
                                 seasonId: season.id,
                                 tvShowId: mediaItem.id,
                             });
+                            episode.seasonId = season.id;
+                            episode.tvShowId = mediaItem.id;
                         }
                     }
                 }
@@ -137,9 +140,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
         }
     }
 
-    public async create(
-        mediaItem: MediaItemForProvider | Partial<MediaItemBaseWithSeasons>
-    ) {
+    public async create(mediaItem: Partial<MediaItemBaseWithSeasons>) {
         const mediaItemId = await super.create({
             ...mediaItem,
             lastTimeUpdated:
@@ -151,21 +152,26 @@ class MediaItemRepository extends repository<MediaItemBase>({
             narrators: mediaItem.narrators?.join(','),
         } as unknown);
 
+        mediaItem.id = mediaItemId;
+
         if (mediaItem.seasons) {
             for (const season of mediaItem.seasons) {
-                const seasonId = await tvSeasonRepository.create({
+                season.id = await tvSeasonRepository.create({
                     ...season,
                     episodes: null,
-                    tvShowId: mediaItemId,
+                    tvShowId: mediaItem.id,
                 });
+                season.tvShowId = mediaItem.id;
 
                 if (season.episodes) {
                     for (const episode of season.episodes) {
-                        const episodeId = await tvEpisodeRepository.create({
+                        episode.id = await tvEpisodeRepository.create({
                             ...episode,
-                            seasonId: seasonId,
-                            tvShowId: mediaItemId,
+                            seasonId: season.id,
+                            tvShowId: mediaItem.id,
                         });
+                        episode.seasonId = season.id;
+                        episode.tvShowId = mediaItem.id;
                     }
                 }
             }
