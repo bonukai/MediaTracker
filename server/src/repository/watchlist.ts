@@ -50,7 +50,7 @@ class WatchlistRepository extends repository<Watchlist>({
             );
 
             if (newItems.length > 0) {
-                await trx(this.tableName).insert(newItems);
+                        this.tableName,
             }
         });
     }
