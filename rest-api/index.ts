@@ -586,6 +586,71 @@ export namespace Tokens {
     }
 }
 
+export namespace ImportTrakttv {
+    /**
+     * No description
+     * @tags TraktTvImport
+     * @name DeviceToken
+     * @request GET:/api/import-trakttv/device-token
+     * @secure
+     */
+    export namespace DeviceToken {
+        export type RequestParams = {};
+        export type RequestQuery = {};
+        export type RequestBody = never;
+        export type RequestHeaders = {};
+        export type ResponseBody = {
+            userCode: string;
+            verificationUrl: string;
+        };
+    }
+    /**
+     * No description
+     * @tags TraktTvImport
+     * @name IsAuthenticated
+     * @request GET:/api/import-trakttv/is-authenticated
+     * @secure
+     */
+    export namespace IsAuthenticated {
+        export type RequestParams = {};
+        export type RequestQuery = {};
+        export type RequestBody = never;
+        export type RequestHeaders = {};
+        export type ResponseBody = boolean;
+    }
+    /**
+     * No description
+     * @tags TraktTvImport
+     * @name ItemsToImport
+     * @request GET:/api/import-trakttv/items-to-import
+     * @secure
+     */
+    export namespace ItemsToImport {
+        export type RequestParams = {};
+        export type RequestQuery = {};
+        export type RequestBody = never;
+        export type RequestHeaders = {};
+        export type ResponseBody = {
+            watchlist: MediaItemItemsResponse[];
+            seen: MediaItemItemsResponse[];
+        };
+    }
+    /**
+     * No description
+     * @tags TraktTvImport
+     * @name Import
+     * @request GET:/api/import-trakttv
+     * @secure
+     */
+    export namespace Import {
+        export type RequestParams = {};
+        export type RequestQuery = {};
+        export type RequestBody = never;
+        export type RequestHeaders = {};
+        export type ResponseBody = any;
+    }
+}
+
 export namespace User {
     /**
      * No description
@@ -1447,6 +1512,80 @@ export class Api<
                 method: 'GET',
                 secure: true,
                 format: 'json',
+                ...params,
+            }),
+    };
+    importTrakttv = {
+        /**
+         * No description
+         *
+         * @tags TraktTvImport
+         * @name DeviceToken
+         * @request GET:/api/import-trakttv/device-token
+         * @secure
+         */
+        deviceToken: (params: RequestParams = {}) =>
+            this.request<{ userCode: string; verificationUrl: string }, any>({
+                path: `/api/import-trakttv/device-token`,
+                method: 'GET',
+                secure: true,
+                format: 'json',
+                ...params,
+            }),
+
+        /**
+         * No description
+         *
+         * @tags TraktTvImport
+         * @name IsAuthenticated
+         * @request GET:/api/import-trakttv/is-authenticated
+         * @secure
+         */
+        isAuthenticated: (params: RequestParams = {}) =>
+            this.request<boolean, any>({
+                path: `/api/import-trakttv/is-authenticated`,
+                method: 'GET',
+                secure: true,
+                format: 'json',
+                ...params,
+            }),
+
+        /**
+         * No description
+         *
+         * @tags TraktTvImport
+         * @name ItemsToImport
+         * @request GET:/api/import-trakttv/items-to-import
+         * @secure
+         */
+        itemsToImport: (params: RequestParams = {}) =>
+            this.request<
+                {
+                    watchlist: MediaItemItemsResponse[];
+                    seen: MediaItemItemsResponse[];
+                },
+                any
+            >({
+                path: `/api/import-trakttv/items-to-import`,
+                method: 'GET',
+                secure: true,
+                format: 'json',
+                ...params,
+            }),
+
+        /**
+         * No description
+         *
+         * @tags TraktTvImport
+         * @name Import
+         * @request GET:/api/import-trakttv
+         * @secure
+         */
+        import: (params: RequestParams = {}) =>
+            this.request<any, any>({
+                path: `/api/import-trakttv`,
+                method: 'GET',
+                secure: true,
                 ...params,
             }),
     };

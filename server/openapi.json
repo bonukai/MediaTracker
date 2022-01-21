@@ -1,2325 +1,2601 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-        "title": "MediaTracker",
-        "version": "0.0.1",
-        "license": {
-            "name": "MIT",
-            "url": "https://opensource.org/licenses/MIT"
-        }
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MediaTracker",
+    "version": "0.0.1",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "security": [
+    {
+      "ApiKey": []
     },
-    "security": [
-        {
-            "ApiKey": []
-        },
-        {
-            "ApiHeader": []
+    {
+      "ApiHeader": []
+    }
+  ],
+  "paths": {
+    "/api/calendar": {
+      "get": {
+        "tags": [
+          "Calendar"
+        ],
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "episodes": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TvEpisode"
+                      }
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/MediaItemItemsResponse"
+                      }
+                    }
+                  },
+                  "required": [
+                    "episodes",
+                    "items"
+                  ]
+                }
+              }
+            }
+          }
         }
-    ],
-    "paths": {
-        "/api/calendar": {
-            "get": {
-                "tags": ["Calendar"],
-                "operationId": "get",
-                "parameters": [
-                    {
-                        "name": "start",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "end",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "nullable": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "episodes": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/TvEpisode"
-                                            }
-                                        },
-                                        "items": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/MediaItemItemsResponse"
-                                            }
-                                        }
-                                    },
-                                    "required": ["episodes", "items"]
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/configuration": {
-            "patch": {
-                "tags": ["Configuration"],
-                "operationId": "update",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "enableRegistration": {
-                                        "type": "boolean",
-                                        "nullable": true
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            },
-            "get": {
-                "tags": ["Configuration"],
-                "operationId": "get",
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "enableRegistration": {
-                                                    "type": "boolean"
-                                                }
-                                            },
-                                            "required": ["enableRegistration"]
-                                        },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "noUsers": {
-                                                    "type": "boolean"
-                                                }
-                                            },
-                                            "required": ["noUsers"]
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/img/poster": {
-            "get": {
-                "tags": ["Img"],
-                "operationId": "GetPoster",
-                "parameters": [
-                    {
-                        "name": "mediaItemId",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "number",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "seasonId",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "number",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "size",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/components/schemas/ImgSize"
-                                }
-                            ],
-                            "nullable": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Image",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/img/backdrop": {
-            "get": {
-                "tags": ["Img"],
-                "operationId": "GetBackdrop",
-                "parameters": [
-                    {
-                        "name": "mediaItemId",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "name": "size",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/components/schemas/ImgSize"
-                                }
-                            ],
-                            "nullable": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Image",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/details/{mediaItemId}": {
-            "get": {
-                "tags": ["MediaItem"],
-                "operationId": "get",
-                "parameters": [
-                    {
-                        "name": "mediaItemId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/MediaItemDetailsResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/items/paginated": {
-            "get": {
-                "description": "Get items",
-                "tags": ["Items"],
-                "operationId": "paginated",
-                "parameters": [
-                    {
-                        "name": "orderBy",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/components/schemas/MediaItemOrderBy"
-                                }
-                            ],
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "sortOrder",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/components/schemas/SortOrder"
-                                }
-                            ],
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "filter",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "onlyOnWatchlist",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "onlySeenItems",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "onlyWithNextEpisodesToWatch",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "onlyWithNextAiring",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "onlyWithUserRating",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "onlyWithoutUserRating",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "number",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "mediaType",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/components/schemas/MediaType"
-                                }
-                            ],
-                            "nullable": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/MediaItemItemsResponse"
-                                            }
-                                        },
-                                        "page": {
-                                            "type": "number"
-                                        },
-                                        "totalPages": {
-                                            "type": "number"
-                                        },
-                                        "from": {
-                                            "type": "number"
-                                        },
-                                        "to": {
-                                            "type": "number"
-                                        },
-                                        "total": {
-                                            "type": "number"
-                                        }
-                                    },
-                                    "required": [
-                                        "data",
-                                        "from",
-                                        "page",
-                                        "to",
-                                        "total",
-                                        "totalPages"
-                                    ]
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/items": {
-            "get": {
-                "description": "Get items",
-                "tags": ["Items"],
-                "operationId": "get",
-                "parameters": [
-                    {
-                        "name": "mediaType",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/components/schemas/MediaType"
-                                }
-                            ],
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "orderBy",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/components/schemas/MediaItemOrderBy"
-                                }
-                            ],
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "sortOrder",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/components/schemas/SortOrder"
-                                }
-                            ],
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "filter",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "onlyOnWatchlist",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "onlySeenItems",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "onlyWithNextEpisodesToWatch",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "onlyWithNextAiring",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "onlyWithUserRating",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "onlyWithoutUserRating",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "nullable": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/MediaItemItemsResponse"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/metadata-provider-credentials": {
-            "get": {
-                "tags": ["MetadataProviderCredentials"],
-                "operationId": "get",
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "IGDB": {
-                                            "type": "object",
-                                            "properties": {
-                                                "CLIENT_ID": {
-                                                    "type": "string"
-                                                },
-                                                "CLIENT_SECRET": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "required": [
-                                                "CLIENT_ID",
-                                                "CLIENT_SECRET"
-                                            ],
-                                            "nullable": true
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "put": {
-                "tags": ["MetadataProviderCredentials"],
-                "operationId": "set",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/MetadataProviderCredentialsRequestType"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/rating": {
-            "put": {
-                "tags": ["Rating"],
-                "operationId": "add",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "mediaItemId": {
-                                        "type": "number"
-                                    },
-                                    "seasonId": {
-                                        "type": "number",
-                                        "nullable": true
-                                    },
-                                    "episodeId": {
-                                        "type": "number",
-                                        "nullable": true
-                                    },
-                                    "rating": {
-                                        "type": "number",
-                                        "nullable": true
-                                    },
-                                    "review": {
-                                        "type": "string",
-                                        "nullable": true
-                                    }
-                                },
-                                "required": ["mediaItemId"]
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/search": {
-            "get": {
-                "tags": ["Search"],
-                "operationId": "search",
-                "parameters": [
-                    {
-                        "name": "q",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "mediaType",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/MediaType"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/MediaItemItemsResponse"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/seen": {
-            "put": {
-                "tags": ["Seen"],
-                "operationId": "add",
-                "parameters": [
-                    {
-                        "name": "mediaItemId",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "name": "seasonId",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "number",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "episodeId",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "number",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "lastSeenEpisodeId",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "number",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "lastSeenAt",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/components/schemas/LastSeenAt"
-                                }
-                            ],
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "date",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "number",
-                            "nullable": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/seen/{seenId}": {
-            "delete": {
-                "tags": ["Seen"],
-                "operationId": "deleteById",
-                "parameters": [
-                    {
-                        "name": "seenId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/seen/": {
-            "delete": {
-                "tags": ["Seen"],
-                "operationId": "delete",
-                "parameters": [
-                    {
-                        "name": "mediaItemId",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "name": "seasonId",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "number",
-                            "nullable": true
-                        }
-                    },
-                    {
-                        "name": "episodeId",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "number",
-                            "nullable": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/tokens": {
-            "put": {
-                "description": "Add token",
-                "tags": ["Token"],
-                "operationId": "add",
-                "parameters": [
-                    {
-                        "name": "description",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "token": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": ["token"]
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete token",
-                "tags": ["Token"],
-                "operationId": "delete",
-                "parameters": [
-                    {
-                        "name": "description",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            },
-            "get": {
-                "description": "Get all tokens",
-                "tags": ["Token"],
-                "operationId": "get",
-                "responses": {
-                    "200": {
-                        "description": "List of token descriptions",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user": {
-            "get": {
-                "tags": ["User"],
-                "operationId": "get",
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/UserResponse"
-                                        }
-                                    ],
-                                    "nullable": true
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/logout": {
-            "get": {
-                "tags": ["User"],
-                "operationId": "logout",
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/login": {
-            "post": {
-                "tags": ["User"],
-                "operationId": "login",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "username": {
-                                        "type": "string"
-                                    },
-                                    "password": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": ["password", "username"]
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/register": {
-            "post": {
-                "tags": ["User"],
-                "operationId": "register",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "username": {
-                                        "type": "string"
-                                    },
-                                    "password": {
-                                        "type": "string"
-                                    },
-                                    "confirmPassword": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": [
-                                    "confirmPassword",
-                                    "password",
-                                    "username"
-                                ]
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/UserResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/RequestError"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/notification-credentials": {
-            "get": {
-                "tags": ["User"],
-                "operationId": "getNotificationCredentials",
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "gotify": {
-                                            "type": "object",
-                                            "properties": {
-                                                "url": {
-                                                    "type": "string"
-                                                },
-                                                "token": {
-                                                    "type": "string"
-                                                },
-                                                "priority": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "required": [
-                                                "priority",
-                                                "token",
-                                                "url"
-                                            ],
-                                            "nullable": true
-                                        },
-                                        "Pushbullet": {
-                                            "type": "object",
-                                            "properties": {
-                                                "token": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "required": ["token"],
-                                            "nullable": true
-                                        },
-                                        "Pushover": {
-                                            "type": "object",
-                                            "properties": {
-                                                "key": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "required": ["key"],
-                                            "nullable": true
-                                        },
-                                        "Pushsafer": {
-                                            "type": "object",
-                                            "properties": {
-                                                "key": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "required": ["key"],
-                                            "nullable": true
-                                        },
-                                        "ntfy": {
-                                            "type": "object",
-                                            "properties": {
-                                                "url": {
-                                                    "type": "string"
-                                                },
-                                                "priority": {
-                                                    "type": "string"
-                                                },
-                                                "topic": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "required": [
-                                                "priority",
-                                                "topic",
-                                                "url"
-                                            ],
-                                            "nullable": true
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "put": {
-                "tags": ["User"],
-                "operationId": "updateNotificationCredentials",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/NotificationPlatformsResponseType"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/settings": {
-            "put": {
-                "tags": ["User"],
-                "operationId": "update",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "nullable": true
-                                    },
-                                    "publicReviews": {
-                                        "type": "boolean",
-                                        "nullable": true
-                                    },
-                                    "sendNotificationWhenStatusChanges": {
-                                        "type": "boolean",
-                                        "nullable": true
-                                    },
-                                    "sendNotificationWhenReleaseDateChanges": {
-                                        "type": "boolean",
-                                        "nullable": true
-                                    },
-                                    "sendNotificationWhenNumberOfSeasonsChanges": {
-                                        "type": "boolean",
-                                        "nullable": true
-                                    },
-                                    "sendNotificationForReleases": {
-                                        "type": "boolean",
-                                        "nullable": true
-                                    },
-                                    "sendNotificationForEpisodesReleases": {
-                                        "type": "boolean",
-                                        "nullable": true
-                                    },
-                                    "notificationPlatform": {
-                                        "enum": [
-                                            "Pushbullet",
-                                            "Pushover",
-                                            "Pushsafer",
-                                            "gotify",
-                                            "ntfy",
-                                            null
-                                        ],
-                                        "type": "string",
-                                        "nullable": true
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/password": {
-            "put": {
-                "tags": ["User"],
-                "operationId": "updatePassword",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "currentPassword": {
-                                        "type": "string"
-                                    },
-                                    "newPassword": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": ["currentPassword", "newPassword"]
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/{userId}": {
-            "get": {
-                "tags": ["User"],
-                "operationId": "getById",
-                "parameters": [
-                    {
-                        "name": "userId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "id": {
-                                            "type": "number"
-                                        },
-                                        "name": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": ["id", "name"],
-                                    "nullable": true
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/watchlist": {
-            "put": {
-                "tags": ["Watchlist"],
-                "operationId": "add",
-                "parameters": [
-                    {
-                        "name": "mediaItemId",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "tags": ["Watchlist"],
-                "operationId": "delete",
-                "parameters": [
-                    {
-                        "name": "mediaItemId",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/text": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
+      }
     },
-    "components": {
-        "securitySchemes": {
-            "ApiKey": {
-                "type": "apiKey",
-                "in": "query",
-                "name": "token"
-            },
-            "ApiHeader": {
-                "type": "apiKey",
-                "in": "header",
-                "name": "Access-Token"
-            }
-        },
-        "schemas": {
-            "TvEpisode": {
+    "/api/configuration": {
+      "patch": {
+        "tags": [
+          "Configuration"
+        ],
+        "operationId": "update",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
                 "type": "object",
                 "properties": {
-                    "id": {
-                        "type": "number",
-                        "nullable": true
+                  "enableRegistration": {
+                    "type": "boolean",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Configuration"
+        ],
+        "operationId": "get",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "enableRegistration": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "enableRegistration"
+                      ]
                     },
-                    "title": {
-                        "type": "string"
-                    },
-                    "description": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "episodeNumber": {
-                        "type": "number"
-                    },
-                    "seasonNumber": {
-                        "type": "number"
-                    },
-                    "releaseDate": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "tvShowId": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "seasonId": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "tmdbId": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "imdbId": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "runtime": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "seenHistory": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Seen"
-                        },
-                        "nullable": true
-                    },
-                    "userRating": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/UserRating"
-                            }
-                        ],
-                        "nullable": true
-                    },
-                    "lastSeenAt": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "seasonAndEpisodeNumber": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "seen": {
-                        "type": "boolean",
-                        "nullable": true
-                    },
-                    "tvShow": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/MediaItemItemsResponse"
-                            }
-                        ],
-                        "nullable": true
-                    },
-                    "isSpecialEpisode": {
-                        "type": "boolean"
+                    {
+                      "type": "object",
+                      "properties": {
+                        "noUsers": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "noUsers"
+                      ]
                     }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/img/poster": {
+      "get": {
+        "tags": [
+          "Img"
+        ],
+        "operationId": "GetPoster",
+        "parameters": [
+          {
+            "name": "mediaItemId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "seasonId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ImgSize"
+                }
+              ],
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Image",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/img/backdrop": {
+      "get": {
+        "tags": [
+          "Img"
+        ],
+        "operationId": "GetBackdrop",
+        "parameters": [
+          {
+            "name": "mediaItemId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ImgSize"
+                }
+              ],
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Image",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/details/{mediaItemId}": {
+      "get": {
+        "tags": [
+          "MediaItem"
+        ],
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "mediaItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaItemDetailsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/items/paginated": {
+      "get": {
+        "description": "Get items",
+        "tags": [
+          "Items"
+        ],
+        "operationId": "paginated",
+        "parameters": [
+          {
+            "name": "orderBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/MediaItemOrderBy"
+                }
+              ],
+              "nullable": true
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/SortOrder"
+                }
+              ],
+              "nullable": true
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "onlyOnWatchlist",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "onlySeenItems",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "onlyWithNextEpisodesToWatch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "onlyWithNextAiring",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "onlyWithUserRating",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "onlyWithoutUserRating",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "mediaType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/MediaType"
+                }
+              ],
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/MediaItemItemsResponse"
+                      }
+                    },
+                    "page": {
+                      "type": "number"
+                    },
+                    "totalPages": {
+                      "type": "number"
+                    },
+                    "from": {
+                      "type": "number"
+                    },
+                    "to": {
+                      "type": "number"
+                    },
+                    "total": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "from",
+                    "page",
+                    "to",
+                    "total",
+                    "totalPages"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/items": {
+      "get": {
+        "description": "Get items",
+        "tags": [
+          "Items"
+        ],
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "mediaType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/MediaType"
+                }
+              ],
+              "nullable": true
+            }
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/MediaItemOrderBy"
+                }
+              ],
+              "nullable": true
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/SortOrder"
+                }
+              ],
+              "nullable": true
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "onlyOnWatchlist",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "onlySeenItems",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "onlyWithNextEpisodesToWatch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "onlyWithNextAiring",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "onlyWithUserRating",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "onlyWithoutUserRating",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MediaItemItemsResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/metadata-provider-credentials": {
+      "get": {
+        "tags": [
+          "MetadataProviderCredentials"
+        ],
+        "operationId": "get",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "IGDB": {
+                      "type": "object",
+                      "properties": {
+                        "CLIENT_ID": {
+                          "type": "string"
+                        },
+                        "CLIENT_SECRET": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "CLIENT_ID",
+                        "CLIENT_SECRET"
+                      ],
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "MetadataProviderCredentials"
+        ],
+        "operationId": "set",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MetadataProviderCredentialsRequestType"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rating": {
+      "put": {
+        "tags": [
+          "Rating"
+        ],
+        "operationId": "add",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mediaItemId": {
+                    "type": "number"
+                  },
+                  "seasonId": {
+                    "type": "number",
+                    "nullable": true
+                  },
+                  "episodeId": {
+                    "type": "number",
+                    "nullable": true
+                  },
+                  "rating": {
+                    "type": "number",
+                    "nullable": true
+                  },
+                  "review": {
+                    "type": "string",
+                    "nullable": true
+                  }
                 },
                 "required": [
-                    "episodeNumber",
-                    "isSpecialEpisode",
-                    "seasonNumber",
-                    "title"
+                  "mediaItemId"
                 ]
-            },
-            "Seen": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "date": {
-                        "type": "number"
-                    },
-                    "mediaItemId": {
-                        "type": "number"
-                    },
-                    "seasonId": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "episodeId": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "userId": {
-                        "type": "number"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/search": {
+      "get": {
+        "tags": [
+          "Search"
+        ],
+        "operationId": "search",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mediaType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/MediaType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MediaItemItemsResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/seen": {
+      "put": {
+        "tags": [
+          "Seen"
+        ],
+        "operationId": "add",
+        "parameters": [
+          {
+            "name": "mediaItemId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "seasonId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "episodeId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "lastSeenEpisodeId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "lastSeenAt",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/LastSeenAt"
+                }
+              ],
+              "nullable": true
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/seen/{seenId}": {
+      "delete": {
+        "tags": [
+          "Seen"
+        ],
+        "operationId": "deleteById",
+        "parameters": [
+          {
+            "name": "seenId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/seen/": {
+      "delete": {
+        "tags": [
+          "Seen"
+        ],
+        "operationId": "delete",
+        "parameters": [
+          {
+            "name": "mediaItemId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "seasonId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "episodeId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tokens": {
+      "put": {
+        "description": "Add token",
+        "tags": [
+          "Token"
+        ],
+        "operationId": "add",
+        "parameters": [
+          {
+            "name": "description",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
                     }
-                },
-                "required": ["date", "mediaItemId", "userId"]
-            },
-            "UserRating": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "nullable": true
+                  },
+                  "required": [
+                    "token"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete token",
+        "tags": [
+          "Token"
+        ],
+        "operationId": "delete",
+        "parameters": [
+          {
+            "name": "description",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "Get all tokens",
+        "tags": [
+          "Token"
+        ],
+        "operationId": "get",
+        "responses": {
+          "200": {
+            "description": "List of token descriptions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/import-trakttv/device-token": {
+      "get": {
+        "tags": [
+          "TraktTvImport"
+        ],
+        "operationId": "deviceToken",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userCode": {
+                      "type": "string"
                     },
-                    "mediaItemId": {
-                        "type": "number"
-                    },
-                    "date": {
-                        "type": "number"
-                    },
-                    "userId": {
-                        "type": "number"
-                    },
-                    "rating": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "review": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "episodeId": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "seasonId": {
-                        "type": "number",
-                        "nullable": true
+                    "verificationUrl": {
+                      "type": "string"
                     }
-                },
-                "required": ["date", "mediaItemId", "userId"]
-            },
-            "MediaItemItemsResponse": {
-                "allOf": [
-                    {
-                        "type": "object",
-                        "properties": {
-                            "tmdbId": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "imdbId": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "tvmazeId": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "igdbId": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "openlibraryId": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "audibleId": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "id": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "numberOfSeasons": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "status": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "platform": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "title": {
-                                "type": "string"
-                            },
-                            "originalTitle": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "poster": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "backdrop": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "tmdbRating": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "releaseDate": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "overview": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "lastTimeUpdated": {
-                                "type": "number"
-                            },
-                            "source": {
-                                "type": "string"
-                            },
-                            "network": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "url": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "runtime": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "mediaType": {
-                                "$ref": "#/components/schemas/MediaType"
-                            },
-                            "genres": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                },
-                                "nullable": true
-                            },
-                            "numberOfEpisodes": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "developer": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "authors": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                },
-                                "nullable": true
-                            },
-                            "narrators": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                },
-                                "nullable": true
-                            },
-                            "language": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "needsDetails": {
-                                "type": "boolean",
-                                "nullable": true
-                            }
-                        },
-                        "required": [
-                            "lastTimeUpdated",
-                            "mediaType",
-                            "source",
-                            "title"
-                        ]
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "isSearchResult": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "hasDetails": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "poster": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "posterSmall": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "backdrop": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "seenHistory": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/Seen"
-                                },
-                                "nullable": true
-                            },
-                            "unseenEpisodesCount": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "userRating": {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/components/schemas/UserRating"
-                                    }
-                                ],
-                                "nullable": true
-                            },
-                            "upcomingEpisode": {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/components/schemas/TvEpisode"
-                                    }
-                                ],
-                                "nullable": true
-                            },
-                            "nextAiring": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "onWatchlist": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "lastSeenAt": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "seen": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "firstUnwatchedEpisode": {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/components/schemas/TvEpisode"
-                                    }
-                                ],
-                                "nullable": true
-                            }
-                        }
-                    }
-                ]
-            },
-            "MediaType": {
-                "enum": ["audiobook", "book", "movie", "tv", "video_game"],
-                "type": "string"
-            },
-            "ImgSize": {
-                "enum": ["original", "small"],
-                "type": "string"
-            },
-            "MediaItemDetailsResponse": {
-                "allOf": [
-                    {
-                        "type": "object",
-                        "properties": {
-                            "tmdbId": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "imdbId": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "tvmazeId": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "igdbId": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "openlibraryId": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "audibleId": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "id": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "numberOfSeasons": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "status": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "platform": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "title": {
-                                "type": "string"
-                            },
-                            "originalTitle": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "poster": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "backdrop": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "tmdbRating": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "releaseDate": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "overview": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "lastTimeUpdated": {
-                                "type": "number"
-                            },
-                            "source": {
-                                "type": "string"
-                            },
-                            "network": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "url": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "runtime": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "mediaType": {
-                                "$ref": "#/components/schemas/MediaType"
-                            },
-                            "genres": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                },
-                                "nullable": true
-                            },
-                            "numberOfEpisodes": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "developer": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "authors": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                },
-                                "nullable": true
-                            },
-                            "narrators": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                },
-                                "nullable": true
-                            },
-                            "language": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "needsDetails": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "seasons": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/TvSeason"
-                                },
-                                "nullable": true
-                            }
-                        },
-                        "required": [
-                            "lastTimeUpdated",
-                            "mediaType",
-                            "source",
-                            "title"
-                        ]
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "isSearchResult": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "hasDetails": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "poster": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "posterSmall": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "backdrop": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "seenHistory": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/Seen"
-                                },
-                                "nullable": true
-                            },
-                            "unseenEpisodesCount": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "userRating": {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/components/schemas/UserRating"
-                                    }
-                                ],
-                                "nullable": true
-                            },
-                            "upcomingEpisode": {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/components/schemas/TvEpisode"
-                                    }
-                                ],
-                                "nullable": true
-                            },
-                            "nextAiring": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "onWatchlist": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "lastSeenAt": {
-                                "type": "number",
-                                "nullable": true
-                            },
-                            "seen": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "firstUnwatchedEpisode": {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/components/schemas/TvEpisode"
-                                    }
-                                ],
-                                "nullable": true
-                            }
-                        }
-                    }
-                ]
-            },
-            "TvSeason": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "description": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "numberOfEpisodes": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "poster": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "releaseDate": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "tvShowId": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "tmdbId": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "title": {
-                        "type": "string"
-                    },
-                    "seasonNumber": {
-                        "type": "number"
-                    },
-                    "tvmazeId": {
-                        "type": "number",
-                        "nullable": true
-                    },
-                    "episodes": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/TvEpisode"
-                        },
-                        "nullable": true
-                    },
-                    "userRating": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/UserRating"
-                            }
-                        ],
-                        "nullable": true
+                  },
+                  "required": [
+                    "userCode",
+                    "verificationUrl"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/import-trakttv/is-authenticated": {
+      "get": {
+        "tags": [
+          "TraktTvImport"
+        ],
+        "operationId": "isAuthenticated",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/import-trakttv/items-to-import": {
+      "get": {
+        "tags": [
+          "TraktTvImport"
+        ],
+        "operationId": "itemsToImport",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "watchlist": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/MediaItemItemsResponse"
+                      }
                     },
                     "seen": {
-                        "type": "boolean",
-                        "nullable": true
-                    },
-                    "posterSmall": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "isSpecialSeason": {
-                        "type": "boolean"
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/MediaItemItemsResponse"
+                      }
                     }
-                },
-                "required": ["isSpecialSeason", "seasonNumber", "title"]
-            },
-            "GetItemsRequest": {
-                "allOf": [
-                    {
-                        "type": "object",
-                        "properties": {
-                            "orderBy": {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/components/schemas/MediaItemOrderBy"
-                                    }
-                                ],
-                                "nullable": true
-                            },
-                            "sortOrder": {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/components/schemas/SortOrder"
-                                    }
-                                ],
-                                "nullable": true
-                            },
-                            "filter": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "onlyOnWatchlist": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "onlySeenItems": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "onlyWithNextEpisodesToWatch": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "onlyWithNextAiring": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "onlyWithUserRating": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "onlyWithoutUserRating": {
-                                "type": "boolean",
-                                "nullable": true
-                            },
-                            "page": {
-                                "type": "number",
-                                "nullable": true
-                            }
-                        }
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "mediaType": {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/components/schemas/MediaType"
-                                    }
-                                ],
-                                "nullable": true
-                            }
-                        }
-                    }
-                ]
-            },
-            "MediaItemOrderBy": {
-                "enum": [
-                    "lastSeen",
-                    "mediaType",
-                    "nextAiring",
-                    "releaseDate",
-                    "status",
-                    "title",
-                    "unseenEpisodes"
-                ],
-                "type": "string"
-            },
-            "SortOrder": {
-                "enum": ["asc", "desc"],
-                "type": "string"
-            },
-            "MetadataProviderCredentialsRequestType": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "enum": ["IGDB"]
-                    },
-                    "credentials": {
-                        "type": "object",
-                        "properties": {
-                            "CLIENT_ID": {
-                                "type": "string"
-                            },
-                            "CLIENT_SECRET": {
-                                "type": "string"
-                            }
-                        },
-                        "required": ["CLIENT_ID", "CLIENT_SECRET"]
-                    }
-                },
-                "required": ["credentials", "name"]
-            },
-            "LastSeenAt": {
-                "enum": ["custom_date", "now", "release_date", "unknown"],
-                "type": "string"
-            },
-            "UserResponse": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "admin": {
-                        "type": "boolean",
-                        "nullable": true
-                    },
-                    "publicReviews": {
-                        "type": "boolean",
-                        "nullable": true
-                    },
-                    "sendNotificationWhenStatusChanges": {
-                        "type": "boolean",
-                        "nullable": true
-                    },
-                    "sendNotificationWhenReleaseDateChanges": {
-                        "type": "boolean",
-                        "nullable": true
-                    },
-                    "sendNotificationWhenNumberOfSeasonsChanges": {
-                        "type": "boolean",
-                        "nullable": true
-                    },
-                    "sendNotificationForReleases": {
-                        "type": "boolean",
-                        "nullable": true
-                    },
-                    "sendNotificationForEpisodesReleases": {
-                        "type": "boolean",
-                        "nullable": true
-                    },
-                    "notificationPlatform": {
-                        "enum": [
-                            "Pushbullet",
-                            "Pushover",
-                            "Pushsafer",
-                            "gotify",
-                            "ntfy",
-                            null
-                        ],
-                        "type": "string",
-                        "nullable": true
-                    }
-                },
-                "required": ["id", "name"]
-            },
-            "RequestError": {
-                "type": "object",
-                "properties": {
-                    "errorMessage": {
-                        "type": "string"
-                    },
-                    "MediaTrackerError": {
-                        "type": "boolean",
-                        "enum": [true]
-                    }
-                },
-                "required": ["MediaTrackerError", "errorMessage"]
-            },
-            "NotificationPlatformsResponseType": {
-                "oneOf": [
-                    {
-                        "type": "object",
-                        "properties": {
-                            "platformName": {
-                                "type": "string",
-                                "enum": ["gotify"]
-                            },
-                            "credentials": {
-                                "type": "object",
-                                "properties": {
-                                    "url": {
-                                        "type": "string"
-                                    },
-                                    "token": {
-                                        "type": "string"
-                                    },
-                                    "priority": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": ["priority", "token", "url"]
-                            }
-                        },
-                        "required": ["credentials", "platformName"]
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "platformName": {
-                                "type": "string",
-                                "enum": ["Pushbullet"]
-                            },
-                            "credentials": {
-                                "type": "object",
-                                "properties": {
-                                    "token": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": ["token"]
-                            }
-                        },
-                        "required": ["credentials", "platformName"]
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "platformName": {
-                                "type": "string",
-                                "enum": ["Pushover"]
-                            },
-                            "credentials": {
-                                "type": "object",
-                                "properties": {
-                                    "key": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": ["key"]
-                            }
-                        },
-                        "required": ["credentials", "platformName"]
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "platformName": {
-                                "type": "string",
-                                "enum": ["Pushsafer"]
-                            },
-                            "credentials": {
-                                "type": "object",
-                                "properties": {
-                                    "key": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": ["key"]
-                            }
-                        },
-                        "required": ["credentials", "platformName"]
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "platformName": {
-                                "type": "string",
-                                "enum": ["ntfy"]
-                            },
-                            "credentials": {
-                                "type": "object",
-                                "properties": {
-                                    "url": {
-                                        "type": "string"
-                                    },
-                                    "priority": {
-                                        "type": "string"
-                                    },
-                                    "topic": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": ["priority", "topic", "url"]
-                            }
-                        },
-                        "required": ["credentials", "platformName"]
-                    }
-                ]
+                  },
+                  "required": [
+                    "seen",
+                    "watchlist"
+                  ]
+                }
+              }
             }
+          }
         }
+      }
+    },
+    "/api/import-trakttv": {
+      "get": {
+        "tags": [
+          "TraktTvImport"
+        ],
+        "operationId": "import",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "get",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UserResponse"
+                    }
+                  ],
+                  "nullable": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/logout": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/login": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "password",
+                  "username"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/register": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "register",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "confirmPassword": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "confirmPassword",
+                  "password",
+                  "username"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/UserResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/RequestError"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/notification-credentials": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "getNotificationCredentials",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "gotify": {
+                      "type": "object",
+                      "properties": {
+                        "url": {
+                          "type": "string"
+                        },
+                        "token": {
+                          "type": "string"
+                        },
+                        "priority": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "priority",
+                        "token",
+                        "url"
+                      ],
+                      "nullable": true
+                    },
+                    "Pushbullet": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "token"
+                      ],
+                      "nullable": true
+                    },
+                    "Pushover": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key"
+                      ],
+                      "nullable": true
+                    },
+                    "Pushsafer": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key"
+                      ],
+                      "nullable": true
+                    },
+                    "ntfy": {
+                      "type": "object",
+                      "properties": {
+                        "url": {
+                          "type": "string"
+                        },
+                        "priority": {
+                          "type": "string"
+                        },
+                        "topic": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "priority",
+                        "topic",
+                        "url"
+                      ],
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "updateNotificationCredentials",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationPlatformsResponseType"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/settings": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "update",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "publicReviews": {
+                    "type": "boolean",
+                    "nullable": true
+                  },
+                  "sendNotificationWhenStatusChanges": {
+                    "type": "boolean",
+                    "nullable": true
+                  },
+                  "sendNotificationWhenReleaseDateChanges": {
+                    "type": "boolean",
+                    "nullable": true
+                  },
+                  "sendNotificationWhenNumberOfSeasonsChanges": {
+                    "type": "boolean",
+                    "nullable": true
+                  },
+                  "sendNotificationForReleases": {
+                    "type": "boolean",
+                    "nullable": true
+                  },
+                  "sendNotificationForEpisodesReleases": {
+                    "type": "boolean",
+                    "nullable": true
+                  },
+                  "notificationPlatform": {
+                    "enum": [
+                      "Pushbullet",
+                      "Pushover",
+                      "Pushsafer",
+                      "gotify",
+                      "ntfy",
+                      null
+                    ],
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/password": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "updatePassword",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currentPassword": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "currentPassword",
+                  "newPassword"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userId}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "getById",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name"
+                  ],
+                  "nullable": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/watchlist": {
+      "put": {
+        "tags": [
+          "Watchlist"
+        ],
+        "operationId": "add",
+        "parameters": [
+          {
+            "name": "mediaItemId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Watchlist"
+        ],
+        "operationId": "delete",
+        "parameters": [
+          {
+            "name": "mediaItemId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
     }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKey": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "token"
+      },
+      "ApiHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Access-Token"
+      }
+    },
+    "schemas": {
+      "TvEpisode": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "nullable": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "episodeNumber": {
+            "type": "number"
+          },
+          "seasonNumber": {
+            "type": "number"
+          },
+          "releaseDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "tvShowId": {
+            "type": "number",
+            "nullable": true
+          },
+          "seasonId": {
+            "type": "number",
+            "nullable": true
+          },
+          "tmdbId": {
+            "type": "number",
+            "nullable": true
+          },
+          "imdbId": {
+            "type": "string",
+            "nullable": true
+          },
+          "runtime": {
+            "type": "number",
+            "nullable": true
+          },
+          "seenHistory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Seen"
+            },
+            "nullable": true
+          },
+          "userRating": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserRating"
+              }
+            ],
+            "nullable": true
+          },
+          "lastSeenAt": {
+            "type": "number",
+            "nullable": true
+          },
+          "seasonAndEpisodeNumber": {
+            "type": "number",
+            "nullable": true
+          },
+          "seen": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "tvShow": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MediaItemItemsResponse"
+              }
+            ],
+            "nullable": true
+          },
+          "isSpecialEpisode": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "episodeNumber",
+          "isSpecialEpisode",
+          "seasonNumber",
+          "title"
+        ]
+      },
+      "Seen": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "nullable": true
+          },
+          "date": {
+            "type": "number"
+          },
+          "mediaItemId": {
+            "type": "number"
+          },
+          "seasonId": {
+            "type": "number",
+            "nullable": true
+          },
+          "episodeId": {
+            "type": "number",
+            "nullable": true
+          },
+          "userId": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "date",
+          "mediaItemId",
+          "userId"
+        ]
+      },
+      "UserRating": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "nullable": true
+          },
+          "mediaItemId": {
+            "type": "number"
+          },
+          "date": {
+            "type": "number"
+          },
+          "userId": {
+            "type": "number"
+          },
+          "rating": {
+            "type": "number",
+            "nullable": true
+          },
+          "review": {
+            "type": "string",
+            "nullable": true
+          },
+          "episodeId": {
+            "type": "number",
+            "nullable": true
+          },
+          "seasonId": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "date",
+          "mediaItemId",
+          "userId"
+        ]
+      },
+      "MediaItemItemsResponse": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "tmdbId": {
+                "type": "number",
+                "nullable": true
+              },
+              "imdbId": {
+                "type": "string",
+                "nullable": true
+              },
+              "tvmazeId": {
+                "type": "number",
+                "nullable": true
+              },
+              "igdbId": {
+                "type": "number",
+                "nullable": true
+              },
+              "openlibraryId": {
+                "type": "string",
+                "nullable": true
+              },
+              "audibleId": {
+                "type": "string",
+                "nullable": true
+              },
+              "id": {
+                "type": "number",
+                "nullable": true
+              },
+              "numberOfSeasons": {
+                "type": "number",
+                "nullable": true
+              },
+              "status": {
+                "type": "string",
+                "nullable": true
+              },
+              "platform": {
+                "type": "string",
+                "nullable": true
+              },
+              "title": {
+                "type": "string"
+              },
+              "originalTitle": {
+                "type": "string",
+                "nullable": true
+              },
+              "poster": {
+                "type": "string",
+                "nullable": true
+              },
+              "backdrop": {
+                "type": "string",
+                "nullable": true
+              },
+              "tmdbRating": {
+                "type": "number",
+                "nullable": true
+              },
+              "releaseDate": {
+                "type": "string",
+                "nullable": true
+              },
+              "overview": {
+                "type": "string",
+                "nullable": true
+              },
+              "lastTimeUpdated": {
+                "type": "number"
+              },
+              "source": {
+                "type": "string"
+              },
+              "network": {
+                "type": "string",
+                "nullable": true
+              },
+              "url": {
+                "type": "string",
+                "nullable": true
+              },
+              "runtime": {
+                "type": "number",
+                "nullable": true
+              },
+              "mediaType": {
+                "$ref": "#/components/schemas/MediaType"
+              },
+              "genres": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              "numberOfEpisodes": {
+                "type": "number",
+                "nullable": true
+              },
+              "developer": {
+                "type": "string",
+                "nullable": true
+              },
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              "narrators": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              "language": {
+                "type": "string",
+                "nullable": true
+              },
+              "needsDetails": {
+                "type": "boolean",
+                "nullable": true
+              }
+            },
+            "required": [
+              "lastTimeUpdated",
+              "mediaType",
+              "source",
+              "title"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "isSearchResult": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "hasDetails": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "poster": {
+                "type": "string",
+                "nullable": true
+              },
+              "posterSmall": {
+                "type": "string",
+                "nullable": true
+              },
+              "backdrop": {
+                "type": "string",
+                "nullable": true
+              },
+              "seenHistory": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Seen"
+                },
+                "nullable": true
+              },
+              "unseenEpisodesCount": {
+                "type": "number",
+                "nullable": true
+              },
+              "userRating": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UserRating"
+                  }
+                ],
+                "nullable": true
+              },
+              "upcomingEpisode": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TvEpisode"
+                  }
+                ],
+                "nullable": true
+              },
+              "nextAiring": {
+                "type": "string",
+                "nullable": true
+              },
+              "onWatchlist": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "lastSeenAt": {
+                "type": "number",
+                "nullable": true
+              },
+              "seen": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "firstUnwatchedEpisode": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TvEpisode"
+                  }
+                ],
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "MediaType": {
+        "enum": [
+          "audiobook",
+          "book",
+          "movie",
+          "tv",
+          "video_game"
+        ],
+        "type": "string"
+      },
+      "ImgSize": {
+        "enum": [
+          "original",
+          "small"
+        ],
+        "type": "string"
+      },
+      "MediaItemDetailsResponse": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "tmdbId": {
+                "type": "number",
+                "nullable": true
+              },
+              "imdbId": {
+                "type": "string",
+                "nullable": true
+              },
+              "tvmazeId": {
+                "type": "number",
+                "nullable": true
+              },
+              "igdbId": {
+                "type": "number",
+                "nullable": true
+              },
+              "openlibraryId": {
+                "type": "string",
+                "nullable": true
+              },
+              "audibleId": {
+                "type": "string",
+                "nullable": true
+              },
+              "id": {
+                "type": "number",
+                "nullable": true
+              },
+              "numberOfSeasons": {
+                "type": "number",
+                "nullable": true
+              },
+              "status": {
+                "type": "string",
+                "nullable": true
+              },
+              "platform": {
+                "type": "string",
+                "nullable": true
+              },
+              "title": {
+                "type": "string"
+              },
+              "originalTitle": {
+                "type": "string",
+                "nullable": true
+              },
+              "poster": {
+                "type": "string",
+                "nullable": true
+              },
+              "backdrop": {
+                "type": "string",
+                "nullable": true
+              },
+              "tmdbRating": {
+                "type": "number",
+                "nullable": true
+              },
+              "releaseDate": {
+                "type": "string",
+                "nullable": true
+              },
+              "overview": {
+                "type": "string",
+                "nullable": true
+              },
+              "lastTimeUpdated": {
+                "type": "number"
+              },
+              "source": {
+                "type": "string"
+              },
+              "network": {
+                "type": "string",
+                "nullable": true
+              },
+              "url": {
+                "type": "string",
+                "nullable": true
+              },
+              "runtime": {
+                "type": "number",
+                "nullable": true
+              },
+              "mediaType": {
+                "$ref": "#/components/schemas/MediaType"
+              },
+              "genres": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              "numberOfEpisodes": {
+                "type": "number",
+                "nullable": true
+              },
+              "developer": {
+                "type": "string",
+                "nullable": true
+              },
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              "narrators": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              "language": {
+                "type": "string",
+                "nullable": true
+              },
+              "needsDetails": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "seasons": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TvSeason"
+                },
+                "nullable": true
+              }
+            },
+            "required": [
+              "lastTimeUpdated",
+              "mediaType",
+              "source",
+              "title"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "isSearchResult": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "hasDetails": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "poster": {
+                "type": "string",
+                "nullable": true
+              },
+              "posterSmall": {
+                "type": "string",
+                "nullable": true
+              },
+              "backdrop": {
+                "type": "string",
+                "nullable": true
+              },
+              "seenHistory": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Seen"
+                },
+                "nullable": true
+              },
+              "unseenEpisodesCount": {
+                "type": "number",
+                "nullable": true
+              },
+              "userRating": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UserRating"
+                  }
+                ],
+                "nullable": true
+              },
+              "upcomingEpisode": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TvEpisode"
+                  }
+                ],
+                "nullable": true
+              },
+              "nextAiring": {
+                "type": "string",
+                "nullable": true
+              },
+              "onWatchlist": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "lastSeenAt": {
+                "type": "number",
+                "nullable": true
+              },
+              "seen": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "firstUnwatchedEpisode": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TvEpisode"
+                  }
+                ],
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "TvSeason": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "numberOfEpisodes": {
+            "type": "number",
+            "nullable": true
+          },
+          "poster": {
+            "type": "string",
+            "nullable": true
+          },
+          "releaseDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "tvShowId": {
+            "type": "number",
+            "nullable": true
+          },
+          "tmdbId": {
+            "type": "number",
+            "nullable": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "seasonNumber": {
+            "type": "number"
+          },
+          "tvmazeId": {
+            "type": "number",
+            "nullable": true
+          },
+          "episodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TvEpisode"
+            },
+            "nullable": true
+          },
+          "userRating": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserRating"
+              }
+            ],
+            "nullable": true
+          },
+          "seen": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "posterSmall": {
+            "type": "string",
+            "nullable": true
+          },
+          "isSpecialSeason": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "isSpecialSeason",
+          "seasonNumber",
+          "title"
+        ]
+      },
+      "GetItemsRequest": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "orderBy": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/MediaItemOrderBy"
+                  }
+                ],
+                "nullable": true
+              },
+              "sortOrder": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/SortOrder"
+                  }
+                ],
+                "nullable": true
+              },
+              "filter": {
+                "type": "string",
+                "nullable": true
+              },
+              "onlyOnWatchlist": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "onlySeenItems": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "onlyWithNextEpisodesToWatch": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "onlyWithNextAiring": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "onlyWithUserRating": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "onlyWithoutUserRating": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "page": {
+                "type": "number",
+                "nullable": true
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "mediaType": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/MediaType"
+                  }
+                ],
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "MediaItemOrderBy": {
+        "enum": [
+          "lastSeen",
+          "mediaType",
+          "nextAiring",
+          "releaseDate",
+          "status",
+          "title",
+          "unseenEpisodes"
+        ],
+        "type": "string"
+      },
+      "SortOrder": {
+        "enum": [
+          "asc",
+          "desc"
+        ],
+        "type": "string"
+      },
+      "MetadataProviderCredentialsRequestType": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "IGDB"
+            ]
+          },
+          "credentials": {
+            "type": "object",
+            "properties": {
+              "CLIENT_ID": {
+                "type": "string"
+              },
+              "CLIENT_SECRET": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "CLIENT_ID",
+              "CLIENT_SECRET"
+            ]
+          }
+        },
+        "required": [
+          "credentials",
+          "name"
+        ]
+      },
+      "LastSeenAt": {
+        "enum": [
+          "custom_date",
+          "now",
+          "release_date",
+          "unknown"
+        ],
+        "type": "string"
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "admin": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "publicReviews": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "sendNotificationWhenStatusChanges": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "sendNotificationWhenReleaseDateChanges": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "sendNotificationWhenNumberOfSeasonsChanges": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "sendNotificationForReleases": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "sendNotificationForEpisodesReleases": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "notificationPlatform": {
+            "enum": [
+              "Pushbullet",
+              "Pushover",
+              "Pushsafer",
+              "gotify",
+              "ntfy",
+              null
+            ],
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "RequestError": {
+        "type": "object",
+        "properties": {
+          "errorMessage": {
+            "type": "string"
+          },
+          "MediaTrackerError": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "MediaTrackerError",
+          "errorMessage"
+        ]
+      },
+      "NotificationPlatformsResponseType": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "platformName": {
+                "type": "string",
+                "enum": [
+                  "gotify"
+                ]
+              },
+              "credentials": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  },
+                  "priority": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "priority",
+                  "token",
+                  "url"
+                ]
+              }
+            },
+            "required": [
+              "credentials",
+              "platformName"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "platformName": {
+                "type": "string",
+                "enum": [
+                  "Pushbullet"
+                ]
+              },
+              "credentials": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "token"
+                ]
+              }
+            },
+            "required": [
+              "credentials",
+              "platformName"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "platformName": {
+                "type": "string",
+                "enum": [
+                  "Pushover"
+                ]
+              },
+              "credentials": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "key"
+                ]
+              }
+            },
+            "required": [
+              "credentials",
+              "platformName"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "platformName": {
+                "type": "string",
+                "enum": [
+                  "Pushsafer"
+                ]
+              },
+              "credentials": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "key"
+                ]
+              }
+            },
+            "required": [
+              "credentials",
+              "platformName"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "platformName": {
+                "type": "string",
+                "enum": [
+                  "ntfy"
+                ]
+              },
+              "credentials": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "priority": {
+                    "type": "string"
+                  },
+                  "topic": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "priority",
+                  "topic",
+                  "url"
+                ]
+              }
+            },
+            "required": [
+              "credentials",
+              "platformName"
+            ]
+          }
+        ]
+      }
+    }
+  }
 }
