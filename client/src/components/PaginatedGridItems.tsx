@@ -165,7 +165,7 @@ export const PaginatedGridItems: FunctionComponent<{
               <Search onSearch={setSearchQuery} />
             )}
 
-            {!isLoading && !searchQuery && items.length === 0 ? (
+            {showSearch && !isLoading && !searchQuery && items.length === 0 ? (
               <div className="flex">
                 Search for items or &nbsp;
                 <Link to="/import" className="text-blue-500 underline">
