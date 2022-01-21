@@ -83,7 +83,11 @@ export const TraktTvImportPage: FunctionComponent = () => {
                   >
                     Import
                   </button>
-                  {importItemsLoading && <>importing items</>}
+                  {importItemsLoading && (
+                    <div className="my-2 text-xl">
+                      Importing items, please wait
+                    </div>
+                  )}
                 </div>
 
                 <div className="text-2xl header">Watchlist</div>
@@ -92,7 +96,6 @@ export const TraktTvImportPage: FunctionComponent = () => {
                   <GridItem
                     key={item.id}
                     mediaItem={item}
-
                     appearance={{
                       showFirstUnwatchedEpisode: false,
                       showNextAiring: false,
