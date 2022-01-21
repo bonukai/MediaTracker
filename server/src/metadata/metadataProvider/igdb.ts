@@ -18,7 +18,7 @@ export class IGDB extends metadataProvider({
     mediaType: 'video_game',
     credentialNames: <const>['CLIENT_ID', 'CLIENT_SECRET'],
 }) {
-    protected async search(query: string): Promise<MediaItemForProvider[]> {
+    public async search(query: string): Promise<MediaItemForProvider[]> {
         const result = await this.searchGames(query);
 
         return Promise.all(result.map((item) => this.mapGame(item)));
