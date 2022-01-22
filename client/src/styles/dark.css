@@ -9,5 +9,5 @@ div {
 input,
 textarea,
 select {
-  @apply dark:bg-[#11191f];
+  @apply dark:bg-[#11191f] dark:text-white;
 }
