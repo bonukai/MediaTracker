@@ -7,7 +7,7 @@
             "value": "pg"
         },
         "DATABASE_SSL": {
-            "value": 1
+            "value": "1"
         },
         "HOSTNAME": {
             "value": "0.0.0.0"
