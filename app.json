@@ -1,0 +1,24 @@
+{
+    "name": "MediaTracker",
+    "description": "Self hosted media tracker for movies, tv shows, video games, books and audiobooks",
+    "repository": "https://github.com/bonukai/MediaTracker",
+    "env": {
+        "DATABASE_CLIENT": {
+            "value": "pg"
+        },
+        "DATABASE_SSL": {
+            "value": 1
+        },
+        "HOSTNAME": {
+            "value": "0.0.0.0"
+        },
+        "PGSSLMODE": {
+            "value": "no-verify"
+        }
+    },
+    "addons": [
+        {
+            "plan": "heroku-postgresql"
+        }
+    ]
+}
