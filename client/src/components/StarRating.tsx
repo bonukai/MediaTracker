@@ -108,7 +108,7 @@ const StarRatingModal: FunctionComponent<
         {episode && <> {formatEpisodeNumber(episode)}</>}
       </div>
 
-      <span className="flex px-1 m-auto cursor-pointer w-min ">
+      <span className="flex px-1 m-auto cursor-pointer w-min dark:text-slate-200">
         {new Array(5).fill(null).map((value, index) => {
           return (
             <span
