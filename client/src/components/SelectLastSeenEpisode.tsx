@@ -51,7 +51,7 @@ export const SelectLastSeenEpisode: FunctionComponent<{
         <>Loading</>
       ) : (
         <>
-          <div className="py-2 text-2xl font-bold">
+          <div className="py-2 text-2xl font-bold text-center">
             What is the last episode you seen?
           </div>
           <div className="text-lg">
