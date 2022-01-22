@@ -75,6 +75,10 @@ volumes:
 | DATABASE_PASSWORD | Database password                     |
 | DATABASE_DATABASE | Database name                         |
 
+## Heroku
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 # Building docker image
 
 ```bash
