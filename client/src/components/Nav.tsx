@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import clsx from 'clsx';
 
 import { NavLink } from 'react-router-dom';
-import { animated, Transition } from '@react-spring/web';
+import { animated, Transition, Spring } from '@react-spring/web';
 
 import { useUser } from 'src/api/user';
 import { useDarkMode } from 'src/hooks/darkMode';
@@ -132,13 +132,26 @@ const SideBar: FunctionComponent<{
         <>
           {show && (
             <>
-              <div
-                className={clsx(
-                  'fixed top-0 bottom-0 left-0 right-0 z-10 w-full h-full',
-                  !showSidebar && 'pointer-events-none'
+              <Spring
+                from={{
+                  opacity: 0,
+                }}
+                to={{
+                  opacity: 0.3,
+                }}
+                reverse={!showSidebar}
+              >
+                {(styles) => (
+                  <animated.div
+                    style={styles}
+                    className={clsx(
+                      'fixed top-0 bottom-0 left-0 right-0 z-10 w-full h-full bg-gray-500',
+                      !showSidebar && 'pointer-events-none'
+                    )}
+                    onClick={() => hideSidebar()}
+                  ></animated.div>
                 )}
-                onClick={() => hideSidebar()}
-              ></div>
+              </Spring>
 
               <animated.div
                 style={transitionStyles}
