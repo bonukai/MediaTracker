@@ -204,7 +204,7 @@ const SeasonComponent: FunctionComponent<{
                 ).length === 0 && 'opacity-0 pointer-events-none'
               )}
             >
-              Add to seen history
+              Add season to seen history
             </div>
           )}
         >
