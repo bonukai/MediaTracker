@@ -382,7 +382,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                 from.toISOString(),
                 to.toISOString(),
             ])
-            .where('episode.isSpecialEpisode', false)
+            .where('episode.isSpecialEpisode', 0)
             .whereNull('notificationsHistory.id');
 
         return res.map((row) =>
