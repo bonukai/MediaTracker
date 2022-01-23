@@ -13,6 +13,7 @@ import { knex } from '../../src/dbconfig';
 import { migrationsDirectory } from '../../knexfile';
 
 export const clearDatabase = async () => {
+    await notificationPlatformsCredentialsRepository.delete();
     await notificationsHistoryRepository.delete();
     await metadataProviderCredentialsRepository.delete();
     await accessTokenRepository.delete();
