@@ -359,9 +359,18 @@ export const DetailsPage: FunctionComponent = () => {
         )}
       </div>
 
+      {mediaItem.mediaType === 'tv' && (
+        <Link
+          to={`/episodes/${mediaItem.id}`}
+          className="mt-3 text-green-600 dark:text-green-400 btn"
+        >
+          Episodes page
+        </Link>
+      )}
+
       {mediaItem.upcomingEpisode && (
         <>
-          <div className="font-bold">
+          <div className="mt-3 font-bold">
             Next episode
             {mediaItem.upcomingEpisode.releaseDate && (
               <>
@@ -401,12 +410,6 @@ export const DetailsPage: FunctionComponent = () => {
             Seen history
           </Link>
         </div>
-      )}
-
-      {mediaItem.mediaType === 'tv' && (
-        <Link to={`/episodes/${mediaItem.id}`} className="mt-3 underline">
-          Episodes
-        </Link>
       )}
 
       {/* Rating */}
