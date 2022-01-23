@@ -60,7 +60,7 @@ export const getPosterHeight = (args: {
 };
 
 export const canBeMarkedAsSeen = (mediaItem: MediaItemItemsResponse) => {
-  return hasBeenReleased(mediaItem) && !mediaItem.lastSeenAt;
+  return hasBeenReleased(mediaItem) && typeof mediaItem.lastSeenAt !== 'number';
 };
 
 export const canBeOnWatchlist = (mediaItem: MediaItemItemsResponse) => {
