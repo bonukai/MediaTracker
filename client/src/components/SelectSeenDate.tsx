@@ -57,7 +57,7 @@ export const SelectSeenDateComponent: FunctionComponent<{
   return (
     <>
       <div className="my-3 text-3xl font-bold text-center">
-        When did you seen it?
+        When did you see it?
       </div>
       <div className="flex flex-col">
         <div
