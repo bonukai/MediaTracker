@@ -61,11 +61,11 @@ class UserRepository extends repository<User>({
             );
 
         if (sendNotificationForReleases) {
-            qb.where('sendNotificationForReleases', true);
+            qb.where('sendNotificationForReleases', 1);
         }
 
         if (sendNotificationForEpisodesReleases) {
-            qb.where('sendNotificationForEpisodesReleases', true);
+            qb.where('sendNotificationForEpisodesReleases', 1);
         }
 
         return await qb;
