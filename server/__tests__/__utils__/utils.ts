@@ -5,6 +5,7 @@ import { userRepository } from '../../src/repository/user';
 import { sessionRepository } from '../../src/repository/session';
 import { accessTokenRepository } from '../../src/repository/accessToken';
 import { metadataProviderCredentialsRepository } from '../../src/repository/metadataProviderCredentials';
+import { notificationPlatformsCredentialsRepository } from '../../src/repository/notificationPlatformsCredentials';
 import { seenRepository } from '../../src/repository/seen';
 import { watchlistRepository } from '../../src/repository/watchlist';
 import { userRatingRepository } from '../../src/repository/userRating';
