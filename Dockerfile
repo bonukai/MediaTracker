@@ -1,22 +1,16 @@
 # Build server and client
 FROM node:17-alpine as build
 
-COPY server/ /server
-COPY client/ /client
-COPY rest-api/ /rest-api
+WORKDIR /app
 
-WORKDIR /server
+COPY server/ /app/server
+COPY client/ /app/client
+COPY rest-api/ /app/rest-api
+COPY ["package.json", "package-lock.json*", "./"]
 
 RUN apk add --no-cache python3 g++ make
 RUN npm install
-
-RUN npm run build-routes
-RUN npm run build-server 
-
-WORKDIR /client
-COPY ["client/package.json", "client/package-lock.json*", "./"]
-RUN npm install
-COPY client/ .
+RUN npm run test
 RUN npm run build
 
 # Build server for production
@@ -40,8 +34,8 @@ WORKDIR /app/assets_cache
 
 WORKDIR /app
 
-COPY --from=build /server/public public
-COPY --from=build /server/build build
+COPY --from=build /app/server/public public
+COPY --from=build /app/server/build build
 COPY --from=server-build-production /server/node_modules node_modules
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ "curl", "127.0.0.1:7481" ]
