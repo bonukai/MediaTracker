@@ -189,17 +189,20 @@ export const repository = <T extends object>(args: {
                     ))
                 );
 
-                const newItems = _.differenceWith(
-                    values,
-                    existingItems,
-                    (a, b) => _.isEqual(uniqueBy(a), uniqueBy(b))
-                );
+                const newItems = _(values)
+                    .differenceWith(existingItems, (a, b) =>
+                        _.isEqual(uniqueBy(a), uniqueBy(b))
+                    )
+                    .uniqWith((a, b) =>
+                        _.isEqual(this.uniqueBy(a), this.uniqueBy(b))
+                    )
+                    .value();
 
                 if (newItems.length > 0) {
                     await knex
                         .batchInsert(
                             this.tableName,
-                            values.map((value) =>
+                            newItems.map((value) =>
                                 this.serialize(this.stripValue(value))
                             ),
                             BATCH_SIZE
