@@ -136,12 +136,11 @@ const downloadNewAssets = async (
             ?.filter(
                 (season) => season.poster !== oldSeasonsMap[season.id]?.poster
             )
-            .map(
-                async (season) =>
-                    await downloadAsset({
-                        assetsType: 'poster',
-                        season: season,
-                    })
+            .map((season) =>
+                downloadAsset({
+                    assetsType: 'poster',
+                    season: season,
+                })
             ) || []
     );
 };
@@ -273,8 +272,12 @@ const sendNotifications = async (
 };
 
 export const updateMediaItem = async (
-    oldMediaItem: MediaItemBaseWithSeasons
+    oldMediaItem?: MediaItemBaseWithSeasons
 ) => {
+    if (!oldMediaItem) {
+        return;
+    }
+
     await mediaItemRepository.lock(oldMediaItem.id);
 
     try {
@@ -296,8 +299,9 @@ export const updateMediaItem = async (
         }
 
         if (newMediaItem.mediaType === 'tv') {
-            oldMediaItem.seasons =
-                await mediaItemRepository.seasonsWithEpisodes(oldMediaItem);
+            oldMediaItem.seasons = await mediaItemRepository.seasonsWithEpisodes(
+                oldMediaItem
+            );
         }
 
         const updatedMediaItem = merge(oldMediaItem, newMediaItem);
