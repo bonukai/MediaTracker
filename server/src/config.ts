@@ -19,7 +19,8 @@ export const DATABASE_DATABASE = process.env.DATABASE_DATABASE;
 export const DATABASE_SSL = process.env.DATABASE_SSL
     ? Boolean(process.env.DATABASE_SSL)
     : undefined;
-export const MIGRATIONS_EXTENSION = DATABASE_CLIENT === 'pg' ? 'js' : 'ts';
+export const MIGRATIONS_EXTENSION =
+    NODE_ENV === 'development' || NODE_ENV === 'test' ? 'ts' : 'js';
 
 export const DEMO = process.env['DEMO'] ? Boolean(process.env['DEMO']) : false;
 export const IGDB_CLIENT_ID = process.env.IGDB_CLIENT_ID;
