@@ -2,6 +2,7 @@
     "name": "MediaTracker",
     "description": "Self hosted media tracker for movies, tv shows, video games, books and audiobooks",
     "repository": "https://github.com/bonukai/MediaTracker",
+    "stack": "container",
     "env": {
         "DATABASE_CLIENT": {
             "value": "pg"
