@@ -16,7 +16,7 @@ Password: **demo**
 ## Building from source
 
 ```bash
-git clone git@github.com:bonukai/MediaTracker.git
+git clone https://github.com/bonukai/MediaTracker.git
 cd MediaTracker
 npm install
 npm run build
