@@ -1,5 +1,5 @@
 import knexLib from 'knex';
-import config, { migrationsDirectory } from '../knexfile';
+import config, { migrationsDirectory } from './knexfile';
 
 export const runMigrations = async () => {
     console.log('Running migrations');

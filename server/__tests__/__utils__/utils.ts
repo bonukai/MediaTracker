@@ -11,7 +11,7 @@ import { watchlistRepository } from '../../src/repository/watchlist';
 import { userRatingRepository } from '../../src/repository/userRating';
 import { notificationsHistoryRepository } from '../../src/repository/notificationsHistory';
 import { knex } from '../../src/dbconfig';
-import { migrationsDirectory } from '../../knexfile';
+import { migrationsDirectory } from '../../src/knexfile';
 
 export const clearDatabase = async () => {
     await notificationPlatformsCredentialsRepository.delete();

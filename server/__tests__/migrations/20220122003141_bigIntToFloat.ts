@@ -10,7 +10,7 @@ import { Watchlist } from '../../src/entity/watchlist';
 import { MediaItemBase } from '../../src/entity/mediaItem';
 import { clearDatabase } from '../__utils__/utils';
 import { knex } from '../../src/dbconfig';
-import { migrationsDirectory } from '../../knexfile';
+import { migrationsDirectory } from '../../src/knexfile';
 
 describe('migrations', () => {
     beforeAll(async () => {

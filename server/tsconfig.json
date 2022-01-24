@@ -14,6 +14,6 @@
         "moduleResolution": "node",
         "baseUrl": "."
     },
-    "include": ["src", "knexfile.ts"],
+    "include": ["src"],
     "exclude": ["node_modules"]
 }
