@@ -12,7 +12,9 @@
         "noImplicitThis": true,
         "sourceMap": true,
         "moduleResolution": "node",
-        "baseUrl": "."
+        "baseUrl": ".",
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true
     },
     "include": ["src"],
     "exclude": ["node_modules"]
