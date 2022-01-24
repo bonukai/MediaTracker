@@ -1,0 +1,7 @@
+client/webpack.config.js
+client/dist
+client/public
+
+server/jest.config.js
+server/scripts
+server/build
