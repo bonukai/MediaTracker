@@ -48,4 +48,4 @@ EXPOSE $PORT
 ENV HOST=127.0.0.1
 ENV NODE_ENV=production
 ENV NODE_PATH=build
-CMD [ "node", "build/src/index.js"]
+CMD [ "node", "build/index.js"]
