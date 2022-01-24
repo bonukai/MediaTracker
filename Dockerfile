@@ -44,6 +44,7 @@ ENV DATABASE_PATH="/storage/data.db"
 ENV ASSETS_PATH="/assets"
 
 EXPOSE 7481
+EXPOSE $PORT
 ENV HOST=127.0.0.1
 ENV NODE_ENV=production
 ENV NODE_PATH=build
