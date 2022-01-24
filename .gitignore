@@ -15,6 +15,7 @@ server/.vscode
 server/data.db
 server/test.db
 server/docs/dist
+server/testDatabase
 
 rest-api/index.js
 rest-api/index.ts

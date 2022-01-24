@@ -10,6 +10,7 @@ import { Watchlist } from '../../src/entity/watchlist';
 import { MediaItemBase } from '../../src/entity/mediaItem';
 import { clearDatabase } from '../__utils__/utils';
 import { knex } from '../../src/dbconfig';
+import { MIGRATIONS_EXTENSION } from '../../src/config';
 import { migrationsDirectory } from '../../src/knexfile';
 
 describe('migrations', () => {
@@ -21,7 +22,7 @@ describe('migrations', () => {
             true
         );
         await knex.migrate.up({
-            name: '20210818142342_init.ts',
+            name: `20210818142342_init.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
 
@@ -43,30 +44,30 @@ describe('migrations', () => {
 
     test('20220121025651_ratingColumnFloat', async () => {
         await knex.migrate.up({
-            name: '20220121025651_ratingColumnFloat.ts',
+            name: `20220121025651_ratingColumnFloat.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
         await knex.migrate.rollback({
-            name: '20220121025651_ratingColumnFloat.ts',
+            name: `20220121025651_ratingColumnFloat.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
         await knex.migrate.up({
-            name: '20220121025651_ratingColumnFloat.ts',
+            name: `20220121025651_ratingColumnFloat.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
     });
 
     test('20220122003141_bigIntToFloat', async () => {
         await knex.migrate.up({
-            name: '20220122003141_bigIntToFloat.ts',
+            name: `20220122003141_bigIntToFloat.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
         await knex.migrate.rollback({
-            name: '20220122003141_bigIntToFloat.ts',
+            name: `20220122003141_bigIntToFloat.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
         await knex.migrate.up({
-            name: '20220122003141_bigIntToFloat.ts',
+            name: `20220122003141_bigIntToFloat.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
     });

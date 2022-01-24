@@ -16,11 +16,4 @@ export const runMigrations = async () => {
     }
 };
 
-const knexConfig =
-    process.env.NODE_ENV === 'test'
-        ? config.test
-        : process.env.NODE_ENV === 'development'
-        ? config.development
-        : config.production;
-
-export const knex = knexLib(knexConfig);
+export const knex = knexLib(config.production);

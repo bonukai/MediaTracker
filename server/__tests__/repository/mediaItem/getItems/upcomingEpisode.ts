@@ -9,7 +9,7 @@ import { User } from '../../../../src/entity/user';
 import { userRepository } from '../../../../src/repository/user';
 
 const upcomingEpisode: TvEpisode = {
-    id: 4,
+    id: 7,
     episodeNumber: 2,
     seasonId: 2,
     seasonNumber: 2,
@@ -84,12 +84,14 @@ const mediaItems: MediaItemBaseWithSeasons[] = [
         title: 'title',
         seasons: [
             {
+                id: 3,
                 seasonNumber: 1,
                 numberOfEpisodes: 2,
                 title: 'Season 1',
                 isSpecialSeason: false,
                 episodes: [
                     {
+                        id: 4,
                         episodeNumber: 1,
                         seasonId: 1,
                         seasonNumber: 3,
@@ -98,7 +100,7 @@ const mediaItems: MediaItemBaseWithSeasons[] = [
                         isSpecialEpisode: false,
                     },
                     {
-                        id: 6,
+                        id: 5,
                         episodeNumber: 2,
                         seasonId: 1,
                         seasonNumber: 3,
@@ -118,6 +120,7 @@ const mediaItems: MediaItemBaseWithSeasons[] = [
         title: 'title',
         seasons: [
             {
+                id: 4,
                 seasonNumber: 1,
                 numberOfEpisodes: 0,
                 title: 'Season 1',
@@ -155,13 +158,14 @@ const mediaItems: MediaItemBaseWithSeasons[] = [
         title: 'title',
         seasons: [
             {
+                id: 5,
                 seasonNumber: 1,
                 numberOfEpisodes: 1,
                 title: 'Season 1',
                 isSpecialSeason: false,
                 episodes: [
                     {
-                        id: 7,
+                        id: 6,
                         episodeNumber: 1,
                         seasonNumber: 1,
                         title: 'Episode 1',
