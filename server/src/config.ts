@@ -21,3 +21,5 @@ export const DATABASE_SSL = process.env.DATABASE_SSL
     : undefined;
 
 export const DEMO = process.env['DEMO'] ? Boolean(process.env['DEMO']) : false;
+export const IGDB_CLIENT_ID = process.env.IGDB_CLIENT_ID;
+export const IGDB_CLIENT_SECRET = process.env.IGDB_CLIENT_SECRET;

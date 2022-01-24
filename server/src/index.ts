@@ -7,7 +7,14 @@ import chalk from 'chalk';
 import { nanoid } from 'nanoid';
 
 import { runMigrations, knex } from 'src/dbconfig';
-import { PUBLIC_PATH, ASSETS_PATH, NODE_ENV, DEMO } from 'src/config';
+import {
+    PUBLIC_PATH,
+    ASSETS_PATH,
+    NODE_ENV,
+    DEMO,
+    IGDB_CLIENT_ID,
+    IGDB_CLIENT_SECRET,
+} from 'src/config';
 import { generatedRoutes } from 'src/generated/routes/routes';
 import { metadataProviders } from 'src/metadata/metadataProviders';
 import { AccessTokenMiddleware } from 'src/middlewares/token';
@@ -19,6 +26,7 @@ import { sendNotifications } from 'src/sendNotifications';
 import { updateMetadata } from 'src/updateMetadata';
 import { durationToMilliseconds } from 'src/utils';
 import { userRepository } from 'src/repository/user';
+import { metadataProviderCredentialsRepository } from 'src/repository/metadataProviderCredentials';
 
 (async () => {
     const app = express();
@@ -46,6 +54,25 @@ import { userRepository } from 'src/repository/user';
         });
 
         console.log(chalk.green.bold('DEMO mode enabled'));
+    }
+
+    if (IGDB_CLIENT_ID && IGDB_CLIENT_SECRET) {
+        await metadataProviderCredentialsRepository.delete({
+            providerName: 'IGDB',
+        });
+
+        await metadataProviderCredentialsRepository.createMany([
+            {
+                providerName: 'IGDB',
+                name: 'CLIENT_ID',
+                value: IGDB_CLIENT_ID,
+            },
+            {
+                providerName: 'IGDB',
+                name: 'CLIENT_SECRET',
+                value: IGDB_CLIENT_SECRET,
+            },
+        ]);
     }
 
     await metadataProviders.load();
