@@ -107,6 +107,11 @@ export class UsersController {
                 return;
             }
 
+            if (username.trim().length === 0) {
+                res.send(toRequestErrorObject('Username cannot be empty'));
+                return;
+            }
+
             await userRepository.create({
                 name: username,
                 password: password,
