@@ -5,6 +5,7 @@ import { onlyForAdmin } from 'src/auth';
 import { Configuration } from 'src/entity/configuration';
 import { configurationRepository } from 'src/repository/globalSettings';
 import { userRepository } from 'src/repository/user';
+import { DEMO } from 'src/config';
 
 /**
  * @openapi_tags Configuration
@@ -29,13 +30,17 @@ export class ConfigurationController {
     get = createExpressRoute<{
         path: '/api/configuration';
         method: 'get';
-        responseBody: Omit<Configuration, 'id'> & { noUsers: boolean };
+        responseBody: Omit<Configuration, 'id'> & {
+            noUsers: boolean;
+            demo: boolean;
+        };
     }>(async (req, res) => {
         const configuration = await configurationRepository.findOne();
         const numberOfUsers = await userRepository.count();
         res.send({
             ..._.omit(configuration, 'id'),
             noUsers: numberOfUsers === 0,
+            demo: DEMO,
         });
     });
 }

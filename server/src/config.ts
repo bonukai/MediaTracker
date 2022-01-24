@@ -19,3 +19,5 @@ export const DATABASE_DATABASE = process.env.DATABASE_DATABASE;
 export const DATABASE_SSL = process.env.DATABASE_SSL
     ? Boolean(process.env.DATABASE_SSL)
     : undefined;
+
+export const DEMO = process.env['DEMO'] ? Boolean(process.env['DEMO']) : false;

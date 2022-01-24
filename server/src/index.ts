@@ -3,10 +3,11 @@ import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import path from 'path';
+import chalk from 'chalk';
 import { nanoid } from 'nanoid';
 
 import { runMigrations, knex } from 'src/dbconfig';
-import { PUBLIC_PATH, ASSETS_PATH, NODE_ENV } from 'src/config';
+import { PUBLIC_PATH, ASSETS_PATH, NODE_ENV, DEMO } from 'src/config';
 import { generatedRoutes } from 'src/generated/routes/routes';
 import { metadataProviders } from 'src/metadata/metadataProviders';
 import { AccessTokenMiddleware } from 'src/middlewares/token';
@@ -17,6 +18,7 @@ import { configurationRepository } from 'src/repository/globalSettings';
 import { sendNotifications } from 'src/sendNotifications';
 import { updateMetadata } from 'src/updateMetadata';
 import { durationToMilliseconds } from 'src/utils';
+import { userRepository } from 'src/repository/user';
 
 (async () => {
     const app = express();
@@ -24,6 +26,27 @@ import { durationToMilliseconds } from 'src/utils';
     const hostname = process.env.HOSTNAME || '127.0.0.1';
 
     await runMigrations();
+
+    if (DEMO) {
+        const demoUser = await userRepository.findOne({ name: 'demo' });
+
+        if (!demoUser) {
+            await userRepository.create({
+                name: 'demo',
+                password: 'demo',
+                admin: false,
+            });
+        }
+
+        await configurationRepository.updateOrCreate({
+            where: {},
+            value: {
+                enableRegistration: false,
+            },
+        });
+
+        console.log(chalk.green.bold('DEMO mode enabled'));
+    }
 
     await metadataProviders.load();
 

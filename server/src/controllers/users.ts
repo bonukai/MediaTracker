@@ -12,6 +12,7 @@ import { localAuthentication } from 'src/auth';
 import { notificationPlatformsCredentialsRepository } from 'src/repository/notificationPlatformsCredentials';
 import { configurationRepository } from 'src/repository/globalSettings';
 import { RequestError, toRequestErrorObject } from 'src/requestError';
+import { DEMO } from 'src/config';
 
 type UserResponse = Omit<User, 'password'>;
 
@@ -75,6 +76,11 @@ export class UsersController {
         responseBody: UserResponse | RequestError;
     }>(
         async (req, res, next) => {
+            if (DEMO) {
+                res.sendStatus(401);
+                return;
+            }
+
             const configuration = await configurationRepository.findOne();
             const usersCount = await userRepository.count();
 
@@ -209,6 +215,11 @@ export class UsersController {
             newPassword: string;
         };
     }>(async (req, res) => {
+        if (DEMO) {
+            res.sendStatus(403);
+            return;
+        }
+
         const userId = Number(req.user);
 
         const { currentPassword, newPassword } = req.body;
@@ -219,11 +230,6 @@ export class UsersController {
         }
 
         const user = await userRepository.findOneWithPassword({ id: userId });
-
-        if (user.name === 'demo') {
-            res.sendStatus(403);
-            return;
-        }
 
         if (!(await userRepository.verifyPassword(user, currentPassword))) {
             res.sendStatus(401);

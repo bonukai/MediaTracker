@@ -11,15 +11,17 @@ import { SettingsPreferencesPage } from 'src/pages/settings/Preferences';
 import { SettingsConfigurationPage } from 'src/pages/settings/Configuration';
 import { SettingsMetadataProviderCredentialsPage } from 'src/pages/settings/MetadataProviderCredentials';
 import { SettingsSegment } from 'src/components/SettingsSegment';
+import { useConfiguration } from 'src/api/configuration';
 
 export const SettingsPage: FunctionComponent = () => {
   const { user } = useUser();
+  const { configuration } = useConfiguration();
 
   return (
     <>
       <Routes>
         <Route element={<SettingsPageLayout />}>
-          {user.name !== 'demo' && (
+          {!configuration.demo && (
             <Route path="password" element={<SettingsPasswordPage />} />
           )}
           <Route
@@ -46,7 +48,7 @@ export const SettingsPage: FunctionComponent = () => {
             path="*"
             element={
               <Navigate
-                to={user.name !== 'demo' ? 'password' : 'application-tokens'}
+                to={!configuration.demo ? 'password' : 'application-tokens'}
                 replace={true}
               />
             }
@@ -100,9 +102,10 @@ const SettingsPageLayout: FunctionComponent = () => {
 
 const useRoutesTitle = () => {
   const { user } = useUser();
+  const { configuration } = useConfiguration();
 
   return [
-    ...(user.name !== 'demo' ? [{ path: 'password', name: 'Password' }] : []),
+    ...(!configuration.demo ? [{ path: 'password', name: 'Password' }] : []),
     { path: 'application-tokens', name: 'Application tokens' },
     { path: 'notifications', name: 'Notifications' },
     { path: 'preferences', name: 'Preferences' },

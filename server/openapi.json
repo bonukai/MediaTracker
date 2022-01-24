@@ -136,9 +136,13 @@
                       "properties": {
                         "noUsers": {
                           "type": "boolean"
+                        },
+                        "demo": {
+                          "type": "boolean"
                         }
                       },
                       "required": [
+                        "demo",
                         "noUsers"
                       ]
                     }
