@@ -327,7 +327,7 @@ export const DetailsPage: FunctionComponent = () => {
       </div>
 
       {canBeOnWatchlist(mediaItem) && (
-        <div className="py-3 pt-5">
+        <div className="pt-5 mt-3">
           {mediaItem.onWatchlist ? (
             <div
               className="text-sm btn-red"
@@ -349,12 +349,14 @@ export const DetailsPage: FunctionComponent = () => {
       <div>
         {hasBeenReleased(mediaItem) && (
           <>
-            <MarkAsSeenButtonWithModal mediaItem={mediaItem} />
             <div className="mt-3">
-              {hasBeenSeenAtLeastOnce(mediaItem) && (
-                <RemoveFromSeenHistoryButton mediaItem={mediaItem} />
-              )}
+              <MarkAsSeenButtonWithModal mediaItem={mediaItem} />
             </div>
+            {hasBeenSeenAtLeastOnce(mediaItem) && (
+              <div className="mt-3">
+                <RemoveFromSeenHistoryButton mediaItem={mediaItem} />
+              </div>
+            )}
           </>
         )}
       </div>
