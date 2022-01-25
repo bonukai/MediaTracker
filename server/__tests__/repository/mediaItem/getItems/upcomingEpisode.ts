@@ -239,13 +239,11 @@ describe('upcomingEpisode', () => {
 
         const itemsById = _.keyBy(fetchedMediaItems, (item) => item.id);
 
-        await Promise.all(
-            [2, 3, 4, 5, 6].map(async (mediaItemId) => {
-                expect(itemsById[mediaItemId].upcomingEpisode).toStrictEqual(
-                    undefined
-                );
-            })
-        );
+        [2, 3, 4, 5, 6].map((mediaItemId) => {
+            expect(itemsById[mediaItemId].upcomingEpisode).toStrictEqual(
+                undefined
+            );
+        });
     });
 
     test('details, no upcoming episode', async () => {
@@ -255,6 +253,7 @@ describe('upcomingEpisode', () => {
                     userId: 1,
                     mediaItemId: mediaItemId,
                 });
+
                 expect(itemDetails.upcomingEpisode).toStrictEqual(undefined);
             })
         );
