@@ -27,6 +27,7 @@ export class MediaItemController {
 
         if (!mediaItem) {
             res.status(404).send();
+            return;
         }
 
         if (mediaItem.needsDetails == true) {
