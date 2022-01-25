@@ -14,8 +14,9 @@
         "moduleResolution": "node",
         "baseUrl": ".",
         "forceConsistentCasingInFileNames": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "noEmit": true
     },
-    "include": ["src"],
+    "include": ["src", "__tests__"],
     "exclude": ["node_modules"]
 }

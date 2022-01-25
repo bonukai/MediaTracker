@@ -1,12 +1,12 @@
 import _ from 'lodash';
 
-import { mediaItemRepository } from '../../../../src/repository/mediaItem';
-import { MediaItemBaseWithSeasons } from '../../../../src/entity/mediaItem';
+import { mediaItemRepository } from 'src/repository/mediaItem';
+import { MediaItemBaseWithSeasons } from 'src/entity/mediaItem';
+import { TvEpisode } from 'src/entity/tvepisode';
+import { watchlistRepository } from 'src/repository/watchlist';
+import { User } from 'src/entity/user';
+import { userRepository } from 'src/repository/user';
 import { clearDatabase, runMigrations } from '../../../__utils__/utils';
-import { TvEpisode } from '../../../../src/entity/tvepisode';
-import { watchlistRepository } from '../../../../src/repository/watchlist';
-import { User } from '../../../../src/entity/user';
-import { userRepository } from '../../../../src/repository/user';
 
 const upcomingEpisode: TvEpisode = {
     id: 7,

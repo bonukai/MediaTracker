@@ -1,17 +1,17 @@
-import { TvSeason } from '../../src/entity/tvseason';
-import { TvEpisode } from '../../src/entity/tvepisode';
-import { UserRating } from '../../src/entity/userRating';
-import { AccessToken } from '../../src/entity/accessToken';
-import { Seen } from '../../src/entity/seen';
-import { NotificationsHistory } from '../../src/entity/notificationsHistory';
-import { NotificationPlatformsCredentials } from '../../src/entity/notificationPlatformsCredentials';
-import { User } from '../../src/entity/user';
-import { Watchlist } from '../../src/entity/watchlist';
-import { MediaItemBase } from '../../src/entity/mediaItem';
+import { TvSeason } from 'src/entity/tvseason';
+import { TvEpisode } from 'src/entity/tvepisode';
+import { UserRating } from 'src/entity/userRating';
+import { AccessToken } from 'src/entity/accessToken';
+import { Seen } from 'src/entity/seen';
+import { NotificationsHistory } from 'src/entity/notificationsHistory';
+import { NotificationPlatformsCredentials } from 'src/entity/notificationPlatformsCredentials';
+import { User } from 'src/entity/user';
+import { Watchlist } from 'src/entity/watchlist';
+import { MediaItemBase } from 'src/entity/mediaItem';
+import { knex } from 'src/dbconfig';
+import { MIGRATIONS_EXTENSION } from 'src/config';
+import { migrationsDirectory } from 'src/knexfile';
 import { clearDatabase } from '../__utils__/utils';
-import { knex } from '../../src/dbconfig';
-import { MIGRATIONS_EXTENSION } from '../../src/config';
-import { migrationsDirectory } from '../../src/knexfile';
 
 describe('migrations', () => {
     beforeAll(async () => {

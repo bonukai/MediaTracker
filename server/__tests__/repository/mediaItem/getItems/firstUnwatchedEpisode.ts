@@ -1,12 +1,11 @@
-import { mediaItemRepository } from '../../../../src/repository/mediaItem';
-import { MediaItemBaseWithSeasons } from '../../../../src/entity/mediaItem';
+import { mediaItemRepository } from 'src/repository/mediaItem';
+import { MediaItemBaseWithSeasons } from 'src/entity/mediaItem';
+import { TvEpisode } from 'src/entity/tvepisode';
+import { User } from 'src/entity/user';
+import { userRepository } from 'src/repository/user';
+import { Seen } from 'src/entity/seen';
+import { seenRepository } from 'src/repository/seen';
 import { clearDatabase, runMigrations } from '../../../__utils__/utils';
-import { TvEpisode } from '../../../../src/entity/tvepisode';
-import { User } from '../../../../src/entity/user';
-import { userRepository } from '../../../../src/repository/user';
-import { Seen } from '../../../../src/entity/seen';
-import { seenRepository } from '../../../../src/repository/seen';
-import { tvEpisodeRepository } from '../../../../src/repository/episode';
 
 const user: User = {
     id: 1,

@@ -1,12 +1,12 @@
 import _ from 'lodash';
 
-import { mediaItemRepository } from '../../../../src/repository/mediaItem';
-import { MediaItemBaseWithSeasons } from '../../../../src/entity/mediaItem';
+import { mediaItemRepository } from 'src/repository/mediaItem';
+import { MediaItemBaseWithSeasons } from 'src/entity/mediaItem';
+import { User } from 'src/entity/user';
+import { userRepository } from 'src/repository/user';
+import { Watchlist } from 'src/entity/watchlist';
+import { watchlistRepository } from 'src/repository/watchlist';
 import { clearDatabase, runMigrations } from '../../../__utils__/utils';
-import { User } from '../../../../src/entity/user';
-import { userRepository } from '../../../../src/repository/user';
-import { Watchlist } from '../../../../src/entity/watchlist';
-import { watchlistRepository } from '../../../../src/repository/watchlist';
 
 const user: User = {
     id: 1,

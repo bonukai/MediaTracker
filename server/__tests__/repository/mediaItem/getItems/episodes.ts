@@ -1,11 +1,11 @@
-import { mediaItemRepository } from '../../../../src/repository/mediaItem';
-import { MediaItemBaseWithSeasons } from '../../../../src/entity/mediaItem';
-import { clearDatabase, runMigrations } from '../../../__utils__/utils';
-import { User } from '../../../../src/entity/user';
-import { userRepository } from '../../../../src/repository/user';
 import _ from 'lodash';
-import { Watchlist } from '../../../../src/entity/watchlist';
-import { watchlistRepository } from '../../../../src/repository/watchlist';
+
+import { mediaItemRepository } from 'src/repository/mediaItem';
+import { MediaItemBaseWithSeasons } from 'src/entity/mediaItem';
+import { User } from 'src/entity/user';
+import { userRepository } from 'src/repository/user';
+import { clearDatabase, runMigrations } from '../../../__utils__/utils';
+
 
 const user: User = {
     id: 1,

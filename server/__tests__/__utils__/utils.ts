@@ -1,17 +1,17 @@
-import { mediaItemRepository } from '../../src/repository/mediaItem';
-import { tvEpisodeRepository } from '../../src/repository/episode';
-import { tvSeasonRepository } from '../../src/repository/season';
-import { userRepository } from '../../src/repository/user';
-import { sessionRepository } from '../../src/repository/session';
-import { accessTokenRepository } from '../../src/repository/accessToken';
-import { metadataProviderCredentialsRepository } from '../../src/repository/metadataProviderCredentials';
-import { notificationPlatformsCredentialsRepository } from '../../src/repository/notificationPlatformsCredentials';
-import { seenRepository } from '../../src/repository/seen';
-import { watchlistRepository } from '../../src/repository/watchlist';
-import { userRatingRepository } from '../../src/repository/userRating';
-import { notificationsHistoryRepository } from '../../src/repository/notificationsHistory';
-import { knex } from '../../src/dbconfig';
-import { migrationsDirectory } from '../../src/knexfile';
+import { mediaItemRepository } from 'src/repository/mediaItem';
+import { tvEpisodeRepository } from 'src/repository/episode';
+import { tvSeasonRepository } from 'src/repository/season';
+import { userRepository } from 'src/repository/user';
+import { sessionRepository } from 'src/repository/session';
+import { accessTokenRepository } from 'src/repository/accessToken';
+import { metadataProviderCredentialsRepository } from 'src/repository/metadataProviderCredentials';
+import { notificationPlatformsCredentialsRepository } from 'src/repository/notificationPlatformsCredentials';
+import { seenRepository } from 'src/repository/seen';
+import { watchlistRepository } from 'src/repository/watchlist';
+import { userRatingRepository } from 'src/repository/userRating';
+import { notificationsHistoryRepository } from 'src/repository/notificationsHistory';
+import { knex } from 'src/dbconfig';
+import { migrationsDirectory } from 'src/knexfile';
 
 export const clearDatabase = async () => {
     await notificationPlatformsCredentialsRepository.delete();

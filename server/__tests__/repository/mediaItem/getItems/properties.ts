@@ -1,10 +1,10 @@
-import { mediaItemRepository } from '../../../../src/repository/mediaItem';
-import { MediaItemBase } from '../../../../src/entity/mediaItem';
+import { mediaItemRepository } from 'src/repository/mediaItem';
+import { MediaItemBase } from 'src/entity/mediaItem';
+import { User } from 'src/entity/user';
+import { Watchlist } from 'src/entity/watchlist';
+import { userRepository } from 'src/repository/user';
+import { watchlistRepository } from 'src/repository/watchlist';
 import { clearDatabase, runMigrations } from '../../../__utils__/utils';
-import { User } from '../../../../src/entity/user';
-import { Watchlist } from '../../../../src/entity/watchlist';
-import { userRepository } from '../../../../src/repository/user';
-import { watchlistRepository } from '../../../../src/repository/watchlist';
 
 const mediaItem: MediaItemBase = {
     developer: 'developer',

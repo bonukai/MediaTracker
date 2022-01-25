@@ -1,12 +1,13 @@
-import { mediaItemRepository } from '../../../../src/repository/mediaItem';
-import { MediaItemBaseWithSeasons } from '../../../../src/entity/mediaItem';
-import { clearDatabase, runMigrations } from '../../../__utils__/utils';
-import { User } from '../../../../src/entity/user';
-import { userRepository } from '../../../../src/repository/user';
 import _ from 'lodash';
-import { Seen } from '../../../../src/entity/seen';
-import { seenRepository } from '../../../../src/repository/seen';
-import { watchlistRepository } from '../../../../src/repository/watchlist';
+
+import { mediaItemRepository } from 'src/repository/mediaItem';
+import { MediaItemBaseWithSeasons } from 'src/entity/mediaItem';
+import { User } from 'src/entity/user';
+import { userRepository } from 'src/repository/user';
+import { Seen } from 'src/entity/seen';
+import { seenRepository } from 'src/repository/seen';
+import { watchlistRepository } from 'src/repository/watchlist';
+import { clearDatabase, runMigrations } from '../../../__utils__/utils';
 
 const user: User = {
     id: 1,
