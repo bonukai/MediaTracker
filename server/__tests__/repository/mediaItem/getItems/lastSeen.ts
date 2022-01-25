@@ -82,6 +82,7 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
         title: 'title',
         seasons: [
             {
+                id: 1,
                 seasonNumber: 1,
                 numberOfEpisodes: 2,
                 isSpecialSeason: false,
@@ -108,6 +109,7 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
                 ],
             },
             {
+                id: 2,
                 seasonNumber: 2,
                 isSpecialSeason: false,
                 numberOfEpisodes: 2,
@@ -149,6 +151,7 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
         title: 'title',
         seasons: [
             {
+                id: 3,
                 seasonNumber: 1,
                 numberOfEpisodes: 2,
                 isSpecialSeason: false,
@@ -184,6 +187,7 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
         title: 'title',
         seasons: [
             {
+                id: 4,
                 seasonNumber: 1,
                 numberOfEpisodes: 2,
                 isSpecialSeason: false,
