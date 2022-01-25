@@ -169,7 +169,7 @@ export const repository = <T extends object>(args: {
             );
         }
 
-        protected async createManyUnique(
+        public async createManyUnique(
             values: Partial<T>[],
             uniqueBy: (value: Partial<T>) => Partial<T>
         ) {
