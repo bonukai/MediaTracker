@@ -14,7 +14,7 @@
         "ajv": "^8.9.0",
         "argon2": "^0.28.3",
         "axios": "^0.25.0",
-        "better-sqlite3": "^7.4.6",
+        "better-sqlite3": "^7.5.0",
         "chalk": "~4.1.2",
         "cookie-parser": "^1.4.6",
         "cross-env": "^7.0.3",
