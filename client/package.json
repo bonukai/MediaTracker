@@ -77,6 +77,7 @@
     "@types/tailwindcss": "^3.0.3",
     "clsx": "^1.1.1",
     "date-fns": "^2.28.0",
+    "mediatracker": "file:..",
     "mediatracker-api": "file:../rest-api",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
