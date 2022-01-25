@@ -6,18 +6,26 @@
             "script": "dev",
             "path": "client/",
             "problemMatcher": [],
-            "label": "client-dev",
+            "label": "client-dev"
         },
         {
             "type": "npm",
             "script": "dev",
             "path": "server/",
             "problemMatcher": [],
-            "label": "server-dev",
+            "label": "server-dev"
         },
         {
             "label": "dev",
-            "dependsOn": ["server-dev", "client-dev"]
+            "dependsOn": ["client-dev", "server-dev"],
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "build-routes",
+            "path": "server/",
+            "label": "server-build-routes",
+            "problemMatcher": []
         }
     ]
 }
