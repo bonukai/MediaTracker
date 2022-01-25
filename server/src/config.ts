@@ -25,3 +25,5 @@ export const MIGRATIONS_EXTENSION =
 export const DEMO = process.env['DEMO'] ? Boolean(process.env['DEMO']) : false;
 export const IGDB_CLIENT_ID = process.env.IGDB_CLIENT_ID;
 export const IGDB_CLIENT_SECRET = process.env.IGDB_CLIENT_SECRET;
+
+export const LANG = process.env.LANG;

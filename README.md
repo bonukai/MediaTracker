@@ -33,6 +33,8 @@ docker run \
     -p 7481:7481 \
     -v .config/mediatracker/data:/storage \
     -v assets:/assets \
+    -e TMDB_LANG=us \
+    -e AUDIBLE_LANG=us \
     bonukai/mediatracker
 ```
 
@@ -48,6 +50,9 @@ services:
     volumes:
       - .config/mediatracker/data:/storage
       - assetsVolume:/assets
+    environment:
+      TMDB_LANG: us
+      AUDIBLE_LANG: us
     image: bonukai/mediatracker
 
 volumes:
@@ -60,20 +65,22 @@ volumes:
 | ----------- | ----------------------- |
 | -p 7481     | Port web API            |
 | -v /storage | Directory with database |
-| -v /assets  | Directory posters       |
+| -v /assets  | Posters directory       |
 
 ### Environment variables
 
-| Name              | Description                           |
-| ----------------- | ------------------------------------- |
-| DATABASE_CLIENT   | Database client: better-sqlite3 or pg |
-| DATABASE_PATH     | Only for sqlite, path to database     |
-| DATABASE_URL      | Connection string                     |
-| DATABASE_HOST     | Database host                         |
-| DATABASE_PORT     | Database port                         |
-| DATABASE_USER     | Database user                         |
-| DATABASE_PASSWORD | Database password                     |
-| DATABASE_DATABASE | Database name                         |
+| Name              | Description                                                                                          |
+| ----------------- | ---------------------------------------------------------------------------------------------------- |
+| TMDB_LANG         | [ISO 639-1 country code used by TMDB](https://developers.themoviedb.org/3/getting-started/languages) |
+| AUDIBLE_LANG      | ISO 639-1 country code used by audible, one of: au, ca, de, fr, in, it, jp, gb, us                   |
+| DATABASE_CLIENT   | Database client: better-sqlite3 or pg                                                                |
+| DATABASE_PATH     | Only for sqlite, path to database                                                                    |
+| DATABASE_URL      | Connection string                                                                                    |
+| DATABASE_HOST     | Database host                                                                                        |
+| DATABASE_PORT     | Database port                                                                                        |
+| DATABASE_USER     | Database user                                                                                        |
+| DATABASE_PASSWORD | Database password                                                                                    |
+| DATABASE_DATABASE | Database name                                                                                        |
 
 ## Heroku
 
@@ -97,12 +104,12 @@ docker run -p 7481:7481 mediatracker
 
 # Metadata providers
 
-| Provider                                                                       | Media type     |
-| ------------------------------------------------------------------------------ | -------------- |
-| [TMDB](https://www.themoviedb.org/)                                            | movie, tv show |
-| [IGDB](https://www.igdb.com/)\*                                                | video game     |
-| [Audible API](https://audible.readthedocs.io/en/latest/misc/external_api.html) | audiobooks     |
-| [Open Library](https://openlibrary.org/)                                       | books          |
+| Provider                                                                       | Media type     | Localization |
+| ------------------------------------------------------------------------------ | -------------- | :----------: |
+| [TMDB](https://www.themoviedb.org/)                                            | movie, tv show |      ✓       |
+| [IGDB](https://www.igdb.com/)\*                                                | video game     |      ✗       |
+| [Audible API](https://audible.readthedocs.io/en/latest/misc/external_api.html) | audiobooks     |      ✓       |
+| [Open Library](https://openlibrary.org/)                                       | books          |      ✗       |
 
 \* IGDB has a limit of 4 requests per second. Because of that IGDB API key is not provided with MediaTracker, it can be acquired [here](https://api-docs.igdb.com/#account-creation) and set in `#/settings/metadata-providers-credentials`
 

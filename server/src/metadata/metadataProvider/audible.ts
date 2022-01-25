@@ -1,11 +1,36 @@
+import axios from 'axios';
+
 import { MediaItemForProvider, ExternalIds } from 'src/entity/mediaItem';
 import { metadataProvider } from 'src/metadata/metadataProvider';
-import axios from 'axios';
+import { AUDIBLE_LANG } from 'src/config';
 
 export class Audible extends metadataProvider({
     name: 'audible',
     mediaType: 'audiobook',
 }) {
+    private readonly languages: Record<string, string> = {
+        AU: 'au',
+        CA: 'ca',
+        DE: 'de',
+        FR: 'fr',
+        IN: 'in',
+        IT: 'it',
+        JP: 'co.jp',
+        UK: 'co.uk',
+        GB: 'co.uk',
+        US: 'com',
+    };
+
+    private domain() {
+        const countryCode = AUDIBLE_LANG?.substring(0, 2)?.toUpperCase();
+
+        if (countryCode in this.languages) {
+            return this.languages[countryCode];
+        }
+
+        return this.languages['US'];
+    }
+
     private readonly queryParams = {
         response_groups: [
             'contributors',
@@ -17,8 +42,8 @@ export class Audible extends metadataProvider({
     };
 
     async search(query: string): Promise<MediaItemForProvider[]> {
-        const res = await axios.get<AudibleResponse.SearchReslut>(
-            'https://api.audible.com/1.0/catalog/products',
+        const res = await axios.get<AudibleResponse.SearchResult>(
+            `https://api.audible.${this.domain()}/1.0/catalog/products`,
             {
                 params: {
                     title: query,
@@ -40,7 +65,9 @@ export class Audible extends metadataProvider({
 
     async details(arg: ExternalIds): Promise<MediaItemForProvider> {
         const res = await axios.get<AudibleResponse.DetailsResult>(
-            `https://api.audible.com//1.0/catalog/products/${arg.audibleId}`,
+            `https://api.audible.${this.domain()}/1.0/catalog/products/${
+                arg.audibleId
+            }`,
             {
                 params: this.queryParams,
             }
@@ -180,7 +207,7 @@ namespace AudibleResponse {
         voice_description: string;
     }
 
-    export interface SearchReslut {
+    export interface SearchResult {
         products: Product[];
         response_groups: string[];
         total_results: number;
