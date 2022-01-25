@@ -5,3 +5,5 @@ client/public
 server/jest.config.js
 server/scripts
 server/build
+
+docs/webpack.config.js

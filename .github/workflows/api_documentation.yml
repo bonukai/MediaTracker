@@ -12,8 +12,8 @@ jobs:
 
       - name: Install and Build 🔧 
         run: |
-          npm ci --prefix server/docs
-          npm run build --prefix server/docs
+          npm ci --prefix docs
+          npm run build --prefix docs
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2

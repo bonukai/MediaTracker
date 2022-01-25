@@ -3,7 +3,7 @@
     "scripts": {
         "test": "cross-env NODE_PATH=. jest",
         "build-server": "tsc -p tsconfig.build.json",
-        "build-docs": "npm run build --prefix docs",
+        "build-docs": "npm run build --prefix ../docs",
         "build-routes": "node scripts/generate_routes.js && node scripts/generate_api.js && npm run build --prefix ../rest-api",
         "watch-routes": "nodemon --watch src --ignore src/generated --ext * --exec \"node scripts/generate_routes.js && node scripts/generate_api.js\"",
         "build": "npm run build-routes && npm run build-server",
