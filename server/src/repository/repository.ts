@@ -1,9 +1,8 @@
-import _, { Dictionary } from 'lodash';
+import _ from 'lodash';
 import { knex } from 'src/dbconfig';
 
-const omitUndefinedValues = <T>(
-    array: Dictionary<Partial<T>>
-): Dictionary<Partial<T>> => _.pickBy(array, (v) => v !== undefined);
+const omitUndefinedValues = <T extends object>(value: Partial<T>) =>
+    _.pickBy(value, (v) => v !== undefined) as Partial<T>;
 
 const BATCH_SIZE = 30;
 
@@ -123,16 +122,10 @@ export const repository = <T extends object>(args: {
                 return this.createUnique(value, this.uniqueBy);
             }
 
-            if (value[this.primaryColumnName]) {
-                await knex(this.tableName).insert(
-                    this.serialize(this.stripValue(value))
-                );
-
-                return value[this.primaryColumnName];
-            }
-
             const res = await knex(this.tableName)
-                .insert(this.serialize(this.stripValue(value)))
+                .insert(
+                    this.serialize(omitUndefinedValues(this.stripValue(value)))
+                )
                 .returning(this.primaryColumnName as string);
 
             if (res?.length > 0) {
@@ -150,16 +143,12 @@ export const repository = <T extends object>(args: {
                     .first();
 
                 if (!existingItem) {
-                    if (value[this.primaryColumnName]) {
-                        await trx(this.tableName).insert(
-                            this.serialize(this.stripValue(value))
-                        );
-
-                        return value[this.primaryColumnName];
-                    }
-
                     const res = await trx(this.tableName)
-                        .insert(this.serialize(this.stripValue(value)))
+                        .insert(
+                            this.serialize(
+                                omitUndefinedValues(this.stripValue(value))
+                            )
+                        )
                         .returning(this.primaryColumnName as string);
 
                     if (res?.length > 0) {
@@ -180,7 +169,9 @@ export const repository = <T extends object>(args: {
 
             await knex.batchInsert(
                 this.tableName,
-                values.map((value) => this.serialize(this.stripValue(value))),
+                values.map((value) =>
+                    this.serialize(omitUndefinedValues(this.stripValue(value)))
+                ),
                 BATCH_SIZE
             );
         }
@@ -219,7 +210,9 @@ export const repository = <T extends object>(args: {
                         .batchInsert(
                             this.tableName,
                             newItems.map((value) =>
-                                this.serialize(this.stripValue(value))
+                                this.serialize(
+                                    omitUndefinedValues(this.stripValue(value))
+                                )
                             ),
                             BATCH_SIZE
                         )
@@ -230,7 +223,7 @@ export const repository = <T extends object>(args: {
 
         public async update(value: Partial<T>) {
             const qb = knex(this.tableName).update(
-                this.serialize(this.stripValue(value))
+                this.serialize(omitUndefinedValues(this.stripValue(value)))
             );
 
             if (value[primaryColumnName]) {
@@ -247,7 +240,9 @@ export const repository = <T extends object>(args: {
             const { value, where } = params;
 
             await knex(this.tableName)
-                .update(this.serialize(this.stripValue(value)))
+                .update(
+                    this.serialize(omitUndefinedValues(this.stripValue(value)))
+                )
                 .where(where);
         }
 
@@ -264,14 +259,20 @@ export const repository = <T extends object>(args: {
 
                 if (existingItem) {
                     await trx(this.tableName)
-                        .update(this.serialize(this.stripValue(value)))
+                        .update(
+                            this.serialize(
+                                omitUndefinedValues(this.stripValue(value))
+                            )
+                        )
                         .where(
                             primaryColumnName,
                             existingItem[primaryColumnName]
                         );
                 } else {
                     await trx(this.tableName).insert(
-                        this.serialize(this.stripValue(value))
+                        this.serialize(
+                            omitUndefinedValues(this.stripValue(value))
+                        )
                     );
                 }
             });
