@@ -31,7 +31,7 @@ jobs:
       DATABASE_USERNAME: postgres
       DATABASE_PASSWORD: postgres
       DATABASE_DATABASE: postgres
-      DATABASE_HOST: postgres
+      DATABASE_HOST: localhost
       DATABASE_PORT: 5432
       
     runs-on: ${{ matrix.os }}
