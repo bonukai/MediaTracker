@@ -50,7 +50,8 @@ export const getDetailsKnex = async (params: {
 
             const userRating = await trx<UserRating>('userRating').where({
                 mediaItemId: mediaItemId,
-            });
+            })
+            .orderBy('date', 'desc');
 
             const watchlist = await trx<Watchlist>('watchlist')
                 .where({

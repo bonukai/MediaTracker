@@ -257,42 +257,48 @@ describe('seenHistory', () => {
     });
 
     test('details, user', async () => {
-        _.forEach(
-            {
-                1: [seenEpisodes[0], seenEpisodes[1], seenEpisodes[2]],
-                2: [],
-                3: [seenEpisodes[3]],
-                4: [seenEpisodes[4]],
-                5: [],
-            },
-            async (value, mediaItemId) => {
-                const details = await mediaItemRepository.details({
-                    mediaItemId: Number(mediaItemId),
-                    userId: user.id,
-                });
+        await Promise.all(
+            _.map(
+                {
+                    1: [seenEpisodes[0], seenEpisodes[1], seenEpisodes[2]],
+                    2: [],
+                    3: [seenEpisodes[3]],
+                    4: [seenEpisodes[4]],
+                    5: [],
+                },
+                async (value, mediaItemId) => {
+                    const details = await mediaItemRepository.details({
+                        mediaItemId: Number(mediaItemId),
+                        userId: user.id,
+                    });
 
-                expect(details.seenHistory).toEqual(value);
-            }
+                    console.log(details.seenHistory)
+
+                    expect(details.seenHistory).toEqual(value);
+                }
+            )
         );
     });
 
     test('details, user2', async () => {
-        _.forEach(
-            {
-                1: [],
-                2: [],
-                3: [],
-                4: [],
-                5: [seenEpisodes[5], seenEpisodes[6]],
-            },
-            async (value, mediaItemId) => {
-                const details = await mediaItemRepository.details({
-                    mediaItemId: Number(mediaItemId),
-                    userId: user2.id,
-                });
+        await Promise.all(
+            _.map(
+                {
+                    1: [],
+                    2: [],
+                    3: [],
+                    4: [],
+                    5: [seenEpisodes[5], seenEpisodes[6]],
+                },
+                async (value, mediaItemId) => {
+                    const details = await mediaItemRepository.details({
+                        mediaItemId: Number(mediaItemId),
+                        userId: user2.id,
+                    });
 
-                expect(details.seenHistory).toEqual(value);
-            }
+                    expect(details.seenHistory).toEqual(value);
+                }
+            )
         );
     });
 });
