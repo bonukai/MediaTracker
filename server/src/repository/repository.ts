@@ -123,6 +123,14 @@ export const repository = <T extends object>(args: {
                 return this.createUnique(value, this.uniqueBy);
             }
 
+            if (value[this.primaryColumnName]) {
+                await knex(this.tableName).insert(
+                    this.serialize(this.stripValue(value))
+                );
+
+                return value[this.primaryColumnName];
+            }
+
             const res = await knex(this.tableName)
                 .insert(this.serialize(this.stripValue(value)))
                 .returning(this.primaryColumnName as string);
@@ -142,6 +150,14 @@ export const repository = <T extends object>(args: {
                     .first();
 
                 if (!existingItem) {
+                    if (value[this.primaryColumnName]) {
+                        await trx(this.tableName).insert(
+                            this.serialize(this.stripValue(value))
+                        );
+
+                        return value[this.primaryColumnName];
+                    }
+
                     const res = await trx(this.tableName)
                         .insert(this.serialize(this.stripValue(value)))
                         .returning(this.primaryColumnName as string);

@@ -172,7 +172,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                             seasonId: season.id,
                             tvShowId: mediaItem.id,
                         });
-                        
+
                         episode.id = episodeId;
                         episode.seasonId = season.id;
                         episode.tvShowId = mediaItem.id;
