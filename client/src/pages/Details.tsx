@@ -389,14 +389,12 @@ export const DetailsPage: FunctionComponent = () => {
       )}
 
       {mediaItem.firstUnwatchedEpisode && (
-        <>
-          <div className="inline-flex mt-3 font-bold">
-            First unwatched episode:{' '}
-            {formatEpisodeNumber(mediaItem.firstUnwatchedEpisode)}{' '}
-            {mediaItem.firstUnwatchedEpisode.title}
-            <MarkAsSeenFirstUnwatchedEpisode mediaItem={mediaItem} />
-          </div>
-        </>
+        <div className="flex mt-3 font-bold">
+          First unwatched episode:{' '}
+          {formatEpisodeNumber(mediaItem.firstUnwatchedEpisode)}{' '}
+          {mediaItem.firstUnwatchedEpisode.title}
+          <MarkAsSeenFirstUnwatchedEpisode mediaItem={mediaItem} />
+        </div>
       )}
 
       {mediaItem.lastSeenAt > 0 && (
