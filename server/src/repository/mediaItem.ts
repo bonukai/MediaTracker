@@ -156,20 +156,24 @@ class MediaItemRepository extends repository<MediaItemBase>({
 
         if (mediaItem.seasons) {
             for (const season of mediaItem.seasons) {
-                season.id = await tvSeasonRepository.create({
+                const seasonId = await tvSeasonRepository.create({
                     ...season,
                     episodes: null,
                     tvShowId: mediaItem.id,
                 });
+
+                season.id = seasonId;
                 season.tvShowId = mediaItem.id;
 
                 if (season.episodes) {
                     for (const episode of season.episodes) {
-                        episode.id = await tvEpisodeRepository.create({
+                        const episodeId = await tvEpisodeRepository.create({
                             ...episode,
                             seasonId: season.id,
                             tvShowId: mediaItem.id,
                         });
+                        
+                        episode.id = episodeId;
                         episode.seasonId = season.id;
                         episode.tvShowId = mediaItem.id;
                     }
