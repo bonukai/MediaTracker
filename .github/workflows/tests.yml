@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         node: [ '16', '17' ]
-        os: [ubuntu-20.04, ubuntu-18.04, windows-latest]
+        os: [ubuntu-20.04, ubuntu-18.04]
     services:     
       postgres:        
         image: postgres        
@@ -32,7 +32,7 @@ jobs:
       DATABASE_HOST: postgres
       
     runs-on: ${{ matrix.os }}
-    name: ${{ matrix.os }} Node ${{ matrix.node }}
+    name: "postgres: ${{ matrix.os }} Node ${{ matrix.node }}"
     steps:
       - uses: actions/checkout@v2
       - name: Setup node
@@ -47,7 +47,7 @@ jobs:
         node: [ '16', '17' ]
         os: [ubuntu-20.04, ubuntu-18.04, windows-latest]
     runs-on: ${{ matrix.os }}
-    name: ${{ matrix.os }} Node ${{ matrix.node }}
+    name: "sqlite: ${{ matrix.os }} Node ${{ matrix.node }}"
     steps:
       - uses: actions/checkout@v2
       - name: Setup node
