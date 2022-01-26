@@ -1,12 +1,11 @@
-const path = require('path');
-const { generateApi } = require('swagger-typescript-api');
+import { generateApi, GenerateApiParams } from 'swagger-typescript-api';
+import path from 'path';
 
 generateApi({
     name: 'index.ts',
     output: path.resolve(process.cwd(), './../rest-api/'),
     input: path.resolve(process.cwd(), './openapi.json'),
     httpClientType: 'fetch',
-    apiClassName: 'MediaTracker',
     defaultResponseAsSuccess: true,
     generateRouteTypes: true,
     unwrapResponseData: true,
@@ -14,4 +13,4 @@ generateApi({
     enumNamesAsValues: false,
     moduleNameIndex: 1,
     generateUnionEnums: true,
-});
+} as Omit<GenerateApiParams, 'url' | 'spec'>);

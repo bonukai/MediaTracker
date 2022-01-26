@@ -1,4 +1,4 @@
-const { typescriptRoutesToOpenApi } = require('typescript-routes-to-openapi');
+import { typescriptRoutesToOpenApi } from 'typescript-routes-to-openapi';
 
 typescriptRoutesToOpenApi({
     openapi: {
