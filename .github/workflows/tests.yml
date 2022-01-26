@@ -32,7 +32,7 @@ jobs:
       DATABASE_PASSWORD: postgres
       DATABASE_DATABASE: postgres
       DATABASE_HOST: postgres
-      DATABASE_PORT: ${{ jobs.services.postgres.ports[5432] }}
+      DATABASE_PORT: 5432
       
     runs-on: ${{ matrix.os }}
     name: "postgres: ${{ matrix.os }} Node ${{ matrix.node }}"
