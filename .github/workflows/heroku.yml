@@ -16,6 +16,6 @@ jobs:
           heroku_app_name: mediatracker-bonukai
           heroku_email: bonukai@protonmail.com
           usedocker: true
-      - env:
+        env:
           HD_HOSTNAME: 0.0.0.0
           HD_DEMO: 1
