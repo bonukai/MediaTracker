@@ -19,6 +19,8 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -30,6 +32,7 @@ jobs:
       DATABASE_PASSWORD: postgres
       DATABASE_DATABASE: postgres
       DATABASE_HOST: postgres
+      DATABASE_PORT: ${{ job.services.postgres.ports[5432] }}
       
     runs-on: ${{ matrix.os }}
     name: "postgres: ${{ matrix.os }} Node ${{ matrix.node }}"
