@@ -28,7 +28,7 @@ jobs:
           --health-retries 5
     env:
       DATABASE_CLIENT: pg
-      DATABASE_USERNAME: postgres
+      DATABASE_USER: postgres
       DATABASE_PASSWORD: postgres
       DATABASE_DATABASE: postgres
       DATABASE_HOST: localhost
