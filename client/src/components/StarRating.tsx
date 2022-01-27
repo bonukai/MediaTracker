@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 
 import { MediaItemItemsResponse, TvEpisode, TvSeason } from 'mediatracker-api';
 
@@ -75,6 +76,7 @@ const StarRatingModal: FunctionComponent<
     episode: undefined,
     ...props,
   };
+  const { t } = useTranslation();
 
   const rating: number = episode
     ? episode.userRating?.rating
@@ -151,9 +153,9 @@ const StarRatingModal: FunctionComponent<
           onChange={(e) => setReview(e.currentTarget.value)}
         />
         <div className="flex w-full">
-          <button className="btn-blue">Save review</button>
+          <button className="btn-blue">{t('Save review')}</button>
           <div className="ml-auto btn-red" onClick={() => closeModal()}>
-            Cancel
+            {t('Cancel')}
           </div>
         </div>
       </form>

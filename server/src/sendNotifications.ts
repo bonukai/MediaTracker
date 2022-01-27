@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import chalk from 'chalk';
 import { addHours, subHours } from 'date-fns';
+import { t } from 'i18next';
 
 import { MediaItemBase } from 'src/entity/mediaItem';
 import { mediaItemRepository } from 'src/repository/mediaItem';
@@ -109,23 +110,34 @@ const sendNotificationForEpisodes = async (episodes: TvEpisode[]) => {
 
     const tvShow = episodes[0].tvShow;
 
-    const usersToNotify =
-        await userRepository.findUsersWithMediaItemOnWatchlist({
+    const usersToNotify = await userRepository.findUsersWithMediaItemOnWatchlist(
+        {
             mediaItemId: tvShow.id,
             sendNotificationForEpisodesReleases: true,
-        });
-
-    console.log(
-        `Sending notification for new episodes of ${tvShow.title} to ${usersToNotify.length} users`
+        }
     );
 
-    let notificationMessage: string;
+    console.log(
+        t(
+            'Sending notification for new episodes of {{ title }} to {{ count }} users',
+            {
+                count: usersToNotify.length,
+                title: tvShow.title,
+                defaultValue_one:
+                    'Sending notification for new episodes of {{ title }} to 1 user',
+            }
+        )
+    );
 
-    if (episodes.length > 1) {
-        notificationMessage = `${episodes.length} episodes for **${tvShow.title}** has been released`;
-    } else {
-        notificationMessage = `New episode for **${tvShow.title}** has been released`;
-    }
+    const notificationMessage = t(
+        '{{ count }} episodes for **{{ title }}** has been released',
+        {
+            count: episodes.length,
+            title: tvShow.title,
+            defaultValue_one:
+                'New episode for **{{ title }}** has been released',
+        }
+    );
 
     await sendNotificationForItem({
         mediaItem: tvShow,
@@ -136,16 +148,23 @@ const sendNotificationForEpisodes = async (episodes: TvEpisode[]) => {
 };
 
 const sendNotificationForMediaItem = async (mediaItem: MediaItemBase) => {
-    const notificationMessage = `${mediaItem.title} has been released`;
+    const notificationMessage = t('{{ title }} has been released', {
+        title: mediaItem.title,
+    });
 
-    const usersToNotify =
-        await userRepository.findUsersWithMediaItemOnWatchlist({
+    const usersToNotify = await userRepository.findUsersWithMediaItemOnWatchlist(
+        {
             mediaItemId: mediaItem.id,
             sendNotificationForReleases: true,
-        });
+        }
+    );
 
     console.log(
-        `Sending notification for ${mediaItem.title} to ${usersToNotify.length} users`
+        t('Sending notification for {{ title }} to {{ count }} users', {
+            count: usersToNotify.length,
+            title: mediaItem.title,
+            defaultValue_one: 'Sending notification for {{ title }} to 1 user',
+        })
     );
 
     await sendNotificationForItem({
@@ -166,8 +185,9 @@ const sendNotificationForItem = async (args: {
 
     for (const user of users) {
         const platform = user.notificationPlatform;
-        const credentials =
-            await notificationPlatformsCredentialsRepository.get(user.id);
+        const credentials = await notificationPlatformsCredentialsRepository.get(
+            user.id
+        );
 
         await Notifications.sendNotification(platform, {
             title: notificationTitle,
@@ -197,7 +217,11 @@ const errorHandler = async (fn: () => Promise<void>) => {
     try {
         await fn();
     } catch (error) {
-        console.log(chalk.bold.red(`Error sending notifications: ${error}`));
+        console.log(
+            chalk.bold.red(
+                t('Error sending notifications: {{ error }}', { error: error })
+            )
+        );
     }
 };
 

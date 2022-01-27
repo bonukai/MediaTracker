@@ -15,6 +15,7 @@
         "baseUrl": ".",
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
+        "resolveJsonModule": true,
         "noEmit": true
     },
     "include": ["src", "__tests__", "scripts"],

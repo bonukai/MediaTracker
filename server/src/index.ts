@@ -5,6 +5,7 @@ import session from 'express-session';
 import path from 'path';
 import chalk from 'chalk';
 import { nanoid } from 'nanoid';
+import { t } from 'i18next';
 
 import { runMigrations, knex } from 'src/dbconfig';
 import {
@@ -14,6 +15,8 @@ import {
     DEMO,
     IGDB_CLIENT_ID,
     IGDB_CLIENT_SECRET,
+    PORT,
+    HOSTNAME,
 } from 'src/config';
 import { generatedRoutes } from 'src/generated/routes/routes';
 import { metadataProviders } from 'src/metadata/metadataProviders';
@@ -27,11 +30,10 @@ import { updateMetadata } from 'src/updateMetadata';
 import { durationToMilliseconds } from 'src/utils';
 import { userRepository } from 'src/repository/user';
 import { metadataProviderCredentialsRepository } from 'src/repository/metadataProviderCredentials';
+import 'src/i18n/i18n';
 
 (async () => {
     const app = express();
-    const port = Number(process.env.PORT) || 7481;
-    const hostname = process.env.HOSTNAME || '127.0.0.1';
 
     await runMigrations();
 
@@ -53,7 +55,7 @@ import { metadataProviderCredentialsRepository } from 'src/repository/metadataPr
             },
         });
 
-        console.log(chalk.green.bold('DEMO mode enabled'));
+        console.log(chalk.green.bold(t('DEMO mode enabled')));
     }
 
     if (IGDB_CLIENT_ID && IGDB_CLIENT_SECRET) {
@@ -167,8 +169,12 @@ import { metadataProviderCredentialsRepository } from 'src/repository/metadataPr
 
     app.use(generatedRoutes);
 
-    const server = app.listen(port, hostname, async () => {
-        console.log(`MediaTracker listening at http://${hostname}:${port}`);
+    const server = app.listen(PORT, HOSTNAME, async () => {
+        console.log(
+            t('MediaTracker listening at {{ address }}', {
+                address: `http://${HOSTNAME}:${PORT}`,
+            })
+        );
 
         if (NODE_ENV === 'production') {
             await updateMetadata();

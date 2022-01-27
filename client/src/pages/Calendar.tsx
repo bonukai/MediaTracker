@@ -3,14 +3,17 @@ import { useQuery } from 'react-query';
 import FullCalendar, { DatesSetArg } from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
+import allLocales from '@fullcalendar/core/locales-all';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { MediaItemItemsResponse, MediaType, TvEpisode } from 'mediatracker-api';
 import { mediaTrackerApi } from 'src/api/api';
 import { formatEpisodeNumber } from 'src/utils';
-import { Link } from 'react-router-dom';
 
 export const CalendarPage: FunctionComponent = () => {
   const [datesSet, setDatesSet] = useState<DatesSetArg>();
+  const { i18n } = useTranslation();
 
   const { data } = useQuery(
     ['calendar', datesSet?.startStr, datesSet?.endStr],
@@ -68,6 +71,8 @@ export const CalendarPage: FunctionComponent = () => {
   return (
     <div className="p-2">
       <FullCalendar
+        locales={allLocales}
+        locale={i18n.language}
         plugins={[dayGridPlugin, listPlugin]}
         headerToolbar={{
           left: 'title',

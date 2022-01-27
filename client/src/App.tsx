@@ -3,8 +3,10 @@ import { QueryCache, QueryClient, QueryClientProvider } from 'react-query';
 import { HashRouter as Router } from 'react-router-dom';
 import { FetchError } from 'src/api/api';
 import { DarkModeProvider } from 'src/hooks/darkMode';
+import { useTranslation } from 'react-i18next';
 
 import { MyRouter } from './Router';
+import './i18n/i18n';
 
 import './styles/fullcalendar.css';
 import './styles/main.scss';
@@ -53,6 +55,7 @@ let globalSetErrorMessage: (message: string) => void;
 
 export const App: FunctionComponent = () => {
   const [errorMessage, setErrorMessage] = React.useState<string>();
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     globalSetErrorMessage = setErrorMessage;
@@ -71,7 +74,7 @@ export const App: FunctionComponent = () => {
       </QueryClientProvider>
       {errorMessage && (
         <div className="fixed z-50 p-1 m-auto -translate-x-1/2 bg-red-700 rounded shadow-sm cursor-default shadow-black left-1/2 top-4">
-          Server error: {errorMessage}
+          {t('Server error')}: {errorMessage}
         </div>
       )}
     </DarkModeProvider>

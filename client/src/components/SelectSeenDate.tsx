@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
+import { useTranslation } from 'react-i18next';
 
 import { markAsSeen } from 'src/api/details';
 import { SelectLastSeenEpisode } from 'src/components/SelectLastSeenEpisode';
@@ -53,30 +54,31 @@ export const SelectSeenDateComponent: FunctionComponent<{
 }> = (props) => {
   const { onSelected, closeModal } = props;
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const { t } = useTranslation();
 
   return (
     <>
       <div className="my-3 text-3xl font-bold text-center">
-        When did you see it?
+        {t('When did you see it?')}
       </div>
       <div className="flex flex-col">
         <div
           className="m-2 btn"
           onClick={() => onSelected({ date: new Date() })}
         >
-          Now
+          {t('Now')}
         </div>
         <div
           className="m-2 btn"
           onClick={() => onSelected({ seenAt: 'release_date' })}
         >
-          At release date
+          {t('At release date')}
         </div>
         <div
           className="m-2 btn"
           onClick={() => onSelected({ seenAt: 'unknown' })}
         >
-          I do not remember
+          {t('I do not remember')}
         </div>
         <div className="m-2">
           <input
@@ -129,11 +131,11 @@ export const SelectSeenDateComponent: FunctionComponent<{
             className="btn"
             onClick={() => onSelected({ date: selectedDate })}
           >
-            Custom date
+            {t('Custom date')}
           </div>
         </div>
         <div className="m-2 btn-red" onClick={() => closeModal()}>
-          Cancel
+          {t('Cancel')}
         </div>
       </div>
     </>

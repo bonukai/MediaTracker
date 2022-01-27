@@ -29,6 +29,6 @@ export const IGDB_CLIENT_SECRET = process.env.IGDB_CLIENT_SECRET;
 export const HOSTNAME = process.env.HOSTNAME || '127.0.0.1';
 export const PORT = Number(process.env.PORT) || 7481;
 
-export const LANG = process.env.LANG || 'us';
+export const LANG = process.env.LANG?.split('.')?.at(0) || 'en';
 export const TMDB_LANG = process.env.TMDB_LANG || 'us';
 export const AUDIBLE_LANG = process.env.TMDB_LANG || 'us';

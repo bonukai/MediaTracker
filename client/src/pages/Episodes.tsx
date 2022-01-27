@@ -16,12 +16,14 @@ import {
   TvEpisode,
   TvSeason,
 } from 'mediatracker-api';
+import { useTranslation } from 'react-i18next';
 
 const EpisodeComponent: FunctionComponent<{
   mediaItem: MediaItemItemsResponse;
   episode: TvEpisode;
 }> = (props) => {
   const { mediaItem, episode } = props;
+  const { t } = useTranslation();
 
   return (
     <div
@@ -69,8 +71,10 @@ const EpisodeComponent: FunctionComponent<{
         <div className="w-28">
           {episode.seenHistory?.length > 0 && (
             <>
-              Seen {episode.seenHistory.length}{' '}
-              {episode.seenHistory.length === 1 ? 'time' : 'times'}
+              {t('Seen {{ count }} times', {
+                count: episode.seenHistory.length,
+                defaultValue_other: 'Seen 1 time',
+              })}
             </>
           )}
         </div>
@@ -87,7 +91,7 @@ const EpisodeComponent: FunctionComponent<{
                 !hasBeenReleased(episode) && 'opacity-0 pointer-events-none'
               )}
             >
-              Add to seen history
+              {t('Add to seen history')}
             </div>
           )}
         >
@@ -108,14 +112,17 @@ const EpisodeComponent: FunctionComponent<{
           onClick={() => {
             if (
               confirm(
-                `Do you wont to remove episode "${episode.title}" from seen history?`
+                t(
+                  'Do you wont to remove episode {{ episode }} from seen history?',
+                  { episode: episode.title }
+                )
               )
             ) {
               markAsUnseen({ mediaItem, episode });
             }
           }}
         >
-          Remove from seen history
+          {t('Remove from seen history')}
         </div>
       </div>
     </div>
@@ -125,12 +132,16 @@ const EpisodeComponent: FunctionComponent<{
 export const EpisodesPage: FunctionComponent = () => {
   const { mediaItemId } = useParams();
   const { mediaItem, isLoading, error } = useDetails(Number(mediaItemId));
+  const { t } = useTranslation();
 
-  const { selectedSeason, selectedSeasonId, setSelectedSeasonId } =
-    useSelectedSeason(mediaItem);
+  const {
+    selectedSeason,
+    selectedSeasonId,
+    setSelectedSeasonId,
+  } = useSelectedSeason(mediaItem);
 
   if (isLoading || !selectedSeason) {
-    return <>Loading</>;
+    return <>{t('Loading')}</>;
   }
 
   if (error) {
@@ -138,7 +149,7 @@ export const EpisodesPage: FunctionComponent = () => {
   }
 
   if (mediaItem && mediaItem.mediaType !== 'tv') {
-    throw new Error('This component can only be used with tv shows');
+    throw new Error(t('This component can only be used with tv shows'));
   }
 
   return (
@@ -162,7 +173,7 @@ export const EpisodesPage: FunctionComponent = () => {
                 )}
                 onClick={() => setSelectedSeasonId(season.id)}
               >
-                Season {season.seasonNumber}
+                {t('Season {{ count }}', { count: season.seasonNumber })}
               </div>
             </div>
           ))}
@@ -182,6 +193,7 @@ const SeasonComponent: FunctionComponent<{
   season: TvSeason;
 }> = (props) => {
   const { mediaItem, season } = props;
+  const { t } = useTranslation();
 
   return (
     <>
@@ -204,7 +216,7 @@ const SeasonComponent: FunctionComponent<{
                 ).length === 0 && 'opacity-0 pointer-events-none'
               )}
             >
-              Add season to seen history
+              {t('Add season to seen history')}
             </div>
           )}
         >
@@ -223,7 +235,7 @@ const SeasonComponent: FunctionComponent<{
         </div>
         {season.description && (
           <div className="py-2">
-            <b className="">Description: </b>
+            <b className="">{t('Description')}:</b>
             <div
               className={clsx(
                 'inline py-1',

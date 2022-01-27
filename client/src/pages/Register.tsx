@@ -1,9 +1,12 @@
 import React, { FormEventHandler, FunctionComponent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useConfiguration } from 'src/api/configuration';
 import { useRegisterUser, useUser } from 'src/api/user';
 
 export const RegisterPage: FunctionComponent = () => {
+  const { t } = useTranslation();
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -24,11 +27,11 @@ export const RegisterPage: FunctionComponent = () => {
   return (
     <div className="flex items-center">
       <div className="mx-auto mt-20">
-        <div className="mb-10 text-5xl">Register</div>
+        <div className="mb-10 text-5xl">{t('Register')}</div>
         <form onSubmit={onSubmit}>
           <div className="pb-5">
             <label htmlFor="username" className="block text-lg">
-              Username:
+              {t('Username')}:
             </label>
             <input
               id="username"
@@ -43,7 +46,7 @@ export const RegisterPage: FunctionComponent = () => {
 
           <div className="pb-5">
             <label htmlFor="password" className="block text-lg">
-              Password:
+              {t('Password')}:
             </label>
             <input
               id="password"
@@ -57,7 +60,7 @@ export const RegisterPage: FunctionComponent = () => {
 
           <div className="pb-5">
             <label htmlFor="confirmPassword" className="block text-lg">
-              Confirm password:
+              {t('Confirm password')}:
             </label>
             <input
               id="confirmPassword"
@@ -70,13 +73,13 @@ export const RegisterPage: FunctionComponent = () => {
           </div>
 
           <div>
-            <button className="w-full mt-2">Register</button>
+            <button className="w-full mt-2">{t('Register')}</button>
           </div>
         </form>
 
         {!configuration?.noUsers && (
           <Link to={'/login'}>
-            <button className="w-full mt-4">Login</button>
+            <button className="w-full mt-4">{t('Login')}</button>
           </Link>
         )}
 

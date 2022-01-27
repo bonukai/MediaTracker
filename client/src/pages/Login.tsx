@@ -1,10 +1,13 @@
 import React, { FormEventHandler, FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import { useConfiguration } from 'src/api/configuration';
 import { useUser } from 'src/api/user';
 
 export const LoginPage: FunctionComponent = () => {
+  const { t } = useTranslation();
+
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
@@ -13,7 +16,7 @@ export const LoginPage: FunctionComponent = () => {
   const { configuration, isLoading } = useConfiguration();
 
   if (isLoading) {
-    return <>Loading</>;
+    return <>{t('Loading')}</>;
   }
 
   const onSubmit: FormEventHandler = async (e) => {
@@ -28,11 +31,11 @@ export const LoginPage: FunctionComponent = () => {
   return (
     <div className="flex items-center">
       <div className="mx-auto mt-20">
-        <div className="mb-10 text-5xl">Login</div>
+        <div className="mb-10 text-5xl">{t('Login')}</div>
         <form onSubmit={onSubmit}>
           <div className="pb-5">
             <label htmlFor="username" className="block text-lg">
-              Username:
+              {t('Username')}:
             </label>
             <input
               id="username"
@@ -47,7 +50,7 @@ export const LoginPage: FunctionComponent = () => {
 
           <div className="pb-2">
             <label htmlFor="password" className="block text-lg">
-              Password:
+              {t('Password')}:
             </label>
             <input
               id="password"
@@ -60,19 +63,19 @@ export const LoginPage: FunctionComponent = () => {
           </div>
 
           <div>
-            <button className="w-full mt-2">Login</button>
+            <button className="w-full mt-2">{t('Login')}</button>
           </div>
         </form>
 
         {Boolean(configuration?.enableRegistration) && (
           <Link to={'/register'}>
-            <button className="w-full mt-4">Register</button>
+            <button className="w-full mt-4">{t('Register')}</button>
           </Link>
         )}
 
         {loginIsError && (
           <div className="pt-2 font-bold text-red-700 dark:text-red-600">
-            Incorrect password or username
+            {t('Incorrect password or username')}
           </div>
         )}
       </div>

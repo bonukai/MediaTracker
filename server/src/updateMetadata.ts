@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import chalk from 'chalk';
+import { t } from 'i18next';
 
 import {
     MediaItemBase,
@@ -366,7 +367,7 @@ const shouldUpdate = (mediaItem: MediaItemBase) => {
 };
 
 export const updateMetadata = async (): Promise<void> => {
-    console.log(chalk.bold.green(`Updating metadata`));
+    console.log(chalk.bold.green(t('Updating metadata')));
 
     let numberOfUpdatedItems = 0;
     let numberOfFailures = 0;
@@ -380,9 +381,12 @@ export const updateMetadata = async (): Promise<void> => {
         }
 
         console.log(
-            `Updating: ${mediaItem.title} (last updated at: ${chalk.blue(
-                new Date(mediaItem.lastTimeUpdated).toLocaleString()
-            )})`
+            t('Updating: {{ title }} (last updated at: {{ date }}', {
+                title: mediaItem.title,
+                data: chalk.blue(
+                    new Date(mediaItem.lastTimeUpdated).toLocaleString()
+                ),
+            })
         );
 
         try {
@@ -395,13 +399,25 @@ export const updateMetadata = async (): Promise<void> => {
     }
 
     if (numberOfUpdatedItems === 0 && numberOfFailures === 0) {
-        console.log(chalk.bold.green(`Everything up to date`));
+        console.log(chalk.bold.green(t('Everything up to date')));
     } else {
-        console.log(chalk.bold.green(`Updated ${numberOfUpdatedItems} items`));
+        console.log(
+            chalk.bold.green(
+                t('Updated {{ count }} items', {
+                    count: numberOfUpdatedItems,
+                    defaultValue_one: 'Updated 1 item',
+                })
+            )
+        );
 
         if (numberOfFailures > 0) {
             console.log(
-                chalk.bold.red(`Failed to update ${numberOfFailures} items`)
+                chalk.bold.red(
+                    t('Failed to update {{ count }} items', {
+                        count: numberOfUpdatedItems,
+                        defaultValue_one: 'Failed to update 1 item',
+                    })
+                )
             );
         }
     }

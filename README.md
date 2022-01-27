@@ -9,6 +9,7 @@ Username: **demo**\
 Password: **demo**
 
 # API Documentation
+
 [https://bonukai.github.io/MediaTracker/](https://bonukai.github.io/MediaTracker/)
 
 # Installation
@@ -51,6 +52,7 @@ services:
       - .config/mediatracker/data:/storage
       - assetsVolume:/assets
     environment:
+      LANG: en
       TMDB_LANG: us
       AUDIBLE_LANG: us
     image: bonukai/mediatracker

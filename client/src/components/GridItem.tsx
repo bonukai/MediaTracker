@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 import { addToWatchlist, removeFromWatchlist } from 'src/api/details';
 import { BadgeRating } from 'src/components/StarRating';
@@ -43,6 +44,15 @@ export const GridItem: FunctionComponent<{
     showRating,
     showAddToWatchlistAndMarkAsSeenButtons,
   } = props.appearance || {};
+  const { t } = useTranslation();
+
+  const mediaTypeString: Record<MediaType, string> = {
+    audiobook: t('Audiobook'),
+    book: t('Book'),
+    movie: t('Movie'),
+    tv: t('Tv'),
+    video_game: t('Video game'),
+  };
 
   return (
     <div key={mediaItem.id} className="item">
@@ -63,13 +73,19 @@ export const GridItem: FunctionComponent<{
                         e.preventDefault();
 
                         if (
-                          confirm(`Remove "${mediaItem.title}" from watchlist?`)
+                          confirm(
+                            t('Remove "{{ title }}" from watchlist?', {
+                              title: mediaItem.title,
+                            })
+                          )
                         ) {
                           removeFromWatchlist(mediaItem);
                         }
                       }}
                     >
-                      <span className="flex material-icons ">bookmark</span>
+                      <span className="flex material-icons ">
+                        {t('bookmark')}
+                      </span>
                     </Item>
                   )}
                 </div>
@@ -132,7 +148,7 @@ export const GridItem: FunctionComponent<{
                         addToWatchlist(mediaItem);
                       }}
                     >
-                      Add to watchlist
+                      {t('Add to watchlist')}
                     </div>
                   )}
                   {canBeMarkedAsSeen(mediaItem) && (
@@ -143,7 +159,7 @@ export const GridItem: FunctionComponent<{
                             className="my-1 pointer-events-auto dark:bg-gray-900 bg-zinc-100 btn "
                             onClick={() => openModal()}
                           >
-                            Mark as seen
+                            {t('Mark as seen')}
                           </div>
                         </>
                       )}
@@ -192,7 +208,11 @@ export const GridItem: FunctionComponent<{
               )}
               {mediaItem.mediaType !== 'tv' && mediaItem.releaseDate && (
                 <>
-                  {'Release ' + relativeTimeTo(new Date(mediaItem.releaseDate))}
+                  {t('Release {{ relativeTime }}', {
+                    relativeTime: relativeTimeTo(
+                      new Date(mediaItem.releaseDate)
+                    ),
+                  })}
                 </>
               )}
             </>
@@ -201,14 +221,6 @@ export const GridItem: FunctionComponent<{
       </div>
     </div>
   );
-};
-
-const mediaTypeString: Record<MediaType, string> = {
-  audiobook: 'Audiobook',
-  book: 'Book',
-  movie: 'Movie',
-  tv: 'Tv',
-  video_game: 'Video game',
 };
 
 const Item = styled.div.attrs({

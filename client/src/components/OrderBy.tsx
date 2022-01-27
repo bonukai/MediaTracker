@@ -1,6 +1,24 @@
 import { MediaItemOrderBy, MediaType, SortOrder } from 'mediatracker-api';
 import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+export const useMediaTypeOrderByNames = (): Record<
+  MediaItemOrderBy,
+  string
+> => {
+  const { t } = useTranslation();
+
+  return {
+    lastSeen: t('Last seen'),
+    releaseDate: t('Release date'),
+    status: t('Status'),
+    title: t('Title'),
+    nextAiring: t('Next airing'),
+    unseenEpisodes: t('Unseen episodes count'),
+    mediaType: t('Media type'),
+  };
+};
 
 export const OrderByComponent: FunctionComponent<{
   orderBy: MediaItemOrderBy;
@@ -29,16 +47,15 @@ export const OrderByComponent: FunctionComponent<{
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const mediaTypeOrderByString: Partial<Record<MediaItemOrderBy, string>> = {
-    lastSeen: 'Last seen',
-    releaseDate: 'Release date',
-    status: 'Status',
-    title: 'Title',
-    ...(mediaType === 'tv'
-      ? { nextAiring: 'Next airing', unseenEpisodes: 'Unseen episodes count' }
+  const mediaTypeOrderByString = {
+    ...useMediaTypeOrderByNames(),
+    ...(mediaType !== 'tv'
+      ? {
+          nextAiring: undefined,
+          unseenEpisodes: undefined,
+        }
       : {}),
-
-    ...(mediaType === undefined ? { mediaType: 'Media type' } : {}),
+    ...(mediaType !== undefined ? { mediaType: undefined } : {}),
   };
 
   return (
@@ -57,8 +74,9 @@ export const OrderByComponent: FunctionComponent<{
         {mediaTypeOrderByString[orderBy]} ▼
         {showSortByMenu && (
           <ul className="absolute right-0 z-10 transition-all rounded shadow-lg shadow-black bg-zinc-100 dark:bg-gray-900">
-            {Object.entries(mediaTypeOrderByString).map(
-              ([value, text]: [MediaItemOrderBy, string]) => (
+            {Object.entries(mediaTypeOrderByString)
+              .filter(([value, text]) => Boolean(text))
+              .map(([value, text]: [MediaItemOrderBy, string]) => (
                 <li
                   key={value}
                   className="px-2 py-1 rounded hover:bg-red-700 whitespace-nowrap"
@@ -66,8 +84,7 @@ export const OrderByComponent: FunctionComponent<{
                 >
                   {text}
                 </li>
-              )
-            )}
+              ))}
           </ul>
         )}
       </div>

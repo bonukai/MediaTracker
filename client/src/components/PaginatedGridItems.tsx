@@ -9,6 +9,7 @@ import React, {
 
 import clsx from 'clsx';
 import { Link, useSearchParams } from 'react-router-dom';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { useSearch } from 'src/api/search';
 import { Items, MediaItemOrderBy, SortOrder } from 'mediatracker-api';
@@ -22,6 +23,7 @@ const Search: FunctionComponent<{
   const [params] = useSearchParams();
   const { onSearch } = props;
   const [textInputValue, setTextInputValue] = useState<string>('');
+  const { t } = useTranslation();
 
   useEffect(() => onSearch(params.get('search') || ''), [params, onSearch]);
 
@@ -40,7 +42,7 @@ const Search: FunctionComponent<{
       />
 
       <button className="px-4 ml-2 transition-shadow duration-100 hover:shadow hover:shadow-indigo-500/50">
-        Search
+        {t('Search')}
       </button>
     </form>
   );
@@ -82,6 +84,7 @@ export const PaginatedGridItems: FunctionComponent<{
   gridItemAppearance?: GridItemAppearanceArgs;
 }> = (props) => {
   const { args, showSortOrderControls, showSearch, gridItemAppearance } = props;
+  const { t } = useTranslation();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState<string>();
@@ -167,10 +170,14 @@ export const PaginatedGridItems: FunctionComponent<{
 
             {showSearch && !isLoading && !searchQuery && items.length === 0 ? (
               <div className="flex">
-                Search for items or &nbsp;
-                <Link to="/import" className="text-blue-500 underline">
-                  import
-                </Link>
+                <Trans
+                  i18nKey="Search for items or&nbsp;<1>import</1>"
+                  components={{
+                    1: (
+                      <Link to="/import" className="text-blue-500 underline" />
+                    ),
+                  }}
+                />
               </div>
             ) : (
               <>
@@ -178,16 +185,21 @@ export const PaginatedGridItems: FunctionComponent<{
                   <div className="flex">
                     <div>
                       {searchQuery ? (
-                        <>
-                          Found {searchResult?.length} items for query{' '}
-                          <span className="italic font-bold ">
-                            {'"'}
-                            {searchQuery}
-                            {'"'}
-                          </span>
-                        </>
+                        <Trans
+                          i18nKey='Found {{ count }} items for query <1>"{{ query }}"<1>'
+                          count={searchResult?.length}
+                          values={{ query: searchQuery }}
+                          components={{
+                            1: <strong></strong>,
+                          }}
+                        />
                       ) : (
-                        <>{numberOfItemsTotal} items</>
+                        <>
+                          {t('{{ count }} items', {
+                            count: numberOfItemsTotal,
+                            defaultValue_one: '1 item',
+                          })}
+                        </>
                       )}
                     </div>
                     {showSortOrderControls && !searchQuery && (
@@ -214,7 +226,7 @@ export const PaginatedGridItems: FunctionComponent<{
           </div>
           {isLoading ? (
             <div className="flex flex-col items-center w-full">
-              <div className="">Loading</div>
+              <div className="">{t('Loading')}</div>
             </div>
           ) : (
             <>
@@ -223,7 +235,12 @@ export const PaginatedGridItems: FunctionComponent<{
                   key={mediaItem.id}
                   mediaType={args.mediaType}
                   mediaItem={mediaItem}
-                  appearance={gridItemAppearance}
+                  appearance={{
+                    ...gridItemAppearance,
+                    showAddToWatchlistAndMarkAsSeenButtons: Boolean(
+                      searchQuery
+                    ),
+                  }}
                 />
               ))}
               <div className="footer">

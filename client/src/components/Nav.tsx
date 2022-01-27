@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 
 import { NavLink, useLocation } from 'react-router-dom';
 import { animated, Transition, Spring } from '@react-spring/web';
@@ -7,26 +8,32 @@ import { animated, Transition, Spring } from '@react-spring/web';
 import { useUser } from 'src/api/user';
 import { useDarkMode } from 'src/hooks/darkMode';
 
-const routes = [
-  { path: '/', name: 'Home' },
-  { path: '/tv', name: 'Tv' },
-  { path: '/movies', name: 'Movies' },
-  { path: '/games', name: 'Games' },
-  { path: '/books', name: 'Books' },
-  { path: '/audiobooks', name: 'Audiobooks' },
-  { path: '/upcoming', name: 'Upcoming' },
-  { path: '/continue-watching', name: 'Continue watching' },
-  { path: '/calendar', name: 'Calendar' },
-  { path: '/import', name: 'Import' },
-];
+export const useRouteNames = () => {
+  const { t } = useTranslation();
+
+  return [
+    { path: '/', name: t('Home') },
+    { path: '/tv', name: t('Tv') },
+    { path: '/movies', name: t('Movies') },
+    { path: '/games', name: t('Games') },
+    { path: '/books', name: t('Books') },
+    { path: '/audiobooks', name: t('Audiobooks') },
+    { path: '/upcoming', name: t('Upcoming') },
+    { path: '/continue-watching', name: t('Continue watching') },
+    { path: '/calendar', name: t('Calendar') },
+    { path: '/import', name: t('Import') },
+  ];
+};
 
 export const NavComponent: FunctionComponent = () => {
   const { user, logout } = useUser();
 
   const { darkMode, setDarkMode } = useDarkMode();
   const [showSidebar, setShowSidebar] = useState(false);
+  const { t } = useTranslation();
 
   const location = useLocation();
+  const routes = useRouteNames();
 
   return (
     <>
@@ -84,7 +91,7 @@ export const NavComponent: FunctionComponent = () => {
                   logout();
                 }}
               >
-                Logout
+                {t('Logout')}
               </a>
             </div>
 
@@ -122,6 +129,7 @@ const SideBar: FunctionComponent<{
   hideSidebar: () => void;
 }> = (props) => {
   const { showSidebar, hideSidebar } = props;
+  const routes = useRouteNames();
 
   return (
     <Transition

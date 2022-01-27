@@ -1,17 +1,25 @@
 import knexLib from 'knex';
+import { t } from 'i18next';
+
 import config, { migrationsDirectory } from './knexfile';
 
 export const runMigrations = async () => {
-    console.log('Running migrations');
+    console.log(t('Running migrations'));
 
     const [batchNo, log] = await knex.migrate.latest({
         directory: migrationsDirectory,
     });
 
     if (log.length === 0) {
-        console.log('Already up to date');
+        console.log(t('Already up to date'));
     } else {
-        console.log(`Batch ${batchNo} run: ${log.length} migrations`);
+        console.log(
+            t('Batch {{ name }} run: {{ count }} migrations', {
+                count: log.length,
+                name: batchNo,
+                defaultValue_one: 'Batch {{ name }} run: 1 migration',
+            })
+        );
         console.log(log.join('\n'));
     }
 };
