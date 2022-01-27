@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import clsx from 'clsx';
 
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { animated, Transition, Spring } from '@react-spring/web';
 
 import { useUser } from 'src/api/user';
@@ -25,6 +25,8 @@ export const NavComponent: FunctionComponent = () => {
 
   const { darkMode, setDarkMode } = useDarkMode();
   const [showSidebar, setShowSidebar] = useState(false);
+
+  const location = useLocation();
 
   return (
     <>
