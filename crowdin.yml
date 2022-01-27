@@ -1,7 +1,9 @@
-"project_id": "496753"
+"project_id" : "496753"
+"base_path" : "."
+"base_url" : "https://api.crowdin.com"
 "preserve_hierarchy": true
-"files": [
-  {
-    "translation": "client/src/i18n/locale/%two_letters_code%/%original_file_name%"
-  }
+files: [
+ {
+  "source" : "client/src/i18n/locale/*/*.json",
+ }
 ]
