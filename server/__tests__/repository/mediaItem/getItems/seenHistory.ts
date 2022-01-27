@@ -27,7 +27,7 @@ const user2: User = {
 const seenEpisodes: Seen[] = [
     {
         id: 1,
-        date: new Date().getTime(),
+        date: 1643313376841,
         mediaItemId: 1,
         userId: user.id,
         episodeId: 1,
@@ -35,7 +35,7 @@ const seenEpisodes: Seen[] = [
     },
     {
         id: 2,
-        date: new Date().getTime(),
+        date: 1643313376842,
         mediaItemId: 1,
         userId: user.id,
         episodeId: 2,
@@ -43,7 +43,7 @@ const seenEpisodes: Seen[] = [
     },
     {
         id: 3,
-        date: new Date().getTime(),
+        date: 1643313376843,
         mediaItemId: 1,
         userId: user.id,
         episodeId: 3,
@@ -51,7 +51,7 @@ const seenEpisodes: Seen[] = [
     },
     {
         id: 4,
-        date: new Date().getTime(),
+        date: 1643313376844,
         mediaItemId: 3,
         episodeId: null,
         userId: user.id,
@@ -59,7 +59,7 @@ const seenEpisodes: Seen[] = [
     },
     {
         id: 5,
-        date: new Date().getTime(),
+        date: 1643313376845,
         mediaItemId: 4,
         episodeId: 5,
         userId: user.id,
@@ -67,7 +67,7 @@ const seenEpisodes: Seen[] = [
     },
     {
         id: 6,
-        date: new Date().getTime(),
+        date: 1643313376846,
         mediaItemId: 5,
         episodeId: 7,
         userId: 2,
@@ -75,7 +75,7 @@ const seenEpisodes: Seen[] = [
     },
     {
         id: 7,
-        date: new Date().getTime(),
+        date: 1643313376847,
         mediaItemId: 5,
         episodeId: 8,
         userId: 2,
@@ -272,9 +272,9 @@ describe('seenHistory', () => {
                         userId: user.id,
                     });
 
-                    console.log(details.seenHistory)
-
-                    expect(details.seenHistory).toEqual(value);
+                    expect(details.seenHistory).toEqual(
+                        _.orderBy(value, (item) => item.date, 'desc')
+                    );
                 }
             )
         );
@@ -296,7 +296,9 @@ describe('seenHistory', () => {
                         userId: user2.id,
                     });
 
-                    expect(details.seenHistory).toEqual(value);
+                    expect(details.seenHistory).toEqual(
+                        _.orderBy(value, (item) => item.date, 'desc')
+                    );
                 }
             )
         );
