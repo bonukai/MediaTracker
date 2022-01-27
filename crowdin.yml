@@ -1,3 +1,4 @@
+preserve_hierarchy: false
 files:
   - source: /client/src/i18n/locale/en/translation.json
     translation: /client/src/i18n/locale/%locale%/translation.json
