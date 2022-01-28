@@ -32,7 +32,7 @@ class PrivateGlobalConfiguration {
             ...value,
         };
 
-        changeLanguage(value.serverLang);
+        changeLanguage(value?.serverLang);
     }
 
     public static get(): Configuration {
