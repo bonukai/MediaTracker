@@ -122,3 +122,7 @@ docker run -p 7481:7481 mediatracker
 -   [Pushbullet](https://www.pushbullet.com)
 -   [Pushover](https://pushover.net)
 -   [Pushsafer](https://www.pushsafer.com)
+
+# Contributors
+
+- [URBANsUNITED](https://github.com/URBANsUNITED) (German translation)
