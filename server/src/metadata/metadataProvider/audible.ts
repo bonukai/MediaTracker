@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { MediaItemForProvider, ExternalIds } from 'src/entity/mediaItem';
 import { metadataProvider } from 'src/metadata/metadataProvider';
-import { AUDIBLE_LANG } from 'src/config';
+import { GlobalConfiguration } from 'src/repository/globalSettings';
 
 export class Audible extends metadataProvider({
     name: 'audible',
@@ -15,6 +15,7 @@ export class Audible extends metadataProvider({
         FR: 'fr',
         IN: 'in',
         IT: 'it',
+        ES: 'es',
         JP: 'co.jp',
         UK: 'co.uk',
         GB: 'co.uk',
@@ -22,7 +23,7 @@ export class Audible extends metadataProvider({
     };
 
     private domain() {
-        const countryCode = AUDIBLE_LANG?.substring(0, 2)?.toUpperCase();
+        const countryCode = GlobalConfiguration().audibleLang?.toUpperCase();
 
         if (countryCode in this.languages) {
             return this.languages[countryCode];

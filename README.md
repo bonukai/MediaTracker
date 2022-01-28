@@ -74,7 +74,7 @@ volumes:
 | Name              | Description                                                                                          |
 | ----------------- | ---------------------------------------------------------------------------------------------------- |
 | TMDB_LANG         | [ISO 639-1 country code used by TMDB](https://developers.themoviedb.org/3/getting-started/languages) |
-| AUDIBLE_LANG      | ISO 639-1 country code used by audible, one of: au, ca, de, fr, in, it, jp, gb, us                   |
+| AUDIBLE_LANG      | ISO 639-1 country code used by audible, one of: au, ca, de, es, fr, in, it, jp, gb, us               |
 | DATABASE_CLIENT   | Database client: better-sqlite3 or pg                                                                |
 | DATABASE_PATH     | Only for sqlite, path to database                                                                    |
 | DATABASE_URL      | Connection string                                                                                    |

@@ -6,4 +6,6 @@ module.exports = {
     moduleNameMapper: {
         '^src/(.*)$': '<rootDir>/src/$1',
     },
+    maxConcurrency: 1,
+    maxWorkers: 1,    
 };

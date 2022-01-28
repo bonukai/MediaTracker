@@ -1,8 +1,10 @@
 import { init } from 'i18next';
-import { LANG } from 'src/config';
+import { GlobalConfiguration } from 'src/repository/globalSettings';
 
 import en from 'src/i18n/locale/en/translation.json';
 import de from 'src/i18n/locale/de/translation.json';
+
+
 
 const resources = <const>{
     en: { translation: en },
@@ -11,7 +13,7 @@ const resources = <const>{
 
 init({
     fallbackLng: 'en',
-    lng: LANG,
+    lng: GlobalConfiguration().serverLang,
     interpolation: {
         escapeValue: false,
     },

@@ -1,11 +1,12 @@
 {
     "name": "backend",
     "scripts": {
-        "test": "cross-env NODE_PATH=. jest",
+        "test": "cross-env NODE_PATH=. DATABASE_PATH=test.db jest",
         "build-server": "tsc -p tsconfig.build.json",
         "build-docs": "npm run build --prefix ../docs",
         "build-routes": "ts-node scripts/generateRoutes.ts && ts-node scripts/generateApi.ts && npm run build --prefix ../rest-api",
         "watch-routes": "nodemon --watch src --ignore src/generated --ext * --exec \"ts-node scripts/generateRoutes.ts && ts-node scripts/generateApi.ts\"",
+        "watch-test": "cross-env NODE_PATH=. DATABASE_PATH=test.db jest --watchAll",
         "build": "npm run build-routes && npm run build-server",
         "dev": "npx cross-env NODE_PATH=. nodemon src/index.ts",
         "start": "cross-env NODE_PATH=build NODE_ENV=production node build/src/index.js",

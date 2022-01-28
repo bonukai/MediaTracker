@@ -91,6 +91,18 @@
                   "enableRegistration": {
                     "type": "boolean",
                     "nullable": true
+                  },
+                  "tmdbLang": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "audibleLang": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "serverLang": {
+                    "type": "string",
+                    "nullable": true
                   }
                 }
               }
@@ -125,6 +137,18 @@
                       "properties": {
                         "enableRegistration": {
                           "type": "boolean"
+                        },
+                        "tmdbLang": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "audibleLang": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "serverLang": {
+                          "type": "string",
+                          "nullable": true
                         }
                       },
                       "required": [

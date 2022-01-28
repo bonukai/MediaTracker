@@ -112,7 +112,12 @@ router.patch(
     requestBodySchema: {
       $schema: 'http://json-schema.org/draft-07/schema#',
       type: 'object',
-      properties: { enableRegistration: { type: ['boolean', 'null'] } },
+      properties: {
+        enableRegistration: { type: ['boolean', 'null'] },
+        tmdbLang: { type: ['string', 'null'] },
+        audibleLang: { type: ['string', 'null'] },
+        serverLang: { type: ['string', 'null'] },
+      },
     },
   }),
   _ConfigurationController.update

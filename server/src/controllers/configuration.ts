@@ -37,6 +37,7 @@ export class ConfigurationController {
     }>(async (req, res) => {
         const configuration = await configurationRepository.findOne();
         const numberOfUsers = await userRepository.count();
+        
         res.send({
             ..._.omit(configuration, 'id'),
             noUsers: numberOfUsers === 0,

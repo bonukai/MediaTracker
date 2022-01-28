@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import { MediaItemForProvider, ExternalIds } from 'src/entity/mediaItem';
 import { metadataProvider } from 'src/metadata/metadataProvider';
-import { TMDB_LANG } from 'src/config';
+import { GlobalConfiguration } from 'src/repository/globalSettings';
 
 const TMDB_API_KEY = '779734046efc1e6127485c54d3b29627';
 
@@ -58,7 +58,7 @@ export class TMDbMovie extends metadataProvider({
                 params: {
                     api_key: TMDB_API_KEY,
                     query: query,
-                    language: TMDB_LANG,
+                    language: GlobalConfiguration().tmdbLang,
                 },
             }
         );
@@ -74,7 +74,7 @@ export class TMDbMovie extends metadataProvider({
             {
                 params: {
                     api_key: TMDB_API_KEY,
-                    language: TMDB_LANG,
+                    language: GlobalConfiguration().tmdbLang,
                 },
             }
         );
@@ -92,7 +92,7 @@ export class TMDbMovie extends metadataProvider({
                 params: {
                     api_key: TMDB_API_KEY,
                     external_source: 'imdb_id',
-                    language: TMDB_LANG,
+                    language: GlobalConfiguration().tmdbLang,
                 },
             }
         );
@@ -138,7 +138,7 @@ export class TMDbTv extends metadataProvider({
                 params: {
                     api_key: TMDB_API_KEY,
                     query: query,
-                    language: TMDB_LANG,
+                    language: GlobalConfiguration().tmdbLang,
                 },
             }
         );
@@ -156,7 +156,7 @@ export class TMDbTv extends metadataProvider({
                 params: {
                     api_key: TMDB_API_KEY,
                     append_to_response: 'external_ids',
-                    language: TMDB_LANG,
+                    language: GlobalConfiguration().tmdbLang,
                 },
             }
         );
@@ -170,7 +170,7 @@ export class TMDbTv extends metadataProvider({
                     {
                         params: {
                             api_key: TMDB_API_KEY,
-                            language: TMDB_LANG,
+                            language: GlobalConfiguration().tmdbLang,
                         },
                     }
                 );
@@ -194,7 +194,7 @@ export class TMDbTv extends metadataProvider({
                 params: {
                     api_key: TMDB_API_KEY,
                     external_source: 'imdb_id',
-                    language: TMDB_LANG,
+                    language: GlobalConfiguration().tmdbLang,
                 },
             }
         );

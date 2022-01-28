@@ -37,6 +37,16 @@ import 'src/i18n/i18n';
 
     await runMigrations();
 
+    const configuration = await configurationRepository.findOne();
+
+    if (!configuration) {
+        await configurationRepository.create({
+            enableRegistration: true,
+            serverLang: 'en',
+            audibleLang: 'US',
+        });
+    }
+
     if (DEMO) {
         const demoUser = await userRepository.findOne({ name: 'demo' });
 
@@ -48,11 +58,8 @@ import 'src/i18n/i18n';
             });
         }
 
-        await configurationRepository.updateOrCreate({
-            where: {},
-            value: {
-                enableRegistration: false,
-            },
+        await configurationRepository.update({
+            enableRegistration: false,
         });
 
         console.log(chalk.green.bold(t('DEMO mode enabled')));
@@ -88,14 +95,6 @@ import 'src/i18n/i18n';
         };
 
         await sessionKeyRepository.create(sessionKey);
-    }
-
-    const configuration = await configurationRepository.findOne();
-
-    if (!configuration) {
-        await configurationRepository.create({
-            enableRegistration: true,
-        });
     }
 
     app.use(
