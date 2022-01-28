@@ -42,8 +42,16 @@ import 'src/i18n/i18n';
     if (!configuration) {
         await configurationRepository.create({
             enableRegistration: true,
-            serverLang: 'en',
-            audibleLang: 'US',
+            serverLang: process.env.SERVER_LANG || 'en',
+            tmdbLang: process.env.TMDB_LANG || 'us',
+            audibleLang: process.env.AUDIBLE_LANG || 'US',
+        });
+    } else {
+        await configurationRepository.update({
+            ...configuration,
+            serverLang: process.env.SERVER_LANG || configuration.serverLang,
+            tmdbLang: process.env.TMDB_LANG || configuration.tmdbLang,
+            audibleLang: process.env.AUDIBLE_LANG || configuration.audibleLang,
         });
     }
 
@@ -117,6 +125,11 @@ import 'src/i18n/i18n';
     app.use(passport.initialize());
     app.use(passport.session());
 
+    app.use((req, res, next) => {
+        console.log(req.method, req.path, req.body);
+        next();
+    });
+
     app.use(AccessTokenMiddleware.authorize);
 
     app.get(/\.(?:js|css)$/, (req, res, next) => {
@@ -158,6 +171,8 @@ import 'src/i18n/i18n';
                 '/api/user/login',
                 '/api/user/register',
                 '/api/configuration',
+                '/oauth/device/code',
+                '/oauth/device/token',
             ].includes(req.path)
         ) {
             next();
