@@ -58,7 +58,7 @@ export class TMDbMovie extends metadataProvider({
                 params: {
                     api_key: TMDB_API_KEY,
                     query: query,
-                    language: GlobalConfiguration().tmdbLang,
+                    language: GlobalConfiguration.configuration.tmdbLang,
                 },
             }
         );
@@ -74,7 +74,7 @@ export class TMDbMovie extends metadataProvider({
             {
                 params: {
                     api_key: TMDB_API_KEY,
-                    language: GlobalConfiguration().tmdbLang,
+                    language: GlobalConfiguration.configuration.tmdbLang,
                 },
             }
         );
@@ -92,7 +92,7 @@ export class TMDbMovie extends metadataProvider({
                 params: {
                     api_key: TMDB_API_KEY,
                     external_source: 'imdb_id',
-                    language: GlobalConfiguration().tmdbLang,
+                    language: GlobalConfiguration.configuration.tmdbLang,
                 },
             }
         );
@@ -138,7 +138,7 @@ export class TMDbTv extends metadataProvider({
                 params: {
                     api_key: TMDB_API_KEY,
                     query: query,
-                    language: GlobalConfiguration().tmdbLang,
+                    language: GlobalConfiguration.configuration.tmdbLang,
                 },
             }
         );
@@ -156,7 +156,7 @@ export class TMDbTv extends metadataProvider({
                 params: {
                     api_key: TMDB_API_KEY,
                     append_to_response: 'external_ids',
-                    language: GlobalConfiguration().tmdbLang,
+                    language: GlobalConfiguration.configuration.tmdbLang,
                 },
             }
         );
@@ -170,7 +170,8 @@ export class TMDbTv extends metadataProvider({
                     {
                         params: {
                             api_key: TMDB_API_KEY,
-                            language: GlobalConfiguration().tmdbLang,
+                            language:
+                                GlobalConfiguration.configuration.tmdbLang,
                         },
                     }
                 );
@@ -194,7 +195,7 @@ export class TMDbTv extends metadataProvider({
                 params: {
                     api_key: TMDB_API_KEY,
                     external_source: 'imdb_id',
-                    language: GlobalConfiguration().tmdbLang,
+                    language: GlobalConfiguration.configuration.tmdbLang,
                 },
             }
         );
@@ -517,3 +518,22 @@ namespace TMDbApi {
         tv_results: TvSearchResponse[];
     }
 }
+
+// (async () => {
+//     const res = await axios.get('https://api.themoviedb.org/3/tv/changes', {
+//         params: {
+//             api_key: TMDB_API_KEY,
+//             start_date: subDays(new Date(), 14),
+//         },
+//     });
+
+//     console.log(res.data);
+
+//     const ids = res.data.results.map((item: { id: number }) => item.id);
+
+//     console.log(ids);
+
+//     const res2 = await knex('mediaItem').whereIn('tmdbId', ids);
+
+//     console.log(res2);
+// })();

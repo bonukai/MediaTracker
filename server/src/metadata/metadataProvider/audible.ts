@@ -23,7 +23,7 @@ export class Audible extends metadataProvider({
     };
 
     private domain() {
-        const countryCode = GlobalConfiguration().audibleLang?.toUpperCase();
+        const countryCode = GlobalConfiguration.configuration.audibleLang?.toUpperCase();
 
         if (countryCode in this.languages) {
             return this.languages[countryCode];
