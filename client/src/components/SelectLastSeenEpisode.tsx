@@ -47,6 +47,12 @@ export const SelectLastSeenEpisode: FunctionComponent<{
     );
   }, [tvShow, season]);
 
+  useEffect(() => {
+    if (selectedSeason && !selectedEpisode) {
+      setSelectedEpisodeId(selectedSeason.episodes?.at(0)?.id);
+    }
+  }, [selectedSeason, selectedEpisode]);
+
   return (
     <div className="p-3 rounded ">
       {isLoading ? (
