@@ -61,9 +61,6 @@ const PosterCss: FunctionComponent<{
   return (
     <>
       <div
-        onLoad={() => {
-          console.log('aa');
-        }}
         className={clsx(
           'flex items-end w-full',
           tailwindcssAspectRatioForMediaType(mediaType)
