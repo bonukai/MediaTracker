@@ -83,9 +83,7 @@ export const GridItem: FunctionComponent<{
                         }
                       }}
                     >
-                      <span className="flex material-icons ">
-                        {t('bookmark')}
-                      </span>
+                      <span className="flex material-icons">bookmark</span>
                     </Item>
                   )}
                 </div>
