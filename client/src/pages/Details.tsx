@@ -298,6 +298,7 @@ export const DetailsPage: FunctionComponent = () => {
                   count: mediaItem.authors.length,
                   defaultValue_one: 'Author',
                 })}
+                :{' '}
               </span>
               {mediaItem.authors.join(', ')}
             </div>
