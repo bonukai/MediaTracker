@@ -104,7 +104,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
                     .select('tvShowId')
                     .count('*', { as: 'numberOfEpisodes' })
                     .from<TvEpisode>('episode')
-                    .whereNot('isSpecialEpisode', 1)
+                    .whereNot('isSpecialEpisode', true)
                     .andWhereNot('releaseDate', '')
                     .andWhereNot('releaseDate', null)
                     .andWhere('releaseDate', '<=', currentDateString)
@@ -131,7 +131,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
                     .min('episodeNumber', {
                         as: 'upcomingEpisodeEpisodeNumber',
                     })
-                    .whereNot('isSpecialEpisode', 1)
+                    .whereNot('isSpecialEpisode', true)
                     .where('releaseDate', '>=', currentDateString)
                     .groupBy('tvShowId')
                     .as('upcomingEpisodeHelper'),
@@ -163,7 +163,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
                     })
                     .count('*', { as: 'unseenEpisodesCount' })
                     .leftJoin<Seen>('seen', 'seen.episodeId', 'episode.id')
-                    .whereNot('episode.isSpecialEpisode', 1)
+                    .whereNot('episode.isSpecialEpisode', true)
                     .andWhereNot('episode.releaseDate', '')
                     .andWhereNot('episode.releaseDate', null)
                     .andWhere('episode.releaseDate', '<=', currentDateString)
