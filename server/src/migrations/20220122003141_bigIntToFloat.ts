@@ -27,8 +27,8 @@ export async function up(knex: Knex): Promise<void> {
             table.dropForeign('tvShowId');
         })
         .alterTable('mediaItem', (table) => {
-            table.float('lastTimeUpdated').alter();
-            table.float('lockedAt').alter();
+            table.float('lastTimeUpdated').alter({ alterType: true });
+            table.float('lockedAt').alter({ alterType: true });
         })
         .alterTable('season', (table) => {
             table.foreign('tvShowId').references('id').inTable('mediaItem');
@@ -55,16 +55,16 @@ export async function up(knex: Knex): Promise<void> {
             table.foreign('episodeId').references('id').inTable('episode');
         })
         .alterTable('seen', (table) => {
-            table.float('date').alter();
+            table.float('date').alter({ alterType: true });
         })
         .alterTable('userRating', (table) => {
-            table.float('date').alter();
+            table.float('date').alter({ alterType: true });
         })
         .alterTable('notificationsHistory', (table) => {
-            table.float('sendDate').alter();
+            table.float('sendDate').alter({ alterType: true });
         })
         .alterTable('sessionKey', (table) => {
-            table.float('createdAt').alter();
+            table.float('createdAt').alter({ alterType: true });
         });
 }
 
@@ -95,8 +95,8 @@ export async function down(knex: Knex): Promise<void> {
             table.dropForeign('tvShowId');
         })
         .alterTable('mediaItem', (table) => {
-            table.bigInteger('lastTimeUpdated').alter();
-            table.bigInteger('lockedAt').alter();
+            table.bigInteger('lastTimeUpdated').alter({ alterType: true });
+            table.bigInteger('lockedAt').alter({ alterType: true });
         })
         .alterTable('season', (table) => {
             table.foreign('tvShowId').references('id').inTable('mediaItem');
@@ -123,16 +123,15 @@ export async function down(knex: Knex): Promise<void> {
             table.foreign('episodeId').references('id').inTable('episode');
         })
         .alterTable('seen', (table) => {
-            table.bigInteger('date').alter();
+            table.bigInteger('date').alter({ alterType: true });
         })
         .alterTable('userRating', (table) => {
-            table.bigInteger('date').alter();
+            table.bigInteger('date').alter({ alterType: true });
         })
         .alterTable('notificationsHistory', (table) => {
-            table.bigInteger('sendDate').alter();
+            table.bigInteger('sendDate').alter({ alterType: true });
         })
         .alterTable('sessionKey', (table) => {
-            table.bigInteger('createdAt').alter();
+            table.bigInteger('createdAt').alter({ alterType: true });
         });
 }
-// a
