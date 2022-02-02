@@ -1,0 +1,8 @@
+{
+    "{count, plural, one {Updated 1 item} other {Updated # items}}": {
+        "one": "przedmiot",
+        "few": "przedmioty",
+        "many": "przedmiotów",
+        "other": "przedmioty"
+    }
+}

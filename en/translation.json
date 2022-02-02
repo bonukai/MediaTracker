@@ -1,0 +1,33 @@
+{
+    "Already up to date": "Already up to date",
+    "Batch {name} run: {count, plural, one {# migration} other {# migrations}}": "Batch {name} run: {count, plural, one {# migration} other {# migrations}}",
+    "Changing server language to {lng}": "Changing server language to {lng}",
+    "DEMO mode enabled": "DEMO mode enabled",
+    "Error sending notifications: {error}": "Error sending notifications: {error}",
+    "Everything up to date": "Everything up to date",
+    "MediaTracker listening at {address}": "MediaTracker listening at {address}",
+    "Running migrations": "Running migrations",
+    "Updating metadata": "Updating metadata",
+    "Updating: {title} (last updated at: {date}": "Updating: {title} (last updated at: {date}",
+    "{count, plural, one {# episode for **{title}** has been released} other {# episodes for **{title}** has been released}}": {
+        "one": "# episode for **{title}** has been released",
+        "other": "# episodes for **{title}** has been released"
+    },
+    "{count, plural, one {Failed to update 1 item} other {Failed to update # items}}": {
+        "one": "Failed to update 1 item",
+        "other": "Failed to update # items"
+    },
+    "{count, plural, one {Sending notification for new episodes of {title} to # user} other {Sending notification for new episodes of {title} to # users}}": {
+        "one": "Sending notification for new episodes of {title} to # user",
+        "other": "Sending notification for new episodes of {title} to # users"
+    },
+    "{count, plural, one {Sending notification for {title} to # user} other {Sending notification for {title} to # users}}": {
+        "one": "Sending notification for {title} to # user",
+        "other": "Sending notification for {title} to # users"
+    },
+    "{count, plural, one {Updated 1 item} other {Updated # items}}": {
+        "one": "Updated 1 item",
+        "other": "Updated # items"
+    },
+    "{title} has been released": "{title} has been released"
+}
