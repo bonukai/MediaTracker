@@ -1,0 +1,19 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: lokalise.com\n"
+"Project-Id-Version: MediaTracker\n"
+"PO-Revision-Date: 2022-02-02 18:32\n"
+"Last-Translator: lokalise.com\n"
+"Language-Team: lokalise.com\n\n"
+"Language: de\n"
+
+#: src/pages/Details.tsx:464
+#: src/pages/Episodes.tsx:72
+#: src/pages/SeenHistory.tsx:34
+msgid "{count, plural, one {Seen 1 time} other {Seen # times}}"
+msgid_plural "{count, plural, one {Seen 1 time} other {Seen # times}}"
+msgstr[0] "asas"
+msgstr[1] "sasasasas"

@@ -1,0 +1,607 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2022-02-02 00:11+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/pages/settings/MetadataProviderCredentials.tsx:15
+msgid "API keys cen be acquired here"
+msgstr "API keys cen be acquired here"
+
+#: src/pages/settings/Notifications.tsx:96
+msgid "Access Token"
+msgstr "Access Token"
+
+msgid "Add season to seen history"
+msgstr "Add season to seen history"
+
+msgid "Add to seen history"
+msgstr "Add to seen history"
+
+msgid "Add to watchlist"
+msgstr "Add to watchlist"
+
+#: src/pages/settings/ApplicationTokens.tsx:29
+msgid "Add token"
+msgstr "Add token"
+
+#: src/dbconfig.ts:14
+msgid "Already up to date"
+msgstr "Already up to date"
+
+#: src/pages/settings/Notifications.tsx:59
+msgid "App token"
+msgstr "App token"
+
+msgid "Application tokens"
+msgstr "Application tokens"
+
+msgid "At release date"
+msgstr "At release date"
+
+#: src/pages/settings/Configuration.tsx:38
+msgid "Audible language"
+msgstr "Audible language"
+
+msgid "Audiobook"
+msgstr "Audiobook"
+
+msgid "Audiobooks"
+msgstr "Audiobooks"
+
+msgid "Authors_one"
+msgstr "Author"
+
+msgid "Authors_other"
+msgstr "Authors"
+
+#: src/dbconfig.ts:20
+msgid "Batch {name} run: {count, plural, one {# migration} other {# migrations}}"
+msgstr "Batch {name} run: {count, plural, one {# migration} other {# migrations}}"
+
+msgid "Book"
+msgstr "Book"
+
+msgid "Books"
+msgstr "Books"
+
+msgid "Calendar"
+msgstr "Calendar"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src/pages/settings/Password.tsx:74
+msgid "Change password"
+msgstr "Change password"
+
+#: src/pages/settings/MetadataProviderCredentials.tsx:18
+msgid "Client ID"
+msgstr "Client ID"
+
+#: src/pages/settings/MetadataProviderCredentials.tsx:22
+msgid "Client Secret"
+msgstr "Client Secret"
+
+msgid "Configuration"
+msgstr "Configuration"
+
+#: src/pages/settings/Password.tsx:40
+msgid "Confirm new password"
+msgstr "Confirm new password"
+
+msgid "Confirm password"
+msgstr "Confirm password"
+
+msgid "Continue watching"
+msgstr "Continue watching"
+
+#: src/pages/settings/Password.tsx:21
+msgid "Current password"
+msgstr "Current password"
+
+#: src/pages/settings/Password.tsx:69
+msgid "Current password is incorrect"
+msgstr "Current password is incorrect"
+
+msgid "Custom date"
+msgstr "Custom date"
+
+#: src/index.ts:75
+msgid "DEMO mode enabled"
+msgstr "DEMO mode enabled"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Do you wont to remove all {{ count }} seen history entries?_one"
+msgstr "Do you wont to remove {{ count }} seen history entry?"
+
+msgid "Do you wont to remove all {{ count }} seen history entries?_other"
+msgstr "Do you wont to remove all {{ count }} seen history entries?"
+
+#: src/pages/Episodes.tsx:113
+msgid "Do you wont to remove episode {0} from seen history?"
+msgstr "Do you wont to remove episode {0} from seen history?"
+
+msgid "Do you wont to remove episode {{ episode }} from seen history?"
+msgstr "Do you wont to remove episode {{ episode }} from seen history?"
+
+#: src/pages/settings/Configuration.tsx:18
+msgid "Enable registration"
+msgstr "Enable registration"
+
+msgid "Episode"
+msgstr "Episode"
+
+#: src/pages/SeenHistory.tsx:57
+msgid "Episode {0} {1}"
+msgstr "Episode {0} {1}"
+
+msgid "Episode {{ episodeNumber }} {{ episodeTitle }}"
+msgstr "Episode {{ episodeNumber }} {{ episodeTitle }}"
+
+msgid "Episodes"
+msgstr "Episodes"
+
+msgid "Episodes page"
+msgstr "Episodes page"
+
+#: src/sendNotifications.ts:217
+msgid "Error sending notifications: {error}"
+msgstr "Error sending notifications: {error}"
+
+#: src/updateMetadata.ts:400
+msgid "Everything up to date"
+msgstr "Everything up to date"
+
+msgid "First unwatched episode"
+msgstr "First unwatched episode"
+
+msgid "Found {{ count }} items for query <1>\"{{ query }}\"<1>_one"
+msgstr "Found {{ count }} item for query <1>\"{{ query }}\"<1>"
+
+msgid "Found {{ count }} items for query <1>\"{{ query }}\"<1>_other"
+msgstr "Found {{ count }} items for query <1>\"{{ query }}\"<1>"
+
+msgid "Games"
+msgstr "Games"
+
+#: src/pages/settings/Configuration.tsx:16
+msgid "General"
+msgstr "General"
+
+msgid "Genres_one"
+msgstr "Genre"
+
+msgid "Genres_other"
+msgstr "Genres"
+
+#: src/pages/settings/Notifications.tsx:92
+msgid "Gotify server url"
+msgstr "Gotify server url"
+
+msgid "Home"
+msgstr "Home"
+
+msgid "I do not remember"
+msgstr "I do not remember"
+
+msgid "Import"
+msgstr "Import"
+
+msgid "Import from"
+msgstr "Import from"
+
+msgid "Incorrect password or username"
+msgstr "Incorrect password or username"
+
+#: src/pages/settings/Notifications.tsx:82
+msgid "Key"
+msgstr "Key"
+
+msgid "Language"
+msgstr "Language"
+
+msgid "Last seen"
+msgstr "Last seen"
+
+#: src/pages/Details.tsx:455
+msgid "Last seen at {0}"
+msgstr "Last seen at {0}"
+
+msgid "Last seen at {{ date }}"
+msgstr "Last seen at {{ date }}"
+
+msgid "Loading"
+msgstr "Loading"
+
+msgid "Login"
+msgstr "Login"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "Mark as seen"
+msgstr "Mark as seen"
+
+msgid "Media type"
+msgstr "Media type"
+
+#: src/index.ts:190
+msgid "MediaTracker listening at {address}"
+msgstr "MediaTracker listening at {address}"
+
+msgid "Metadata providers credentials"
+msgstr "Metadata providers credentials"
+
+msgid "Movie"
+msgstr "Movie"
+
+msgid "Movies"
+msgstr "Movies"
+
+msgid "Narrators_one"
+msgstr "Narrator"
+
+msgid "Narrators_other"
+msgstr "Narrators"
+
+msgid "Network"
+msgstr "Network"
+
+#: src/pages/settings/Password.tsx:31
+msgid "New password"
+msgstr "New password"
+
+msgid "Next airing"
+msgstr "Next airing"
+
+msgid "Next episode"
+msgstr "Next episode"
+
+msgid "Next episode to watch"
+msgstr "Next episode to watch"
+
+msgid "No date"
+msgstr "No date"
+
+msgid "Notifications"
+msgstr "Notifications"
+
+msgid "Now"
+msgstr "Now"
+
+msgid "Overview"
+msgstr "Overview"
+
+msgid "Password"
+msgstr "Password"
+
+#: src/pages/settings/Password.tsx:65
+msgid "Password has been changed"
+msgstr "Password has been changed"
+
+#: src/pages/settings/Password.tsx:54
+msgid "Passwords do not match"
+msgstr "Passwords do not match"
+
+msgid "Platform"
+msgstr "Platform"
+
+msgid "Preferences"
+msgstr "Preferences"
+
+#: src/pages/settings/Notifications.tsx:100
+#: src/pages/settings/Notifications.tsx:119
+msgid "Priority"
+msgstr "Priority"
+
+#: src/pages/settings/Preferences.tsx:11
+msgid "Public reviews"
+msgstr "Public reviews"
+
+#: src/pages/settings/Notifications.tsx:38
+msgid "Receive notification for all media items on your watchlist, when it's release date changes"
+msgstr "Receive notification for all media items on your watchlist, when it's release date changes"
+
+#: src/pages/settings/Notifications.tsx:30
+msgid "Receive notification for all media items on your watchlist, when it's status changes"
+msgstr "Receive notification for all media items on your watchlist, when it's status changes"
+
+#: src/pages/settings/Notifications.tsx:16
+msgid "Receive notification for all media items on your watchlist, when they are released, including new seasons for tv shows"
+msgstr "Receive notification for all media items on your watchlist, when they are released, including new seasons for tv shows"
+
+#: src/pages/settings/Notifications.tsx:46
+msgid "Receive notification for all tv shows on your watchlist, when it's number of seasons changes"
+msgstr "Receive notification for all tv shows on your watchlist, when it's number of seasons changes"
+
+#: src/pages/settings/Notifications.tsx:22
+msgid "Receive notification for every episode for all tv shows on your watchlist, when it's released"
+msgstr "Receive notification for every episode for all tv shows on your watchlist, when it's released"
+
+msgid "Register"
+msgstr "Register"
+
+msgid "Release date"
+msgstr "Release date"
+
+#: src/components/GridItem.tsx:172
+msgid "Release {0}"
+msgstr "Release {0}"
+
+msgid "Release {{ relativeTime }}"
+msgstr "Release {{ relativeTime }}"
+
+#: src/components/GridItem.tsx:76
+msgid "Remove \"{0}\" from watchlist?"
+msgstr "Remove \"{0}\" from watchlist?"
+
+msgid "Remove \"{{ title }}\" from watchlist?"
+msgstr "Remove \"{{ title }}\" from watchlist?"
+
+msgid "Remove from seen history"
+msgstr "Remove from seen history"
+
+msgid "Remove from watchlist"
+msgstr "Remove from watchlist"
+
+#: src/pages/settings/ApplicationTokens.tsx:47
+msgid "Remove token"
+msgstr "Remove token"
+
+#: src/pages/Details.tsx:48
+msgid "Review by <0><1>{author}</1></0> at {date}"
+msgstr "Review by <0><1>{author}</1></0> at {date}"
+
+msgid "Review by <i><strong>{{ author }}</strong></i> at {{ date }}"
+msgstr "Review by <i><strong>{{ author }}</strong></i> at {{ date }}"
+
+#: src/dbconfig.ts:7
+msgid "Running migrations"
+msgstr "Running migrations"
+
+msgid "Runtime"
+msgstr "Runtime"
+
+#: src/pages/settings/MetadataProviderCredentials.tsx:79
+#: src/pages/settings/Notifications.tsx:217
+msgid "Save"
+msgstr "Save"
+
+msgid "Save review"
+msgstr "Save review"
+
+msgid "Search"
+msgstr "Search"
+
+msgid "Search for items or&nbsp;<1>import</1>"
+msgstr "Search for items or&nbsp;<1>import</1>"
+
+#: src/components/PaginatedGridItems.tsx:171
+msgid "Search for items or <0>import</0>"
+msgstr "Search for items or <0>import</0>"
+
+msgid "Season"
+msgstr "Season"
+
+#: src/pages/Episodes.tsx:170
+msgid "Season {0}"
+msgstr "Season {0}"
+
+msgid "Season {{ count }}_one"
+msgstr "Season {{ count }}"
+
+msgid "Season {{ count }}_other"
+msgstr "Season {{ count }}"
+
+msgid "Seasons"
+msgstr "Seasons"
+
+#: src/pages/SeenHistory.tsx:47
+msgid "Seen at {0}"
+msgstr "Seen at {0}"
+
+msgid "Seen at {{ date }}"
+msgstr "Seen at {{ date }}"
+
+msgid "Seen history"
+msgstr "Seen history"
+
+msgid "Seen {{ count }} times_one"
+msgstr "Seen 1 time"
+
+msgid "Seen {{ count }} times_other"
+msgstr "Seen {{ count }} times"
+
+msgid "Select"
+msgstr "Select"
+
+#: src/pages/settings/Notifications.tsx:21
+msgid "Send notification for episodes releases"
+msgstr "Send notification for episodes releases"
+
+#: src/pages/settings/Notifications.tsx:15
+msgid "Send notification for releases"
+msgstr "Send notification for releases"
+
+#: src/pages/settings/Notifications.tsx:45
+msgid "Send notification when number of seasons changes"
+msgstr "Send notification when number of seasons changes"
+
+#: src/pages/settings/Notifications.tsx:37
+msgid "Send notification when release date changes"
+msgstr "Send notification when release date changes"
+
+#: src/pages/settings/Notifications.tsx:29
+msgid "Send notification when status changes"
+msgstr "Send notification when status changes"
+
+msgid "Server error"
+msgstr "Server error"
+
+#: src/App.tsx:81
+msgid "Server error: {errorMessage}"
+msgstr "Server error: {errorMessage}"
+
+#: src/pages/settings/Configuration.tsx:26
+msgid "Server language"
+msgstr "Server language"
+
+#: src/pages/settings/Notifications.tsx:128
+msgid "Server url (only for self hosting)"
+msgstr "Server url (only for self hosting)"
+
+msgid "Settings"
+msgstr "Settings"
+
+#: src/pages/settings/Preferences.tsx:12
+msgid "Show your reviews to other users"
+msgstr "Show your reviews to other users"
+
+msgid "Source"
+msgstr "Source"
+
+msgid "Status"
+msgstr "Status"
+
+#: src/pages/settings/Configuration.tsx:58
+msgid "TMDB language"
+msgstr "TMDB language"
+
+msgid "This component can only be used with tv shows"
+msgstr "This component can only be used with tv shows"
+
+msgid "Title"
+msgstr "Title"
+
+#: src/pages/settings/Notifications.tsx:115
+msgid "Topic"
+msgstr "Topic"
+
+msgid "Tv"
+msgstr "Tv"
+
+msgid "Unrated"
+msgstr "Unrated"
+
+msgid "Unseen episodes count"
+msgstr "Unseen episodes count"
+
+msgid "Upcoming"
+msgstr "Upcoming"
+
+#: src/updateMetadata.ts:370
+msgid "Updating metadata"
+msgstr "Updating metadata"
+
+#: src/updateMetadata.ts:388
+msgid "Updating: {title} (last updated at: {date}"
+msgstr "Updating: {title} (last updated at: {date}"
+
+#: src/pages/settings/Notifications.tsx:71
+msgid "User key"
+msgstr "User key"
+
+msgid "Username"
+msgstr "Username"
+
+msgid "Video game"
+msgstr "Video game"
+
+msgid "What is the last episode you see?"
+msgstr "What is the last episode you see?"
+
+msgid "When did you see it?"
+msgstr "When did you see it?"
+
+msgid "bookmark"
+msgstr "bookmark"
+
+#: src/components/PaginatedGridItems.tsx:184
+msgid "{0, plural, one { Found # item for query \"<0>{searchQuery}</0>\"} other { Found # items for query \"<1>{searchQuery}</1>\"}}"
+msgstr "{\"one\":\" Found # item for query \\\"<0>{searchQuery}<\\/0>\\\"\",\"other\":\" Found # items for query \\\"<1>{searchQuery}<\\/1>\\\"\"}"
+
+#: src/pages/Details.tsx:316
+msgid "{0, plural, one {Author} other {Authors}}"
+msgstr "{\"one\":\"Author\",\"other\":\"Authors\"}"
+
+#: src/pages/Details.tsx:276
+msgid "{0, plural, one {Genre} other {Genres}}"
+msgstr "{\"one\":\"Genre\",\"other\":\"Genres\"}"
+
+#: src/pages/Details.tsx:330
+msgid "{0, plural, one {Narrator} other {Narrators}}"
+msgstr "{\"one\":\"Narrator\",\"other\":\"Narrators\"}"
+
+#: src/pages/Details.tsx:358
+msgid "{0, plural, other {unseen}}"
+msgid_plural "{0, plural, other {unseen}}"
+msgstr[0] ""
+msgstr[1] "{\"other\":\"unseen\"}"
+
+#: src/sendNotifications.ts:134
+msgid "{count, plural, one {# episode for **{title}** has been released} other {# episodes for **{title}** has been released}}"
+msgstr "{count, plural, one {# episode for **{title}** has been released} other {# episodes for **{title}** has been released}}"
+
+#: src/pages/Details.tsx:91
+msgid "{count, plural, one {Do you wont to remove # seen history entry?} other {Do you wont to remove all # seen history entries?}}"
+msgid_plural "{count, plural, one {Do you wont to remove # seen history entry?} other {Do you wont to remove all # seen history entries?}}"
+msgstr[0] "Do you wont to remove # seen history entry?"
+msgstr[1] "Do you wont to remove all # seen history entries?"
+
+#: src/updateMetadata.ts:418
+msgid "{count, plural, one {Failed to update 1 item} other {Failed to update # items}}"
+msgstr "{count, plural, one {Failed to update 1 item} other {Failed to update # items}}"
+
+#: src/pages/Details.tsx:464
+#: src/pages/Episodes.tsx:72
+#: src/pages/SeenHistory.tsx:34
+msgid "{count, plural, one {Seen 1 time} other {Seen # times}}"
+msgid_plural "{count, plural, one {Seen 1 time} other {Seen # times}}"
+msgstr[0] ""
+msgstr[1] "{\"one\":\"Seen 1 time\",\"other\":\"Seen # times\"}"
+
+#: src/sendNotifications.ts:125
+msgid "{count, plural, one {Sending notification for new episodes of {title} to # user} other {Sending notification for new episodes of {title} to # users}}"
+msgstr "{count, plural, one {Sending notification for new episodes of {title} to # user} other {Sending notification for new episodes of {title} to # users}}"
+
+#: src/sendNotifications.ts:161
+msgid "{count, plural, one {Sending notification for {title} to # user} other {Sending notification for {title} to # users}}"
+msgstr "{count, plural, one {Sending notification for {title} to # user} other {Sending notification for {title} to # users}}"
+
+#: src/updateMetadata.ts:406
+msgid "{count, plural, one {Updated 1 item} other {Updated # items}}"
+msgstr "{count, plural, one {Updated 1 item} other {Updated # items}}"
+
+#: src/components/PaginatedGridItems.tsx:200
+msgid "{numberOfItemsTotal, plural, one {1 item} other {# items}}"
+msgid_plural "numberOfItemsTotal"
+msgstr[0] "1 item"
+msgstr[1] "# items"
+
+#: src/sendNotifications.ts:149
+msgid "{title} has been released"
+msgstr "{title} has been released"
+
+msgid "{{ count }} items_one"
+msgstr "1 item"
+
+msgid "{{ count }} items_other"
+msgstr "{{ count }} items"
+
+msgid "{{ count }} unseen_one"
+msgstr "{{ count }} unseen"
+
+msgid "{{ count }} unseen_other"
+msgstr "{{ count }} unseen"
