@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: mediatracker\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-02 17:04\n"
+"PO-Revision-Date: 2022-02-02 18:10\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -24,7 +24,7 @@ msgstr "Bereits auf dem neuesten Stand"
 
 #: src/dbconfig.ts:20
 msgid "Batch {name} run: {count, plural, one {# migration} other {# migrations}}"
-msgstr ""
+msgstr "Batch {name} läuft: {count, plural, one {1 Migration} other {# Migrationen}}"
 
 #: src/index.ts:75
 msgid "DEMO mode enabled"
@@ -32,7 +32,7 @@ msgstr "DEMO Modus aktiviert"
 
 #: src/sendNotifications.ts:217
 msgid "Error sending notifications: {error}"
-msgstr ""
+msgstr "Fehler beim Senden der Benachrichtigungen: {error}"
 
 #: src/updateMetadata.ts:400
 msgid "Everything up to date"
@@ -40,7 +40,7 @@ msgstr "Alle Daten sind aktuell"
 
 #: src/index.ts:190
 msgid "MediaTracker listening at {address}"
-msgstr ""
+msgstr "MediaTracker hört auf {address}"
 
 #: src/dbconfig.ts:7
 msgid "Running migrations"
@@ -48,33 +48,33 @@ msgstr "Ausführen von Migrationen"
 
 #: src/updateMetadata.ts:370
 msgid "Updating metadata"
-msgstr "Metadaten werden aktualisiert ..."
+msgstr "Metadaten werden aktualisiert"
 
 #: src/updateMetadata.ts:388
 msgid "Updating: {title} (last updated at: {date}"
-msgstr ""
+msgstr "Aktualisierung: {title} (zuletzt geändert am: {date}"
 
 #: src/sendNotifications.ts:134
 msgid "{count, plural, one {# episode for **{title}** has been released} other {# episodes for **{title}** has been released}}"
-msgstr ""
+msgstr "{count, plural, one {Neue Folge für **{title}** wurde veröffentlicht} other {# Folgen für **{title}** wurden veröffentlicht}}"
 
 #: src/updateMetadata.ts:418
 msgid "{count, plural, one {Failed to update 1 item} other {Failed to update # items}}"
-msgstr ""
+msgstr "{count, plural, one {Konnte 1 Element nicht aktualisieren} other {Fehler beim Aktualisieren von # Elementen}}"
 
 #: src/sendNotifications.ts:125
 msgid "{count, plural, one {Sending notification for new episodes of {title} to # user} other {Sending notification for new episodes of {title} to # users}}"
-msgstr ""
+msgstr "{count, plural, one {Sende Benachrichtigung für neue Folgen von {title} an 1 Benutzer} other {Sende Benachrichtigung für neue Folgen von {title} an # Benutzer}}"
 
 #: src/sendNotifications.ts:161
 msgid "{count, plural, one {Sending notification for {title} to # user} other {Sending notification for {title} to # users}}"
-msgstr ""
+msgstr "{count, plural, one {Sende Benachrichtigung für {title} an 1 Benutzer} other {Sende Benachrichtigung für {title} an # Benutzer}}"
 
 #: src/updateMetadata.ts:406
 msgid "{count, plural, one {Updated 1 item} other {Updated # items}}"
-msgstr ""
+msgstr "{count, plural, one {1 Element aktualisiert} other {Aktualisierte # Einträge}}"
 
 #: src/sendNotifications.ts:149
 msgid "{title} has been released"
-msgstr ""
+msgstr "{title} wurde veröffentlicht"
 
