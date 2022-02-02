@@ -1,0 +1,80 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2022-02-02 00:11+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: fr\n"
+"Project-Id-Version: mediatracker\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-02 17:04\n"
+"Last-Translator: \n"
+"Language-Team: French\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Crowdin-Project: mediatracker\n"
+"X-Crowdin-Project-ID: 496753\n"
+"X-Crowdin-Language: fr\n"
+"X-Crowdin-File: /[bonukai.MediaTracker] main/server/src/i18n/locales/en/translation.po\n"
+"X-Crowdin-File-ID: 47\n"
+
+#: src/dbconfig.ts:14
+msgid "Already up to date"
+msgstr ""
+
+#: src/dbconfig.ts:20
+msgid "Batch {name} run: {count, plural, one {# migration} other {# migrations}}"
+msgstr ""
+
+#: src/index.ts:75
+msgid "DEMO mode enabled"
+msgstr ""
+
+#: src/sendNotifications.ts:217
+msgid "Error sending notifications: {error}"
+msgstr ""
+
+#: src/updateMetadata.ts:400
+msgid "Everything up to date"
+msgstr ""
+
+#: src/index.ts:190
+msgid "MediaTracker listening at {address}"
+msgstr ""
+
+#: src/dbconfig.ts:7
+msgid "Running migrations"
+msgstr ""
+
+#: src/updateMetadata.ts:370
+msgid "Updating metadata"
+msgstr ""
+
+#: src/updateMetadata.ts:388
+msgid "Updating: {title} (last updated at: {date}"
+msgstr ""
+
+#: src/sendNotifications.ts:134
+msgid "{count, plural, one {# episode for **{title}** has been released} other {# episodes for **{title}** has been released}}"
+msgstr ""
+
+#: src/updateMetadata.ts:418
+msgid "{count, plural, one {Failed to update 1 item} other {Failed to update # items}}"
+msgstr ""
+
+#: src/sendNotifications.ts:125
+msgid "{count, plural, one {Sending notification for new episodes of {title} to # user} other {Sending notification for new episodes of {title} to # users}}"
+msgstr ""
+
+#: src/sendNotifications.ts:161
+msgid "{count, plural, one {Sending notification for {title} to # user} other {Sending notification for {title} to # users}}"
+msgstr ""
+
+#: src/updateMetadata.ts:406
+msgid "{count, plural, one {Updated 1 item} other {Updated # items}}"
+msgstr ""
+
+#: src/sendNotifications.ts:149
+msgid "{title} has been released"
+msgstr ""
+
