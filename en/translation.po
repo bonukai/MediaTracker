@@ -1,0 +1,72 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2022-02-02 00:11+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+msgid "Already up to date"
+msgstr "Already up to date"
+
+msgid "Batch {name} run: {count, plural, one {# migration} other {# migrations}}"
+msgstr "Batch {name} run: {count, plural, one {# migration} other {# migrations}}"
+
+msgid "Changing server language to {lng}"
+msgstr "Changing server language to {lng}"
+
+msgid "DEMO mode enabled"
+msgstr "DEMO mode enabled"
+
+msgid "Error sending notifications: {error}"
+msgstr "Error sending notifications: {error}"
+
+msgid "Everything up to date"
+msgstr "Everything up to date"
+
+msgid "MediaTracker listening at {address}"
+msgstr "MediaTracker listening at {address}"
+
+msgid "Running migrations"
+msgstr "Running migrations"
+
+msgid "Updating metadata"
+msgstr "Updating metadata"
+
+msgid "Updating: {title} (last updated at: {date}"
+msgstr "Updating: {title} (last updated at: {date}"
+
+msgid "{count, plural, one {# episode for **{title}** has been released} other {# episodes for **{title}** has been released}}"
+msgid_plural "count"
+msgstr[0] "# episode for **{title}** has been released"
+msgstr[1] "# episodes for **{title}** has been released"
+
+msgid "{count, plural, one {Failed to update 1 item} other {Failed to update # items}}"
+msgid_plural "count"
+msgstr[0] "Failed to update 1 item"
+msgstr[1] "Failed to update # items"
+
+msgid "{count, plural, one {Sending notification for new episodes of {title} to # user} other {Sending notification for new episodes of {title} to # users}}"
+msgid_plural "count"
+msgstr[0] "Sending notification for new episodes of {title} to # user"
+msgstr[1] "Sending notification for new episodes of {title} to # users"
+
+msgid "{count, plural, one {Sending notification for {title} to # user} other {Sending notification for {title} to # users}}"
+msgid_plural "count"
+msgstr[0] "Sending notification for {title} to # user"
+msgstr[1] "Sending notification for {title} to # users"
+
+msgid "{count, plural, one {Updated 1 item} other {Updated # items}}"
+msgid_plural "count"
+msgstr[0] "Updated 1 item"
+msgstr[1] "Updated # items"
+
+msgid "{title} has been released"
+msgstr "{title} has been released"
