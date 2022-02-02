@@ -14,7 +14,7 @@
    "fallbackLocales": {
       "default": "en"
    },
-   "format": "po",
+   "format": "minimal",
    "sourceLocale": "en",
    "compileNamespace": "ts"
 }

@@ -13,6 +13,7 @@ import { notificationPlatformsCredentialsRepository } from 'src/repository/notif
 import { configurationRepository } from 'src/repository/globalSettings';
 import { RequestError, toRequestErrorObject } from 'src/requestError';
 import { DEMO } from 'src/config';
+import { t } from '@lingui/macro';
 
 type UserResponse = Omit<User, 'password'>;
 
@@ -93,22 +94,22 @@ export class UsersController {
             const user = await userRepository.findOne({ name: username });
 
             if (user) {
-                res.send(toRequestErrorObject('User already exists'));
+                res.send(toRequestErrorObject(t`User already exists`));
                 return;
             }
 
             if (password !== confirmPassword) {
-                res.send(toRequestErrorObject('Passwords do not match'));
+                res.send(toRequestErrorObject(t`Passwords do not match`));
                 return;
             }
 
             if (password.trim().length === 0) {
-                res.send(toRequestErrorObject('Password cannot be empty'));
+                res.send(toRequestErrorObject(t`Password cannot be empty`));
                 return;
             }
 
             if (username.trim().length === 0) {
-                res.send(toRequestErrorObject('Username cannot be empty'));
+                res.send(toRequestErrorObject(t`Username cannot be empty`));
                 return;
             }
 
@@ -139,8 +140,9 @@ export class UsersController {
     }>(async (req, res) => {
         const userId = Number(req.user);
 
-        const credentials =
-            await notificationPlatformsCredentialsRepository.get(userId);
+        const credentials = await notificationPlatformsCredentialsRepository.get(
+            userId
+        );
 
         res.send(credentials);
     });
@@ -160,7 +162,7 @@ export class UsersController {
         try {
             await Notifications.sendNotification(platformName, {
                 title: 'MediaTracker',
-                message: 'Test',
+                message: t`Test message`,
                 credentials: credentials,
             });
         } catch (error) {

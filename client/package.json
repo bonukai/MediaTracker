@@ -23,6 +23,7 @@
     "@babel/preset-typescript": "^7.16.7",
     "@babel/runtime": "^7.16.7",
     "@lingui/cli": "^3.13.2",
+    "@lingui/loader": "^3.13.2",
     "@lingui/macro": "^3.13.2",
     "@parcel/transformer-sass": "^2.2.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",

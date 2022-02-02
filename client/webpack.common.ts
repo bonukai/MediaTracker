@@ -35,16 +35,19 @@ const config: Configuration = {
       },
       {
         test: /\.tsx?$/,
-        use: {
-          loader: 'babel-loader',
-        },
+        loader: 'babel-loader',
         exclude: /node_modules/,
+      },
+      {
+        resourceQuery: /raw-lingui$/,
+        type: 'javascript/auto',
       },
     ],
   },
+
   resolve: {
     plugins: [new TsconfigPathsPlugin()],
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js', '.json'],
   },
   output: {
     filename: '[name]_[chunkhash:8].js',

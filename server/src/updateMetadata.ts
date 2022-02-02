@@ -173,7 +173,7 @@ const sendNotifications = async (
         !(!newMediaItem.status && !oldMediaItem.status)
     ) {
         await send({
-            message: `Status changed for ${newMediaItem.title}: "${newMediaItem.status}"`,
+            message: t`Status changed for ${newMediaItem.title}: "${newMediaItem.status}"`,
             filter: (user) => user.sendNotificationWhenStatusChanges,
         });
     }
@@ -183,7 +183,7 @@ const sendNotifications = async (
         new Date(newMediaItem.releaseDate) > new Date()
     ) {
         await send({
-            message: `Release date changed for ${newMediaItem.title}: "${newMediaItem.releaseDate}"`,
+            message: t`Release date changed for ${newMediaItem.title}: "${newMediaItem.releaseDate}"`,
             filter: (user) => user.sendNotificationWhenReleaseDateChanges,
         });
     }
@@ -209,7 +209,7 @@ const sendNotifications = async (
                 ];
 
             await send({
-                message: `Season ${removedSeason.seasonNumber} of ${newMediaItem.title} has been canceled`,
+                message: t`Season ${removedSeason.seasonNumber} of ${newMediaItem.title} has been canceled`,
                 filter: (user) =>
                     user.sendNotificationWhenNumberOfSeasonsChanges,
             });
@@ -228,7 +228,7 @@ const sendNotifications = async (
             if (newSeason.releaseDate) {
                 if (new Date(newSeason.releaseDate) > new Date())
                     await send({
-                        message: `New season of ${
+                        message: t`New season of ${
                             newMediaItem.title
                         } will be released at ${new Date(
                             newSeason.releaseDate
@@ -238,7 +238,7 @@ const sendNotifications = async (
                     });
             } else {
                 await send({
-                    message: `${newMediaItem.title} got a new season`,
+                    message: t`${newMediaItem.title} got a new season`,
                     filter: (user) =>
                         user.sendNotificationWhenNumberOfSeasonsChanges,
                 });
@@ -259,7 +259,7 @@ const sendNotifications = async (
                 new Date(newMediaItemLastSeason.releaseDate) > new Date()
             ) {
                 await send({
-                    message: `Season ${
+                    message: t`Season ${
                         newMediaItemLastSeason.seasonNumber
                     } of ${newMediaItem.title} will be released at ${new Date(
                         newMediaItemLastSeason.releaseDate
