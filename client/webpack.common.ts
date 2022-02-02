@@ -38,10 +38,6 @@ const config: Configuration = {
         loader: 'babel-loader',
         exclude: /node_modules/,
       },
-      {
-        resourceQuery: /raw-lingui$/,
-        type: 'javascript/auto',
-      },
     ],
   },
 
