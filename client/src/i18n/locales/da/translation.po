@@ -1,0 +1,562 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2022-02-02 13:36+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: da\n"
+"Project-Id-Version: mediatracker\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-02 17:05\n"
+"Last-Translator: \n"
+"Language-Team: Danish\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: mediatracker\n"
+"X-Crowdin-Project-ID: 496753\n"
+"X-Crowdin-Language: da\n"
+"X-Crowdin-File: /[bonukai.MediaTracker] main/client/src/i18n/locales/en/translation.po\n"
+"X-Crowdin-File-ID: 45\n"
+
+#: src/pages/settings/MetadataProviderCredentials.tsx:15
+msgid "API keys cen be acquired here"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:96
+msgid "Access Token"
+msgstr ""
+
+#: src/pages/Episodes.tsx:212
+msgid "Add season to seen history"
+msgstr ""
+
+#: src/pages/Details.tsx:113
+#: src/pages/Episodes.tsx:92
+msgid "Add to seen history"
+msgstr ""
+
+#: src/components/GridItem.tsx:192
+#: src/pages/Details.tsx:396
+msgid "Add to watchlist"
+msgstr ""
+
+#: src/pages/settings/ApplicationTokens.tsx:29
+msgid "Add token"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:59
+msgid "App token"
+msgstr ""
+
+#: src/pages/Settings.tsx:112
+msgid "Application tokens"
+msgstr ""
+
+#: src/components/SelectSeenDate.tsx:74
+msgid "At release date"
+msgstr ""
+
+#: src/pages/settings/Configuration.tsx:38
+msgid "Audible language"
+msgstr ""
+
+#: src/components/GridItem.tsx:49
+msgid "Audiobook"
+msgstr ""
+
+#: src/components/Nav.tsx:17
+msgid "Audiobooks"
+msgstr ""
+
+#: src/components/GridItem.tsx:50
+msgid "Book"
+msgstr ""
+
+#: src/components/Nav.tsx:16
+msgid "Books"
+msgstr ""
+
+#: src/components/Nav.tsx:20
+msgid "Calendar"
+msgstr ""
+
+#: src/components/SelectLastSeenEpisode.tsx:133
+#: src/components/SelectSeenDate.tsx:137
+#: src/components/StarRating.tsx:158
+msgid "Cancel"
+msgstr ""
+
+#: src/pages/settings/Password.tsx:74
+msgid "Change password"
+msgstr ""
+
+#: src/pages/settings/MetadataProviderCredentials.tsx:18
+msgid "Client ID"
+msgstr ""
+
+#: src/pages/settings/MetadataProviderCredentials.tsx:22
+msgid "Client Secret"
+msgstr ""
+
+#: src/pages/Settings.tsx:117
+msgid "Configuration"
+msgstr ""
+
+#: src/pages/settings/Password.tsx:40
+msgid "Confirm new password"
+msgstr ""
+
+#: src/pages/Register.tsx:63
+msgid "Confirm password"
+msgstr ""
+
+#: src/components/Nav.tsx:19
+msgid "Continue watching"
+msgstr ""
+
+#: src/pages/settings/Password.tsx:21
+msgid "Current password"
+msgstr ""
+
+#: src/pages/settings/Password.tsx:69
+msgid "Current password is incorrect"
+msgstr ""
+
+#: src/components/SelectSeenDate.tsx:133
+msgid "Custom date"
+msgstr ""
+
+#: src/pages/Episodes.tsx:232
+msgid "Description"
+msgstr ""
+
+#: src/pages/Episodes.tsx:113
+msgid "Do you wont to remove episode {0} from seen history?"
+msgstr ""
+
+#: src/pages/settings/Configuration.tsx:18
+msgid "Enable registration"
+msgstr ""
+
+#: src/components/SelectLastSeenEpisode.tsx:86
+msgid "Episode"
+msgstr ""
+
+#: src/pages/SeenHistory.tsx:57
+msgid "Episode {0} {1}"
+msgstr ""
+
+#: src/pages/Details.tsx:352
+msgid "Episodes"
+msgstr ""
+
+#: src/pages/Details.tsx:422
+msgid "Episodes page"
+msgstr ""
+
+#: src/pages/Details.tsx:446
+msgid "First unwatched episode"
+msgstr ""
+
+#: src/components/Nav.tsx:15
+msgid "Games"
+msgstr ""
+
+#: src/pages/settings/Configuration.tsx:16
+msgid "General"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:92
+msgid "Gotify server url"
+msgstr ""
+
+#: src/components/Nav.tsx:12
+msgid "Home"
+msgstr ""
+
+#: src/components/SelectSeenDate.tsx:80
+msgid "I do not remember"
+msgstr ""
+
+#: src/components/Nav.tsx:21
+msgid "Import"
+msgstr ""
+
+#: src/pages/Import.tsx:14
+msgid "Import from"
+msgstr ""
+
+#: src/pages/Login.tsx:82
+msgid "Incorrect password or username"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:82
+msgid "Key"
+msgstr ""
+
+#: src/pages/Details.tsx:307
+msgid "Language"
+msgstr ""
+
+#: src/components/OrderBy.tsx:11
+msgid "Last seen"
+msgstr ""
+
+#: src/pages/Details.tsx:455
+msgid "Last seen at {0}"
+msgstr ""
+
+#: src/components/PaginatedGridItems.tsx:232
+#: src/components/SelectLastSeenEpisode.tsx:58
+#: src/pages/Details.tsx:195
+#: src/pages/Episodes.tsx:138
+#: src/pages/Login.tsx:17
+#: src/pages/SeenHistory.tsx:22
+msgid "Loading"
+msgstr ""
+
+#: src/pages/Login.tsx:33
+#: src/pages/Login.tsx:67
+#: src/pages/Register.tsx:85
+msgid "Login"
+msgstr ""
+
+#: src/components/Nav.tsx:90
+msgid "Logout"
+msgstr ""
+
+#: src/components/GridItem.tsx:203
+msgid "Mark as seen"
+msgstr ""
+
+#: src/components/OrderBy.tsx:17
+msgid "Media type"
+msgstr ""
+
+#: src/pages/Settings.tsx:120
+msgid "Metadata providers credentials"
+msgstr ""
+
+#: src/components/GridItem.tsx:51
+msgid "Movie"
+msgstr ""
+
+#: src/components/Nav.tsx:14
+msgid "Movies"
+msgstr ""
+
+#: src/pages/Details.tsx:258
+msgid "Network"
+msgstr ""
+
+#: src/pages/settings/Password.tsx:31
+msgid "New password"
+msgstr ""
+
+#: src/components/OrderBy.tsx:15
+msgid "Next airing"
+msgstr ""
+
+#: src/pages/Details.tsx:429
+msgid "Next episode"
+msgstr ""
+
+#: src/pages/Home.tsx:76
+msgid "Next episode to watch"
+msgstr ""
+
+#: src/pages/SeenHistory.tsx:51
+msgid "No date"
+msgstr ""
+
+#: src/pages/Settings.tsx:113
+msgid "Notifications"
+msgstr ""
+
+#: src/components/SelectSeenDate.tsx:68
+msgid "Now"
+msgstr ""
+
+#: src/pages/Details.tsx:298
+msgid "Overview"
+msgstr ""
+
+#: src/pages/Login.tsx:53
+#: src/pages/Register.tsx:49
+#: src/pages/Settings.tsx:111
+msgid "Password"
+msgstr ""
+
+#: src/pages/settings/Password.tsx:65
+msgid "Password has been changed"
+msgstr ""
+
+#: src/pages/settings/Password.tsx:54
+msgid "Passwords do not match"
+msgstr ""
+
+#: src/pages/Details.tsx:249
+#: src/pages/settings/Notifications.tsx:160
+msgid "Platform"
+msgstr ""
+
+#: src/pages/Settings.tsx:114
+msgid "Preferences"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:100
+#: src/pages/settings/Notifications.tsx:119
+msgid "Priority"
+msgstr ""
+
+#: src/pages/settings/Preferences.tsx:11
+msgid "Public reviews"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:38
+msgid "Receive notification for all media items on your watchlist, when it's release date changes"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:30
+msgid "Receive notification for all media items on your watchlist, when it's status changes"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:16
+msgid "Receive notification for all media items on your watchlist, when they are released, including new seasons for tv shows"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:46
+msgid "Receive notification for all tv shows on your watchlist, when it's number of seasons changes"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:22
+msgid "Receive notification for every episode for all tv shows on your watchlist, when it's released"
+msgstr ""
+
+#: src/pages/Login.tsx:75
+#: src/pages/Register.tsx:29
+#: src/pages/Register.tsx:77
+msgid "Register"
+msgstr ""
+
+#: src/components/OrderBy.tsx:12
+#: src/pages/Details.tsx:222
+msgid "Release date"
+msgstr ""
+
+#: src/components/GridItem.tsx:172
+msgid "Release {0}"
+msgstr ""
+
+#: src/components/GridItem.tsx:76
+msgid "Remove \"{0}\" from watchlist?"
+msgstr ""
+
+#: src/pages/Details.tsx:98
+#: src/pages/Episodes.tsx:120
+msgid "Remove from seen history"
+msgstr ""
+
+#: src/pages/Details.tsx:389
+msgid "Remove from watchlist"
+msgstr ""
+
+#: src/pages/settings/ApplicationTokens.tsx:47
+msgid "Remove token"
+msgstr ""
+
+#: src/pages/Details.tsx:48
+msgid "Review by <0><1>{author}</1></0> at {date}"
+msgstr ""
+
+#: src/pages/Details.tsx:233
+msgid "Runtime"
+msgstr ""
+
+#: src/pages/settings/MetadataProviderCredentials.tsx:79
+#: src/pages/settings/Notifications.tsx:217
+msgid "Save"
+msgstr ""
+
+#: src/components/StarRating.tsx:155
+msgid "Save review"
+msgstr ""
+
+#: src/components/PaginatedGridItems.tsx:44
+msgid "Search"
+msgstr ""
+
+#: src/components/PaginatedGridItems.tsx:171
+msgid "Search for items or <0>import</0>"
+msgstr ""
+
+#: src/components/SelectLastSeenEpisode.tsx:68
+msgid "Season"
+msgstr ""
+
+#: src/pages/Episodes.tsx:170
+msgid "Season {0}"
+msgstr ""
+
+#: src/pages/Details.tsx:345
+msgid "Seasons"
+msgstr ""
+
+#: src/pages/SeenHistory.tsx:47
+msgid "Seen at {0}"
+msgstr ""
+
+#: src/pages/Details.tsx:471
+msgid "Seen history"
+msgstr ""
+
+#: src/components/SelectLastSeenEpisode.tsx:110
+msgid "Select"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:21
+msgid "Send notification for episodes releases"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:15
+msgid "Send notification for releases"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:45
+msgid "Send notification when number of seasons changes"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:37
+msgid "Send notification when release date changes"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:29
+msgid "Send notification when status changes"
+msgstr ""
+
+#: src/App.tsx:81
+msgid "Server error: {errorMessage}"
+msgstr ""
+
+#: src/pages/settings/Configuration.tsx:26
+msgid "Server language"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:128
+msgid "Server url (only for self hosting)"
+msgstr ""
+
+#: src/pages/Settings.tsx:76
+msgid "Settings"
+msgstr ""
+
+#: src/pages/settings/Preferences.tsx:12
+msgid "Show your reviews to other users"
+msgstr ""
+
+#: src/pages/Details.tsx:371
+msgid "Source"
+msgstr ""
+
+#: src/components/OrderBy.tsx:13
+#: src/pages/Details.tsx:267
+msgid "Status"
+msgstr ""
+
+#: src/pages/settings/Configuration.tsx:58
+msgid "TMDB language"
+msgstr ""
+
+#: src/pages/Episodes.tsx:146
+msgid "This component can only be used with tv shows"
+msgstr ""
+
+#: src/components/OrderBy.tsx:14
+msgid "Title"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:115
+msgid "Topic"
+msgstr ""
+
+#: src/components/GridItem.tsx:52
+#: src/components/Nav.tsx:13
+msgid "Tv"
+msgstr ""
+
+#: src/pages/Home.tsx:90
+msgid "Unrated"
+msgstr ""
+
+#: src/components/OrderBy.tsx:16
+msgid "Unseen episodes count"
+msgstr ""
+
+#: src/components/Nav.tsx:18
+#: src/pages/Home.tsx:62
+msgid "Upcoming"
+msgstr ""
+
+#: src/pages/settings/Notifications.tsx:71
+msgid "User key"
+msgstr ""
+
+#: src/pages/Login.tsx:38
+#: src/pages/Register.tsx:34
+msgid "Username"
+msgstr ""
+
+#: src/components/GridItem.tsx:53
+msgid "Video game"
+msgstr ""
+
+#: src/components/SelectLastSeenEpisode.tsx:62
+msgid "What is the last episode you see?"
+msgstr ""
+
+#: src/components/SelectSeenDate.tsx:61
+msgid "When did you see it?"
+msgstr ""
+
+#: src/components/PaginatedGridItems.tsx:184
+msgid "{0, plural, one { Found # item for query \"<0>{searchQuery}</0>\"} other { Found # items for query \"<1>{searchQuery}</1>\"}}"
+msgstr ""
+
+#: src/components/PaginatedGridItems.tsx:184
+#~ msgid "{0, plural, one { Found # items for query \"<0>{searchQuery}</0>\"} other { Found # item for query \"<1>{searchQuery}</1>\"}}"
+#~ msgstr "{0, plural, one { Found # items for query \"<0>{searchQuery}</0>\"} other { Found # item for query \"<1>{searchQuery}</1>\"}}"
+
+#: src/pages/Details.tsx:316
+msgid "{0, plural, one {Author} other {Authors}}"
+msgstr ""
+
+#: src/pages/Details.tsx:276
+msgid "{0, plural, one {Genre} other {Genres}}"
+msgstr ""
+
+#: src/pages/Details.tsx:330
+msgid "{0, plural, one {Narrator} other {Narrators}}"
+msgstr ""
+
+#: src/pages/Details.tsx:464
+#~ msgid "{0, plural, one {Seen # time} other {Seen # times}}"
+#~ msgstr "{0, plural, one {Seen # time} other {Seen # times}}"
+
+#: src/pages/Details.tsx:464
+#: src/pages/Episodes.tsx:72
+#: src/pages/SeenHistory.tsx:34
+msgid "{0, plural, one {Seen 1 time} other {Seen # times}}"
+msgstr ""
+
+#: src/pages/Details.tsx:358
+msgid "{0, plural, other {unseen}}"
+msgstr ""
+
+#: src/pages/Details.tsx:91
+msgid "{count, plural, one {Do you wont to remove # seen history entry?} other {Do you wont to remove all # seen history entries?}}"
+msgstr ""
+
+#: src/components/PaginatedGridItems.tsx:200
+msgid "{numberOfItemsTotal, plural, one {1 item} other {# items}}"
+msgstr ""
+
