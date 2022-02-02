@@ -411,7 +411,7 @@ export const updateMetadata = async (): Promise<void> => {
         );
 
         if (numberOfFailures > 0) {
-            const count = numberOfUpdatedItems;
+            const count = numberOfFailures;
 
             console.log(
                 chalk.bold.red(
