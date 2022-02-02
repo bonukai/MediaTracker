@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: mediatracker\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-02 17:05\n"
+"PO-Revision-Date: 2022-02-02 18:10\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -132,7 +132,7 @@ msgstr "Beschreibung"
 
 #: src/pages/Episodes.tsx:113
 msgid "Do you wont to remove episode {0} from seen history?"
-msgstr ""
+msgstr "Möchtest du die Folge {0} von der Gesehenliste entfernen?"
 
 #: src/pages/settings/Configuration.tsx:18
 msgid "Enable registration"
@@ -144,7 +144,7 @@ msgstr "Folge"
 
 #: src/pages/SeenHistory.tsx:57
 msgid "Episode {0} {1}"
-msgstr ""
+msgstr "Folge {0} {1}"
 
 #: src/pages/Details.tsx:352
 msgid "Episodes"
@@ -204,7 +204,7 @@ msgstr "Zuletzt gesehen"
 
 #: src/pages/Details.tsx:455
 msgid "Last seen at {0}"
-msgstr ""
+msgstr "Zuletzt gesehen am {0}"
 
 #: src/components/PaginatedGridItems.tsx:232
 #: src/components/SelectLastSeenEpisode.tsx:58
@@ -213,7 +213,7 @@ msgstr ""
 #: src/pages/Login.tsx:17
 #: src/pages/SeenHistory.tsx:22
 msgid "Loading"
-msgstr "Wird geladen..."
+msgstr "Wird geladen"
 
 #: src/pages/Login.tsx:33
 #: src/pages/Login.tsx:67
@@ -346,11 +346,11 @@ msgstr "Erscheinungsdatum"
 
 #: src/components/GridItem.tsx:172
 msgid "Release {0}"
-msgstr ""
+msgstr "Veröffentlichung {0}"
 
 #: src/components/GridItem.tsx:76
 msgid "Remove \"{0}\" from watchlist?"
-msgstr ""
+msgstr "\"{0}\" von der Watchlist entfernen?"
 
 #: src/pages/Details.tsx:98
 #: src/pages/Episodes.tsx:120
@@ -367,7 +367,7 @@ msgstr ""
 
 #: src/pages/Details.tsx:48
 msgid "Review by <0><1>{author}</1></0> at {date}"
-msgstr ""
+msgstr "Bewertung von <0><1>{author}</1></0> um {date}"
 
 #: src/pages/Details.tsx:233
 msgid "Runtime"
@@ -388,7 +388,7 @@ msgstr "Suche"
 
 #: src/components/PaginatedGridItems.tsx:171
 msgid "Search for items or <0>import</0>"
-msgstr ""
+msgstr "Nach Elementen suchen oder <0>importieren</0>"
 
 #: src/components/SelectLastSeenEpisode.tsx:68
 msgid "Season"
@@ -396,7 +396,7 @@ msgstr "Staffel"
 
 #: src/pages/Episodes.tsx:170
 msgid "Season {0}"
-msgstr ""
+msgstr "Staffel {0}"
 
 #: src/pages/Details.tsx:345
 msgid "Seasons"
@@ -404,7 +404,7 @@ msgstr "Staffeln"
 
 #: src/pages/SeenHistory.tsx:47
 msgid "Seen at {0}"
-msgstr ""
+msgstr "Gesehen am {0}"
 
 #: src/pages/Details.tsx:471
 msgid "Seen history"
@@ -436,7 +436,7 @@ msgstr ""
 
 #: src/App.tsx:81
 msgid "Server error: {errorMessage}"
-msgstr ""
+msgstr "Server Error: {errorMessage}"
 
 #: src/pages/settings/Configuration.tsx:26
 msgid "Server language"
@@ -520,7 +520,7 @@ msgstr "Wann hast du es gesehen?"
 
 #: src/components/PaginatedGridItems.tsx:184
 msgid "{0, plural, one { Found # item for query \"<0>{searchQuery}</0>\"} other { Found # items for query \"<1>{searchQuery}</1>\"}}"
-msgstr ""
+msgstr "{0, plural, one { # Einträge für Abfrage \"<0>{searchQuery}<0>\" gefunden} other {  # Einträge für Abfrage \"<1>{searchQuery}</1>\" gefunden}}"
 
 #: src/components/PaginatedGridItems.tsx:184
 #~ msgid "{0, plural, one { Found # items for query \"<0>{searchQuery}</0>\"} other { Found # item for query \"<1>{searchQuery}</1>\"}}"
@@ -528,7 +528,7 @@ msgstr ""
 
 #: src/pages/Details.tsx:316
 msgid "{0, plural, one {Author} other {Authors}}"
-msgstr ""
+msgstr "{0, plural, one {Autor} other {Autoren}}"
 
 #: src/pages/Details.tsx:276
 msgid "{0, plural, one {Genre} other {Genres}}"
@@ -536,7 +536,7 @@ msgstr ""
 
 #: src/pages/Details.tsx:330
 msgid "{0, plural, one {Narrator} other {Narrators}}"
-msgstr ""
+msgstr "{0, plural, one {Sprecher} other {Sprecher}}"
 
 #: src/pages/Details.tsx:464
 #~ msgid "{0, plural, one {Seen # time} other {Seen # times}}"
@@ -546,17 +546,17 @@ msgstr ""
 #: src/pages/Episodes.tsx:72
 #: src/pages/SeenHistory.tsx:34
 msgid "{0, plural, one {Seen 1 time} other {Seen # times}}"
-msgstr ""
+msgstr "{0, plural, one {1 mal gesehen} other {# mal gesehen}}"
 
 #: src/pages/Details.tsx:358
 msgid "{0, plural, other {unseen}}"
-msgstr ""
+msgstr "{0, plural, other {ungesehen}}"
 
 #: src/pages/Details.tsx:91
 msgid "{count, plural, one {Do you wont to remove # seen history entry?} other {Do you wont to remove all # seen history entries?}}"
-msgstr ""
+msgstr "{count, plural, one {Möchten Sie # Einträge von der Gesehenliste entfernen?} other {Möchten Sie alle # Einträge von der Gesehenliste entfernen?}}"
 
 #: src/components/PaginatedGridItems.tsx:200
 msgid "{numberOfItemsTotal, plural, one {1 item} other {# items}}"
-msgstr ""
+msgstr "{numberOfItemsTotal, plural, one {1 Artikel} other {# Artikel}}"
 
