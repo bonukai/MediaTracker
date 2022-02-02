@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans } from '@lingui/macro';
 
 import { setLastSeenEpisode, useDetails } from 'src/api/details';
 import { Modal } from 'src/components/Modal';
@@ -12,7 +12,6 @@ export const SelectLastSeenEpisode: FunctionComponent<{
   closeModal: (selected?: boolean) => void;
 }> = (props) => {
   const { closeModal, season } = props;
-  const { t } = useTranslation();
 
   const { mediaItem: tvShow, isLoading } = useDetails(props.tvShow.id);
 
@@ -56,16 +55,18 @@ export const SelectLastSeenEpisode: FunctionComponent<{
   return (
     <div className="p-3 rounded ">
       {isLoading ? (
-        <>{t('Loading')}</>
+        <Trans>Loading</Trans>
       ) : (
         <>
           <div className="py-2 text-2xl font-bold text-center">
-            {t('What is the last episode you see?')}
+            <Trans>What is the last episode you see?</Trans>
           </div>
           <div className="text-lg">
             {!season && (
               <div className="py-2">
-                <span className="mr-2">{t('Season')}:</span>
+                <span className="mr-2">
+                  <Trans>Season</Trans>:
+                </span>
                 <select
                   value={selectedSeasonId}
                   onChange={(e) => setSelectedSeasonId(Number(e.target.value))}
@@ -81,7 +82,9 @@ export const SelectLastSeenEpisode: FunctionComponent<{
               </div>
             )}
             <div className="py-2">
-              <span className="mr-2">{t('Episode')}:</span>
+              <span className="mr-2">
+                <Trans>Episode</Trans>:
+              </span>
               <select
                 value={selectedEpisodeId}
                 onChange={(e) => setSelectedEpisodeId(Number(e.target.value))}
@@ -104,7 +107,7 @@ export const SelectLastSeenEpisode: FunctionComponent<{
               onBeforeClosed={() => closeModal(true)}
               openModal={(onClick) => (
                 <div className="btn-blue" onClick={onClick}>
-                  {t('Select')}
+                  <Trans>Select</Trans>
                 </div>
               )}
             >
@@ -127,7 +130,7 @@ export const SelectLastSeenEpisode: FunctionComponent<{
             </Modal>
 
             <div className="btn-red" onClick={() => closeModal()}>
-              {t('Cancel')}
+              <Trans>Cancel</Trans>
             </div>
           </div>
         </>

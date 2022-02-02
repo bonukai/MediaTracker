@@ -1,15 +1,14 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+import { Plural, Trans } from '@lingui/macro';
 
 import { TvEpisode } from 'mediatracker-api';
 import { useDetails } from 'src/api/details';
 import { formatEpisodeNumber } from 'src/utils';
-import { useTranslation } from 'react-i18next';
 
 export const SeenHistoryPage: FunctionComponent = () => {
   const { mediaItemId } = useParams();
   const { mediaItem, isLoading, error } = useDetails(Number(mediaItemId));
-  const { t } = useTranslation();
 
   const episodesMap: Record<number, TvEpisode> = useMemo(
     () =>
@@ -20,7 +19,7 @@ export const SeenHistoryPage: FunctionComponent = () => {
   );
 
   if (isLoading) {
-    return <>{t('Loading')}</>;
+    return <Trans>Loading</Trans>;
   }
 
   if (error) {
@@ -32,10 +31,11 @@ export const SeenHistoryPage: FunctionComponent = () => {
       {mediaItem.seenHistory?.length > 0 && (
         <div className="mt-3">
           <div>
-            {t('Seen {{ count }} times', {
-              count: mediaItem.seenHistory.length,
-              defaultValue_one: 'Seen 1 time',
-            })}
+            <Plural
+              value={mediaItem.seenHistory.length}
+              one="Seen 1 time"
+              other="Seen # times"
+            />
           </div>
 
           <ul className="list-disc">
@@ -44,27 +44,23 @@ export const SeenHistoryPage: FunctionComponent = () => {
               .map((seenEntry) => (
                 <li key={seenEntry.id}>
                   {seenEntry.date > 0 ? (
-                    <>
-                      {t('Seen at {{ date }}', {
-                        date: new Date(seenEntry.date).toLocaleString(),
-                      })}
-                    </>
+                    <Trans>
+                      Seen at {new Date(seenEntry.date).toLocaleString()}
+                    </Trans>
                   ) : (
-                    <>{t('No date')}</>
+                    <Trans>No date</Trans>
                   )}
                   <div>
                     {seenEntry.seasonId &&
                       seenEntry.episodeId &&
                       episodesMap[seenEntry.episodeId] && (
-                        <>
-                          {t('Episode {{ episodeNumber }} {{ episodeTitle }}', {
-                            episodeNumber: formatEpisodeNumber(
-                              episodesMap[seenEntry.episodeId]
-                            ),
-                            episodeTitle:
-                              episodesMap[seenEntry.episodeId].title,
-                          })}
-                        </>
+                        <Trans>
+                          Episode{' '}
+                          {formatEpisodeNumber(
+                            episodesMap[seenEntry.episodeId]
+                          )}{' '}
+                          {episodesMap[seenEntry.episodeId].title}
+                        </Trans>
                       )}
                   </div>
                 </li>

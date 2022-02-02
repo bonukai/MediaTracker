@@ -2,6 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
+import { Plural, t, Trans } from '@lingui/macro';
 
 import { markAsUnseen, useDetails } from 'src/api/details';
 import { Modal } from 'src/components/Modal';
@@ -16,14 +17,12 @@ import {
   TvEpisode,
   TvSeason,
 } from 'mediatracker-api';
-import { useTranslation } from 'react-i18next';
 
 const EpisodeComponent: FunctionComponent<{
   mediaItem: MediaItemItemsResponse;
   episode: TvEpisode;
 }> = (props) => {
   const { mediaItem, episode } = props;
-  const { t } = useTranslation();
 
   return (
     <div
@@ -70,12 +69,11 @@ const EpisodeComponent: FunctionComponent<{
 
         <div className="w-28">
           {episode.seenHistory?.length > 0 && (
-            <>
-              {t('Seen {{ count }} times', {
-                count: episode.seenHistory.length,
-                defaultValue_other: 'Seen 1 time',
-              })}
-            </>
+            <Plural
+              value={episode.seenHistory.length}
+              one="Seen 1 time"
+              other="Seen # times"
+            />
           )}
         </div>
       </div>
@@ -91,7 +89,7 @@ const EpisodeComponent: FunctionComponent<{
                 !hasBeenReleased(episode) && 'opacity-0 pointer-events-none'
               )}
             >
-              {t('Add to seen history')}
+              <Trans>Add to seen history</Trans>
             </div>
           )}
         >
@@ -112,17 +110,14 @@ const EpisodeComponent: FunctionComponent<{
           onClick={() => {
             if (
               confirm(
-                t(
-                  'Do you wont to remove episode {{ episode }} from seen history?',
-                  { episode: episode.title }
-                )
+                t`Do you wont to remove episode ${episode.title} from seen history?`
               )
             ) {
               markAsUnseen({ mediaItem, episode });
             }
           }}
         >
-          {t('Remove from seen history')}
+          <Trans>Remove from seen history</Trans>
         </div>
       </div>
     </div>
@@ -132,7 +127,6 @@ const EpisodeComponent: FunctionComponent<{
 export const EpisodesPage: FunctionComponent = () => {
   const { mediaItemId } = useParams();
   const { mediaItem, isLoading, error } = useDetails(Number(mediaItemId));
-  const { t } = useTranslation();
 
   const {
     selectedSeason,
@@ -141,7 +135,7 @@ export const EpisodesPage: FunctionComponent = () => {
   } = useSelectedSeason(mediaItem);
 
   if (isLoading || !selectedSeason) {
-    return <>{t('Loading')}</>;
+    return <Trans>Loading</Trans>;
   }
 
   if (error) {
@@ -149,7 +143,7 @@ export const EpisodesPage: FunctionComponent = () => {
   }
 
   if (mediaItem && mediaItem.mediaType !== 'tv') {
-    throw new Error(t('This component can only be used with tv shows'));
+    throw new Error(t`This component can only be used with tv shows`);
   }
 
   return (
@@ -173,7 +167,7 @@ export const EpisodesPage: FunctionComponent = () => {
                 )}
                 onClick={() => setSelectedSeasonId(season.id)}
               >
-                {t('Season {{ count }}', { count: season.seasonNumber })}
+                <Trans>Season {season.seasonNumber}</Trans>
               </div>
             </div>
           ))}
@@ -193,7 +187,6 @@ const SeasonComponent: FunctionComponent<{
   season: TvSeason;
 }> = (props) => {
   const { mediaItem, season } = props;
-  const { t } = useTranslation();
 
   return (
     <>
@@ -216,7 +209,7 @@ const SeasonComponent: FunctionComponent<{
                 ).length === 0 && 'opacity-0 pointer-events-none'
               )}
             >
-              {t('Add season to seen history')}
+              <Trans>Add season to seen history</Trans>
             </div>
           )}
         >
@@ -235,7 +228,9 @@ const SeasonComponent: FunctionComponent<{
         </div>
         {season.description && (
           <div className="py-2">
-            <b className="">{t('Description')}:</b>
+            <b className="">
+              <Trans>Description</Trans>:
+            </b>
             <div
               className={clsx(
                 'inline py-1',

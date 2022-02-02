@@ -9,7 +9,7 @@ import React, {
 
 import clsx from 'clsx';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Trans, useTranslation } from 'react-i18next';
+import { Plural, Trans } from '@lingui/macro';
 
 import { useSearch } from 'src/api/search';
 import { Items, MediaItemOrderBy, SortOrder } from 'mediatracker-api';
@@ -23,7 +23,6 @@ const Search: FunctionComponent<{
   const [params] = useSearchParams();
   const { onSearch } = props;
   const [textInputValue, setTextInputValue] = useState<string>('');
-  const { t } = useTranslation();
 
   useEffect(() => onSearch(params.get('search') || ''), [params, onSearch]);
 
@@ -42,7 +41,7 @@ const Search: FunctionComponent<{
       />
 
       <button className="px-4 ml-2 transition-shadow duration-100 hover:shadow hover:shadow-indigo-500/50">
-        {t('Search')}
+        <Trans>Search</Trans>
       </button>
     </form>
   );
@@ -84,7 +83,6 @@ export const PaginatedGridItems: FunctionComponent<{
   gridItemAppearance?: GridItemAppearanceArgs;
 }> = (props) => {
   const { args, showSortOrderControls, showSearch, gridItemAppearance } = props;
-  const { t } = useTranslation();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState<string>();
@@ -170,14 +168,12 @@ export const PaginatedGridItems: FunctionComponent<{
 
             {showSearch && !isLoading && !searchQuery && items.length === 0 ? (
               <div className="flex">
-                <Trans
-                  i18nKey="Search for items or&nbsp;<1>import</1>"
-                  components={{
-                    1: (
-                      <Link to="/import" className="text-blue-500 underline" />
-                    ),
-                  }}
-                />
+                <Trans>
+                  Search for items or&nbsp;
+                  <Link to="/import" className="text-blue-500 underline">
+                    import
+                  </Link>
+                </Trans>
               </div>
             ) : (
               <>
@@ -185,21 +181,27 @@ export const PaginatedGridItems: FunctionComponent<{
                   <div className="flex">
                     <div>
                       {searchQuery ? (
-                        <Trans
-                          i18nKey='Found {{ count }} items for query <1>"{{ query }}"<1>'
-                          count={searchResult?.length}
-                          values={{ query: searchQuery }}
-                          components={{
-                            1: <strong></strong>,
-                          }}
+                        <Plural
+                          value={searchResult?.length}
+                          one={
+                            <Trans>
+                              Found # item for query &quot;
+                              <strong>{searchQuery}</strong>&quot;
+                            </Trans>
+                          }
+                          other={
+                            <Trans>
+                              Found # items for query &quot;
+                              <strong>{searchQuery}</strong>&quot;
+                            </Trans>
+                          }
                         />
                       ) : (
-                        <>
-                          {t('{{ count }} items', {
-                            count: numberOfItemsTotal,
-                            defaultValue_one: '1 item',
-                          })}
-                        </>
+                        <Plural
+                          value={numberOfItemsTotal}
+                          one="1 item"
+                          other="# items"
+                        />
                       )}
                     </div>
                     {showSortOrderControls && !searchQuery && (
@@ -226,7 +228,9 @@ export const PaginatedGridItems: FunctionComponent<{
           </div>
           {isLoading ? (
             <div className="flex flex-col items-center w-full">
-              <div className="">{t('Loading')}</div>
+              <div className="">
+                <Trans>Loading</Trans>
+              </div>
             </div>
           ) : (
             <>

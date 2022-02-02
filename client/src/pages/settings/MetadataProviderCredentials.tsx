@@ -1,37 +1,40 @@
 import { MetadataProviderCredentials } from 'mediatracker-api';
 import React, { FunctionComponent, useEffect, useRef } from 'react';
+import { Trans } from '@lingui/macro';
+
 import { useMetadataProviderCredentials } from 'src/api/metadataProviderCredentials';
 import { SettingsSegment } from 'src/components/SettingsSegment';
 
-export const SettingsMetadataProviderCredentialsPage: FunctionComponent =
-  () => {
-    return (
-      <MetadataProviderCredentialsBaseComponent providerName="IGDB">
-        <a
-          href="https://api-docs.igdb.com/#account-creation"
-          className="block mb-2 underline"
-        >
-          API keys cen be acquired here
-        </a>
-        <label>
-          Client ID
-          <input className="block mb-2" name="CLIENT_ID" />
-        </label>
-        <label>
-          Client Secret
-          <input className="block" name="CLIENT_SECRET" />
-        </label>
-      </MetadataProviderCredentialsBaseComponent>
-    );
-  };
+export const SettingsMetadataProviderCredentialsPage: FunctionComponent = () => {
+  return (
+    <MetadataProviderCredentialsBaseComponent providerName="IGDB">
+      <a
+        href="https://api-docs.igdb.com/#account-creation"
+        className="block mb-2 underline"
+      >
+        <Trans>API keys cen be acquired here</Trans>
+      </a>
+      <label>
+        <Trans>Client ID</Trans>
+        <input className="block mb-2" name="CLIENT_ID" />
+      </label>
+      <label>
+        <Trans>Client Secret</Trans>
+        <input className="block" name="CLIENT_SECRET" />
+      </label>
+    </MetadataProviderCredentialsBaseComponent>
+  );
+};
 
 const MetadataProviderCredentialsBaseComponent: FunctionComponent<{
   providerName: string;
 }> = (props) => {
   const { providerName, children } = props;
 
-  const { metadataProviderCredentials, setMetadataProviderCredentials } =
-    useMetadataProviderCredentials();
+  const {
+    metadataProviderCredentials,
+    setMetadataProviderCredentials,
+  } = useMetadataProviderCredentials();
 
   const formRef = useRef<HTMLFormElement>();
 
@@ -72,7 +75,9 @@ const MetadataProviderCredentialsBaseComponent: FunctionComponent<{
           }}
         >
           {children}
-          <button className="block mt-2 btn">Save</button>
+          <button className="block mt-2 btn">
+            <Trans>Save</Trans>
+          </button>
         </form>
       </div>
     </SettingsSegment>

@@ -1,21 +1,26 @@
-import { init, changeLanguage } from 'i18next';
+import { i18n } from '@lingui/core';
+import { t } from '@lingui/macro';
+import { en, de } from 'make-plural/plurals';
+
+import { messages as messagesEm } from 'src/i18n/locales/en/translation';
+import { messages as messagesDe } from 'src/i18n/locales/de/translation';
+
 import { GlobalConfiguration } from 'src/repository/globalSettings';
 
-import en from 'src/i18n/locale/en/translation.json';
-import de from 'src/i18n/locale/de/translation.json';
+export const setupI18n = (locale: string) => {
+    i18n.loadLocaleData({
+        en: { plurals: en },
+        de: { plurals: de },
+    });
+    i18n.load({ en: messagesEm, de: messagesDe });
+    i18n.activate(locale);
 
-const resources = <const>{
-    en: { translation: en },
-    de: { translation: de },
+    GlobalConfiguration.subscribe('serverLang', (lng) => {
+        if (i18n.locale === lng) {
+            return;
+        }
+
+        console.log(t`Changing server language to ${lng}`);
+        i18n.activate(lng);
+    });
 };
-
-init({
-    fallbackLng: 'en',
-    lng: GlobalConfiguration.configuration.serverLang,
-    interpolation: {
-        escapeValue: false,
-    },
-    resources: resources,
-});
-
-GlobalConfiguration.subscribe('serverLang', (lng) => changeLanguage(lng));

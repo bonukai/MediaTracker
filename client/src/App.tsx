@@ -1,16 +1,20 @@
-import React, { FunctionComponent, useContext } from 'react';
+import React, { FunctionComponent } from 'react';
 import { QueryCache, QueryClient, QueryClientProvider } from 'react-query';
 import { HashRouter as Router } from 'react-router-dom';
 import { FetchError } from 'src/api/api';
 import { DarkModeProvider } from 'src/hooks/darkMode';
-import { useTranslation } from 'react-i18next';
 
 import { MyRouter } from './Router';
-import './i18n/i18n';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { Trans } from '@lingui/macro';
+import { setupI18n } from 'src/i18n/i18n';
 
 import './styles/fullcalendar.css';
 import './styles/main.scss';
 import './styles/tailwind.css';
+
+setupI18n();
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,7 +59,6 @@ let globalSetErrorMessage: (message: string) => void;
 
 export const App: FunctionComponent = () => {
   const [errorMessage, setErrorMessage] = React.useState<string>();
-  const { t } = useTranslation();
 
   React.useEffect(() => {
     globalSetErrorMessage = setErrorMessage;
@@ -66,17 +69,19 @@ export const App: FunctionComponent = () => {
   }, []);
 
   return (
-    <DarkModeProvider>
-      <QueryClientProvider client={queryClient}>
-        <Router>
-          <MyRouter />
-        </Router>
-      </QueryClientProvider>
-      {errorMessage && (
-        <div className="fixed z-50 p-1 m-auto -translate-x-1/2 bg-red-700 rounded shadow-sm cursor-default shadow-black left-1/2 top-4">
-          {t('Server error')}: {errorMessage}
-        </div>
-      )}
-    </DarkModeProvider>
+    <I18nProvider i18n={i18n}>
+      <DarkModeProvider>
+        <QueryClientProvider client={queryClient}>
+          <Router>
+            <MyRouter />
+          </Router>
+        </QueryClientProvider>
+        {errorMessage && (
+          <div className="fixed z-50 p-1 m-auto -translate-x-1/2 bg-red-700 rounded shadow-sm cursor-default shadow-black left-1/2 top-4">
+            <Trans>Server error: {errorMessage}</Trans>
+          </div>
+        )}
+      </DarkModeProvider>
+    </I18nProvider>
   );
 };

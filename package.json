@@ -27,7 +27,7 @@
     },
     "homepage": "https://github.com/bonukai/MediaTracker#readme",
     "engines": {
-        "node": ">=16"
+        "node": ">=14"
     },
     "devDependencies": {
         "@types/jest": "^27.4.0",

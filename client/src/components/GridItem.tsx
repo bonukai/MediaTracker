@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { t, Trans } from '@lingui/macro';
 
 import { addToWatchlist, removeFromWatchlist } from 'src/api/details';
 import { BadgeRating } from 'src/components/StarRating';
@@ -44,14 +44,13 @@ export const GridItem: FunctionComponent<{
     showRating,
     showAddToWatchlistAndMarkAsSeenButtons,
   } = props.appearance || {};
-  const { t } = useTranslation();
 
   const mediaTypeString: Record<MediaType, string> = {
-    audiobook: t('Audiobook'),
-    book: t('Book'),
-    movie: t('Movie'),
-    tv: t('Tv'),
-    video_game: t('Video game'),
+    audiobook: t`Audiobook`,
+    book: t`Book`,
+    movie: t`Movie`,
+    tv: t`Tv`,
+    video_game: t`Video game`,
   };
 
   return (
@@ -74,9 +73,7 @@ export const GridItem: FunctionComponent<{
 
                         if (
                           confirm(
-                            t('Remove "{{ title }}" from watchlist?', {
-                              title: mediaItem.title,
-                            })
+                            t`Remove "${mediaItem.title}" from watchlist?`
                           )
                         ) {
                           removeFromWatchlist(mediaItem);
@@ -164,13 +161,9 @@ export const GridItem: FunctionComponent<{
                 </>
               )}
               {mediaItem.mediaType !== 'tv' && mediaItem.releaseDate && (
-                <>
-                  {t('Release {{ relativeTime }}', {
-                    relativeTime: relativeTimeTo(
-                      new Date(mediaItem.releaseDate)
-                    ),
-                  })}
-                </>
+                <Trans>
+                  Release {relativeTimeTo(new Date(mediaItem.releaseDate))}
+                </Trans>
               )}
             </>
           )}
@@ -188,7 +181,7 @@ export const GridItem: FunctionComponent<{
                       addToWatchlist(mediaItem);
                     }}
                   >
-                    {t('Add to watchlist')}
+                    <Trans>Add to watchlist</Trans>
                   </div>
                 )}
                 {canBeMarkedAsSeen(mediaItem) && (
@@ -199,7 +192,7 @@ export const GridItem: FunctionComponent<{
                           className="my-1 text-sm text-center pointer-events-auto dark:bg-gray-900 bg-zinc-100 btn"
                           onClick={() => openModal()}
                         >
-                          {t('Mark as seen')}
+                          <Trans>Mark as seen</Trans>
                         </div>
                       </>
                     )}

@@ -1,22 +1,20 @@
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import { t } from '@lingui/macro';
+
 import { MediaItemOrderBy, MediaType, SortOrder } from 'mediatracker-api';
-import React, { FunctionComponent, useEffect, useRef } from 'react';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 export const useMediaTypeOrderByNames = (): Record<
   MediaItemOrderBy,
   string
 > => {
-  const { t } = useTranslation();
-
   return {
-    lastSeen: t('Last seen'),
-    releaseDate: t('Release date'),
-    status: t('Status'),
-    title: t('Title'),
-    nextAiring: t('Next airing'),
-    unseenEpisodes: t('Unseen episodes count'),
-    mediaType: t('Media type'),
+    lastSeen: t`Last seen`,
+    releaseDate: t`Release date`,
+    status: t`Status`,
+    title: t`Title`,
+    nextAiring: t`Next airing`,
+    unseenEpisodes: t`Unseen episodes count`,
+    mediaType: t`Media type`,
   };
 };
 

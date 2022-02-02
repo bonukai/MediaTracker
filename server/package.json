@@ -1,18 +1,19 @@
 {
     "name": "backend",
     "scripts": {
-        "test": "cross-env NODE_PATH=. DATABASE_PATH=test.db jest",
-        "build-server": "tsc -p tsconfig.build.json",
+        "test": "cross-env DATABASE_PATH=test.db jest",
+        "build-server": "babel src --out-dir build --extensions .ts --delete-dir-on-start",
         "build-docs": "npm run build --prefix ../docs",
-        "build-routes": "ts-node scripts/generateRoutes.ts && ts-node scripts/generateApi.ts && npm run build --prefix ../rest-api",
-        "watch-routes": "nodemon --watch src --ignore src/generated --ext * --exec \"ts-node scripts/generateRoutes.ts && ts-node scripts/generateApi.ts\"",
-        "watch-test": "cross-env NODE_PATH=. DATABASE_PATH=test.db jest --watchAll",
+        "build-routes": "babel-node --extensions .ts scripts/generateRoutes.ts && babel-node --extensions .ts scripts/generateApi.ts && npm run build --prefix ../rest-api",
+        "watch-routes": "nodemon --watch src --ignore src/generated --ext * --exec \"npx babel-node --extensions .ts scripts/generateRoutes.ts && npx babel-node --extensions .ts scripts/generateApi.ts\"",
+        "watch-test": "cross-env DATABASE_PATH=test.db jest --watchAll",
         "build": "npm run build-routes && npm run build-server",
-        "dev": "npx cross-env NODE_PATH=. nodemon src/index.ts",
-        "start": "cross-env NODE_PATH=build NODE_ENV=production node build/src/index.js",
+        "dev": "nodemon --watch src --ext * --exec \"npx babel-node --extensions .ts src/index.ts\"",
+        "start": "cross-env NODE_ENV=production node build/index.js",
         "lint": "eslint src"
     },
     "dependencies": {
+        "@lingui/core": "^3.13.2",
         "ajv": "^8.9.0",
         "argon2": "^0.28.3",
         "axios": "^0.25.0",
@@ -25,9 +26,9 @@
         "express-session": "^1.17.2",
         "form-data": "^4.0.0",
         "fs-extra": "^10.0.0",
-        "i18next": "^21.6.10",
         "knex": "^1.0.2",
         "lodash": "^4.17.21",
+        "make-plural": "^7.0.0",
         "nanoid": "^3.2.0",
         "passport": "^0.5.2",
         "passport-local": "^1.0.0",
@@ -37,6 +38,13 @@
         "url-join": "^4.0.1"
     },
     "devDependencies": {
+        "@babel/cli": "^7.16.8",
+        "@babel/core": "^7.16.12",
+        "@babel/node": "^7.16.8",
+        "@babel/preset-env": "^7.16.11",
+        "@babel/preset-typescript": "^7.16.7",
+        "@lingui/cli": "^3.13.2",
+        "@lingui/macro": "^3.13.2",
         "@tsconfig/recommended": "^1.0.1",
         "@types/cookie-parser": "^1.4.2",
         "@types/express": "^4.17.13",
@@ -44,13 +52,15 @@
         "@types/fs-extra": "^9.0.13",
         "@types/jest": "^27.4.0",
         "@types/lodash": "^4.14.178",
-        "@types/node": "^17.0.13",
         "@types/passport": "^1.0.7",
         "@types/passport-local": "^1.0.34",
         "@types/sharp": "^0.29.5",
         "@types/url-join": "^4.0.1",
         "@typescript-eslint/eslint-plugin": "^5.10.2",
         "@typescript-eslint/parser": "^5.10.2",
+        "babel-jest": "^27.4.6",
+        "babel-plugin-macros": "^3.1.0",
+        "babel-plugin-module-resolver": "^4.1.0",
         "concurrently": "^7.0.0",
         "eslint": "^8.8.0",
         "eslint-plugin-import": "^2.25.4",
@@ -66,7 +76,7 @@
         "typescript-routes-to-openapi": "^0.0.26"
     },
     "engines": {
-        "node": ">=16"
+        "node": ">=14"
     },
     "nodemonConfig": {
         "env": {

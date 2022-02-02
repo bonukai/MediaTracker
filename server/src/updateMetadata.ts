@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import chalk from 'chalk';
-import { t } from 'i18next';
+import { plural, t } from '@lingui/macro';
 
 import {
     MediaItemBase,
@@ -367,7 +367,7 @@ const shouldUpdate = (mediaItem: MediaItemBase) => {
 };
 
 export const updateMetadata = async (): Promise<void> => {
-    console.log(chalk.bold.green(t('Updating metadata')));
+    console.log(chalk.bold.green(t`Updating metadata`));
 
     let numberOfUpdatedItems = 0;
     let numberOfFailures = 0;
@@ -380,14 +380,12 @@ export const updateMetadata = async (): Promise<void> => {
             continue;
         }
 
-        console.log(
-            t('Updating: {{ title }} (last updated at: {{ date }}', {
-                title: mediaItem.title,
-                data: chalk.blue(
-                    new Date(mediaItem.lastTimeUpdated).toLocaleString()
-                ),
-            })
+        const title = mediaItem.title;
+        const date = chalk.blue(
+            new Date(mediaItem.lastTimeUpdated).toLocaleString()
         );
+
+        console.log(t`Updating: ${title} (last updated at: ${date}`);
 
         try {
             await updateMediaItem(mediaItem);
@@ -399,23 +397,27 @@ export const updateMetadata = async (): Promise<void> => {
     }
 
     if (numberOfUpdatedItems === 0 && numberOfFailures === 0) {
-        console.log(chalk.bold.green(t('Everything up to date')));
+        console.log(chalk.bold.green(t`Everything up to date`));
     } else {
+        const count = numberOfUpdatedItems;
+
         console.log(
             chalk.bold.green(
-                t('Updated {{ count }} items', {
-                    count: numberOfUpdatedItems,
-                    defaultValue_one: 'Updated 1 item',
+                plural(count, {
+                    one: 'Updated 1 item',
+                    other: 'Updated # items',
                 })
             )
         );
 
         if (numberOfFailures > 0) {
+            const count = numberOfUpdatedItems;
+
             console.log(
                 chalk.bold.red(
-                    t('Failed to update {{ count }} items', {
-                        count: numberOfUpdatedItems,
-                        defaultValue_one: 'Failed to update 1 item',
+                    plural(count, {
+                        one: 'Failed to update 1 item',
+                        other: 'Failed to update # items',
                     })
                 )
             );

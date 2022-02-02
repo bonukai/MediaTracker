@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { useTranslation } from 'react-i18next';
+import { t } from '@lingui/macro';
 
 import { MediaItemItemsResponse } from 'mediatracker-api';
 import { useItems } from 'src/api/items';
@@ -31,8 +31,6 @@ const Segment: FunctionComponent<{
 };
 
 export const HomePage: FunctionComponent = () => {
-  const { t } = useTranslation();
-
   const { items: upcomingEpisodes } = useItems({
     orderBy: 'nextAiring',
     sortOrder: 'asc',
@@ -61,7 +59,7 @@ export const HomePage: FunctionComponent = () => {
   return (
     <div className="px-2">
       <Segment
-        title={t('Upcoming')}
+        title={t`Upcoming`}
         items={upcomingEpisodes}
         gridItemArgs={{
           showRating: true,
@@ -75,7 +73,7 @@ export const HomePage: FunctionComponent = () => {
       />
 
       <Segment
-        title={t('Next episode to watch')}
+        title={t`Next episode to watch`}
         items={continueWatching}
         gridItemArgs={{
           showRating: true,
@@ -89,7 +87,7 @@ export const HomePage: FunctionComponent = () => {
       />
 
       <Segment
-        title={t('Unrated')}
+        title={t`Unrated`}
         items={unratedItems}
         gridItemArgs={{
           showRating: true,

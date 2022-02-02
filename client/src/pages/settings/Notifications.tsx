@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useEffect, useRef } from 'react';
+import { t, Trans } from '@lingui/macro';
 import { User } from 'mediatracker-api';
 import { useNotificationPlatformsCredentials } from 'src/api/notificationPlatformsCredentials';
 import { useUser } from 'src/api/user';
@@ -11,38 +12,38 @@ export const SettingsNotificationsPage: FunctionComponent = () => {
   return (
     <>
       <CheckboxWithTitleAndDescription
-        title="Send notification for releases"
-        description="Receive notification for all media items on your watchlist, when they are released, including new seasons for tv shows"
+        title={t`Send notification for releases`}
+        description={t`Receive notification for all media items on your watchlist, when they are released, including new seasons for tv shows`}
         checked={user.sendNotificationForReleases}
         onChange={(value) => updateUser({ sendNotificationForReleases: value })}
       />
       <CheckboxWithTitleAndDescription
-        title="Send notification for episodes releases"
-        description="Receive notification for every episode for all tv shows on your watchlist, when it's released"
+        title={t`Send notification for episodes releases`}
+        description={t`Receive notification for every episode for all tv shows on your watchlist, when it's released`}
         checked={user.sendNotificationForEpisodesReleases}
         onChange={(value) =>
           updateUser({ sendNotificationForEpisodesReleases: value })
         }
       />
       <CheckboxWithTitleAndDescription
-        title="Send notification when status changes"
-        description="Receive notification for all media items on your watchlist, when it's status changes"
+        title={t`Send notification when status changes`}
+        description={t`Receive notification for all media items on your watchlist, when it's status changes`}
         checked={user.sendNotificationWhenStatusChanges}
         onChange={(value) =>
           updateUser({ sendNotificationWhenStatusChanges: value })
         }
       />
       <CheckboxWithTitleAndDescription
-        title="Send notification when release date changes"
-        description="Receive notification for all media items on your watchlist, when it's release date changes"
+        title={t`Send notification when release date changes`}
+        description={t`Receive notification for all media items on your watchlist, when it's release date changes`}
         checked={user.sendNotificationWhenReleaseDateChanges}
         onChange={(value) =>
           updateUser({ sendNotificationWhenReleaseDateChanges: value })
         }
       />
       <CheckboxWithTitleAndDescription
-        title="Send notification when number of seasons changes"
-        description="Receive notification for all tv shows on your watchlist, when it's number of seasons changes"
+        title={t`Send notification when number of seasons changes`}
+        description={t`Receive notification for all tv shows on your watchlist, when it's number of seasons changes`}
         checked={user.sendNotificationWhenNumberOfSeasonsChanges}
         onChange={(value) =>
           updateUser({ sendNotificationWhenNumberOfSeasonsChanges: value })
@@ -55,7 +56,7 @@ export const SettingsNotificationsPage: FunctionComponent = () => {
         href="https://www.pushbullet.com"
       >
         <label>
-          App token
+          <Trans>App token</Trans>
           {/* https://www.pushbullet.com/#settings/account */}
           <input name="token" required className="block" />
         </label>
@@ -67,7 +68,7 @@ export const SettingsNotificationsPage: FunctionComponent = () => {
       >
         <label>
           {/* https://pushover.net */}
-          User key
+          <Trans> User key</Trans>
           <input name="key" required className="block" />
         </label>
       </NotificationPlatformsCredentials>
@@ -78,7 +79,7 @@ export const SettingsNotificationsPage: FunctionComponent = () => {
       >
         <label>
           {/* https://www.pushsafer.com/dashboard */}
-          Key
+          <Trans>Key</Trans>
           <input name="key" required className="block" />
         </label>
       </NotificationPlatformsCredentials>
@@ -88,15 +89,15 @@ export const SettingsNotificationsPage: FunctionComponent = () => {
         href="https://gotify.net"
       >
         <label>
-          Gotify server url
+          <Trans>Gotify server url</Trans>
           <input name="url" type="url" required className="block" />
         </label>
         <label>
-          Access Token
+          <Trans>Access Token</Trans>
           <input name="token" required className="block" />
         </label>
         <label>
-          Priority
+          <Trans>Priority</Trans>
           <select name="priority" className="block">
             <option></option>
             {new Array(10).fill(null).map((_, index) => (
@@ -111,11 +112,11 @@ export const SettingsNotificationsPage: FunctionComponent = () => {
         href="https://ntfy.sh"
       >
         <label>
-          Topic
+          <Trans>Topic</Trans>
           <input name="topic" required className="block" />
         </label>
         <label>
-          Priority
+          <Trans>Priority</Trans>
           <select name="priority" className="block">
             <option></option>
             {new Array(5).fill(null).map((_, index) => (
@@ -124,7 +125,7 @@ export const SettingsNotificationsPage: FunctionComponent = () => {
           </select>
         </label>
         <label>
-          Server url (only for self hosting)
+          <Trans>Server url (only for self hosting)</Trans>
           <input name="url" type="url" className="block" />
         </label>
       </NotificationPlatformsCredentials>
@@ -155,7 +156,9 @@ const NotificationPlatform: FunctionComponent = () => {
             <option key={platform}>{platform}</option>
           ))}
         </select>
-        <div>Platform</div>
+        <div>
+          <Trans>Platform</Trans>
+        </div>
       </div>
     </>
   );
@@ -210,7 +213,9 @@ const NotificationPlatformsCredentials: FunctionComponent<{
         >
           {props.children}
 
-          <button className="mt-2 btn">Save</button>
+          <button className="mt-2 btn">
+            <Trans>Save</Trans>
+          </button>
         </form>
       </SettingsSegment>
     </div>

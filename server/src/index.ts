@@ -5,7 +5,7 @@ import session from 'express-session';
 import path from 'path';
 import chalk from 'chalk';
 import { nanoid } from 'nanoid';
-import { t } from 'i18next';
+import { t } from '@lingui/macro';
 
 import { runMigrations, knex } from 'src/dbconfig';
 import {
@@ -30,9 +30,11 @@ import { updateMetadata } from 'src/updateMetadata';
 import { durationToMilliseconds } from 'src/utils';
 import { userRepository } from 'src/repository/user';
 import { metadataProviderCredentialsRepository } from 'src/repository/metadataProviderCredentials';
-import 'src/i18n/i18n';
+import { setupI18n } from 'src/i18n/i18n';
 
 (async () => {
+    setupI18n(process.env.SERVER_LANG || 'en');
+
     const app = express();
 
     await runMigrations();
@@ -70,7 +72,7 @@ import 'src/i18n/i18n';
             enableRegistration: false,
         });
 
-        console.log(chalk.green.bold(t('DEMO mode enabled')));
+        console.log(chalk.green.bold(t`DEMO mode enabled`));
     }
 
     if (IGDB_CLIENT_ID && IGDB_CLIENT_SECRET) {
@@ -124,11 +126,6 @@ import 'src/i18n/i18n';
 
     app.use(passport.initialize());
     app.use(passport.session());
-
-    app.use((req, res, next) => {
-        console.log(req.method, req.path, req.body);
-        next();
-    });
 
     app.use(AccessTokenMiddleware.authorize);
 
@@ -184,11 +181,9 @@ import 'src/i18n/i18n';
     app.use(generatedRoutes);
 
     const server = app.listen(PORT, HOSTNAME, async () => {
-        console.log(
-            t('MediaTracker listening at {{ address }}', {
-                address: `http://${HOSTNAME}:${PORT}`,
-            })
-        );
+        const address = `http://${HOSTNAME}:${PORT}`;
+
+        console.log(t`MediaTracker listening at ${address}`);
 
         if (NODE_ENV === 'production') {
             await updateMetadata();

@@ -1,12 +1,11 @@
 import React, { FunctionComponent } from 'react';
-import { useTranslation } from 'react-i18next';
+import { t } from '@lingui/macro';
 import { useConfiguration } from 'src/api/configuration';
 import { CheckboxWithTitleAndDescription } from 'src/components/Checkbox';
 import { SettingsSegment } from 'src/components/SettingsSegment';
 
 export const SettingsConfigurationPage: FunctionComponent = () => {
   const { configuration, update, isLoading } = useConfiguration();
-  const { t } = useTranslation();
 
   return (
     <>
@@ -14,9 +13,9 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
         <></>
       ) : (
         <>
-          <SettingsSegment title={t('General')}>
+          <SettingsSegment title={t`General`}>
             <CheckboxWithTitleAndDescription
-              title={t('Enable registration')}
+              title={t`Enable registration`}
               checked={configuration.enableRegistration}
               onChange={(value) => update({ enableRegistration: value })}
             />
@@ -24,7 +23,7 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
 
           <div className="mt-3" />
 
-          <SettingsSegment title={t('Server language')}>
+          <SettingsSegment title={t`Server language`}>
             <select
               value={configuration.serverLang || 'en'}
               onChange={(e) => update({ serverLang: e.currentTarget.value })}
@@ -36,7 +35,7 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
 
           <div className="mt-3" />
 
-          <SettingsSegment title={t('Audible language')}>
+          <SettingsSegment title={t`Audible language`}>
             <select
               value={configuration.audibleLang || 'US'}
               onChange={(e) => update({ audibleLang: e.currentTarget.value })}
@@ -56,7 +55,7 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
 
           <div className="mt-3" />
 
-          <SettingsSegment title={t('TMDB language')}>
+          <SettingsSegment title={t`TMDB language`}>
             <select
               value={configuration.tmdbLang || 'en'}
               onChange={(e) => update({ tmdbLang: e.currentTarget.value })}

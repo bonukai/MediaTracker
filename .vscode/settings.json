@@ -3,11 +3,16 @@
         "audiobooks",
         "bonukai",
         "buildx",
+        "checkin",
         "daygrid",
         "DOCKERHUB",
         "flox",
+        "languagedetector",
+        "lingui",
         "ntfy",
         "pmmmwh",
+        "scrobble",
+        "semibold",
         "Trakt",
         "trakttv"
     ]

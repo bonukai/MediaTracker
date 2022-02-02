@@ -1,13 +1,11 @@
 import React, { FormEventHandler, FunctionComponent } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans } from '@lingui/macro';
 import { Link } from 'react-router-dom';
 
 import { useConfiguration } from 'src/api/configuration';
 import { useUser } from 'src/api/user';
 
 export const LoginPage: FunctionComponent = () => {
-  const { t } = useTranslation();
-
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
@@ -16,7 +14,7 @@ export const LoginPage: FunctionComponent = () => {
   const { configuration, isLoading } = useConfiguration();
 
   if (isLoading) {
-    return <>{t('Loading')}</>;
+    return <Trans>Loading</Trans>;
   }
 
   const onSubmit: FormEventHandler = async (e) => {
@@ -31,11 +29,13 @@ export const LoginPage: FunctionComponent = () => {
   return (
     <div className="flex items-center">
       <div className="mx-auto mt-20">
-        <div className="mb-10 text-5xl">{t('Login')}</div>
+        <div className="mb-10 text-5xl">
+          <Trans>Login</Trans>
+        </div>
         <form onSubmit={onSubmit}>
           <div className="pb-5">
             <label htmlFor="username" className="block text-lg">
-              {t('Username')}:
+              <Trans>Username</Trans>:
             </label>
             <input
               id="username"
@@ -50,7 +50,7 @@ export const LoginPage: FunctionComponent = () => {
 
           <div className="pb-2">
             <label htmlFor="password" className="block text-lg">
-              {t('Password')}:
+              <Trans>Password</Trans>:
             </label>
             <input
               id="password"
@@ -63,19 +63,23 @@ export const LoginPage: FunctionComponent = () => {
           </div>
 
           <div>
-            <button className="w-full mt-2">{t('Login')}</button>
+            <button className="w-full mt-2">
+              <Trans>Login</Trans>
+            </button>
           </div>
         </form>
 
         {Boolean(configuration?.enableRegistration) && (
           <Link to={'/register'}>
-            <button className="w-full mt-4">{t('Register')}</button>
+            <button className="w-full mt-4">
+              <Trans>Register</Trans>
+            </button>
           </Link>
         )}
 
         {loginIsError && (
           <div className="pt-2 font-bold text-red-700 dark:text-red-600">
-            {t('Incorrect password or username')}
+            <Trans>Incorrect password or username</Trans>
           </div>
         )}
       </div>
