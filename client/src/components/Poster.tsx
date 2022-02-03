@@ -185,7 +185,7 @@ const PosterSpring: FunctionComponent<{
       >
         <div
           className={clsx(
-            'relative w-full h-full transition-shadow duration-100 rounded shadow-md overflow-clip shadow-black',
+            'relative w-full transition-shadow duration-100 rounded shadow-md overflow-clip shadow-black',
             href && 'hover:shadow-black hover:shadow-lg',
             tailwindcssAspectRatioForMediaType(itemMediaType)
           )}
