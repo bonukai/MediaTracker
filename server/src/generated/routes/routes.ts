@@ -128,36 +128,24 @@ router.get(
   _ConfigurationController.get
 );
 router.get(
-  '/img/poster',
+  '/img/:id',
   validatorHandler({
+    pathParamsSchema: {
+      type: 'object',
+      properties: { id: { type: 'string' } },
+      required: ['id'],
+      nullable: false,
+    },
     requestQuerySchema: {
       $schema: 'http://json-schema.org/draft-07/schema#',
       definitions: { ImgSize: { enum: ['original', 'small'], type: 'string' } },
       type: 'object',
       properties: {
-        mediaItemId: { type: ['number', 'null'] },
-        seasonId: { type: ['number', 'null'] },
         size: { oneOf: [{ $ref: '#/definitions/ImgSize' }, { type: 'null' }] },
       },
     },
   }),
-  _ImgController.poster
-);
-router.get(
-  '/img/backdrop',
-  validatorHandler({
-    requestQuerySchema: {
-      $schema: 'http://json-schema.org/draft-07/schema#',
-      definitions: { ImgSize: { enum: ['original', 'small'], type: 'string' } },
-      type: 'object',
-      properties: {
-        mediaItemId: { type: 'number' },
-        size: { oneOf: [{ $ref: '#/definitions/ImgSize' }, { type: 'null' }] },
-      },
-      required: ['mediaItemId'],
-    },
-  }),
-  _ImgController.backdrop
+  _ImgController.image
 );
 router.get(
   '/api/details/:mediaItemId',

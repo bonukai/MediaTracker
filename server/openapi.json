@@ -178,72 +178,19 @@
         }
       }
     },
-    "/img/poster": {
+    "/img/{id}": {
       "get": {
         "tags": [
           "Img"
         ],
-        "operationId": "GetPoster",
+        "operationId": "GetImage",
         "parameters": [
           {
-            "name": "mediaItemId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "number",
-              "nullable": true
-            }
-          },
-          {
-            "name": "seasonId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "number",
-              "nullable": true
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/ImgSize"
-                }
-              ],
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Image",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/img/backdrop": {
-      "get": {
-        "tags": [
-          "Img"
-        ],
-        "operationId": "GetBackdrop",
-        "parameters": [
-          {
-            "name": "mediaItemId",
-            "in": "query",
+            "name": "id",
+            "in": "path",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "string"
             }
           },
           {
@@ -262,7 +209,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Image",
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {

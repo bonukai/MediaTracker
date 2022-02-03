@@ -13,6 +13,7 @@ import { TvSeason } from 'src/entity/tvseason';
 import { Seen, SeenFilters } from 'src/entity/seen';
 import { knex } from 'src/dbconfig';
 import { Watchlist } from 'src/entity/watchlist';
+import { Image } from 'src/entity/image';
 
 export const getDetailsKnex = async (params: {
     mediaItemId: number;
@@ -60,15 +61,11 @@ export const getDetailsKnex = async (params: {
                 })
                 .first();
 
-            return {
-                mediaItem,
-                seasons,
-                episodes,
-                seenHistory,
-                userRating,
-                watchlist,
-            };
+        const images = await trx<Image>('image').where({
+            mediaItemId: mediaItemId,
+            seasonId: null,
         });
+                images,
 
     if (!mediaItem) {
         return;
@@ -163,6 +160,8 @@ export const getDetailsKnex = async (params: {
 
     const lastSeen = _.first(seenHistory)?.date || null;
 
+    const { poster, backdrop } = _.keyBy(images, (image) => image.type);
+
     return {
         ...mediaItem,
         hasDetails: true,
@@ -181,14 +180,8 @@ export const getDetailsKnex = async (params: {
         nextAiring: nextAiring,
         numberOfEpisodes: numberOfEpisodes,
         lastSeenAt: lastSeen,
-        poster: mediaItem.poster
-            ? mediaItemPosterPath(mediaItem.id, 'original')
-            : null,
-        posterSmall: mediaItem.poster
-            ? mediaItemPosterPath(mediaItem.id, 'small')
-            : null,
-        backdrop: mediaItem.backdrop
-            ? mediaItemBackdropPath(mediaItem.id)
-            : null,
+        poster: poster?.id ? `/img/${poster?.id}` : null,
+        posterSmall: poster?.id ? `/img/${poster?.id}?size=small` : null,
+        backdrop: backdrop?.id ? `/img/${backdrop?.id}` : null,
     };
 };

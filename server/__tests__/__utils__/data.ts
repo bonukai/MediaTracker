@@ -32,6 +32,8 @@ export class InitialData {
         mediaType: 'tv',
         source: 'user',
         title: 'title',
+        poster: 'posterUrl',
+        backdrop: 'backdropUrl',
     };
 
     static season: TvSeason = {
@@ -42,6 +44,7 @@ export class InitialData {
         title: 'title',
         seasonNumber: 1,
         numberOfEpisodes: 1,
+        poster: 'posterUrl',
         isSpecialSeason: false,
     };
 

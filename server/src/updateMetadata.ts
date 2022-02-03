@@ -11,7 +11,7 @@ import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason, TvSeasonFilters } from 'src/entity/tvseason';
 import { metadataProviders } from 'src/metadata/metadataProviders';
 import { mediaItemRepository } from 'src/repository/mediaItem';
-import { downloadAsset, durationToMilliseconds } from 'src/utils';
+import { durationToMilliseconds, updateAsset } from 'src/utils';
 import { tvEpisodeRepository } from 'src/repository/episode';
 import { tvSeasonRepository } from 'src/repository/season';
 import { Notifications } from 'src/notifications/notifications';
@@ -109,25 +109,27 @@ const downloadNewAssets = async (
     oldMediaItem: MediaItemBaseWithSeasons,
     newMediaItem: MediaItemBaseWithSeasons
 ) => {
-    if (oldMediaItem.poster && newMediaItem.poster !== oldMediaItem.poster) {
-        await downloadAsset({
-            assetsType: 'poster',
-            mediaItem: newMediaItem,
+    if (newMediaItem.poster && newMediaItem.poster !== oldMediaItem.poster) {
+        await updateAsset({
+            type: 'poster',
+            mediaItemId: oldMediaItem.id,
+            url: newMediaItem.poster,
         });
     }
 
     if (
-        oldMediaItem.backdrop &&
+        newMediaItem.backdrop &&
         newMediaItem.backdrop !== oldMediaItem.backdrop
     ) {
-        await downloadAsset({
-            assetsType: 'backdrop',
-            mediaItem: newMediaItem,
+        await updateAsset({
+            type: 'backdrop',
+            mediaItemId: oldMediaItem.id,
+            url: newMediaItem.backdrop,
         });
     }
 
-    const oldSeasonsMap = _.keyBy(
-        oldMediaItem.seasons,
+    const newSeasonsMap = _.keyBy(
+        newMediaItem.seasons,
         (season) => season.seasonNumber
     );
 
@@ -135,12 +137,14 @@ const downloadNewAssets = async (
         newMediaItem.seasons
             ?.filter((season) => season.poster)
             ?.filter(
-                (season) => season.poster !== oldSeasonsMap[season.id]?.poster
+                (season) => season.poster !== newSeasonsMap[season.id]?.poster
             )
             .map((season) =>
-                downloadAsset({
-                    assetsType: 'poster',
-                    season: season,
+                updateAsset({
+                    type: 'poster',
+                    mediaItemId: oldMediaItem.id,
+                    seasonId: season.id,
+                    url: season.poster,
                 })
             ) || []
     );
