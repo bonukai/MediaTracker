@@ -65,7 +65,17 @@ export const getDetailsKnex = async (params: {
             mediaItemId: mediaItemId,
             seasonId: null,
         });
+
+        return {
+            mediaItem,
+            seasons,
+            episodes,
+            seenHistory,
+            userRating,
+            watchlist,
                 images,
+        };
+    });
 
     if (!mediaItem) {
         return;
