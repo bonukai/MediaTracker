@@ -38,7 +38,7 @@ describe('migrations', () => {
         );
     });
 
-    test('20220202231058_posterId', async () => {
+    test('20220202231058_image', async () => {
         await knex.migrate.up({
             name: `20220121025651_ratingColumnFloat.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
@@ -55,7 +55,7 @@ describe('migrations', () => {
         });
 
         await knex.migrate.up({
-            name: `20220202231058_posterId.${MIGRATIONS_EXTENSION}`,
+            name: `20220202231058_image.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
 
@@ -77,7 +77,7 @@ describe('migrations', () => {
         });
 
         await knex.migrate.up({
-            name: `20220202231058_posterId.${MIGRATIONS_EXTENSION}`,
+            name: `20220202231058_image.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
     });
