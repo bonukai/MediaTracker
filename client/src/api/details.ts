@@ -1,7 +1,6 @@
-import { useMutation, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import { queryClient } from 'src/App';
 import {
-  MediaItemDetailsResponse,
   MediaItemItemsResponse,
   TvEpisode,
   LastSeenAt,
@@ -91,11 +90,13 @@ export const removeFromWatchlist = async (
 ) => {
   await mediaTrackerApi.watchlist.delete({ mediaItemId: mediaItem.id });
   await updateMediaItem(mediaItem);
+  queryClient.invalidateQueries(['items']);
 };
 
 export const addToWatchlist = async (mediaItem: MediaItemItemsResponse) => {
   await mediaTrackerApi.watchlist.add({ mediaItemId: mediaItem.id });
   await updateMediaItem(mediaItem);
+  queryClient.invalidateQueries(['items']);
 };
 
 export const markAsSeen = async (args: {
@@ -114,6 +115,7 @@ export const markAsSeen = async (args: {
   });
 
   await updateMediaItem(args.mediaItem);
+  queryClient.invalidateQueries(['items']);
 };
 
 export const setLastSeenEpisode = async (args: {
@@ -132,6 +134,7 @@ export const setLastSeenEpisode = async (args: {
   });
 
   await updateMediaItem(args.mediaItem);
+  queryClient.invalidateQueries(['items']);
 };
 
 export const markAsUnseen = async (args: {
@@ -146,6 +149,7 @@ export const markAsUnseen = async (args: {
   });
 
   await updateMediaItem(args.mediaItem);
+  queryClient.invalidateQueries(['items']);
 };
 
 export const removeFromSeenHistory = async (
@@ -155,4 +159,5 @@ export const removeFromSeenHistory = async (
     mediaItemId: mediaItem.id,
   });
   await updateMediaItem(mediaItem);
+  queryClient.invalidateQueries(['items']);
 };
