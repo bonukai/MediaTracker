@@ -111,22 +111,7 @@ export class SearchController {
                 if ('id' in item) {
                     return item;
                 } else {
-                    const id = await mediaItemRepository.create(item);
-
-                    return {
-                        id: id,
-                        lastTimeUpdated: new Date().getTime(),
-                        ...item,
-                        poster: item.poster
-                            ? mediaItemPosterPath(id, 'small')
-                            : null,
-                        posterSmall: item.poster
-                            ? mediaItemPosterPath(id, 'original')
-                            : null,
-                        backdrop: item.backdrop
-                            ? mediaItemBackdropPath(id)
-                            : null,
-                    };
+                    return await mediaItemRepository.add(item);
                 }
             })
         );

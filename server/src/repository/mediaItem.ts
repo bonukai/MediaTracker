@@ -16,11 +16,10 @@ import {
     MediaItemBase,
     MediaItemBaseWithSeasons,
     mediaItemColumns,
-    MediaItemForProvider,
+    MediaItemDetailsResponse,
     MediaItemItemsResponse,
     MediaType,
 } from 'src/entity/mediaItem';
-import { downloadAsset } from 'src/utils';
 import { imageRepository } from 'src/repository/image';
 
 export type MediaItemOrderBy =
@@ -156,20 +155,6 @@ class MediaItemRepository extends repository<MediaItemBase>({
 
         mediaItem.id = mediaItemId;
 
-        if (mediaItem.poster) {
-            imageRepository.create({
-                mediaItemId: mediaItem.id,
-                type: 'poster',
-            });
-        }
-
-        if (mediaItem.backdrop) {
-            imageRepository.create({
-                mediaItemId: mediaItem.id,
-                type: 'backdrop',
-            });
-        }
-
         if (mediaItem.seasons) {
             for (const season of mediaItem.seasons) {
                 const seasonId = await tvSeasonRepository.create({
@@ -181,14 +166,6 @@ class MediaItemRepository extends repository<MediaItemBase>({
 
                 season.id = seasonId;
                 season.tvShowId = mediaItem.id;
-
-                if (season.poster) {
-                    imageRepository.create({
-                        mediaItemId: mediaItem.id,
-                        seasonId: season.id,
-                        type: 'poster',
-                    });
-                }
 
                 if (season.episodes) {
                     for (const episode of season.episodes) {
@@ -207,6 +184,62 @@ class MediaItemRepository extends repository<MediaItemBase>({
         }
 
         return mediaItemId;
+    }
+
+    public async add(
+        value: Omit<MediaItemBaseWithSeasons, 'lastTimeUpdated'> &
+            Partial<Pick<MediaItemBaseWithSeasons, 'lastTimeUpdated'>>
+    ): Promise<MediaItemDetailsResponse> {
+        const lastTimeUpdated = value.lastTimeUpdated
+            ? value.lastTimeUpdated
+            : new Date().getTime();
+
+        const id = await this.create({
+            ...value,
+            lastTimeUpdated: lastTimeUpdated,
+        });
+
+        const mediaItem: MediaItemDetailsResponse = {
+            ...value,
+            lastTimeUpdated: lastTimeUpdated,
+            id: id,
+        };
+
+        if (mediaItem.poster) {
+            const imageId = await imageRepository.create({
+                mediaItemId: mediaItem.id,
+                type: 'poster',
+            });
+
+            mediaItem.poster = `/img/${imageId}`;
+            mediaItem.posterSmall = `/img/${imageId}?size=small`;
+        }
+
+        if (mediaItem.backdrop) {
+            const imageId = await imageRepository.create({
+                mediaItemId: mediaItem.id,
+                type: 'backdrop',
+            });
+
+            mediaItem.backdrop = `/img/${imageId}`;
+        }
+
+        if (mediaItem.seasons) {
+            for (const season of mediaItem.seasons) {
+                if (season.poster) {
+                    const imageId = await imageRepository.create({
+                        mediaItemId: mediaItem.id,
+                        seasonId: season.id,
+                        type: 'poster',
+                    });
+
+                    season.poster = `/img/${imageId}`;
+                    season.posterSmall = `/img/${imageId}?size=small`;
+                }
+            }
+        }
+
+        return mediaItem;
     }
 
     public async createMany(mediaItem: Partial<MediaItemBaseWithSeasons>[]) {
