@@ -52,7 +52,10 @@ const mergeSearchResultWithExistingItems = (
     });
 };
 
-const findExistingItems = async (searchResult: MediaItemForProvider[]) => {
+const findExistingItems = async (
+    searchResult: MediaItemForProvider[],
+    mediaType: MediaType
+) => {
     const externalIds = _(externalIdColumnNames)
         .keyBy((id) => id)
         .mapValues((id) =>
@@ -60,7 +63,10 @@ const findExistingItems = async (searchResult: MediaItemForProvider[]) => {
         )
         .value();
 
-    return await mediaItemRepository.findByExternalIds(externalIds);
+    return await mediaItemRepository.findByExternalIds({
+        ...externalIds,
+        mediaType: mediaType,
+    });
 };
 
 /**
@@ -94,7 +100,7 @@ export class SearchController {
         const metadataProvider = metadataProviders.get(mediaType);
         const searchResult = await metadataProvider.search(query);
 
-        const existingItems = await findExistingItems(searchResult);
+        const existingItems = await findExistingItems(searchResult, mediaType);
 
         const existingItemsDetails = await getItemsKnex({
             userId: userId,

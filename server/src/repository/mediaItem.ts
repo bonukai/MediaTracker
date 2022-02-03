@@ -276,54 +276,60 @@ class MediaItemRepository extends repository<MediaItemBase>({
         igdbId?: number[];
         openlibraryId?: number[];
         audibleId?: string[];
+        mediaType: MediaType;
     }) {
-        const qb = knex<MediaItemBase>(this.tableName);
-
-        if (params.tmdbId) {
-            qb.orWhereIn('tmdbId', params.tmdbId);
-        }
-        if (params.imdbId) {
-            qb.orWhereIn('imdbId', params.imdbId);
-        }
-        if (params.tvmazeId) {
-            qb.orWhereIn('tvmazeId', params.tvmazeId);
-        }
-        if (params.igdbId) {
-            qb.orWhereIn('igdbId', params.igdbId);
-        }
-        if (params.openlibraryId) {
-            qb.orWhereIn('openlibraryId', params.openlibraryId);
-        }
-        if (params.audibleId) {
-            qb.orWhereIn('audibleId', params.audibleId);
-        }
-
-        return (await qb).map((item) => this.deserialize(item));
+        return (
+            await knex<MediaItemBase>(this.tableName)
+                .where({ mediaType: params.mediaType })
+                .andWhere((qb) => {
+                    if (params.tmdbId) {
+                        qb.orWhereIn('tmdbId', params.tmdbId);
+                    }
+                    if (params.imdbId) {
+                        qb.orWhereIn('imdbId', params.imdbId);
+                    }
+                    if (params.tvmazeId) {
+                        qb.orWhereIn('tvmazeId', params.tvmazeId);
+                    }
+                    if (params.igdbId) {
+                        qb.orWhereIn('igdbId', params.igdbId);
+                    }
+                    if (params.openlibraryId) {
+                        qb.orWhereIn('openlibraryId', params.openlibraryId);
+                    }
+                    if (params.audibleId) {
+                        qb.orWhereIn('audibleId', params.audibleId);
+                    }
+                })
+        ).map((item) => this.deserialize(item));
     }
 
-    public async findByExternalId(params: ExternalIds) {
-        const qb = knex<MediaItemBase>(this.tableName);
-
-        if (params.tmdbId) {
-            qb.orWhere('tmdbId', params.tmdbId);
-        }
-        if (params.imdbId) {
-            qb.orWhere('imdbId', params.imdbId);
-        }
-        if (params.tvmazeId) {
-            qb.orWhere('tvmazeId', params.tvmazeId);
-        }
-        if (params.igdbId) {
-            qb.orWhere('igdbId', params.igdbId);
-        }
-        if (params.openlibraryId) {
-            qb.orWhere('openlibraryId', params.openlibraryId);
-        }
-        if (params.audibleId) {
-            qb.orWhere('audibleId', params.audibleId);
-        }
-
-        return this.deserialize(await qb.first());
+    public async findByExternalId(params: ExternalIds, mediaType: MediaType) {
+        return this.deserialize(
+            await knex<MediaItemBase>(this.tableName)
+                .where({ mediaType: mediaType })
+                .andWhere((qb) => {
+                    if (params.tmdbId) {
+                        qb.orWhere('tmdbId', params.tmdbId);
+                    }
+                    if (params.imdbId) {
+                        qb.orWhere('imdbId', params.imdbId);
+                    }
+                    if (params.tvmazeId) {
+                        qb.orWhere('tvmazeId', params.tvmazeId);
+                    }
+                    if (params.igdbId) {
+                        qb.orWhere('igdbId', params.igdbId);
+                    }
+                    if (params.openlibraryId) {
+                        qb.orWhere('openlibraryId', params.openlibraryId);
+                    }
+                    if (params.audibleId) {
+                        qb.orWhere('audibleId', params.audibleId);
+                    }
+                })
+                .first()
+        );
     }
 
     public async findByTitle(params: {
