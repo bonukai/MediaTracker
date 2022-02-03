@@ -45,7 +45,7 @@ import { setupI18n } from 'src/i18n/i18n';
         await configurationRepository.create({
             enableRegistration: true,
             serverLang: process.env.SERVER_LANG || 'en',
-            tmdbLang: process.env.TMDB_LANG || 'us',
+            tmdbLang: process.env.TMDB_LANG || 'en',
             audibleLang: process.env.AUDIBLE_LANG || 'US',
         });
     } else {

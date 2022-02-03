@@ -34,7 +34,7 @@ docker run \
     -p 7481:7481 \
     -v .config/mediatracker/data:/storage \
     -v assets:/assets \
-    -e TMDB_LANG=us \
+    -e TMDB_LANG=en \
     -e AUDIBLE_LANG=us \
     bonukai/mediatracker
 ```
@@ -53,7 +53,7 @@ services:
       - assetsVolume:/assets
     environment:
       LANG: en
-      TMDB_LANG: us
+      TMDB_LANG: en
       AUDIBLE_LANG: us
     image: bonukai/mediatracker
 
