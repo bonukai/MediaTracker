@@ -69,7 +69,6 @@ export const getDetailsKnex = async (params: {
 
         const images = await trx<Image>('image').where({
             mediaItemId: mediaItemId,
-            seasonId: null,
         });
 
         return {
@@ -114,16 +113,20 @@ export const getDetailsKnex = async (params: {
     });
 
     const groupedEpisodes = _.groupBy(episodes, (episode) => episode.seasonId);
+    const seasonPosters = _.keyBy(
+        images.filter((image) => image.seasonId),
+        (image) => image.seasonId
+    );
 
     seasons.forEach((season) => {
-        const hasPoster = Boolean(season.poster);
+        const hasPoster = Boolean(season.poster) && seasonPosters[season.id];
 
         season.isSpecialSeason = Boolean(season.isSpecialSeason);
         season.poster = hasPoster
-            ? seasonPosterPath(season.id, 'original')
+            ? `/img/${seasonPosters[season.id].id}`
             : null;
         season.posterSmall = hasPoster
-            ? seasonPosterPath(season.id, 'small')
+            ? `/img/${seasonPosters[season.id].id}?size=small`
             : null;
         season.episodes = groupedEpisodes[season.id] || [];
         season.userRating = groupedSeasonRating[season.id];
@@ -176,7 +179,10 @@ export const getDetailsKnex = async (params: {
 
     const lastSeen = _.first(seenHistory)?.date || null;
 
-    const { poster, backdrop } = _.keyBy(images, (image) => image.type);
+    const { poster, backdrop } = _.keyBy(
+        images.filter((image) => !image.seasonId),
+        (image) => image.type
+    );
 
     return {
         ...mediaItem,
