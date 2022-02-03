@@ -1,10 +1,8 @@
 import _ from 'lodash';
 
 import {
-    mediaItemBackdropPath,
     MediaItemBase,
     MediaItemDetailsResponse,
-    mediaItemPosterPath,
     seasonPosterPath,
 } from 'src/entity/mediaItem';
 import { TvEpisode, TvEpisodeFilters } from 'src/entity/tvepisode';
@@ -30,38 +28,44 @@ export const getDetailsKnex = async (params: {
         watchlist,
         images,
     } = await knex.transaction(async (trx) => {
+        const mediaItem = await trx<MediaItemBase>('mediaItem')
+            .where({
+                id: mediaItemId,
+            })
+            .first();
 
-            const seasons = await trx<TvSeason>('season')
-                .where({
-                    tvShowId: mediaItemId,
-                })
-                .orderBy('seasonNumber', 'asc');
+        const seasons = await trx<TvSeason>('season')
+            .where({
+                tvShowId: mediaItemId,
+            })
+            .orderBy('seasonNumber', 'asc');
 
-            const episodes = await trx<TvEpisode>('episode')
-                .where({
-                    tvShowId: mediaItemId,
-                })
-                .orderBy('seasonNumber', 'asc')
-                .orderBy('episodeNumber', 'asc');
+        const episodes = await trx<TvEpisode>('episode')
+            .where({
+                tvShowId: mediaItemId,
+            })
+            .orderBy('seasonNumber', 'asc')
+            .orderBy('episodeNumber', 'asc');
 
-            const seenHistory = await trx<Seen>('seen')
-                .where({
-                    mediaItemId: mediaItemId,
-                    userId: userId,
-                })
-                .orderBy('date', 'desc');
+        const seenHistory = await trx<Seen>('seen')
+            .where({
+                mediaItemId: mediaItemId,
+                userId: userId,
+            })
+            .orderBy('date', 'desc');
 
-            const userRating = await trx<UserRating>('userRating').where({
+        const userRating = await trx<UserRating>('userRating')
+            .where({
                 mediaItemId: mediaItemId,
             })
             .orderBy('date', 'desc');
 
-            const watchlist = await trx<Watchlist>('watchlist')
-                .where({
-                    mediaItemId: mediaItemId,
-                    userId: userId,
-                })
-                .first();
+        const watchlist = await trx<Watchlist>('watchlist')
+            .where({
+                mediaItemId: mediaItemId,
+                userId: userId,
+            })
+            .first();
 
         const images = await trx<Image>('image').where({
             mediaItemId: mediaItemId,
@@ -75,7 +79,7 @@ export const getDetailsKnex = async (params: {
             seenHistory,
             userRating,
             watchlist,
-                images,
+            images,
         };
     });
 
@@ -177,9 +181,9 @@ export const getDetailsKnex = async (params: {
     return {
         ...mediaItem,
         hasDetails: true,
-        genres: (mediaItem.genres as unknown as string)?.split(','),
-        narrators: (mediaItem.narrators as unknown as string)?.split(','),
-        authors: (mediaItem.authors as unknown as string)?.split(','),
+        genres: ((mediaItem.genres as unknown) as string)?.split(','),
+        narrators: ((mediaItem.narrators as unknown) as string)?.split(','),
+        authors: ((mediaItem.authors as unknown) as string)?.split(','),
         seenHistory: seenHistory,
         seen: seen,
         seasons: seasons,
