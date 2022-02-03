@@ -20,6 +20,8 @@ import {
     MediaItemItemsResponse,
     MediaType,
 } from 'src/entity/mediaItem';
+import { downloadAsset } from 'src/utils';
+import { imageRepository } from 'src/repository/image';
 
 export type MediaItemOrderBy =
     | 'title'
@@ -152,6 +154,20 @@ class MediaItemRepository extends repository<MediaItemBase>({
             narrators: mediaItem.narrators?.join(','),
         } as unknown);
 
+        if (mediaItem.poster) {
+            imageRepository.create({
+                mediaItemId: mediaItem.id,
+                type: 'poster',
+            });
+        }
+
+        if (mediaItem.backdrop) {
+            imageRepository.create({
+                mediaItemId: mediaItem.id,
+                type: 'backdrop',
+            });
+        }
+
         mediaItem.id = mediaItemId;
 
         if (mediaItem.seasons) {
@@ -165,6 +181,14 @@ class MediaItemRepository extends repository<MediaItemBase>({
 
                 season.id = seasonId;
                 season.tvShowId = mediaItem.id;
+
+                if (season.poster) {
+                    imageRepository.create({
+                        mediaItemId: mediaItem.id,
+                        seasonId: season.id,
+                        type: 'poster',
+                    });
+                }
 
                 if (season.episodes) {
                     for (const episode of season.episodes) {
@@ -186,13 +210,16 @@ class MediaItemRepository extends repository<MediaItemBase>({
     }
 
     public async createMany(mediaItem: Partial<MediaItemBaseWithSeasons>[]) {
-        await Promise.all(mediaItem.map((mediaItem) => this.create(mediaItem)));
+        return await Promise.all(
+            mediaItem.map((mediaItem) => this.create(mediaItem))
+        );
     }
 
     public async seasonsWithEpisodes(mediaItem: MediaItemBase) {
         const seasons = await tvSeasonRepository.find({
             tvShowId: Number(mediaItem.id),
         });
+
         const episodes = await tvEpisodeRepository.find({
             tvShowId: Number(mediaItem.id),
         });
@@ -387,7 +414,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                 from.toISOString(),
                 to.toISOString(),
             ])
-            .where('episode.isSpecialEpisode', 0)
+            .where('episode.isSpecialEpisode', false)
             .whereNull('notificationsHistory.id');
 
         return res.map((row) =>

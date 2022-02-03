@@ -1,14 +1,11 @@
 import axios from 'axios';
 import { add } from 'date-fns';
 import fs, { pathExists, rm } from 'fs-extra';
-import { customAlphabet } from 'nanoid';
 import path from 'path';
 import sharp from 'sharp';
 
-import { ImageType } from 'src/entity/image';
+import { getImageId, ImageType } from 'src/entity/image';
 import { imageRepository } from 'src/repository/image';
-
-const nanoid = customAlphabet('1234567890abcdef', 32);
 
 export const durationToMilliseconds = (duration: Duration) =>
     add(0, duration).getTime();
@@ -51,7 +48,7 @@ export const updateAsset = async (args: {
         type: type,
     });
 
-    const newImageId = nanoid();
+    const newImageId = getImageId();
 
     await downloadAsset({
         imageId: newImageId,
