@@ -154,6 +154,8 @@ class MediaItemRepository extends repository<MediaItemBase>({
             narrators: mediaItem.narrators?.join(','),
         } as unknown);
 
+        mediaItem.id = mediaItemId;
+
         if (mediaItem.poster) {
             imageRepository.create({
                 mediaItemId: mediaItem.id,
@@ -167,8 +169,6 @@ class MediaItemRepository extends repository<MediaItemBase>({
                 type: 'backdrop',
             });
         }
-
-        mediaItem.id = mediaItemId;
 
         if (mediaItem.seasons) {
             for (const season of mediaItem.seasons) {
