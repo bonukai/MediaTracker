@@ -42,10 +42,11 @@ describe('migrations', () => {
             name: `20220121025651_ratingColumnFloat.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
-        await knex.migrate.rollback({
-            name: `20220121025651_ratingColumnFloat.${MIGRATIONS_EXTENSION}`,
+
+        await knex.migrate.down({
             directory: migrationsDirectory,
         });
+
         await knex.migrate.up({
             name: `20220121025651_ratingColumnFloat.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
@@ -57,10 +58,11 @@ describe('migrations', () => {
             name: `20220122003141_bigIntToFloat.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
-        await knex.migrate.rollback({
-            name: `20220122003141_bigIntToFloat.${MIGRATIONS_EXTENSION}`,
+
+        await knex.migrate.down({
             directory: migrationsDirectory,
         });
+
         await knex.migrate.up({
             name: `20220122003141_bigIntToFloat.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
