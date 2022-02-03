@@ -2,7 +2,7 @@ import { i18n } from '@lingui/core';
 import { t } from '@lingui/macro';
 import { en, de } from 'make-plural/plurals';
 
-import { messages as messagesEm } from 'src/i18n/locales/en/translation';
+import { messages as messagesEn } from 'src/i18n/locales/en/translation';
 import { messages as messagesDe } from 'src/i18n/locales/de/translation';
 
 import { GlobalConfiguration } from 'src/repository/globalSettings';
@@ -12,7 +12,7 @@ export const setupI18n = (locale: string) => {
         en: { plurals: en },
         de: { plurals: de },
     });
-    i18n.load({ en: messagesEm, de: messagesDe });
+    i18n.load({ en: messagesEn, de: messagesDe });
     i18n.activate(locale);
 
     GlobalConfiguration.subscribe('serverLang', (lng) => {
