@@ -21,13 +21,15 @@ export const getDetailsKnex = async (params: {
 }): Promise<MediaItemDetailsResponse> => {
     const { mediaItemId, userId } = params;
 
-    const { mediaItem, seasons, episodes, seenHistory, userRating, watchlist } =
-        await knex.transaction(async (trx) => {
-            const mediaItem = await trx<MediaItemBase>('mediaItem')
-                .where({
-                    id: mediaItemId,
-                })
-                .first();
+    const {
+        mediaItem,
+        seasons,
+        episodes,
+        seenHistory,
+        userRating,
+        watchlist,
+        images,
+    } = await knex.transaction(async (trx) => {
 
             const seasons = await trx<TvSeason>('season')
                 .where({
