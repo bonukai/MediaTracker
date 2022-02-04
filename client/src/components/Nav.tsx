@@ -17,6 +17,7 @@ export const useRouteNames = () => {
     { path: '/audiobooks', name: t`Audiobooks` },
     { path: '/upcoming', name: t`Upcoming` },
     { path: '/continue-watching', name: t`Continue watching` },
+    { path: '/watchlist', name: t`Watchlist` },
     { path: '/calendar', name: t`Calendar` },
     { path: '/import', name: t`Import` },
   ];
