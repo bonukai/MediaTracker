@@ -19,7 +19,7 @@ export class TraktTvExport {
         );
     }
 
-    async authenticate(onAuthenticated: (deviceCode: string) => void) {
+    async authenticate(onAuthenticated: (deviceCode: string) => Promise<void>) {
         if (!this.deviceCode || this.hasDeviceCodeExpired()) {
             this.deviceToken = undefined;
 
@@ -48,7 +48,7 @@ export class TraktTvExport {
                     );
                     this.deviceToken = res.data;
                     clearInterval(interval);
-                    onAuthenticated(this.deviceCode.user_code);
+                    await onAuthenticated(this.deviceCode.user_code);
 
                     // eslint-disable-next-line no-empty
                 } catch (error) {}
