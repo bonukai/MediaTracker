@@ -432,19 +432,9 @@ router.get(
   _TraktTvImportController.traktTvGetUserCode
 );
 router.get(
-  '/api/import-trakttv/is-authenticated',
+  '/api/import-trakttv/state',
   validatorHandler({}),
   _TraktTvImportController.traktTvAuthenticated
-);
-router.get(
-  '/api/import-trakttv/items-to-import',
-  validatorHandler({}),
-  _TraktTvImportController.traktTvItemsToImport
-);
-router.get(
-  '/api/import-trakttv',
-  validatorHandler({}),
-  _TraktTvImportController.traktTvImport
 );
 router.get('/api/user', validatorHandler({}), _UsersController.get);
 router.get('/api/user/logout', validatorHandler({}), _UsersController.logout);

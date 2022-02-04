@@ -8,8 +8,12 @@ import {
 import { metadataProviderCredentialsRepository } from 'src/repository/metadataProviderCredentials';
 
 export abstract class MetadataProvider {
-    async findByImdbId(tmdbId: string): Promise<MediaItemForProvider> {
-        return null;
+    async findByImdbId(imdbId: string): Promise<MediaItemForProvider> {
+        throw new Error('Not implemented');
+    }
+
+    async findByTmdbId(tmdbId: number): Promise<MediaItemForProvider> {
+        throw new Error('Not implemented');
     }
 
     /**

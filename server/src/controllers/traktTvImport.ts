@@ -1,13 +1,9 @@
 import _ from 'lodash';
-import {
-    mediaItemBackdropPath,
-    MediaItemBase,
-    MediaItemBaseWithSeasons,
-    MediaItemItemsResponse,
-    mediaItemPosterPath,
-    MediaType,
-} from 'src/entity/mediaItem';
-import { TraktTvImport } from 'src/import/trakttv';
+
+import { MediaItemBaseWithSeasons, MediaType } from 'src/entity/mediaItem';
+import { Seen } from 'src/entity/seen';
+import { TraktApi, TraktTvExport } from 'src/export/trakttv';
+import { MetadataProvider } from 'src/metadata/metadataProvider';
 import { metadataProviders } from 'src/metadata/metadataProviders';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { seenRepository } from 'src/repository/seen';
@@ -16,6 +12,31 @@ import { watchlistRepository } from 'src/repository/watchlist';
 import { updateMediaItem } from 'src/updateMetadata';
 import { createExpressRoute } from 'typescript-routes-to-openapi-server';
 
+type ImportState =
+    | 'uninitialized'
+    | 'waiting-for-authentication'
+    | 'exporting'
+    | 'updating-metadata'
+    | 'importing'
+    | 'imported';
+
+type Summary = {
+    watchlist: {
+        movies: number;
+        shows: number;
+    };
+    seen: {
+        movies: number;
+        episodes: number;
+    };
+    ratings: {
+        movies: number;
+        shows: number;
+        seasons: number;
+        episodes: number;
+    };
+};
+
 /**
  * @openapi_tags TraktTvImport
  */
@@ -23,11 +44,13 @@ export class TraktTvImportController {
     private readonly importState = new Map<
         number,
         {
-            traktTvImport: TraktTvImport;
-            exportedData?: Awaited<
-                ReturnType<typeof TraktTvImport.prototype.export>
+            state: ImportState;
+            deviceCode?: Awaited<
+                ReturnType<typeof TraktTvExport.prototype.authenticate>
             >;
-            importing?: boolean;
+            exportSummary?: Summary;
+            importSummary?: Summary;
+            progress?: number;
         }
     >();
 
@@ -44,408 +67,569 @@ export class TraktTvImportController {
     }>(async (req, res) => {
         const userId = Number(req.user);
 
-        let traktTvImport = this.importState.get(userId)?.traktTvImport;
+        const importState = this.importState.get(userId);
 
-        if (!traktTvImport) {
-            traktTvImport = new TraktTvImport();
+        if (
+            !importState ||
+            importState?.state === 'uninitialized' ||
+            importState?.deviceCode?.expiresAt <= new Date()
+        ) {
+            const traktTvImport = new TraktTvExport();
+
+            const deviceCode = await traktTvImport.authenticate(
+                async (userCode) => {
+                    if (
+                        userCode !==
+                        this.importState.get(userId)?.deviceCode?.userCode
+                    ) {
+                        return;
+                    }
+
+                    this.importState.set(userId, {
+                        state: 'exporting',
+                        deviceCode: this.importState.get(userId)?.deviceCode,
+                    });
+
+                    const exportedData = await traktTvImport.export();
+
+                    this.importState.set(userId, {
+                        ...this.importState.get(userId),
+                        state: 'updating-metadata',
+                        exportSummary: {
+                            watchlist: {
+                                movies: exportedData.watchlist.filter(
+                                    traktTvMovieFilter
+                                ).length,
+                                shows: exportedData.watchlist.filter(
+                                    traktTvShowFilter
+                                ).length,
+                            },
+                            seen: {
+                                movies: exportedData.history.filter(
+                                    traktTvMovieFilter
+                                ).length,
+                                episodes: exportedData.history.filter(
+                                    traktTvShowFilter
+                                ).length,
+                            },
+                            ratings: {
+                                movies: exportedData.rating.filter(
+                                    traktTvMovieFilter
+                                ).length,
+                                shows: exportedData.rating.filter(
+                                    (item) =>
+                                        item.show &&
+                                        !item.season &&
+                                        !item.episode
+                                ).length,
+                                seasons: exportedData.rating.filter(
+                                    traktTvSeasonFilter
+                                ).length,
+                                episodes: exportedData.rating.filter(
+                                    traktTvEpisodeFilter
+                                ).length,
+                            },
+                        },
+                        progress: undefined,
+                    });
+
+                    const mediaItemsMap = await updateMetadataForTraktTvImport(
+                        exportedData,
+                        (progress) => {
+                            this.importState.set(userId, {
+                                ...this.importState.get(userId),
+                                state: 'updating-metadata',
+                                progress: progress,
+                            });
+                        }
+                    );
+
+                    this.importState.set(userId, {
+                        ...this.importState.get(userId),
+                        state: 'importing',
+                        progress: undefined,
+                    });
+
+                    const movieMetadata = <
+                        T extends {
+                            movie?: TraktApi.MovieResponse;
+                        }
+                    >(
+                        item: T
+                    ) => {
+                        const res = mediaItemsMap[item.movie?.ids?.tmdb];
+
+                        if (res) {
+                            return {
+                                mediaItem: res,
+                                item,
+                            };
+                        }
+                    };
+
+                    const tvShowMetadata = <
+                        T extends {
+                            show?: TraktApi.ShowResponse;
+                        }
+                    >(
+                        item: T
+                    ) => {
+                        const res = mediaItemsMap[item.show?.ids?.tmdb];
+
+                        if (res) {
+                            return {
+                                mediaItem: res,
+                                item,
+                            };
+                        }
+                    };
+
+                    const watchlistMovies = exportedData.watchlist
+                        .filter(traktTvMovieFilter)
+                        .map(movieMetadata)
+                        .filter(Boolean)
+                        .map(({ mediaItem }) => ({
+                            userId: userId,
+                            mediaItemId: mediaItem.id,
+                        }));
+
+                    const watchlistTvShows = exportedData.watchlist
+                        .filter(traktTvShowFilter)
+                        .map(tvShowMetadata)
+                        .filter(Boolean)
+                        .map(({ mediaItem }) => ({
+                            userId: userId,
+                            mediaItemId: mediaItem.id,
+                        }));
+
+                    const seenMovies = exportedData.history
+                        .filter(traktTvMovieFilter)
+                        .map(movieMetadata)
+                        .filter(Boolean)
+                        .map(({ mediaItem, item }) => ({
+                            userId: userId,
+                            mediaItemId: mediaItem.id,
+                            date: new Date(item.watched_at).getTime(),
+                        }));
+
+                    const seenEpisodes = exportedData.history
+                        .filter(traktTvShowFilter)
+                        .map(tvShowMetadata)
+                        .filter(Boolean)
+                        .map(withEpisode)
+                        .filter(Boolean)
+                        .map(({ mediaItem, item, episode }) => ({
+                            userId: userId,
+                            mediaItemId: mediaItem.id,
+                            date: new Date(item.watched_at).getTime(),
+                            episodeId: episode.id,
+                        }))
+                        .filter(Boolean);
+
+                    const ratedMovies = exportedData.rating
+                        .filter(traktTvMovieFilter)
+                        .map(movieMetadata)
+                        .filter(Boolean)
+                        .map(({ mediaItem, item }) => ({
+                            userId: userId,
+                            mediaItemId: mediaItem.id,
+                            rating: item.rating / 2,
+                            date: new Date(item.rated_at).getTime(),
+                        }));
+
+                    const ratedTvShows = exportedData.rating
+                        .filter(
+                            (item) => item.show && !item.season && !item.episode
+                        )
+                        .map(tvShowMetadata)
+                        .filter(Boolean)
+                        .map(({ mediaItem, item }) => ({
+                            userId: userId,
+                            mediaItemId: mediaItem.id,
+                            rating: item.rating / 2,
+                            date: new Date(item.rated_at).getTime(),
+                        }));
+
+                    const ratedSeasons = exportedData.rating
+                        .filter(traktTvSeasonFilter)
+                        .map(tvShowMetadata)
+                        .filter(Boolean)
+                        .map(withSeason)
+                        .filter(Boolean)
+                        .map(({ mediaItem, item, season }) => ({
+                            userId: userId,
+                            mediaItemId: mediaItem.id,
+                            rating: item.rating / 2,
+                            date: new Date(item.rated_at).getTime(),
+                            seasonId: season.id,
+                        }))
+                        .filter(Boolean);
+
+                    const ratedEpisodes = exportedData.rating
+                        .filter(traktTvEpisodeFilter)
+                        .map(tvShowMetadata)
+                        .filter(Boolean)
+                        .map(withEpisode)
+                        .filter(Boolean)
+                        .map(({ mediaItem, item, episode }) => ({
+                            userId: userId,
+                            mediaItemId: mediaItem.id,
+                            rating: item.rating / 2,
+                            date: new Date(item.rated_at).getTime(),
+                            episodeId: episode.id,
+                        }))
+                        .filter(Boolean);
+
+                    await watchlistRepository.createMany(watchlistMovies);
+
+                    await watchlistRepository.createMany(watchlistTvShows);
+
+                    const seenUniqueBy = (seen: Seen) => ({
+                        userId: seen.userId,
+                        mediaItemId: seen.mediaItemId,
+                        date: seen.date,
+                    });
+
+                    await seenRepository.createManyUnique(
+                        seenMovies,
+                        seenUniqueBy
+                    );
+
+                    await seenRepository.createManyUnique(
+                        seenEpisodes,
+                        seenUniqueBy
+                    );
+
+                    await userRatingRepository.createMany(ratedMovies);
+                    await userRatingRepository.createMany(ratedTvShows);
+                    await userRatingRepository.createMany(ratedSeasons);
+                    await userRatingRepository.createMany(ratedEpisodes);
+
+                    this.importState.set(userId, {
+                        ...this.importState.get(userId),
+                        state: 'imported',
+                        importSummary: {
+                            watchlist: {
+                                movies: watchlistMovies.length,
+                                shows: watchlistTvShows.length,
+                            },
+                            seen: {
+                                movies: seenMovies.length,
+                                episodes: seenEpisodes.length,
+                            },
+                            ratings: {
+                                movies: ratedMovies.length,
+                                shows: ratedTvShows.length,
+                                seasons: ratedSeasons.length,
+                                episodes: ratedEpisodes.length,
+                            },
+                        },
+                    });
+                }
+            );
+
             this.importState.set(userId, {
-                traktTvImport: traktTvImport,
-                exportedData: null,
+                state: 'waiting-for-authentication',
+                deviceCode: deviceCode,
+            });
+
+            res.send({
+                userCode: deviceCode.userCode,
+                verificationUrl: deviceCode.verificationUrl,
+            });
+        } else {
+            res.send({
+                userCode: importState.deviceCode.userCode,
+                verificationUrl: importState.deviceCode.verificationUrl,
             });
         }
-
-        res.send(await traktTvImport.authenticate());
     });
 
     /**
-     * @openapi_operationId isAuthenticated
+     * @openapi_operationId state
      */
 
     traktTvAuthenticated = createExpressRoute<{
         method: 'get';
-        path: '/api/import-trakttv/is-authenticated';
-        responseBody: boolean;
+        path: '/api/import-trakttv/state';
+        responseBody: {
+            state: ImportState;
+            progress?: number;
+            exportSummary?: Summary;
+            importSummary?: Summary;
+        };
     }>(async (req, res) => {
         const userId = Number(req.user);
 
         const importState = this.importState.get(userId);
 
         if (!importState) {
-            res.send(false);
+            res.send({ state: 'uninitialized' });
             return;
         }
-
-        res.send(importState.traktTvImport.isAuthenticated());
-    });
-
-    /**
-     * @openapi_operationId itemsToImport
-     */
-    traktTvItemsToImport = createExpressRoute<{
-        method: 'get';
-        path: '/api/import-trakttv/items-to-import';
-        responseBody: {
-            watchlist: MediaItemItemsResponse[];
-            seen: MediaItemItemsResponse[];
-        };
-    }>(async (req, res) => {
-        const userId = Number(req.user);
-
-        const importState = this.importState.get(userId);
-
-        if (!importState || !importState.traktTvImport?.isAuthenticated()) {
-            res.sendStatus(400);
-            return;
-        }
-
-        if (!importState.exportedData) {
-            importState.exportedData = await importState.traktTvImport.export();
-        }
-
-        const data = await getMediaItemsFromTraktTvExportData(
-            importState.exportedData
-        );
 
         res.send({
-            watchlist: [
-                ...Object.values(data.watchlistMovies).map(addAssets),
-                ...Object.values(data.watchlistTvShows).map(addAssets),
-            ],
-            seen: [
-                ...Object.values(data.historyMovies).map(addAssets),
-                ...Object.values(data.historyTvShows).map(addAssets),
-            ],
+            state: importState.state,
+            progress: importState.progress,
+            exportSummary: importState.exportSummary,
+            importSummary: importState.importSummary,
         });
-    });
-
-    /**
-     * @openapi_operationId import
-     */
-    traktTvImport = createExpressRoute<{
-        method: 'get';
-        path: '/api/import-trakttv';
-    }>(async (req, res) => {
-        const userId = Number(req.user);
-
-        const importState = this.importState.get(userId);
-
-        if (
-            !importState ||
-            !importState.exportedData ||
-            importState.importing
-        ) {
-            res.sendStatus(400);
-            return;
-        }
-
-        importState.importing = true;
-
-        const data = await getMediaItemsFromTraktTvExportData(
-            importState.exportedData
-        );
-
-        await watchlistRepository.createMany(
-            importState.exportedData.watchlist
-                .filter((item) => item.movie)
-                .map((item) => ({
-                    userId: userId,
-                    mediaItemId: data.watchlistMovies[item.movie?.ids?.imdb].id,
-                }))
-        );
-
-        await watchlistRepository.createMany(
-            importState.exportedData.watchlist
-                .filter((item) => item.show)
-                .map((item) => ({
-                    userId: userId,
-                    mediaItemId: data.watchlistTvShows[item.show?.ids?.imdb].id,
-                }))
-        );
-
-        await seenRepository.createMany(
-            importState.exportedData.history
-                .filter((item) => item.movie)
-                .map((item) => ({
-                    userId: userId,
-                    mediaItemId: data.historyMovies[item.movie?.ids?.imdb].id,
-                    date: new Date(item.watched_at).getTime(),
-                }))
-        );
-
-        const tvShowsWithSeasons = new Map<string, MediaItemBaseWithSeasons>();
-
-        for (const [imdbId, mediaItem] of [
-            ...Object.entries(data.historyTvShows),
-            ...Object.entries(data.ratingTvShows),
-        ]) {
-            if (mediaItem.needsDetails) {
-                tvShowsWithSeasons.set(
-                    imdbId,
-                    await updateMediaItem(mediaItem)
-                );
-            }
-        }
-
-        await seenRepository.createMany(
-            (
-                await Promise.all(
-                    importState.exportedData.history
-                        .filter((item) => item.show)
-                        .map(async (item) => {
-                            const imdbId = item.show?.ids?.imdb;
-
-                            const res = await getEpisodeOrSeason({
-                                imdbId: imdbId,
-                                items: data.historyTvShows,
-                                seasonNumber: item.episode?.season,
-                                episodeNumber: item.episode?.number,
-                                tvShowsWithSeasons: tvShowsWithSeasons,
-                            });
-
-                            if (!res?.episode) {
-                                return;
-                            }
-
-                            return {
-                                userId: userId,
-                                mediaItemId: res.mediaItemId,
-                                episodeId: res.episode.id,
-                                date: new Date(item.watched_at).getTime(),
-                            };
-                        })
-                )
-            ).filter(Boolean)
-        );
-
-        await userRatingRepository.createMany(
-            importState.exportedData.rating
-                .filter((item) => item.movie)
-                .map((item) => ({
-                    userId: userId,
-                    mediaItemId: data.ratingMovies[item.movie?.ids?.imdb].id,
-                    rating: item.rating / 2,
-                    date: new Date(item.rated_at).getTime(),
-                }))
-        );
-
-        await userRatingRepository.createMany(
-            importState.exportedData.rating
-                .filter((item) => item.show && !item.season && !item.episode)
-                .map((item) => ({
-                    userId: userId,
-                    mediaItemId: data.ratingMovies[item.movie?.ids?.imdb].id,
-                    rating: item.rating / 2,
-                    date: new Date(item.rated_at).getTime(),
-                }))
-        );
-
-        await userRatingRepository.createMany(
-            (
-                await Promise.all(
-                    importState.exportedData.rating
-                        .filter(
-                            (item) => item.show && item.season && !item.episode
-                        )
-                        .map(async (item) => {
-                            const res = await getEpisodeOrSeason({
-                                imdbId: item.show?.ids?.imdb,
-                                items: data.ratingTvShows,
-                                seasonNumber: item.season.number,
-                                tvShowsWithSeasons: tvShowsWithSeasons,
-                            });
-
-                            if (!res?.season) {
-                                return;
-                            }
-                            return {
-                                userId: userId,
-                                mediaItemId: res.mediaItemId,
-                                rating: item.rating / 2,
-                                date: new Date(item.rated_at).getTime(),
-                                seasonId: res.season.id,
-                            };
-                        })
-                )
-            ).filter(Boolean)
-        );
-
-        await userRatingRepository.createMany(
-            (
-                await Promise.all(
-                    importState.exportedData.rating
-                        .filter(
-                            (item) => item.show && !item.season && item.episode
-                        )
-                        .map(async (item) => {
-                            const res = await getEpisodeOrSeason({
-                                imdbId: item.show?.ids?.imdb,
-                                items: data.ratingTvShows,
-                                seasonNumber: item.episode.season,
-                                episodeNumber: item.episode.number,
-                                tvShowsWithSeasons: tvShowsWithSeasons,
-                            });
-
-                            if (!res?.episode) {
-                                return;
-                            }
-                            return {
-                                userId: userId,
-                                mediaItemId: res.mediaItemId,
-                                rating: item.rating / 2,
-                                date: new Date(item.rated_at).getTime(),
-                                episodeId: res.episode.id,
-                            };
-                        })
-                )
-            ).filter(Boolean)
-        );
-
-        this.importState.delete(userId);
-
-        res.sendStatus(200);
     });
 }
 
-const getEpisodeOrSeason = async (args: {
-    imdbId: string;
-    items: _.Dictionary<MediaItemBase>;
+const findEpisodeOrSeason = (args: {
+    mediaItem: MediaItemBaseWithSeasons;
     seasonNumber: number;
     episodeNumber?: number;
-    tvShowsWithSeasons: Map<string, MediaItemBaseWithSeasons>;
 }) => {
-    const {
-        imdbId,
-        items,
-        seasonNumber,
-        episodeNumber,
-        tvShowsWithSeasons,
-    } = args;
+    const { mediaItem, seasonNumber, episodeNumber } = args;
 
-    if (!imdbId) {
-        return;
-    }
+    const season = mediaItem?.seasons?.find(
+        (season) => season.seasonNumber === seasonNumber
+    );
 
-    const mediaItem = items[imdbId];
-
-    if (!mediaItem) {
-        return;
-    }
-
-    if (!tvShowsWithSeasons.has(imdbId)) {
-        const seasons = await mediaItemRepository.seasonsWithEpisodes(
-            mediaItem
-        );
-
-        tvShowsWithSeasons.set(imdbId, {
-            ...mediaItem,
-            seasons: seasons,
-        });
-    }
-
-    const season = tvShowsWithSeasons
-        .get(imdbId)
-        ?.seasons?.find((season) => season.seasonNumber === seasonNumber);
+    const episode = episodeNumber
+        ? season?.episodes?.find(
+              (episode) => episode.episodeNumber === episodeNumber
+          )
+        : undefined;
 
     return {
-        mediaItemId: mediaItem.id,
         season: season,
-        episode: episodeNumber
-            ? season?.episodes?.find(
-                  (episode) => episode.episodeNumber === episodeNumber
-              )
-            : undefined,
+        episode: episode,
     };
 };
 
-const addAssets = (item: MediaItemBase) => {
-    return {
-        ...item,
-        poster: item.poster ? mediaItemPosterPath(item.id, 'small') : null,
-        posterSmall: item.poster
-            ? mediaItemPosterPath(item.id, 'original')
-            : null,
-        backdrop: item.backdrop ? mediaItemBackdropPath(item.id) : null,
-    };
-};
-
-const getMediaItemsByImdbIds = async (
-    imdbId: string[],
+const getMediaItemsByTmdbIds = async (
+    tmdbId: number[],
     mediaType: MediaType
 ) => {
-    const foundMediaItems = await mediaItemRepository.findByExternalIds({
-        imdbId: imdbId,
-    });
-
-    const foundMediaItemsMap = _.keyBy(
-        foundMediaItems,
-        (mediaItem) => mediaItem.imdbId
+    const existingItems: MediaItemBaseWithSeasons[] = await mediaItemRepository.findByExternalIds(
+        {
+            tmdbId: tmdbId,
+            mediaType: mediaType,
+        }
     );
 
-    const missingItems = imdbId.filter((imdbId) => !foundMediaItemsMap[imdbId]);
-
-    for (const missingItem of missingItems) {
-        const metadataProvider = metadataProviders.get(mediaType);
-        const item = await metadataProvider.findByImdbId(missingItem);
-        const id = await mediaItemRepository.create(item);
-
-        foundMediaItemsMap[missingItem] = {
-            ...item,
-            id: id,
-            lastTimeUpdated: new Date().getTime(),
-        };
-    }
-
-    return foundMediaItemsMap;
-};
-
-const getMediaItemsFromTraktTvExportData = async (
-    exportedData: Awaited<ReturnType<typeof TraktTvImport.prototype.export>>
-) => {
-    const watchlistMovies = await getMediaItemsByImdbIds(
-        exportedData.watchlist
-            .filter((item) => item.movie)
-            .map((item) => item.movie.ids.imdb),
-        'movie'
-    );
-    const watchlistTvShows = await getMediaItemsByImdbIds(
-        exportedData.watchlist
-            .filter((item) => item.show)
-            .map((item) => item.show.ids.imdb),
-        'tv'
+    const existingItemsMapByTmdbId: _.Dictionary<MediaItemBaseWithSeasons> = _.keyBy(
+        existingItems,
+        (mediaItem) => mediaItem.tmdbId
     );
 
-    const historyMovies = await getMediaItemsByImdbIds(
-        exportedData.history
-            .filter((item) => item.movie)
-            .map((item) => item.movie.ids.imdb),
-        'movie'
-    );
-    const historyTvShows = await getMediaItemsByImdbIds(
-        exportedData.history
-            .filter((item) => item.show)
-            .map((item) => item.show.ids.imdb),
-        'tv'
+    const missingItems = tmdbId.filter(
+        (tmdbId) => !existingItemsMapByTmdbId[tmdbId]
     );
 
-    const ratingMovies = await getMediaItemsByImdbIds(
-        exportedData.rating
-            .filter((item) => item.movie)
-            .map((item) => item.movie.ids.imdb),
-        'movie'
-    );
-    const ratingTvShows = await getMediaItemsByImdbIds(
-        exportedData.rating
-            .filter((item) => item.show)
-            .map((item) => item.show.ids.imdb),
-        'tv'
+    await Promise.all(
+        existingItems
+            .filter((item) => item.mediaType === 'tv')
+            .map(async (item) => {
+                item.seasons = await mediaItemRepository.seasonsWithEpisodes(
+                    item
+                );
+            })
+            .map(errorHandler)
     );
 
     return {
-        watchlistMovies,
-        watchlistTvShows,
-        historyMovies,
-        historyTvShows,
-        ratingMovies,
-        ratingTvShows,
+        existingItems: existingItems,
+        missingItems: missingItems,
     };
 };
+
+const errorHandler = async <T>(promise: Promise<T>): Promise<T> => {
+    try {
+        return await promise;
+    } catch (error) {
+        return null;
+    }
+};
+
+const updateMetadataForTraktTvImport = async (
+    exportedData: Awaited<ReturnType<typeof TraktTvExport.prototype.export>>,
+    onProgress: (progress: number) => void
+) => {
+    const movies = await getMediaItemsByTmdbIds(
+        _.uniq(
+            [
+                ...exportedData.watchlist,
+                ...exportedData.history,
+                ...exportedData.rating,
+            ]
+                .filter(traktTvMovieFilter)
+                .map((item) => item.movie.ids.tmdb)
+        ),
+        'movie'
+    );
+
+    const tvShows = await getMediaItemsByTmdbIds(
+        _.uniq(
+            [
+                ...exportedData.watchlist,
+                ...exportedData.history,
+                ...exportedData.rating,
+            ]
+                .filter(traktTvShowFilter)
+                .map((item) => item.show.ids.tmdb)
+        ),
+        'tv'
+    );
+
+    const tvShowsToUpdate = tvShows.existingItems.filter(
+        (item) => item.needsDetails
+    );
+
+    const total =
+        movies.missingItems.length +
+        tvShows.missingItems.length +
+        tvShowsToUpdate.length;
+
+    let currentItem = 0;
+
+    const movieMetadataProvider = metadataProviders.get('movie');
+    const tvShowMetadataProvider = metadataProviders.get('tv');
+
+    const updateProgress = async <T>(promise: Promise<T>): Promise<T> => {
+        const res = await promise;
+        currentItem++;
+        onProgress(currentItem / total);
+        return res;
+    };
+
+    const foundMovies = (
+        await Promise.all(
+            movies.missingItems
+                .map((tmdbId) =>
+                    errorHandler(
+                        findMediaItemFromTmdbId(tmdbId, movieMetadataProvider)
+                    )
+                )
+                .map(updateProgress)
+                .map(errorHandler)
+        )
+    ).filter(Boolean);
+
+    const foundTvShows = (
+        await Promise.all(
+            tvShows.missingItems
+                .map((tmdbId) =>
+                    errorHandler(
+                        findMediaItemFromTmdbId(tmdbId, tvShowMetadataProvider)
+                    )
+                )
+                .map(updateProgress)
+                .map(errorHandler)
+        )
+    ).filter(Boolean);
+
+    const updatedTvShows = await Promise.all(
+        tvShowsToUpdate
+            .map(updateMediaItem)
+            .map(updateProgress)
+            .map(errorHandler)
+    );
+
+    return _.keyBy(
+        [
+            ...movies.existingItems,
+            ...foundMovies,
+            ..._.uniqBy(
+                [...updatedTvShows, ...tvShows.existingItems],
+                (item) => item.id
+            ),
+            ...foundTvShows,
+        ],
+        (mediaItem) => mediaItem.tmdbId
+    );
+};
+
+const findMediaItemFromTmdbId = async (
+    tmdbId: number,
+    metadataProvider: MetadataProvider
+) => {
+    const item = await metadataProvider.findByTmdbId(tmdbId);
+
+    if (item) {
+        return await mediaItemRepository.add(item);
+    }
+};
+
+const withEpisode = <
+    T extends {
+        episode: {
+            season: number;
+            number: number;
+        };
+    }
+>({
+    mediaItem,
+    item,
+}: {
+    mediaItem: MediaItemBaseWithSeasons;
+    item: T;
+}) => {
+    const res = findEpisodeOrSeason({
+        mediaItem: mediaItem,
+        seasonNumber: item.episode?.season,
+        episodeNumber: item.episode?.number,
+    });
+
+    if (!res?.episode) {
+        return;
+    }
+
+    return { mediaItem, item, episode: res.episode };
+};
+
+const withSeason = <
+    T extends {
+        season: {
+            number: number;
+        };
+    }
+>({
+    mediaItem,
+    item,
+}: {
+    mediaItem: MediaItemBaseWithSeasons;
+    item: T;
+}) => {
+    const res = findEpisodeOrSeason({
+        mediaItem: mediaItem,
+        seasonNumber: item.season?.number,
+    });
+
+    if (!res?.season) {
+        return;
+    }
+
+    return { mediaItem, item, season: res.season };
+};
+
+const traktTvMovieFilter = (item: {
+    episode?: TraktApi.EpisodeResponse;
+    show?: TraktApi.ShowResponse;
+    movie?: TraktApi.MovieResponse;
+    season?: TraktApi.SeasonResponse;
+}) => item.movie;
+
+const traktTvShowFilter = (item: {
+    episode?: TraktApi.EpisodeResponse;
+    show?: TraktApi.ShowResponse;
+    movie?: TraktApi.MovieResponse;
+    season?: TraktApi.SeasonResponse;
+}) => item.show;
+
+const traktTvSeasonFilter = (item: {
+    episode?: TraktApi.EpisodeResponse;
+    show?: TraktApi.ShowResponse;
+    movie?: TraktApi.MovieResponse;
+    season?: TraktApi.SeasonResponse;
+}) => item.show && item.season && !item.episode;
+
+const traktTvEpisodeFilter = (item: {
+    episode?: TraktApi.EpisodeResponse;
+    show?: TraktApi.ShowResponse;
+    movie?: TraktApi.MovieResponse;
+    season?: TraktApi.SeasonResponse;
+}) => item.show && !item.season && item.episode;

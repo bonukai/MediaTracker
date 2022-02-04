@@ -1,161 +1,235 @@
 import React, { FunctionComponent, useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
-import { Navigate } from 'react-router-dom';
+import { useQuery } from 'react-query';
+import { Spring } from 'react-spring';
+
 import { mediaTrackerApi } from 'src/api/api';
-import { queryClient } from 'src/App';
-import { GridItem } from 'src/components/GridItem';
+import { ImportState, Summary } from 'mediatracker-api';
+import { t, Trans } from '@lingui/macro';
 
 const useTraktTvImport = () => {
-  const [isAuthenticatedState, setIsAuthenticatedState] = useState(false);
+  const [_state, setState] = useState<ImportState>();
 
-  const { data: deviceCode, isLoading: deviceCodeLoading } = useQuery(
+  const { data: deviceCode } = useQuery(
     ['traktTvImport', 'device-code'],
     mediaTrackerApi.importTrakttv.deviceToken
   );
 
-  const { data: isAuthenticated, isLoading: isAuthenticatedLoading } = useQuery(
-    ['traktTvImport', 'is-authenticated'],
-    mediaTrackerApi.importTrakttv.isAuthenticated,
+  const { data: state } = useQuery(
+    ['traktTvImport', 'state'],
+    mediaTrackerApi.importTrakttv.state,
     {
-      enabled: deviceCode != null && !isAuthenticatedState,
-      refetchInterval: deviceCode != null ? 100 : false,
-      onSuccess: (data) => setIsAuthenticatedState(data),
+      refetchInterval: _state === 'updating-metadata' ? 10 : 100,
+      onSettled: (data) => setState(data?.state),
     }
   );
-
-  const { data: itemsToImport, isLoading: itemsToImportLoading } = useQuery(
-    ['traktTvImport', 'items-to-import'],
-    mediaTrackerApi.importTrakttv.itemsToImport,
-    {
-      enabled: isAuthenticatedState === true,
-    }
-  );
-
-  const importMutation = useMutation(mediaTrackerApi.importTrakttv.import, {
-    onSuccess: () => {
-      setIsAuthenticatedState(false);
-      queryClient.removeQueries(['traktTvImport']);
-    },
-  });
 
   return {
     deviceCode,
-    isAuthenticated,
-    itemsToImport,
-    importItems: importMutation.mutate,
-    importItemsLoading: importMutation.isLoading,
-    importItemsSuccess: importMutation.isSuccess,
+    state,
   };
 };
 
 export const TraktTvImportPage: FunctionComponent = () => {
-  const {
-    deviceCode,
-    isAuthenticated,
-    itemsToImport,
-    importItems,
-    importItemsLoading,
-    importItemsSuccess,
-  } = useTraktTvImport();
+  const { deviceCode, state } = useTraktTvImport();
 
-  if (importItemsSuccess) {
-    return <Navigate to="/" />;
+  return (
+    <div className="flex flex-col justify-center w-full mt-4">
+      <div className="flex flex-col items-center w-full">
+        {state ? (
+          <>
+            {deviceCode && state?.state === 'waiting-for-authentication' ? (
+              <div className="">
+                <Trans>
+                  Go to{' '}
+                  <a
+                    href={deviceCode.verificationUrl}
+                    className="text-blue-800 underline dark:text-blue-400"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {deviceCode.verificationUrl}
+                  </a>{' '}
+                  and enter following code: {deviceCode.userCode}
+                </Trans>
+                <div
+                  className="ml-2 text-sm btn"
+                  onClick={() => {
+                    navigator.permissions
+                      .query({ name: 'clipboard-write' as PermissionName })
+                      .then((result) => {
+                        if (
+                          result.state == 'granted' ||
+                          result.state == 'prompt'
+                        ) {
+                          navigator.clipboard.writeText(deviceCode.userCode);
+                        }
+                      });
+                  }}
+                >
+                  <Trans>Copy to clipboard</Trans>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="text-2xl">{stateMap[state.state]}</div>
+              </>
+            )}
+          </>
+        ) : (
+          <Trans>Loading</Trans>
+        )}
+        <div className="py-4">
+          {state?.progress > 0 && (
+            <Spring
+              from={{ percent: 0 }}
+              to={{ percent: state.progress * 100 }}
+            >
+              {({ percent }) => (
+                <div
+                  className="block h-4 border rounded w-80 bg-grad"
+                  style={{
+                    background: `linear-gradient(to right, black ${percent}%, transparent ${percent}%)`,
+                  }}
+                />
+              )}
+            </Spring>
+          )}
+        </div>
+        {state?.exportSummary && (
+          <>
+            <div className="my-2 text-2xl">
+              <Trans>Summary</Trans>
+            </div>
+            <SummaryTable
+              exported={state.exportSummary}
+              imported={state.importSummary}
+            />
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const stateMap: Record<ImportState, string> = {
+  exporting: t`Exporting`,
+  uninitialized: t`Uninitialized`,
+  'updating-metadata': t`Updating metadata`,
+  'waiting-for-authentication': t`Waiting for authentication`,
+  imported: t`Imported`,
+  importing: t`Importing`,
+};
+
+const TableCell: FunctionComponent<{ imported?: number; exported: number }> = (
+  props
+) => {
+  const { imported, exported } = props;
+
+  if (!exported) {
+    return <></>;
   }
 
   return (
-    <div className="flex justify-center w-full">
-      {isAuthenticated ? (
-        <>
-          {!itemsToImport ? (
-            <>Fetching items</>
-          ) : (
-            <>
-              <div className="flex flex-row flex-wrap items-grid">
-                <div className="flex flex-col header">
-                  <div className="text-2xl ">
-                    Following items will be added to MediaTracker
-                  </div>
+    <>
+      {imported || '?'} / {exported}
+    </>
+  );
+};
 
-                  <button
-                    className="self-center mt-3 mb-1 btn-blue"
-                    onClick={() => importItems({})}
-                    disabled={importItemsLoading}
-                  >
-                    Import
-                  </button>
-                  {importItemsLoading && (
-                    <div className="my-2 text-xl">
-                      Importing items, please wait
-                    </div>
-                  )}
-                </div>
+const SummaryTable: FunctionComponent<{
+  exported: Summary;
+  imported?: Summary;
+}> = (props) => {
+  const { exported, imported } = props;
 
-                <div className="text-2xl header">Watchlist</div>
-
-                {itemsToImport.watchlist.map((item) => (
-                  <GridItem
-                    key={item.id}
-                    mediaItem={item}
-                    appearance={{
-                      showFirstUnwatchedEpisode: false,
-                      showNextAiring: false,
-                      showRating: false,
-                      showAddToWatchlistAndMarkAsSeenButtons: false,
-                      topBar: {
-                        showFirstUnwatchedEpisodeBadge: false,
-                        showOnWatchlistIcon: false,
-                        showUnwatchedEpisodesCount: false,
-                      },
-                    }}
-                  />
-                ))}
-
-                <div className="text-2xl header">Seen</div>
-
-                {itemsToImport.seen.map((item) => (
-                  <GridItem key={item.id} mediaItem={item} />
-                ))}
-              </div>
-            </>
-          )}
-        </>
-      ) : (
-        <>
-          {deviceCode ? (
-            <div className="">
-              Go to{' '}
-              <a
-                href={deviceCode.verificationUrl}
-                className="text-blue-800 underline dark:text-blue-400"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {deviceCode.verificationUrl}
-              </a>{' '}
-              and enter following code: {deviceCode.userCode}
-              <div
-                className="ml-2 text-sm btn"
-                onClick={() => {
-                  navigator.permissions
-                    .query({ name: 'clipboard-write' as PermissionName })
-                    .then((result) => {
-                      if (
-                        result.state == 'granted' ||
-                        result.state == 'prompt'
-                      ) {
-                        navigator.clipboard.writeText(deviceCode.userCode);
-                      }
-                    });
-                }}
-              >
-                Copy to clipboard
-              </div>
-            </div>
-          ) : (
-            <>Loading</>
-          )}
-        </>
-      )}
-    </div>
+  return (
+    <table className="w-full divide-y divide-gray-300 table-auto">
+      <thead className="text-lg font-semibold ">
+        <tr className="divide-x">
+          <th></th>
+          <th>
+            <Trans>Movies</Trans>
+          </th>
+          <th>
+            <Trans>Shows</Trans>
+          </th>
+          <th>
+            <Trans>Seasons</Trans>
+          </th>
+          <th>
+            <Trans>Episodes</Trans>
+          </th>
+        </tr>
+      </thead>
+      <tbody className="text-sm divide-y ">
+        <tr className="divide-x ">
+          <td>
+            <Trans>Watchlist</Trans>
+          </td>
+          <td className="text-center">
+            <TableCell
+              imported={imported?.watchlist.movies}
+              exported={exported.watchlist.movies}
+            />
+          </td>
+          <td className="text-center">
+            <TableCell
+              imported={imported?.watchlist.shows}
+              exported={exported.watchlist.shows}
+            />
+          </td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr className="divide-x ">
+          <td>
+            <Trans>Seen history</Trans>
+          </td>
+          <td className="text-center">
+            <TableCell
+              imported={imported?.seen.movies}
+              exported={exported.seen.movies}
+            />
+          </td>
+          <td></td>
+          <td></td>
+          <td className="text-center">
+            <TableCell
+              imported={imported?.seen.episodes}
+              exported={exported.seen.episodes}
+            />
+          </td>
+        </tr>
+        <tr className="divide-x ">
+          <td>
+            <Trans>Ratings</Trans>
+          </td>
+          <td className="text-center">
+            <TableCell
+              imported={imported?.ratings.movies}
+              exported={exported.ratings.movies}
+            />
+          </td>
+          <td className="text-center">
+            <TableCell
+              imported={imported?.ratings.shows}
+              exported={exported.ratings.shows}
+            />
+          </td>
+          <td className="text-center">
+            <TableCell
+              imported={imported?.ratings.seasons}
+              exported={exported.ratings.seasons}
+            />
+          </td>
+          <td className="text-center">
+            <TableCell
+              imported={imported?.ratings.episodes}
+              exported={exported.ratings.episodes}
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
   );
 };

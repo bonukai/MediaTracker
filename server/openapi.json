@@ -972,32 +972,12 @@
         }
       }
     },
-    "/api/import-trakttv/is-authenticated": {
+    "/api/import-trakttv/state": {
       "get": {
         "tags": [
           "TraktTvImport"
         ],
-        "operationId": "isAuthenticated",
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/import-trakttv/items-to-import": {
-      "get": {
-        "tags": [
-          "TraktTvImport"
-        ],
-        "operationId": "itemsToImport",
+        "operationId": "state",
         "responses": {
           "200": {
             "description": "",
@@ -1006,42 +986,34 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "watchlist": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/MediaItemItemsResponse"
-                      }
+                    "state": {
+                      "$ref": "#/components/schemas/ImportState"
                     },
-                    "seen": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/MediaItemItemsResponse"
-                      }
+                    "progress": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "exportSummary": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/Summary"
+                        }
+                      ],
+                      "nullable": true
+                    },
+                    "importSummary": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/Summary"
+                        }
+                      ],
+                      "nullable": true
                     }
                   },
                   "required": [
-                    "seen",
-                    "watchlist"
+                    "state"
                   ]
                 }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/import-trakttv": {
-      "get": {
-        "tags": [
-          "TraktTvImport"
-        ],
-        "operationId": "import",
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/text": {
-                "schema": {}
               }
             }
           }
@@ -2347,6 +2319,80 @@
           "unknown"
         ],
         "type": "string"
+      },
+      "ImportState": {
+        "enum": [
+          "exporting",
+          "imported",
+          "importing",
+          "uninitialized",
+          "updating-metadata",
+          "waiting-for-authentication"
+        ],
+        "type": "string"
+      },
+      "Summary": {
+        "type": "object",
+        "properties": {
+          "watchlist": {
+            "type": "object",
+            "properties": {
+              "movies": {
+                "type": "number"
+              },
+              "shows": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "movies",
+              "shows"
+            ]
+          },
+          "seen": {
+            "type": "object",
+            "properties": {
+              "movies": {
+                "type": "number"
+              },
+              "episodes": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "episodes",
+              "movies"
+            ]
+          },
+          "ratings": {
+            "type": "object",
+            "properties": {
+              "movies": {
+                "type": "number"
+              },
+              "shows": {
+                "type": "number"
+              },
+              "seasons": {
+                "type": "number"
+              },
+              "episodes": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "episodes",
+              "movies",
+              "seasons",
+              "shows"
+            ]
+          }
+        },
+        "required": [
+          "ratings",
+          "seen",
+          "watchlist"
+        ]
       },
       "UserResponse": {
         "type": "object",
