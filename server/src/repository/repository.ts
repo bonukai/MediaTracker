@@ -201,7 +201,7 @@ export const repository = <T extends object>(args: {
                         _.isEqual(uniqueBy(a), uniqueBy(b))
                     )
                     .uniqWith((a, b) =>
-                        _.isEqual(this.uniqueBy(a), this.uniqueBy(b))
+                        _.isEqual(uniqueBy(a), uniqueBy(b))
                     )
                     .value();
 
