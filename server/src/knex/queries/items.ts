@@ -327,7 +327,9 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
 
         // nextEpisodesToWatchSubQuery
         if (onlyWithNextEpisodesToWatch === true) {
-            query.where('seenEpisodesCount', '>', 0);
+            query
+                .where('seenEpisodesCount', '>', 0)
+                .andWhere('unseenEpisodesCount', '>', 0);
         }
 
         if (onlyWithUserRating === true) {
