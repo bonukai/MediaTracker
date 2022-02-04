@@ -1,10 +1,8 @@
 import _ from 'lodash';
 import {
-    mediaItemBackdropPath,
     MediaItemBase,
     mediaItemColumns,
     MediaItemItemsResponse,
-    mediaItemPosterPath,
 } from 'src/entity/mediaItem';
 import { knex } from 'src/dbconfig';
 
@@ -84,8 +82,9 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
             lastSeenAt: 'lastSeen.date',
             numberOfEpisodes: 'numberOfEpisodes',
             unseenEpisodesCount: 'unseenEpisodesCount',
+            seenEpisodesCount: 'seenEpisodesCount',
             poster: 'poster.id',
-            backdrop: 'backdrop.id'
+            backdrop: 'backdrop.id',
         })
         .from<MediaItemBase>('mediaItem')
         .leftJoin<Seen>(
@@ -154,6 +153,28 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
                         'upcomingEpisode.episodeNumber',
                         'upcomingEpisodeEpisodeNumber'
                     )
+        )
+        // Seen episodes count
+        .leftJoin<TvEpisode>(
+            (qb) =>
+                qb
+                    .from<TvEpisode>('episode')
+                    .select('tvShowId')
+                    .count('*', { as: 'seenEpisodesCount' })
+                    .leftJoin(
+                        (qb) =>
+                            qb
+                                .distinct('userId', 'episodeId')
+                                .from<Seen>('seen')
+                                .as('seen'),
+                        'episodeId',
+                        'episode.id'
+                    )
+                    .where('userId', userId)
+                    .groupBy('tvShowId')
+                    .as('seenEpisodes'),
+            'seenEpisodes.tvShowId',
+            'mediaItem.id'
         )
         // First unwatched episode and unseen episodes count
         .leftJoin<TvEpisode>(
@@ -306,21 +327,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
 
         // nextEpisodesToWatchSubQuery
         if (onlyWithNextEpisodesToWatch === true) {
-            query
-                .andWhereNot((qb) =>
-                    qb
-                        .where('mediaItem.mediaType', 'tv')
-                        .andWhere('firstUnwatchedEpisode.tvShowId', null)
-                )
-                .andWhere((qb) =>
-                    qb
-                        .where('mediaItem.mediaType', 'tv')
-                        .orWhere(
-                            'mediaItem.releaseDate',
-                            '<=',
-                            currentDateString
-                        )
-                );
+            query.where('seenEpisodesCount', '>', 0);
         }
 
         if (onlyWithUserRating === true) {
