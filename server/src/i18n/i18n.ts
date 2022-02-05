@@ -16,7 +16,7 @@ export const setupI18n = (locale: string) => {
     i18n.activate(locale);
 
     GlobalConfiguration.subscribe('serverLang', (lng) => {
-        if (i18n.locale === lng) {
+        if (i18n.locale === lng || !lng) {
             return;
         }
 
