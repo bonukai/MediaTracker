@@ -71,7 +71,7 @@ import { RatingController } from '../../controllers/rating';
 import { SearchController } from '../../controllers/search';
 import { SeenController } from '../../controllers/seen';
 import { TokenController } from '../../controllers/token';
-import { TraktTvImportController } from '../../controllers/traktTvImport';
+import { TraktTvImportController } from '../../controllers/import/traktTv';
 import { UsersController } from '../../controllers/users';
 import { WatchlistController } from '../../controllers/watchlist';
 
