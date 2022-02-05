@@ -18,7 +18,8 @@ const useTraktTvImport = () => {
     ['traktTvImport', 'state'],
     mediaTrackerApi.importTrakttv.state,
     {
-      refetchInterval: _state === 'updating-metadata' ? 10 : 100,
+      refetchInterval: 100,
+      enabled: _state !== 'imported',
       onSettled: (data) => setState(data?.state),
     }
   );
