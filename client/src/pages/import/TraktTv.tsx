@@ -10,12 +10,12 @@ const useTraktTvImport = () => {
   const [_state, setState] = useState<ImportState>();
 
   const { data: deviceCode } = useQuery(
-    ['traktTvImport', 'device-code'],
+    ['import', 'TraktTv', 'device-code'],
     mediaTrackerApi.importTrakttv.deviceToken
   );
 
   const { data: state } = useQuery(
-    ['traktTvImport', 'state'],
+    ['import', 'TraktTv', 'state'],
     mediaTrackerApi.importTrakttv.state,
     {
       refetchInterval: 100,
