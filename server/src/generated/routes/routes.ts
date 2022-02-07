@@ -71,9 +71,9 @@ import { RatingController } from '../../controllers/rating';
 import { SearchController } from '../../controllers/search';
 import { SeenController } from '../../controllers/seen';
 import { TokenController } from '../../controllers/token';
-import { TraktTvImportController } from '../../controllers/import/traktTv';
 import { UsersController } from '../../controllers/users';
 import { WatchlistController } from '../../controllers/watchlist';
+import { TraktTvImportController } from '../../controllers/import/traktTv';
 
 const _CalendarController = new CalendarController();
 const _ConfigurationController = new ConfigurationController();
@@ -86,9 +86,9 @@ const _RatingController = new RatingController();
 const _SearchController = new SearchController();
 const _SeenController = new SeenController();
 const _TokenController = new TokenController();
-const _TraktTvImportController = new TraktTvImportController();
 const _UsersController = new UsersController();
 const _WatchlistController = new WatchlistController();
+const _TraktTvImportController = new TraktTvImportController();
 
 const router: Router = express.Router();
 
@@ -111,12 +111,169 @@ router.patch(
   validatorHandler({
     requestBodySchema: {
       $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        TmdbLang: {
+          enum: [
+            'aa',
+            'ab',
+            'af',
+            'am',
+            'ar',
+            'as',
+            'ay',
+            'az',
+            'ba',
+            'be',
+            'bg',
+            'bh',
+            'bi',
+            'bn',
+            'bo',
+            'br',
+            'ca',
+            'co',
+            'cs',
+            'cy',
+            'da',
+            'de',
+            'dz',
+            'el',
+            'en',
+            'eo',
+            'es',
+            'et',
+            'eu',
+            'fa',
+            'fi',
+            'fj',
+            'fo',
+            'fr',
+            'fy',
+            'ga',
+            'gd',
+            'gl',
+            'gn',
+            'gu',
+            'ha',
+            'he',
+            'hi',
+            'hr',
+            'hu',
+            'hy',
+            'ia',
+            'id',
+            'ie',
+            'ik',
+            'is',
+            'it',
+            'iu',
+            'ja',
+            'jw',
+            'ka',
+            'kk',
+            'kl',
+            'km',
+            'kn',
+            'ko',
+            'ks',
+            'ku',
+            'ky',
+            'la',
+            'ln',
+            'lo',
+            'lt',
+            'lv',
+            'mg',
+            'mi',
+            'mk',
+            'ml',
+            'mn',
+            'mo',
+            'mr',
+            'ms',
+            'mt',
+            'my',
+            'na',
+            'ne',
+            'nl',
+            'no',
+            'oc',
+            'om',
+            'or',
+            'pa',
+            'pl',
+            'ps',
+            'pt',
+            'qu',
+            'rm',
+            'rn',
+            'ro',
+            'ru',
+            'rw',
+            'sa',
+            'sd',
+            'sg',
+            'sh',
+            'si',
+            'sk',
+            'sl',
+            'sm',
+            'sn',
+            'so',
+            'sq',
+            'sr',
+            'ss',
+            'st',
+            'su',
+            'sv',
+            'sw',
+            'ta',
+            'te',
+            'tg',
+            'th',
+            'ti',
+            'tk',
+            'tl',
+            'tn',
+            'to',
+            'tr',
+            'ts',
+            'tt',
+            'tw',
+            'ug',
+            'uk',
+            'ur',
+            'uz',
+            'vi',
+            'vo',
+            'wo',
+            'xh',
+            'yi',
+            'yo',
+            'za',
+            'zh',
+            'zu',
+          ],
+          type: 'string',
+        },
+        AudibleLang: {
+          enum: ['AU', 'CA', 'DE', 'ES', 'FR', 'IN', 'IT', 'JP', 'UK', 'US'],
+          type: 'string',
+        },
+        ServerLang: { enum: ['de', 'en'], type: 'string' },
+      },
       type: 'object',
       properties: {
         enableRegistration: { type: ['boolean', 'null'] },
-        tmdbLang: { type: ['string', 'null'] },
-        audibleLang: { type: ['string', 'null'] },
-        serverLang: { type: ['string', 'null'] },
+        tmdbLang: {
+          oneOf: [{ $ref: '#/definitions/TmdbLang' }, { type: 'null' }],
+        },
+        audibleLang: {
+          oneOf: [{ $ref: '#/definitions/AudibleLang' }, { type: 'null' }],
+        },
+        serverLang: {
+          oneOf: [{ $ref: '#/definitions/ServerLang' }, { type: 'null' }],
+        },
       },
     },
   }),
@@ -426,16 +583,6 @@ router.delete(
   _TokenController.delete
 );
 router.get('/api/tokens', validatorHandler({}), _TokenController.get);
-router.get(
-  '/api/import-trakttv/device-token',
-  validatorHandler({}),
-  _TraktTvImportController.traktTvGetUserCode
-);
-router.get(
-  '/api/import-trakttv/state',
-  validatorHandler({}),
-  _TraktTvImportController.traktTvAuthenticated
-);
 router.get('/api/user', validatorHandler({}), _UsersController.get);
 router.get('/api/user/logout', validatorHandler({}), _UsersController.logout);
 router.post(
@@ -633,6 +780,16 @@ router.delete(
     },
   }),
   _WatchlistController.delete
+);
+router.get(
+  '/api/import-trakttv/device-token',
+  validatorHandler({}),
+  _TraktTvImportController.traktTvGetUserCode
+);
+router.get(
+  '/api/import-trakttv/state',
+  validatorHandler({}),
+  _TraktTvImportController.traktTvAuthenticated
 );
 
 export { router as generatedRoutes };

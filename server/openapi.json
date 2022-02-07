@@ -93,15 +93,27 @@
                     "nullable": true
                   },
                   "tmdbLang": {
-                    "type": "string",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/TmdbLang"
+                      }
+                    ],
                     "nullable": true
                   },
                   "audibleLang": {
-                    "type": "string",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/AudibleLang"
+                      }
+                    ],
                     "nullable": true
                   },
                   "serverLang": {
-                    "type": "string",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ServerLang"
+                      }
+                    ],
                     "nullable": true
                   }
                 }
@@ -139,15 +151,27 @@
                           "type": "boolean"
                         },
                         "tmdbLang": {
-                          "type": "string",
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/TmdbLang"
+                            }
+                          ],
                           "nullable": true
                         },
                         "audibleLang": {
-                          "type": "string",
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/AudibleLang"
+                            }
+                          ],
                           "nullable": true
                         },
                         "serverLang": {
-                          "type": "string",
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/ServerLang"
+                            }
+                          ],
                           "nullable": true
                         }
                       },
@@ -940,86 +964,6 @@
         }
       }
     },
-    "/api/import-trakttv/device-token": {
-      "get": {
-        "tags": [
-          "TraktTvImport"
-        ],
-        "operationId": "deviceToken",
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "userCode": {
-                      "type": "string"
-                    },
-                    "verificationUrl": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "userCode",
-                    "verificationUrl"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/import-trakttv/state": {
-      "get": {
-        "tags": [
-          "TraktTvImport"
-        ],
-        "operationId": "state",
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "state": {
-                      "$ref": "#/components/schemas/ImportState"
-                    },
-                    "progress": {
-                      "type": "number",
-                      "nullable": true
-                    },
-                    "exportSummary": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/Summary"
-                        }
-                      ],
-                      "nullable": true
-                    },
-                    "importSummary": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/Summary"
-                        }
-                      ],
-                      "nullable": true
-                    }
-                  },
-                  "required": [
-                    "state"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/user": {
       "get": {
         "tags": [
@@ -1486,6 +1430,86 @@
           }
         }
       }
+    },
+    "/api/import-trakttv/device-token": {
+      "get": {
+        "tags": [
+          "TraktTvImport"
+        ],
+        "operationId": "deviceToken",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userCode": {
+                      "type": "string"
+                    },
+                    "verificationUrl": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "userCode",
+                    "verificationUrl"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/import-trakttv/state": {
+      "get": {
+        "tags": [
+          "TraktTvImport"
+        ],
+        "operationId": "state",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "state": {
+                      "$ref": "#/components/schemas/ImportState"
+                    },
+                    "progress": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "exportSummary": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/Summary"
+                        }
+                      ],
+                      "nullable": true
+                    },
+                    "importSummary": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/Summary"
+                        }
+                      ],
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "state"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1885,6 +1909,172 @@
           "movie",
           "tv",
           "video_game"
+        ],
+        "type": "string"
+      },
+      "TmdbLang": {
+        "enum": [
+          "aa",
+          "ab",
+          "af",
+          "am",
+          "ar",
+          "as",
+          "ay",
+          "az",
+          "ba",
+          "be",
+          "bg",
+          "bh",
+          "bi",
+          "bn",
+          "bo",
+          "br",
+          "ca",
+          "co",
+          "cs",
+          "cy",
+          "da",
+          "de",
+          "dz",
+          "el",
+          "en",
+          "eo",
+          "es",
+          "et",
+          "eu",
+          "fa",
+          "fi",
+          "fj",
+          "fo",
+          "fr",
+          "fy",
+          "ga",
+          "gd",
+          "gl",
+          "gn",
+          "gu",
+          "ha",
+          "he",
+          "hi",
+          "hr",
+          "hu",
+          "hy",
+          "ia",
+          "id",
+          "ie",
+          "ik",
+          "is",
+          "it",
+          "iu",
+          "ja",
+          "jw",
+          "ka",
+          "kk",
+          "kl",
+          "km",
+          "kn",
+          "ko",
+          "ks",
+          "ku",
+          "ky",
+          "la",
+          "ln",
+          "lo",
+          "lt",
+          "lv",
+          "mg",
+          "mi",
+          "mk",
+          "ml",
+          "mn",
+          "mo",
+          "mr",
+          "ms",
+          "mt",
+          "my",
+          "na",
+          "ne",
+          "nl",
+          "no",
+          "oc",
+          "om",
+          "or",
+          "pa",
+          "pl",
+          "ps",
+          "pt",
+          "qu",
+          "rm",
+          "rn",
+          "ro",
+          "ru",
+          "rw",
+          "sa",
+          "sd",
+          "sg",
+          "sh",
+          "si",
+          "sk",
+          "sl",
+          "sm",
+          "sn",
+          "so",
+          "sq",
+          "sr",
+          "ss",
+          "st",
+          "su",
+          "sv",
+          "sw",
+          "ta",
+          "te",
+          "tg",
+          "th",
+          "ti",
+          "tk",
+          "tl",
+          "tn",
+          "to",
+          "tr",
+          "ts",
+          "tt",
+          "tw",
+          "ug",
+          "uk",
+          "ur",
+          "uz",
+          "vi",
+          "vo",
+          "wo",
+          "xh",
+          "yi",
+          "yo",
+          "za",
+          "zh",
+          "zu"
+        ],
+        "type": "string"
+      },
+      "AudibleLang": {
+        "enum": [
+          "AU",
+          "CA",
+          "DE",
+          "ES",
+          "FR",
+          "IN",
+          "IT",
+          "JP",
+          "UK",
+          "US"
+        ],
+        "type": "string"
+      },
+      "ServerLang": {
+        "enum": [
+          "de",
+          "en"
         ],
         "type": "string"
       },
@@ -2320,80 +2510,6 @@
         ],
         "type": "string"
       },
-      "ImportState": {
-        "enum": [
-          "exporting",
-          "imported",
-          "importing",
-          "uninitialized",
-          "updating-metadata",
-          "waiting-for-authentication"
-        ],
-        "type": "string"
-      },
-      "Summary": {
-        "type": "object",
-        "properties": {
-          "watchlist": {
-            "type": "object",
-            "properties": {
-              "movies": {
-                "type": "number"
-              },
-              "shows": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "movies",
-              "shows"
-            ]
-          },
-          "seen": {
-            "type": "object",
-            "properties": {
-              "movies": {
-                "type": "number"
-              },
-              "episodes": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "episodes",
-              "movies"
-            ]
-          },
-          "ratings": {
-            "type": "object",
-            "properties": {
-              "movies": {
-                "type": "number"
-              },
-              "shows": {
-                "type": "number"
-              },
-              "seasons": {
-                "type": "number"
-              },
-              "episodes": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "episodes",
-              "movies",
-              "seasons",
-              "shows"
-            ]
-          }
-        },
-        "required": [
-          "ratings",
-          "seen",
-          "watchlist"
-        ]
-      },
       "UserResponse": {
         "type": "object",
         "properties": {
@@ -2615,6 +2731,80 @@
               "platformName"
             ]
           }
+        ]
+      },
+      "ImportState": {
+        "enum": [
+          "exporting",
+          "imported",
+          "importing",
+          "uninitialized",
+          "updating-metadata",
+          "waiting-for-authentication"
+        ],
+        "type": "string"
+      },
+      "Summary": {
+        "type": "object",
+        "properties": {
+          "watchlist": {
+            "type": "object",
+            "properties": {
+              "movies": {
+                "type": "number"
+              },
+              "shows": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "movies",
+              "shows"
+            ]
+          },
+          "seen": {
+            "type": "object",
+            "properties": {
+              "movies": {
+                "type": "number"
+              },
+              "episodes": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "episodes",
+              "movies"
+            ]
+          },
+          "ratings": {
+            "type": "object",
+            "properties": {
+              "movies": {
+                "type": "number"
+              },
+              "shows": {
+                "type": "number"
+              },
+              "seasons": {
+                "type": "number"
+              },
+              "episodes": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "episodes",
+              "movies",
+              "seasons",
+              "shows"
+            ]
+          }
+        },
+        "required": [
+          "ratings",
+          "seen",
+          "watchlist"
         ]
       }
     }
