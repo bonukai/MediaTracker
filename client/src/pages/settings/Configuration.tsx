@@ -47,7 +47,7 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
               <option value="FR">France (Français)</option>
               <option value="IN">India (English)</option>
               <option value="IT">Italia (Italiano)</option>
-              <option value="GK">UK (English)</option>
+              <option value="UK">UK (English)</option>
               <option value="US">United States (English)</option>
               <option value="JP">日本 (日本語)</option>
             </select>
