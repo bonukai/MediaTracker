@@ -1,1 +1,23 @@
-{}
+{
+  "Calendar": "Calendario",
+  "Cancel": "Cancelar",
+  "Change password": "Cambiar contraseña",
+  "Configuration": "Configuración",
+  "Confirm password": "Confirmar contraseña",
+  "Current password": "Contraseña actual",
+  "Current password is incorrect": "La contraseña actual es incorrecta",
+  "Custom date": "Fecha personalizada",
+  "Description": "Descripción",
+  "Episode": "Episodio",
+  "Episode {0} {1}": "Episodio {0} {1}",
+  "Episodes": "Episodios",
+  "Games": "Juegos",
+  "General": "General",
+  "Go to <0>{0}</0> and enter following code: {1}": "Ve a <0>{0}</0> e introduce el siguiente código: {1}",
+  "Home": "Inicio",
+  "Import": "Importar",
+  "Imported": "Importado",
+  "Incorrect password or username": "Contraseña o nombre de usuario incorrectos",
+  "Language": "Idioma",
+  "Save": "Guardar"
+}
