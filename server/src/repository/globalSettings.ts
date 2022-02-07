@@ -20,7 +20,7 @@ export class GlobalConfiguration {
     static _configuration: Configuration = { enableRegistration: true };
     static listeners: {
         key: keyof Omit<Configuration, 'id'>;
-        handler: (value: unknown) => Promise<void>;
+        handler: (value: unknown) => Promise<void> | void;
     }[] = [];
 
     public static update(value: Partial<Configuration>) {
@@ -59,11 +59,11 @@ export class GlobalConfiguration {
         key: T,
         handler: (
             value: Configuration extends {
-                [K in T]: infer A;
+                [K in T]?: infer A;
             }
                 ? A
                 : never
-        ) => Promise<void>
+        ) => Promise<void> | void
     ) {
         this.listeners.push({ key: key, handler: handler });
     }
