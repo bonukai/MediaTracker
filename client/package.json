@@ -4,9 +4,10 @@
   "private": true,
   "proxy": "http://localhost:7481",
   "scripts": {
+    "lingui:extract": "lingui extract",
     "lingui:compile": "lingui compile",
     "dev": "npm run lingui:compile && webpack serve --config webpack.dev.ts",
-    "build": "npm run lingui:compile && cross-env NODE_ENV=production webpack --config webpack.prod.ts",
+    "build": "npm run lingui:extract && npm run lingui:compile && cross-env NODE_ENV=production webpack --config webpack.prod.ts",
     "lint": "eslint src"
   },
   "eslintConfig": {
