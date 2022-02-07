@@ -5,6 +5,7 @@
   "Error sending notifications: {error}": "Fehler beim Senden der Benachrichtigungen: {error}",
   "Everything up to date": "Alle Daten sind aktuell",
   "MediaTracker listening at {address}": "MediaTracker hört auf {address}",
+  "Passwords do not match": "Die Passwörter stimmen nicht überein",
   "Running migrations": "Ausführen von Migrationen",
   "Updating metadata": "Metadaten werden aktualisiert",
   "Updating: {title} (last updated at: {date}": "Aktualisierung: {title} (zuletzt geändert am: {date}",
