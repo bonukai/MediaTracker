@@ -16,7 +16,7 @@
     },
     "dependencies": {
         "@lingui/core": "^3.13.2",
-        "ajv": "^8.9.0",
+        "ajv": "^8.10.0",
         "argon2": "^0.28.3",
         "axios": "^0.25.0",
         "better-sqlite3": "^7.4.6",
@@ -59,7 +59,7 @@
         "@types/sharp": "^0.29.5",
         "@types/url-join": "^4.0.1",
         "@typescript-eslint/eslint-plugin": "^5.10.2",
-        "@typescript-eslint/parser": "^5.10.2",
+        "@typescript-eslint/parser": "^5.11.0",
         "babel-jest": "^27.4.6",
         "babel-plugin-macros": "^3.1.0",
         "babel-plugin-module-resolver": "^4.1.0",
