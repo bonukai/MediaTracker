@@ -61,7 +61,7 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
               onChange={(e) => update({ tmdbLang: e.currentTarget.value })}
             >
               {Object.entries(languagesCodes).map(([code, language]) => (
-                <option key={code}>{language}</option>
+                <option key={code} value={code}>{language}</option>
               ))}
             </select>
           </SettingsSegment>
