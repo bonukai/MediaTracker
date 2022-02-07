@@ -23,7 +23,7 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
-    "@babel/runtime": "^7.16.7",
+    "@babel/runtime": "^7.17.0",
     "@lingui/cli": "^3.13.2",
     "@lingui/loader": "^3.13.2",
     "@lingui/macro": "^3.13.2",
