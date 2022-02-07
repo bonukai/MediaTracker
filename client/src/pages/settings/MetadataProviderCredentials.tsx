@@ -12,7 +12,7 @@ export const SettingsMetadataProviderCredentialsPage: FunctionComponent = () => 
         href="https://api-docs.igdb.com/#account-creation"
         className="block mb-2 underline"
       >
-        <Trans>API keys cen be acquired here</Trans>
+        <Trans>API keys can be acquired here</Trans>
       </a>
       <label>
         <Trans>Client ID</Trans>
