@@ -1,1 +1,12 @@
-{}
+{
+  "Already up to date": "Ya está actualizado",
+  "Changing server language to {lng}": "Cambiando el idioma del servidor a {lng}",
+  "DEMO mode enabled": "Modo DEMO activado",
+  "Everything up to date": "Todo está actualizado",
+  "Password cannot be empty": "La contraseña no puede estar vacía",
+  "Passwords do not match": "Las contraseñas no coinciden",
+  "Running migrations": "Ejecutando migraciones",
+  "Updating metadata": "Actualizando metadatos",
+  "User already exists": "El usuario ya existe",
+  "Username cannot be empty": "El nombre de usuario no puede estar vacío"
+}
