@@ -2074,7 +2074,8 @@
       "ServerLang": {
         "enum": [
           "de",
-          "en"
+          "en",
+          "es"
         ],
         "type": "string"
       },

@@ -260,7 +260,7 @@ router.patch(
           enum: ['AU', 'CA', 'DE', 'ES', 'FR', 'IN', 'IT', 'JP', 'UK', 'US'],
           type: 'string',
         },
-        ServerLang: { enum: ['de', 'en'], type: 'string' },
+        ServerLang: { enum: ['de', 'en', 'es'], type: 'string' },
       },
       type: 'object',
       properties: {

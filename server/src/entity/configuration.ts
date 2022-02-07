@@ -6,7 +6,7 @@ export type Configuration = {
     serverLang?: ServerLang;
 };
 
-export type ServerLang = 'en' | 'de';
+export type ServerLang = 'de' | 'en' | 'es';
 
 export type AudibleLang =
     | 'AU'

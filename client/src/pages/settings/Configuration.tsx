@@ -30,6 +30,7 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
             >
               <option value="en">English</option>
               <option value="de">German</option>
+              <option value="es">Spanish</option>
             </select>
           </SettingsSegment>
 
