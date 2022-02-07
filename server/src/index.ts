@@ -17,6 +17,9 @@ import {
     IGDB_CLIENT_SECRET,
     PORT,
     HOSTNAME,
+    SERVER_LANG,
+    TMDB_LANG,
+    AUDIBLE_LANG
 } from 'src/config';
 import { generatedRoutes } from 'src/generated/routes/routes';
 import { metadataProviders } from 'src/metadata/metadataProviders';
@@ -24,16 +27,47 @@ import { AccessTokenMiddleware } from 'src/middlewares/token';
 import { SessionStore } from 'src/sessionStore';
 import { requireUserAuthentication } from 'src/auth';
 import { sessionKeyRepository } from 'src/repository/sessionKey';
-import { configurationRepository } from 'src/repository/globalSettings';
+import {
+    configurationRepository,
+    GlobalConfiguration
+} from 'src/repository/globalSettings';
 import { sendNotifications } from 'src/sendNotifications';
-import { updateMetadata } from 'src/updateMetadata';
+import { updateMediaItems, updateMetadata } from 'src/updateMetadata';
 import { durationToMilliseconds } from 'src/utils';
 import { userRepository } from 'src/repository/user';
 import { metadataProviderCredentialsRepository } from 'src/repository/metadataProviderCredentials';
 import { setupI18n } from 'src/i18n/i18n';
+import { mediaItemRepository } from 'src/repository/mediaItem';
+import { CancellationToken } from 'src/cancellationToken';
+
+let updateMetadataCancellationToken: CancellationToken;
+
+GlobalConfiguration.subscribe('tmdbLang', async (value) => {
+    console.log(
+        chalk.bold.green(
+            t`TMDB language changed to: "${value}", updating metadata for all items`
+        )
+    );
+
+    if (updateMetadataCancellationToken) {
+        await updateMetadataCancellationToken.cancel();
+    }
+
+    updateMetadataCancellationToken = new CancellationToken();
+
+    const mediaItems = await mediaItemRepository.find({
+        source: 'tmdb'
+    });
+
+    await updateMediaItems({
+        mediaItems: mediaItems,
+        cancellationToken: updateMetadataCancellationToken,
+        forceUpdate: true
+    });
+});
 
 (async () => {
-    setupI18n(process.env.SERVER_LANG || 'en');
+    setupI18n(SERVER_LANG || 'en');
 
     const app = express();
 
@@ -44,16 +78,17 @@ import { setupI18n } from 'src/i18n/i18n';
     if (!configuration) {
         await configurationRepository.create({
             enableRegistration: true,
-            serverLang: process.env.SERVER_LANG || 'en',
-            tmdbLang: process.env.TMDB_LANG || 'en',
-            audibleLang: process.env.AUDIBLE_LANG || 'US',
+            serverLang: SERVER_LANG || 'en',
+            tmdbLang: TMDB_LANG || 'en',
+            audibleLang: AUDIBLE_LANG || 'US'
         });
     } else {
+        GlobalConfiguration.configuration = configuration;
+
         await configurationRepository.update({
-            ...configuration,
-            serverLang: process.env.SERVER_LANG || configuration.serverLang,
-            tmdbLang: process.env.TMDB_LANG || configuration.tmdbLang,
-            audibleLang: process.env.AUDIBLE_LANG || configuration.audibleLang,
+            serverLang: SERVER_LANG || configuration.serverLang,
+            tmdbLang: TMDB_LANG || configuration.tmdbLang,
+            audibleLang: AUDIBLE_LANG || configuration.audibleLang
         });
     }
 
@@ -64,12 +99,12 @@ import { setupI18n } from 'src/i18n/i18n';
             await userRepository.create({
                 name: 'demo',
                 password: 'demo',
-                admin: false,
+                admin: false
             });
         }
 
         await configurationRepository.update({
-            enableRegistration: false,
+            enableRegistration: false
         });
 
         console.log(chalk.green.bold(t`DEMO mode enabled`));
@@ -77,20 +112,20 @@ import { setupI18n } from 'src/i18n/i18n';
 
     if (IGDB_CLIENT_ID && IGDB_CLIENT_SECRET) {
         await metadataProviderCredentialsRepository.delete({
-            providerName: 'IGDB',
+            providerName: 'IGDB'
         });
 
         await metadataProviderCredentialsRepository.createMany([
             {
                 providerName: 'IGDB',
                 name: 'CLIENT_ID',
-                value: IGDB_CLIENT_ID,
+                value: IGDB_CLIENT_ID
             },
             {
                 providerName: 'IGDB',
                 name: 'CLIENT_SECRET',
-                value: IGDB_CLIENT_SECRET,
-            },
+                value: IGDB_CLIENT_SECRET
+            }
         ]);
     }
 

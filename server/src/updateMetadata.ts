@@ -17,6 +17,7 @@ import { tvSeasonRepository } from 'src/repository/season';
 import { Notifications } from 'src/notifications/notifications';
 import { userRepository } from 'src/repository/user';
 import { User } from 'src/entity/user';
+import { CancellationToken } from 'src/cancellationToken';
 
 const getItemsToDelete = (
     oldMediaItem: MediaItemBaseWithSeasons,
@@ -279,6 +280,13 @@ const sendNotifications = async (
 export const updateMediaItem = async (
     oldMediaItem?: MediaItemBaseWithSeasons
 ) => {
+    const title = oldMediaItem.title;
+    const date = chalk.blue(
+        new Date(oldMediaItem.lastTimeUpdated).toLocaleString()
+    );
+
+    console.log(t`Updating: ${title} (last updated at: ${date}`);
+
     if (!oldMediaItem) {
         return;
     }
@@ -370,26 +378,36 @@ const shouldUpdate = (mediaItem: MediaItemBase) => {
     return timePassed >= durationToMilliseconds({ hours: 24 });
 };
 
-export const updateMetadata = async (): Promise<void> => {
-    console.log(chalk.bold.green(t`Updating metadata`));
+export const updateMediaItems = async (args: {
+    mediaItems: MediaItemBaseWithSeasons[];
+    cancellationToken?: CancellationToken;
+    forceUpdate?: boolean;
+}) => {
+    const { mediaItems, cancellationToken, forceUpdate } = args;
+
+    console.log(
+        chalk.bold.green(
+            plural(mediaItems.length, {
+                one: 'Updating metadata for # item',
+                other: 'Updating metadata for # items'
+            })
+        )
+    );
 
     let numberOfUpdatedItems = 0;
     let numberOfFailures = 0;
-    const mediaItems = await mediaItemRepository.itemsToPossiblyUpdate();
 
     for (const mediaItem of mediaItems) {
-        const skip = !shouldUpdate(mediaItem);
+        if (cancellationToken?.shouldCancel) {
+            console.log(chalk.bold('Updating metadata canceled'));
+            break;
+        }
+
+        const skip = forceUpdate ? false : !shouldUpdate(mediaItem);
 
         if (skip) {
             continue;
         }
-
-        const title = mediaItem.title;
-        const date = chalk.blue(
-            new Date(mediaItem.lastTimeUpdated).toLocaleString()
-        );
-
-        console.log(t`Updating: ${title} (last updated at: ${date}`);
 
         try {
             await updateMediaItem(mediaItem);
@@ -409,7 +427,7 @@ export const updateMetadata = async (): Promise<void> => {
             chalk.bold.green(
                 plural(count, {
                     one: 'Updated 1 item',
-                    other: 'Updated # items',
+                    other: 'Updated # items'
                 })
             )
         );
@@ -421,10 +439,18 @@ export const updateMetadata = async (): Promise<void> => {
                 chalk.bold.red(
                     plural(count, {
                         one: 'Failed to update 1 item',
-                        other: 'Failed to update # items',
+                        other: 'Failed to update # items'
                     })
                 )
             );
         }
     }
+
+    cancellationToken?.complected();
 };
+
+export const updateMetadata = async (): Promise<void> => {
+    const mediaItems = await mediaItemRepository.itemsToPossiblyUpdate();
+    await updateMediaItems({ mediaItems: mediaItems });
+};
+

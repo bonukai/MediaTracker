@@ -1,53 +1,58 @@
+import chalk from 'chalk';
+import _ from 'lodash';
 import { Configuration } from 'src/entity/configuration';
 import { repository } from 'src/repository/repository';
 
 class ConfigurationRepository extends repository<Configuration>({
     tableName: 'configuration',
     primaryColumnName: 'id',
-    booleanColumnNames: ['enableRegistration'],
+    booleanColumnNames: ['enableRegistration']
 }) {
-    public update(value: Partial<Configuration>): Promise<void> {
-        PrivateGlobalConfiguration.update(value);
-        return super.update(value);
+    public async update(value: Partial<Configuration>): Promise<void> {
+        GlobalConfiguration.update(value);
+        return await super.update(value);
     }
 }
 
 export const configurationRepository = new ConfigurationRepository();
 
-class PrivateGlobalConfiguration {
+export class GlobalConfiguration {
     static _configuration: Configuration = { enableRegistration: true };
     static listeners: {
         key: keyof Omit<Configuration, 'id'>;
-        handler: (value: unknown) => void;
+        handler: (value: unknown) => Promise<void>;
     }[] = [];
 
     public static update(value: Partial<Configuration>) {
-        PrivateGlobalConfiguration._configuration = {
-            ...PrivateGlobalConfiguration._configuration,
-            ...value,
+        const previousConfiguration = _.cloneDeep(this._configuration);
+
+        this._configuration = {
+            ...this._configuration,
+            ...value
         };
 
         value &&
-            this.listeners.forEach(
-                ({ key, handler }) => key in value && handler(value[key])
-            );
+            this.listeners.forEach(async ({ key, handler }) => {
+                if (key in value && value[key] !== previousConfiguration[key]) {
+                    try {
+                        await handler(value[key]);
+                    } catch (error) {
+                        console.log(chalk.bold.red(error));
+                    }
+                }
+            });
     }
 
     public static get(): Configuration {
-        return PrivateGlobalConfiguration._configuration;
+        return this._configuration;
     }
 
-    public static subscribe(
-        key: keyof Omit<Configuration, 'id'>,
-        handler: (value: unknown) => void
-    ) {
-        this.listeners.push({ key: key, handler: handler });
-    }
-}
-
-export class GlobalConfiguration {
     public static get configuration() {
-        return PrivateGlobalConfiguration._configuration;
+        return this._configuration;
+    }
+
+    public static set configuration(value: Configuration) {
+        this._configuration = value;
     }
 
     public static subscribe<T extends keyof Omit<Configuration, 'id'>>(
@@ -58,8 +63,8 @@ export class GlobalConfiguration {
             }
                 ? A
                 : never
-        ) => void
+        ) => Promise<void>
     ) {
-        return PrivateGlobalConfiguration.subscribe(key, handler);
+        this.listeners.push({ key: key, handler: handler });
     }
 }
