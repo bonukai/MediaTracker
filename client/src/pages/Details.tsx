@@ -99,21 +99,15 @@ const RemoveFromSeenHistoryButton: FunctionComponent<{
         ) && removeFromSeenHistory(mediaItem)
       }
     >
-      {isAudiobook(mediaItem) && (
-        <Trans>Remove from listened history</Trans>
-      )}
+      {isAudiobook(mediaItem) && <Trans>Remove from listened history</Trans>}
 
-      {isBook(mediaItem) && (
-        <Trans>Remove from read history</Trans>
-      )}
+      {isBook(mediaItem) && <Trans>Remove from read history</Trans>}
 
       {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
         <Trans>Remove from seen history</Trans>
       )}
 
-      {isVideoGame(mediaItem) && (
-        <Trans>Remove from played history</Trans>
-      )}
+      {isVideoGame(mediaItem) && <Trans>Remove from played history</Trans>}
     </div>
   );
 };
@@ -128,21 +122,15 @@ const MarkAsSeenButtonWithModal: FunctionComponent<{
       <Modal
         openModal={(openModal) => (
           <div className="text-sm btn-blue" onClick={openModal}>
-          {isAudiobook(mediaItem) && (
-            <Trans>Add to listened history</Trans>
-          )}
+            {isAudiobook(mediaItem) && <Trans>Add to listened history</Trans>}
 
-          {isBook(mediaItem) && (
-            <Trans>Add to read history</Trans>
-          )}
+            {isBook(mediaItem) && <Trans>Add to read history</Trans>}
 
-          {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
-            <Trans>Add to seen history</Trans>
-          )}
+            {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
+              <Trans>Add to seen history</Trans>
+            )}
 
-          {isVideoGame(mediaItem) && (
-            <Trans>Add to played history</Trans>
-          )}
+            {isVideoGame(mediaItem) && <Trans>Add to played history</Trans>}
           </div>
         )}
       >
