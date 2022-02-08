@@ -66,7 +66,7 @@ type ToMetadataProviderCredentialsType<
     Result extends ReadonlyArray<unknown> = []
 > = Input extends readonly []
     ? Result
-    : Input extends readonly [infer First, ...(infer Rest)]
+    : Input extends readonly [infer First, ...infer Rest]
     ? MapType<First> extends never
         ? ToMetadataProviderCredentialsType<Rest, Result>
         : ToMetadataProviderCredentialsType<Rest, [...Result, MapType<First>]>

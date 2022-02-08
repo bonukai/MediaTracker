@@ -140,9 +140,8 @@ export class UsersController {
     }>(async (req, res) => {
         const userId = Number(req.user);
 
-        const credentials = await notificationPlatformsCredentialsRepository.get(
-            userId
-        );
+        const credentials =
+            await notificationPlatformsCredentialsRepository.get(userId);
 
         res.send(credentials);
     });

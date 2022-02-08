@@ -128,11 +128,8 @@ export const EpisodesPage: FunctionComponent = () => {
   const { mediaItemId } = useParams();
   const { mediaItem, isLoading, error } = useDetails(Number(mediaItemId));
 
-  const {
-    selectedSeason,
-    selectedSeasonId,
-    setSelectedSeasonId,
-  } = useSelectedSeason(mediaItem);
+  const { selectedSeason, selectedSeasonId, setSelectedSeasonId } =
+    useSelectedSeason(mediaItem);
 
   if (isLoading || !selectedSeason) {
     return <Trans>Loading</Trans>;

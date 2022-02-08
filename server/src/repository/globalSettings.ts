@@ -6,7 +6,7 @@ import { repository } from 'src/repository/repository';
 class ConfigurationRepository extends repository<Configuration>({
     tableName: 'configuration',
     primaryColumnName: 'id',
-    booleanColumnNames: ['enableRegistration']
+    booleanColumnNames: ['enableRegistration'],
 }) {
     public async update(value: Partial<Configuration>) {
         GlobalConfiguration.update(value);
@@ -28,7 +28,7 @@ export class GlobalConfiguration {
 
         this._configuration = {
             ...this._configuration,
-            ...value
+            ...value,
         };
 
         value &&

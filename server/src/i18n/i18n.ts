@@ -12,7 +12,7 @@ export const setupI18n = (locale: string) => {
     i18n.loadLocaleData({
         de: { plurals: plurals.de },
         en: { plurals: plurals.en },
-        es: { plurals: plurals.es }
+        es: { plurals: plurals.es },
     });
     i18n.load({ de: de, en: en, es: es });
     i18n.activate(locale);

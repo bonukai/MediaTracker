@@ -12,6 +12,6 @@ export const setupI18n = () => {
   i18n.loadLocaleData({
     [locale]: { plurals: plurals[locale] },
   });
-  i18n.load({de: de , en: en, es: es});
+  i18n.load({ de: de, en: en, es: es });
   i18n.activate(locale);
 };

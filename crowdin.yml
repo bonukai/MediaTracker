@@ -1,7 +1,7 @@
 files:
-  - source: /client/src/i18n/locales/en/translation.json
-    translation: /client/src/i18n/locales/%two_letters_code%/translation.json
-    update_option: update_as_unapproved
-  - source: /server/src/i18n/locales/en/translation.json
-    translation: /server/src/i18n/locales/%two_letters_code%/translation.json
-    update_option: update_as_unapproved
+    - source: /client/src/i18n/locales/en/translation.json
+      translation: /client/src/i18n/locales/%two_letters_code%/translation.json
+      update_option: update_as_unapproved
+    - source: /server/src/i18n/locales/en/translation.json
+      translation: /server/src/i18n/locales/%two_letters_code%/translation.json
+      update_option: update_as_unapproved

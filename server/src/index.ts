@@ -19,7 +19,7 @@ import {
     HOSTNAME,
     SERVER_LANG,
     TMDB_LANG,
-    AUDIBLE_LANG
+    AUDIBLE_LANG,
 } from 'src/config';
 import { generatedRoutes } from 'src/generated/routes/routes';
 import { metadataProviders } from 'src/metadata/metadataProviders';
@@ -29,7 +29,7 @@ import { requireUserAuthentication } from 'src/auth';
 import { sessionKeyRepository } from 'src/repository/sessionKey';
 import {
     configurationRepository,
-    GlobalConfiguration
+    GlobalConfiguration,
 } from 'src/repository/globalSettings';
 import { sendNotifications } from 'src/sendNotifications';
 import { updateMediaItems, updateMetadata } from 'src/updateMetadata';
@@ -56,13 +56,13 @@ GlobalConfiguration.subscribe('tmdbLang', async (value) => {
     updateMetadataCancellationToken = new CancellationToken();
 
     const mediaItems = await mediaItemRepository.find({
-        source: 'tmdb'
+        source: 'tmdb',
     });
 
     await updateMediaItems({
         mediaItems: mediaItems,
         cancellationToken: updateMetadataCancellationToken,
-        forceUpdate: true
+        forceUpdate: true,
     });
 });
 
@@ -80,7 +80,7 @@ GlobalConfiguration.subscribe('tmdbLang', async (value) => {
             enableRegistration: true,
             serverLang: SERVER_LANG || 'en',
             tmdbLang: TMDB_LANG || 'en',
-            audibleLang: AUDIBLE_LANG || 'US'
+            audibleLang: AUDIBLE_LANG || 'US',
         });
     } else {
         GlobalConfiguration.configuration = configuration;
@@ -88,7 +88,7 @@ GlobalConfiguration.subscribe('tmdbLang', async (value) => {
         await configurationRepository.update({
             serverLang: SERVER_LANG || configuration.serverLang,
             tmdbLang: TMDB_LANG || configuration.tmdbLang,
-            audibleLang: AUDIBLE_LANG || configuration.audibleLang
+            audibleLang: AUDIBLE_LANG || configuration.audibleLang,
         });
     }
 
@@ -99,12 +99,12 @@ GlobalConfiguration.subscribe('tmdbLang', async (value) => {
             await userRepository.create({
                 name: 'demo',
                 password: 'demo',
-                admin: false
+                admin: false,
             });
         }
 
         await configurationRepository.update({
-            enableRegistration: false
+            enableRegistration: false,
         });
 
         console.log(chalk.green.bold(t`DEMO mode enabled`));
@@ -112,20 +112,20 @@ GlobalConfiguration.subscribe('tmdbLang', async (value) => {
 
     if (IGDB_CLIENT_ID && IGDB_CLIENT_SECRET) {
         await metadataProviderCredentialsRepository.delete({
-            providerName: 'IGDB'
+            providerName: 'IGDB',
         });
 
         await metadataProviderCredentialsRepository.createMany([
             {
                 providerName: 'IGDB',
                 name: 'CLIENT_ID',
-                value: IGDB_CLIENT_ID
+                value: IGDB_CLIENT_ID,
             },
             {
                 providerName: 'IGDB',
                 name: 'CLIENT_SECRET',
-                value: IGDB_CLIENT_SECRET
-            }
+                value: IGDB_CLIENT_SECRET,
+            },
         ]);
     }
 

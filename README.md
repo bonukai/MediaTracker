@@ -127,4 +127,4 @@ docker run -p 7481:7481 mediatracker
 
 # Contributors
 
-- [URBANsUNITED](https://github.com/URBANsUNITED) (German translation)
+-   [URBANsUNITED](https://github.com/URBANsUNITED) (German translation)

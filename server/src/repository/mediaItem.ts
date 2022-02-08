@@ -18,7 +18,7 @@ import {
     mediaItemColumns,
     MediaItemForProvider,
     MediaItemItemsResponse,
-    MediaType
+    MediaType,
 } from 'src/entity/mediaItem';
 import { imageRepository } from 'src/repository/image';
 import { getImageId, Image } from 'src/entity/image';
@@ -87,7 +87,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
     tableName: 'mediaItem',
     columnNames: mediaItemColumns,
     primaryColumnName: 'id',
-    booleanColumnNames: ['needsDetails']
+    booleanColumnNames: ['needsDetails'],
 }) {
     public items(
         args: GetItemsArgs & { page: number }
@@ -109,7 +109,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
             genres: (value.genres as unknown as string)?.split(',') || null,
             narrators:
                 (value.narrators as unknown as string)?.split(',') || null,
-            authors: (value.authors as unknown as string)?.split(',') || null
+            authors: (value.authors as unknown as string)?.split(',') || null,
         });
     }
 
@@ -118,7 +118,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
             ...value,
             genres: value.genres?.join(','),
             authors: value.authors?.join(','),
-            narrators: value.narrators?.join(',')
+            narrators: value.narrators?.join(','),
         } as unknown);
     }
 
@@ -134,26 +134,26 @@ class MediaItemRepository extends repository<MediaItemBase>({
                 ..._.cloneDeep(mediaItem),
                 lastTimeUpdated: mediaItem.lastTimeUpdated
                     ? mediaItem.lastTimeUpdated
-                    : new Date().getTime()
+                    : new Date().getTime(),
             };
 
             await trx(this.tableName)
                 .update(this.serialize(this.stripValue(mediaItem)))
                 .where({
-                    id: mediaItem.id
+                    id: mediaItem.id,
                 });
 
             if (!mediaItem.poster) {
                 await trx(imageRepository.tableName).delete().where({
                     mediaItemId: mediaItem.id,
                     seasonId: null,
-                    type: 'poster'
+                    type: 'poster',
                 });
             } else {
                 const res = await trx(imageRepository.tableName).where({
                     mediaItemId: mediaItem.id,
                     seasonId: null,
-                    type: 'poster'
+                    type: 'poster',
                 });
 
                 if (res.length === 0) {
@@ -163,7 +163,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                         id: getImageId(),
                         mediaItemId: mediaItem.id,
                         seasonId: null,
-                        type: 'poster'
+                        type: 'poster',
                     });
 
                     result.poster = `/img/${posterId}`;
@@ -174,13 +174,13 @@ class MediaItemRepository extends repository<MediaItemBase>({
                 await trx(imageRepository.tableName).delete().where({
                     mediaItemId: mediaItem.id,
                     seasonId: null,
-                    type: 'backdrop'
+                    type: 'backdrop',
                 });
             } else {
                 const res = await trx(imageRepository.tableName).where({
                     mediaItemId: mediaItem.id,
                     seasonId: null,
-                    type: 'backdrop'
+                    type: 'backdrop',
                 });
 
                 if (res.length === 0) {
@@ -188,7 +188,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                         id: getImageId(),
                         mediaItemId: mediaItem.id,
                         seasonId: null,
-                        type: 'backdrop'
+                        type: 'backdrop',
                     });
                 }
             }
@@ -225,13 +225,13 @@ class MediaItemRepository extends repository<MediaItemBase>({
                         await trx(imageRepository.tableName).delete().where({
                             mediaItemId: mediaItem.id,
                             seasonId: season.id,
-                            type: 'poster'
+                            type: 'poster',
                         });
                     } else {
                         const res = await trx(imageRepository.tableName).where({
                             mediaItemId: mediaItem.id,
                             seasonId: season.id,
-                            type: 'poster'
+                            type: 'poster',
                         });
 
                         if (res.length === 0) {
@@ -239,7 +239,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                                 id: getImageId(),
                                 mediaItemId: mediaItem.id,
                                 seasonId: season.id,
-                                type: 'poster'
+                                type: 'poster',
                             });
                         }
                     }
@@ -287,7 +287,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                 ..._.cloneDeep(mediaItem),
                 lastTimeUpdated: mediaItem.lastTimeUpdated
                     ? mediaItem.lastTimeUpdated
-                    : new Date().getTime()
+                    : new Date().getTime(),
             };
 
             const res = await trx(this.tableName)
@@ -302,7 +302,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                 await trx(imageRepository.tableName).insert({
                     id: imageId,
                     mediaItemId: result.id,
-                    type: 'poster'
+                    type: 'poster',
                 });
 
                 result.poster = `/img/${imageId}`;
@@ -314,7 +314,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                 await trx(imageRepository.tableName).insert({
                     id: imageId,
                     mediaItemId: result.id,
-                    type: 'backdrop'
+                    type: 'backdrop',
                 });
 
                 result.backdrop = `/img/${imageId}`;
@@ -324,7 +324,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                 ...season,
                 numberOfEpisodes:
                     season.numberOfEpisodes || season.episodes?.length || 0,
-                tvShowId: result.id
+                tvShowId: result.id,
             }));
 
             seasons?.forEach((season) => delete season.episodes);
@@ -349,7 +349,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                                 id: getImageId(),
                                 mediaItemId: result.id,
                                 seasonId: season.id,
-                                type: 'poster'
+                                type: 'poster',
                             })),
                             30
                         )
@@ -362,7 +362,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                         tvShowId: result.id,
                         seasonId: season.id,
                         seasonAndEpisodeNumber:
-                            episode.seasonNumber * 1000 + episode.episodeNumber
+                            episode.seasonNumber * 1000 + episode.episodeNumber,
                     }))
                 );
 
@@ -386,11 +386,11 @@ class MediaItemRepository extends repository<MediaItemBase>({
 
     public async seasonsWithEpisodes(mediaItem: MediaItemBase) {
         const seasons = await tvSeasonRepository.find({
-            tvShowId: Number(mediaItem.id)
+            tvShowId: Number(mediaItem.id),
         });
 
         const episodes = await tvEpisodeRepository.find({
-            tvShowId: Number(mediaItem.id)
+            tvShowId: Number(mediaItem.id),
         });
 
         const groupedEpisodes = _.groupBy(
@@ -493,7 +493,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
         if (params.releaseYear) {
             qb.whereBetween('releaseDate', [
                 new Date(params.releaseYear, 0, 1).toISOString(),
-                new Date(params.releaseYear, 11, 31).toISOString()
+                new Date(params.releaseYear, 11, 31).toISOString(),
             ]);
         }
 
@@ -520,7 +520,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
         if (params.releaseYear) {
             qb.whereBetween('releaseDate', [
                 new Date(params.releaseYear, 0, 1).toISOString(),
-                new Date(params.releaseYear, 11, 31).toISOString()
+                new Date(params.releaseYear, 11, 31).toISOString(),
             ]);
         }
 
@@ -563,7 +563,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
             )
             .whereBetween('mediaItem.releaseDate', [
                 from.toISOString(),
-                to.toISOString()
+                to.toISOString(),
             ])
             .whereNot('mediaType', 'tv')
             .whereNull('notificationsHistory.id');
@@ -587,7 +587,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
             )
             .whereBetween('episode.releaseDate', [
                 from.toISOString(),
-                to.toISOString()
+                to.toISOString(),
             ])
             .where('episode.isSpecialEpisode', false)
             .whereNull('notificationsHistory.id');
@@ -654,7 +654,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
 
         const searchResultWithId = _.cloneDeep(searchResult).map((item) => ({
             ...item,
-            searchResultId: idCounter++
+            searchResultId: idCounter++,
         }));
 
         const externalIds = _(externalIdColumnNames)
@@ -716,7 +716,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                     if (res) {
                         existingSearchResults.push({
                             ...res,
-                            id: item.id
+                            id: item.id,
                         });
 
                         return;
@@ -727,7 +727,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
             const existingImages = _(
                 await trx<Image>(imageRepository.tableName)
                     .where({
-                        seasonId: null
+                        seasonId: null,
                     })
                     .whereIn(
                         'mediaItemId',
@@ -794,7 +794,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                                 id: posterId,
                                 mediaItemId: item.id,
                                 seasonId: null,
-                                type: 'poster'
+                                type: 'poster',
                             };
                         }),
                     30
@@ -815,7 +815,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                                 id: backdropId,
                                 mediaItemId: item.id,
                                 seasonId: null,
-                                type: 'backdrop'
+                                type: 'backdrop',
                             };
                         }),
                     30
@@ -842,7 +842,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
                     )
                         .sortBy('searchResultId')
                         .forEach((item) => delete item.searchResultId)
-                        .valueOf()
+                        .valueOf(),
             };
         });
     }
@@ -856,5 +856,5 @@ const externalIdColumnNames = <const>[
     'tmdbId',
     'igdbId',
     'tvmazeId',
-    'audibleId'
+    'audibleId',
 ];

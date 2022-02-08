@@ -241,9 +241,8 @@ export const PaginatedGridItems: FunctionComponent<{
                   mediaItem={mediaItem}
                   appearance={{
                     ...gridItemAppearance,
-                    showAddToWatchlistAndMarkAsSeenButtons: Boolean(
-                      searchQuery
-                    ),
+                    showAddToWatchlistAndMarkAsSeenButtons:
+                      Boolean(searchQuery),
                   }}
                 />
               ))}

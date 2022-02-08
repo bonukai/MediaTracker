@@ -110,12 +110,11 @@ const sendNotificationForEpisodes = async (episodes: TvEpisode[]) => {
 
     const tvShow = episodes[0].tvShow;
 
-    const usersToNotify = await userRepository.findUsersWithMediaItemOnWatchlist(
-        {
+    const usersToNotify =
+        await userRepository.findUsersWithMediaItemOnWatchlist({
             mediaItemId: tvShow.id,
             sendNotificationForEpisodesReleases: true,
-        }
-    );
+        });
 
     const title = tvShow.title;
     {
@@ -148,12 +147,11 @@ const sendNotificationForMediaItem = async (mediaItem: MediaItemBase) => {
     const title = mediaItem.title;
     const notificationMessage = t`${title} has been released`;
 
-    const usersToNotify = await userRepository.findUsersWithMediaItemOnWatchlist(
-        {
+    const usersToNotify =
+        await userRepository.findUsersWithMediaItemOnWatchlist({
             mediaItemId: mediaItem.id,
             sendNotificationForReleases: true,
-        }
-    );
+        });
 
     const count = usersToNotify.length;
 
@@ -182,9 +180,8 @@ const sendNotificationForItem = async (args: {
 
     for (const user of users) {
         const platform = user.notificationPlatform;
-        const credentials = await notificationPlatformsCredentialsRepository.get(
-            user.id
-        );
+        const credentials =
+            await notificationPlatformsCredentialsRepository.get(user.id);
 
         await Notifications.sendNotification(platform, {
             title: notificationTitle,

@@ -6,7 +6,6 @@ import { User } from 'src/entity/user';
 import { userRepository } from 'src/repository/user';
 import { clearDatabase, runMigrations } from '../../../__utils__/utils';
 
-
 const user: User = {
     id: 1,
     name: 'admin',

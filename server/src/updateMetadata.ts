@@ -312,9 +312,8 @@ export const updateMediaItem = async (
         }
 
         if (newMediaItem.mediaType === 'tv') {
-            oldMediaItem.seasons = await mediaItemRepository.seasonsWithEpisodes(
-                oldMediaItem
-            );
+            oldMediaItem.seasons =
+                await mediaItemRepository.seasonsWithEpisodes(oldMediaItem);
         }
 
         const updatedMediaItem = merge(oldMediaItem, newMediaItem);
@@ -389,7 +388,7 @@ export const updateMediaItems = async (args: {
         chalk.bold.green(
             plural(mediaItems.length, {
                 one: 'Updating metadata for # item',
-                other: 'Updating metadata for # items'
+                other: 'Updating metadata for # items',
             })
         )
     );
@@ -427,7 +426,7 @@ export const updateMediaItems = async (args: {
             chalk.bold.green(
                 plural(count, {
                     one: 'Updated 1 item',
-                    other: 'Updated # items'
+                    other: 'Updated # items',
                 })
             )
         );
@@ -439,7 +438,7 @@ export const updateMediaItems = async (args: {
                 chalk.bold.red(
                     plural(count, {
                         one: 'Failed to update 1 item',
-                        other: 'Failed to update # items'
+                        other: 'Failed to update # items',
                     })
                 )
             );
@@ -453,4 +452,3 @@ export const updateMetadata = async (): Promise<void> => {
     const mediaItems = await mediaItemRepository.itemsToPossiblyUpdate();
     await updateMediaItems({ mediaItems: mediaItems });
 };
-

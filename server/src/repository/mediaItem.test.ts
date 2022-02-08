@@ -2,14 +2,14 @@ import _ from 'lodash';
 import {
     MediaItemBase,
     MediaItemBaseWithSeasons,
-    MediaItemForProvider
+    MediaItemForProvider,
 } from 'src/entity/mediaItem';
 import { imageRepository } from 'src/repository/image';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import {
     clearDatabase,
     randomNumericId,
-    runMigrations
+    runMigrations,
 } from '__tests__/__utils__/utils';
 
 describe('mediaItemRepository', () => {
@@ -31,19 +31,19 @@ describe('mediaItemRepository', () => {
         const poster = await imageRepository.findOne({
             mediaItemId: mediaItem.id,
             seasonId: null,
-            type: 'poster'
+            type: 'poster',
         });
 
         const backdrop = await imageRepository.findOne({
             mediaItemId: mediaItem.id,
             seasonId: null,
-            type: 'backdrop'
+            type: 'backdrop',
         });
 
         const seasonPoster = await imageRepository.findOne({
             mediaItemId: mediaItem.id,
             seasonId: 1,
-            type: 'poster'
+            type: 'poster',
         });
 
         expect(poster).toBeDefined();
@@ -57,7 +57,7 @@ describe('mediaItemRepository', () => {
             mediaType: 'tv',
             source: 'user',
             poster: 'poster',
-            backdrop: 'backdrop'
+            backdrop: 'backdrop',
         };
 
         const returnedMediaItem = await mediaItemRepository.create(mediaItem);
@@ -70,19 +70,19 @@ describe('mediaItemRepository', () => {
         const poster = await imageRepository.findOne({
             mediaItemId: result.id,
             seasonId: null,
-            type: 'poster'
+            type: 'poster',
         });
 
         const backdrop = await imageRepository.findOne({
             mediaItemId: result.id,
             seasonId: null,
-            type: 'backdrop'
+            type: 'backdrop',
         });
 
         const seasonPoster = await imageRepository.findOne({
             mediaItemId: result.id,
             seasonId: 1,
-            type: 'poster'
+            type: 'poster',
         });
 
         expect(poster).toBeDefined();
@@ -95,28 +95,28 @@ describe('mediaItemRepository', () => {
             ...mediaItem,
             seasons: mediaItem.seasons.map((season) => ({
                 ...season,
-                poster: null
+                poster: null,
             })),
             poster: undefined,
-            backdrop: undefined
+            backdrop: undefined,
         });
 
         const poster = await imageRepository.findOne({
             mediaItemId: mediaItem.id,
             seasonId: null,
-            type: 'poster'
+            type: 'poster',
         });
 
         const backdrop = await imageRepository.findOne({
             mediaItemId: mediaItem.id,
             seasonId: null,
-            type: 'backdrop'
+            type: 'backdrop',
         });
 
         const seasonPoster = await imageRepository.findOne({
             mediaItemId: mediaItem.id,
             seasonId: 1,
-            type: 'poster'
+            type: 'poster',
         });
 
         expect(poster).toBeUndefined();
@@ -130,19 +130,19 @@ describe('mediaItemRepository', () => {
         const poster = await imageRepository.findOne({
             mediaItemId: mediaItem.id,
             seasonId: null,
-            type: 'poster'
+            type: 'poster',
         });
 
         const backdrop = await imageRepository.findOne({
             mediaItemId: mediaItem.id,
             seasonId: null,
-            type: 'backdrop'
+            type: 'backdrop',
         });
 
         const seasonPoster = await imageRepository.findOne({
             mediaItemId: mediaItem.id,
             seasonId: 1,
-            type: 'poster'
+            type: 'poster',
         });
 
         expect(poster).toBeDefined();
@@ -162,7 +162,7 @@ describe('mediaItemRepository', () => {
         const seasonPoster = await imageRepository.findOne({
             mediaItemId: mediaItem.id,
             seasonId: 4,
-            type: 'poster'
+            type: 'poster',
         });
 
         expect(seasonPoster).toBeDefined();
@@ -186,18 +186,18 @@ describe('mediaItemRepository', () => {
                             title: 'Episode 1',
                             episodeNumber: 1,
                             seasonNumber: 1,
-                            isSpecialEpisode: false
-                        }
-                    ]
-                }
-            ]
+                            isSpecialEpisode: false,
+                        },
+                    ],
+                },
+            ],
         };
 
         await mediaItemRepository.create(mediaItem);
 
         const result: MediaItemBaseWithSeasons =
             await mediaItemRepository.findOne({
-                id: 123
+                id: 123,
             });
 
         result.seasons = await mediaItemRepository.seasonsWithEpisodes(result);
@@ -209,11 +209,11 @@ describe('mediaItemRepository', () => {
                     episodes: [
                         {
                             id: 11,
-                            seasonAndEpisodeNumber: 1001
-                        }
-                    ]
-                }
-            ]
+                            seasonAndEpisodeNumber: 1001,
+                        },
+                    ],
+                },
+            ],
         });
 
         await mediaItemRepository.update({
@@ -230,23 +230,23 @@ describe('mediaItemRepository', () => {
                             title: 'Episode 1',
                             episodeNumber: 1,
                             seasonNumber: 1,
-                            isSpecialEpisode: false
+                            isSpecialEpisode: false,
                         },
                         {
                             id: 12,
                             title: 'Episode 2',
                             episodeNumber: 2,
                             seasonNumber: 1,
-                            isSpecialEpisode: false
-                        }
-                    ]
-                }
-            ]
+                            isSpecialEpisode: false,
+                        },
+                    ],
+                },
+            ],
         });
 
         const result2: MediaItemBaseWithSeasons =
             await mediaItemRepository.findOne({
-                id: 123
+                id: 123,
             });
 
         result2.seasons = await mediaItemRepository.seasonsWithEpisodes(
@@ -259,14 +259,14 @@ describe('mediaItemRepository', () => {
                 {
                     episodes: [
                         {
-                            seasonAndEpisodeNumber: 1001
+                            seasonAndEpisodeNumber: 1001,
                         },
                         {
-                            seasonAndEpisodeNumber: 1002
-                        }
-                    ]
-                }
-            ]
+                            seasonAndEpisodeNumber: 1002,
+                        },
+                    ],
+                },
+            ],
         });
     });
 
@@ -279,22 +279,22 @@ describe('mediaItemRepository', () => {
                 mediaType: 'tv',
                 title: 'Item 1',
                 poster: 'poster',
-                backdrop: 'backdrop'
+                backdrop: 'backdrop',
             },
             {
                 id: 77772,
                 imdbId: 'tt876123',
                 source: 'user',
                 mediaType: 'tv',
-                title: 'Item 4'
+                title: 'Item 4',
             },
             {
                 id: 77773,
                 tmdbId: 9875321,
                 source: 'user',
                 mediaType: 'tv',
-                title: 'Item 2'
-            }
+                title: 'Item 2',
+            },
         ];
 
         const searchResult: MediaItemForProvider[] = [
@@ -302,13 +302,13 @@ describe('mediaItemRepository', () => {
                 tmdbId: 1234567,
                 source: 'user',
                 mediaType: 'tv',
-                title: 'Item 1'
+                title: 'Item 1',
             },
             {
                 tmdbId: 9875321,
                 source: 'user',
                 mediaType: 'tv',
-                title: 'Item 2'
+                title: 'Item 2',
             },
             {
                 imdbId: 'tt1234567',
@@ -316,7 +316,7 @@ describe('mediaItemRepository', () => {
                 mediaType: 'tv',
                 poster: 'poster',
                 backdrop: 'backdrop',
-                title: 'Item 3'
+                title: 'Item 3',
             },
             {
                 imdbId: 'tt876123',
@@ -324,8 +324,8 @@ describe('mediaItemRepository', () => {
                 source: 'user',
                 mediaType: 'tv',
                 title: 'new Title 4',
-                overview: 'new overview'
-            }
+                overview: 'new overview',
+            },
         ];
 
         await mediaItemRepository.createMany(existingItems);
@@ -337,35 +337,35 @@ describe('mediaItemRepository', () => {
             );
 
         const updatedMediaItem = await mediaItemRepository.findOne({
-            imdbId: 'tt876123'
+            imdbId: 'tt876123',
         });
 
         const insertedMediaItem = await mediaItemRepository.findOne({
-            imdbId: 'tt1234567'
+            imdbId: 'tt1234567',
         });
 
         const insertedPoster = await imageRepository.findOne({
             mediaItemId: insertedMediaItem.id,
             seasonId: null,
-            type: 'poster'
+            type: 'poster',
         });
 
         const insertedBackdrop = await imageRepository.findOne({
             mediaItemId: insertedMediaItem.id,
             seasonId: null,
-            type: 'backdrop'
+            type: 'backdrop',
         });
 
         const existingItemPoster = await imageRepository.findOne({
             mediaItemId: 77771,
             seasonId: null,
-            type: 'poster'
+            type: 'poster',
         });
 
         const existingItemBackdrop = await imageRepository.findOne({
             mediaItemId: 77771,
             seasonId: null,
-            type: 'backdrop'
+            type: 'backdrop',
         });
 
         expect(insertedPoster).toBeDefined();
@@ -376,19 +376,19 @@ describe('mediaItemRepository', () => {
                 ...searchResult[0],
                 id: 77771,
                 poster: `/img/${existingItemPoster.id}`,
-                backdrop: `/img/${existingItemBackdrop.id}`
+                backdrop: `/img/${existingItemBackdrop.id}`,
             },
             { ...searchResult[1], id: 77773 },
             {
                 ...searchResult[2],
                 id: insertedMediaItem.id,
                 poster: `/img/${insertedPoster.id}`,
-                backdrop: `/img/${insertedBackdrop.id}`
+                backdrop: `/img/${insertedBackdrop.id}`,
             },
             {
                 ...searchResult[3],
-                id: 77772
-            }
+                id: 77772,
+            },
         ]);
 
         expect(res.existingItems).toMatchObject([
@@ -396,13 +396,13 @@ describe('mediaItemRepository', () => {
                 ...searchResult[0],
                 id: 77771,
                 poster: `/img/${existingItemPoster.id}`,
-                backdrop: `/img/${existingItemBackdrop.id}`
+                backdrop: `/img/${existingItemBackdrop.id}`,
             },
             { ...searchResult[1], id: 77773 },
             {
                 ...searchResult[3],
-                id: 77772
-            }
+                id: 77772,
+            },
         ]);
 
         expect(updatedMediaItem).toMatchObject(searchResult[3]);
@@ -467,7 +467,7 @@ const mediaItem: MediaItemBaseWithSeasons = {
                     description: null,
                     imdbId: null,
                     tmdbId: null,
-                    runtime: null
+                    runtime: null,
                 },
                 {
                     id: 2,
@@ -482,9 +482,9 @@ const mediaItem: MediaItemBaseWithSeasons = {
                     description: null,
                     imdbId: null,
                     tmdbId: null,
-                    runtime: null
-                }
-            ]
+                    runtime: null,
+                },
+            ],
         },
         {
             id: 2,
@@ -511,9 +511,9 @@ const mediaItem: MediaItemBaseWithSeasons = {
                     description: null,
                     imdbId: null,
                     tmdbId: null,
-                    runtime: null
-                }
-            ]
+                    runtime: null,
+                },
+            ],
         },
         {
             id: 3,
@@ -526,9 +526,9 @@ const mediaItem: MediaItemBaseWithSeasons = {
             episodes: undefined,
             poster: null,
             releaseDate: null,
-            tmdbId: null
-        }
-    ]
+            tmdbId: null,
+        },
+    ],
 };
 
 const updatedMediaItem = {
@@ -578,9 +578,9 @@ const updatedMediaItem = {
                     description: null,
                     imdbId: null,
                     tmdbId: null,
-                    runtime: null
-                }
-            ]
+                    runtime: null,
+                },
+            ],
         },
         mediaItem.seasons[2],
         {
@@ -605,12 +605,12 @@ const updatedMediaItem = {
                     description: null,
                     imdbId: null,
                     tmdbId: null,
-                    runtime: null
-                }
+                    runtime: null,
+                },
             ],
             poster: 'poster',
             releaseDate: null,
-            tmdbId: null
-        }
-    ]
+            tmdbId: null,
+        },
+    ],
 };
