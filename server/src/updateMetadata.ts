@@ -138,7 +138,9 @@ const downloadNewAssets = async (
         newMediaItem.seasons
             ?.filter((season) => season.poster)
             ?.filter(
-                (season) => season.poster !== newSeasonsMap[season.id]?.poster
+                (season) =>
+                    season.id &&
+                    season.poster !== newSeasonsMap[season.id]?.poster
             )
             .map((season) =>
                 updateAsset({
@@ -316,7 +318,7 @@ export const updateMediaItem = async (
                 await mediaItemRepository.seasonsWithEpisodes(oldMediaItem);
         }
 
-        const updatedMediaItem = merge(oldMediaItem, newMediaItem);
+        let updatedMediaItem = merge(oldMediaItem, newMediaItem);
 
         if (newMediaItem.mediaType === 'tv') {
             const [episodesToDelete, seasonToDelete] = getItemsToDelete(
@@ -341,7 +343,7 @@ export const updateMediaItem = async (
             }
         }
 
-        await mediaItemRepository.update(updatedMediaItem);
+        updatedMediaItem = await mediaItemRepository.update(updatedMediaItem);
 
         await downloadNewAssets(oldMediaItem, updatedMediaItem);
 
