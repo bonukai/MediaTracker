@@ -12,6 +12,8 @@ export type ExternalIds = {
     igdbId?: number;
     openlibraryId?: string;
     audibleId?: string;
+    traktId?: number;
+    goodreadsId?: number;
 };
 
 export type MediaItemBase = ExternalIds & {

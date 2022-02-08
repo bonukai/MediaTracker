@@ -412,6 +412,8 @@ class MediaItemRepository extends repository<MediaItemBase>({
         igdbId?: number[];
         openlibraryId?: number[];
         audibleId?: string[];
+        goodreadsId?: number[];
+        traktId?: number[];
         mediaType: MediaType;
     }) {
         return (
@@ -435,6 +437,12 @@ class MediaItemRepository extends repository<MediaItemBase>({
                     }
                     if (params.audibleId) {
                         qb.orWhereIn('audibleId', params.audibleId);
+                    }
+                    if (params.goodreadsId) {
+                        qb.orWhereIn('goodreadsId', params.goodreadsId);
+                    }
+                    if (params.traktId) {
+                        qb.orWhereIn('traktId', params.traktId);
                     }
                 })
         ).map((item) => this.deserialize(item));
@@ -462,6 +470,12 @@ class MediaItemRepository extends repository<MediaItemBase>({
                     }
                     if (params.audibleId) {
                         qb.orWhere('audibleId', params.audibleId);
+                    }
+                    if (params.goodreadsId) {
+                        qb.orWhere('goodreadsId', params.goodreadsId);
+                    }
+                    if (params.traktId) {
+                        qb.orWhere('traktId', params.traktId);
                     }
                 })
                 .first()
@@ -702,6 +716,15 @@ class MediaItemRepository extends repository<MediaItemBase>({
                         if (externalIds.audibleId) {
                             qb.orWhereIn('audibleId', externalIds.audibleId);
                         }
+                        if (externalIds.goodreadsId) {
+                            qb.orWhereIn(
+                                'goodreadsId',
+                                externalIds.goodreadsId
+                            );
+                        }
+                        if (externalIds.traktId) {
+                            qb.orWhereIn('traktId', externalIds.traktId);
+                        }
                     })
             ).map((item) => this.deserialize(item));
 
@@ -857,4 +880,6 @@ const externalIdColumnNames = <const>[
     'igdbId',
     'tvmazeId',
     'audibleId',
+    'traktId',
+    'goodreadsId',
 ];
