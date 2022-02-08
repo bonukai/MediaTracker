@@ -104,13 +104,14 @@ export class InitialData {
         userId: this.user.id,
     };
 
-    static notificationPlatformsCredentials: NotificationPlatformsCredentials = {
-        id: 1,
-        name: 'key',
-        platformName: 'platform',
-        userId: this.user.id,
-        value: 'value',
-    };
+    static notificationPlatformsCredentials: NotificationPlatformsCredentials =
+        {
+            id: 1,
+            name: 'key',
+            platformName: 'platform',
+            userId: this.user.id,
+            value: 'value',
+        };
 
     static notificationsHistory: NotificationsHistory = {
         id: 1,

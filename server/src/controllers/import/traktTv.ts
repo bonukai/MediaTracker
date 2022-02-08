@@ -108,9 +108,10 @@ export class TraktTvImportController {
                                 movies: exportedData.history.filter(
                                     traktTvMovieFilter
                                 ).length,
-                                episodes: exportedData.history.filter(
-                                    traktTvShowFilter
-                                ).length,
+                                episodes:
+                                    exportedData.history.filter(
+                                        traktTvShowFilter
+                                    ).length,
                             },
                             ratings: {
                                 movies: exportedData.rating.filter(
@@ -122,12 +123,14 @@ export class TraktTvImportController {
                                         !item.season &&
                                         !item.episode
                                 ).length,
-                                seasons: exportedData.rating.filter(
-                                    traktTvSeasonFilter
-                                ).length,
-                                episodes: exportedData.rating.filter(
-                                    traktTvEpisodeFilter
-                                ).length,
+                                seasons:
+                                    exportedData.rating.filter(
+                                        traktTvSeasonFilter
+                                    ).length,
+                                episodes:
+                                    exportedData.rating.filter(
+                                        traktTvEpisodeFilter
+                                    ).length,
                             },
                         },
                         progress: undefined,
@@ -404,17 +407,14 @@ const getMediaItemsByTmdbIds = async (
     tmdbId: number[],
     mediaType: MediaType
 ) => {
-    const existingItems: MediaItemBaseWithSeasons[] = await mediaItemRepository.findByExternalIds(
-        {
+    const existingItems: MediaItemBaseWithSeasons[] =
+        await mediaItemRepository.findByExternalIds({
             tmdbId: tmdbId,
             mediaType: mediaType,
-        }
-    );
+        });
 
-    const existingItemsMapByTmdbId: _.Dictionary<MediaItemBaseWithSeasons> = _.keyBy(
-        existingItems,
-        (mediaItem) => mediaItem.tmdbId
-    );
+    const existingItemsMapByTmdbId: _.Dictionary<MediaItemBaseWithSeasons> =
+        _.keyBy(existingItems, (mediaItem) => mediaItem.tmdbId);
 
     const missingItems = tmdbId.filter(
         (tmdbId) => !existingItemsMapByTmdbId[tmdbId]

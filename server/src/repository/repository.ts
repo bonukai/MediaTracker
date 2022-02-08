@@ -18,7 +18,7 @@ export const repository = <T extends object>(args: {
         tableName,
         columnNames,
         booleanColumnNames,
-        uniqueBy
+        uniqueBy,
     } = args;
 
     return class Repository {
@@ -44,7 +44,7 @@ export const repository = <T extends object>(args: {
                                 : 0
                             : undefined
                     )
-                    .value()
+                    .value(),
             };
         }
 
@@ -62,7 +62,7 @@ export const repository = <T extends object>(args: {
                             ? Boolean(value[key])
                             : undefined
                     )
-                    .value()
+                    .value(),
             } as T;
         }
 

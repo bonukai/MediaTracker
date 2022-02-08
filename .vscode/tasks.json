@@ -20,11 +20,11 @@
             "script": "watch-routes",
             "path": "server/",
             "problemMatcher": [],
-            "label": "server:watch-routes",
+            "label": "server:watch-routes"
         },
         {
             "label": "dev",
-            "dependsOn": ["client:dev", "server:watch-routes","server:dev"],
+            "dependsOn": ["client:dev", "server:watch-routes", "server:dev"],
             "problemMatcher": []
         },
         {

@@ -22,10 +22,8 @@ import { WatchlistPage } from 'src/pages/WatchlistPage';
 
 export const MyRouter: FunctionComponent = () => {
   const { isLoading, user } = useUser();
-  const {
-    configuration,
-    isLoading: isLoadingConfiguration,
-  } = useConfiguration();
+  const { configuration, isLoading: isLoadingConfiguration } =
+    useConfiguration();
 
   if (isLoading || isLoadingConfiguration) return <>{'Loading...'}</>;
 

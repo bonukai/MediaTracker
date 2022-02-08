@@ -30,9 +30,8 @@ export class Notifications {
             return;
         }
 
-        const credentials = await notificationPlatformsCredentialsRepository.get(
-            userId
-        );
+        const credentials =
+            await notificationPlatformsCredentialsRepository.get(userId);
 
         const platform = this.platformsByName[user.notificationPlatform];
 
@@ -86,11 +85,11 @@ export type NotificationPlatformsCredentialsType = {
     >;
 };
 
-export type NotificationPlatformsResponseType = NotificationPlatformsCredentialsArrayType[number];
+export type NotificationPlatformsResponseType =
+    NotificationPlatformsCredentialsArrayType[number];
 
-type NotificationPlatformsCredentialsArrayType = ToNotificationPlatformsCredentialsArrayType<
-    typeof platforms
->;
+type NotificationPlatformsCredentialsArrayType =
+    ToNotificationPlatformsCredentialsArrayType<typeof platforms>;
 
 type Property<
     T extends Record<string, unknown>,
@@ -102,31 +101,30 @@ type ToNotificationPlatformsCredentialsArrayType<
     Result extends ReadonlyArray<unknown> = []
 > = Input extends readonly []
     ? Result
-    : Input extends readonly [infer First, ...(infer Rest)]
+    : Input extends readonly [infer First, ...infer Rest]
     ? ToNotificationPlatformsCredentialsArrayType<
           Rest,
           [...Result, TransformNotificationPlatform<First>]
       >
     : Result;
 
-type TransformNotificationPlatform<
-    NotificationPlatform
-> = NotificationPlatform extends {
-    name: infer PlatformName;
-    credentialNames: infer Credentials;
-    credentialName: infer CredentialName;
-}
-    ? Credentials extends readonly []
-        ? CredentialName extends string
+type TransformNotificationPlatform<NotificationPlatform> =
+    NotificationPlatform extends {
+        name: infer PlatformName;
+        credentialNames: infer Credentials;
+        credentialName: infer CredentialName;
+    }
+        ? Credentials extends readonly []
+            ? CredentialName extends string
+                ? {
+                      platformName: PlatformName;
+                      credentials: Record<CredentialName, string>;
+                  }
+                : never
+            : Credentials extends ReadonlyArray<string>
             ? {
                   platformName: PlatformName;
-                  credentials: Record<CredentialName, string>;
+                  credentials: Record<Credentials[number], string>;
               }
             : never
-        : Credentials extends ReadonlyArray<string>
-        ? {
-              platformName: PlatformName;
-              credentials: Record<Credentials[number], string>;
-          }
-        : never
-    : never;
+        : never;

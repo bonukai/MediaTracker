@@ -5,22 +5,22 @@ on:
         branches: [main]
     pull_request:
         branches: [main]
-        
+
 jobs:
-  build:      
-    strategy:
-      matrix:
-        node: [ '16', '17' ]
-        os: [ubuntu-20.04, ubuntu-18.04, windows-latest]
-    runs-on: ${{ matrix.os }}
-    name: ${{ matrix.os }} Node ${{ matrix.node }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
-      - run: npm run build
-      - run: npm run lint
-      - run: npm run test
+    build:
+        strategy:
+            matrix:
+                node: ['16', '17']
+                os: [ubuntu-20.04, ubuntu-18.04, windows-latest]
+        runs-on: ${{ matrix.os }}
+        name: ${{ matrix.os }} Node ${{ matrix.node }}
+        steps:
+            - uses: actions/checkout@v2
+            - name: Setup node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ matrix.node }}
+            - run: npm install
+            - run: npm run build
+            - run: npm run lint
+            - run: npm run test
