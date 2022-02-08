@@ -550,7 +550,7 @@ const findMediaItemFromTmdbId = async (
     const item = await metadataProvider.findByTmdbId(tmdbId);
 
     if (item) {
-        return await mediaItemRepository.add(item);
+        return await mediaItemRepository.create(item);
     }
 };
 

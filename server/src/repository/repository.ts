@@ -18,17 +18,17 @@ export const repository = <T extends object>(args: {
         tableName,
         columnNames,
         booleanColumnNames,
-        uniqueBy,
+        uniqueBy
     } = args;
 
     return class Repository {
         public readonly tableName = tableName;
-        protected readonly columnNames = columnNames;
-        protected readonly primaryColumnName = primaryColumnName;
-        protected readonly booleanColumnNames = booleanColumnNames;
-        protected readonly uniqueBy = uniqueBy;
+        public readonly columnNames = columnNames;
+        public readonly primaryColumnName = primaryColumnName;
+        public readonly booleanColumnNames = booleanColumnNames;
+        public readonly uniqueBy = uniqueBy;
 
-        protected serialize(value: Partial<T>): unknown {
+        public serialize(value: Partial<T>): unknown {
             if (!this.booleanColumnNames) {
                 return value;
             }
@@ -44,11 +44,11 @@ export const repository = <T extends object>(args: {
                                 : 0
                             : undefined
                     )
-                    .value(),
+                    .value()
             };
         }
 
-        protected deserialize(value: Partial<Record<keyof T, unknown>>): T {
+        public deserialize(value: Partial<Record<keyof T, unknown>>): T {
             if (!this.booleanColumnNames) {
                 return value as T;
             }
@@ -62,11 +62,11 @@ export const repository = <T extends object>(args: {
                             ? Boolean(value[key])
                             : undefined
                     )
-                    .value(),
+                    .value()
             } as T;
         }
 
-        protected stripValue(value: Partial<T>) {
+        public stripValue(value: Partial<T>) {
             if (!this.columnNames) {
                 return value;
             }
@@ -133,7 +133,7 @@ export const repository = <T extends object>(args: {
             }
         }
 
-        protected async createUnique(
+        public async createUnique(
             value: Partial<T>,
             uniqueBy: (value: Partial<T>) => Partial<T>
         ) {
@@ -167,13 +167,25 @@ export const repository = <T extends object>(args: {
                 return this.createManyUnique(values, uniqueBy);
             }
 
-            await knex.batchInsert(
-                this.tableName,
-                values.map((value) =>
-                    this.serialize(omitUndefinedValues(this.stripValue(value)))
-                ),
-                BATCH_SIZE
+            const res = await knex
+                .batchInsert(
+                    this.tableName,
+                    values.map((value) =>
+                        this.serialize(
+                            omitUndefinedValues(this.stripValue(value))
+                        )
+                    ),
+                    BATCH_SIZE
+                )
+                .returning(this.primaryColumnName as string);
+
+            res.forEach(
+                (value, index) =>
+                    (values[index][this.primaryColumnName] =
+                        value[this.primaryColumnName])
             );
+
+            return res.map((value) => value[this.primaryColumnName]);
         }
 
         public async createManyUnique(
@@ -200,13 +212,11 @@ export const repository = <T extends object>(args: {
                     .differenceWith(existingItems, (a, b) =>
                         _.isEqual(uniqueBy(a), uniqueBy(b))
                     )
-                    .uniqWith((a, b) =>
-                        _.isEqual(uniqueBy(a), uniqueBy(b))
-                    )
+                    .uniqWith((a, b) => _.isEqual(uniqueBy(a), uniqueBy(b)))
                     .value();
 
                 if (newItems.length > 0) {
-                    await knex
+                    const res = await knex
                         .batchInsert(
                             this.tableName,
                             newItems.map((value) =>
@@ -216,12 +226,21 @@ export const repository = <T extends object>(args: {
                             ),
                             BATCH_SIZE
                         )
+                        .returning(this.primaryColumnName as string)
                         .transacting(trx);
+
+                    res.forEach(
+                        (value, index) =>
+                            (newItems[index][this.primaryColumnName] =
+                                value[this.primaryColumnName])
+                    );
+
+                    return res.map((value) => value[this.primaryColumnName]);
                 }
             });
         }
 
-        public async update(value: Partial<T>) {
+        public async update(value: Partial<T>): Promise<Partial<T>> {
             const qb = knex(this.tableName).update(
                 this.serialize(omitUndefinedValues(this.stripValue(value)))
             );
@@ -231,6 +250,8 @@ export const repository = <T extends object>(args: {
             }
 
             await qb;
+
+            return value;
         }
 
         public async updateWhere(params: {

@@ -17,7 +17,7 @@ class EpisodeRepository extends repository<TvEpisode>({
     }
 
     public async createMany(values: Partial<TvEpisode>[]) {
-        await super.createMany(
+        return await super.createMany(
             values.map((value) => ({
                 ...value,
                 seasonAndEpisodeNumber:

@@ -97,11 +97,13 @@ class UserRepository extends repository<User>({
     }
 
     public async update(user: Partial<User>) {
-        if (user.password) {
-            user.password = await argon2.hash(user.password);
+        const result = _.cloneDeep(user);
+
+        if (result.password) {
+            result.password = await argon2.hash(result.password);
         }
 
-        await super.update(user);
+        return await super.update(result);
     }
 
     public async verifyPassword(user: User, password: string) {
