@@ -18,13 +18,12 @@ import { NotFound } from 'src/pages/NotFound';
 import { SeenHistoryPage } from 'src/pages/SeenHistory';
 import { ImportPage } from 'src/pages/Import';
 import { TraktTvImportPage } from 'src/pages/import/TraktTv';
+import { WatchlistPage } from 'src/pages/WatchlistPage';
 
 export const MyRouter: FunctionComponent = () => {
   const { isLoading, user } = useUser();
-  const {
-    configuration,
-    isLoading: isLoadingConfiguration,
-  } = useConfiguration();
+  const { configuration, isLoading: isLoadingConfiguration } =
+    useConfiguration();
 
   if (isLoading || isLoadingConfiguration) return <>{'Loading...'}</>;
 
@@ -48,7 +47,10 @@ export const MyRouter: FunctionComponent = () => {
 
               <Route path="/" element={<HomePage />} />
 
-              <Route path="/settings/*" element={<SettingsPage />} />
+              <Route
+                path="/settings/*"
+                element={<SettingsPage key="settings" />}
+              />
               <Route
                 path="/tv"
                 element={<ItemsPage key="/tv" mediaType="tv" />}
@@ -70,30 +72,53 @@ export const MyRouter: FunctionComponent = () => {
                 element={<ItemsPage key="/audiobooks" mediaType="audiobook" />}
               />
 
-              <Route path="/upcoming" element={<UpcomingPage />} />
               <Route
-                path="/continue-watching"
-                element={<ContinueWatchingPage />}
+                path="/upcoming"
+                element={<UpcomingPage key="/audiobooks" />}
               />
-              <Route path="/calendar" element={<CalendarPage />} />
-              <Route path="/details/:mediaItemId" element={<DetailsPage />} />
-              <Route path="/episodes/:mediaItemId" element={<EpisodesPage />} />
               <Route
-                path="/seen-history/:mediaItemId"
-                element={<SeenHistoryPage />}
+                path="/watchlist"
+                element={<WatchlistPage key="/watchlist" />}
               />
 
-              <Route path="/import" element={<ImportPage />} />
-              <Route path="/import/trakttv" element={<TraktTvImportPage />} />
+              <Route
+                path="/continue-watching"
+                element={<ContinueWatchingPage key="/continue-watching" />}
+              />
+              <Route
+                path="/calendar"
+                element={<CalendarPage key="/calendar" />}
+              />
+              <Route
+                path="/details/:mediaItemId"
+                element={<DetailsPage key="/details" />}
+              />
+              <Route
+                path="/episodes/:mediaItemId"
+                element={<EpisodesPage key="/episodes" />}
+              />
+              <Route
+                path="/seen-history/:mediaItemId"
+                element={<SeenHistoryPage key="/seen-history" />}
+              />
+
+              <Route path="/import" element={<ImportPage key="/import" />} />
+              <Route
+                path="/import/trakttv"
+                element={<TraktTvImportPage key="/import/trakttv" />}
+              />
             </>
           ) : (
             <>
               {!configuration.noUsers && (
-                <Route path="/login" element={<LoginPage />} />
+                <Route path="/login" element={<LoginPage key="/login" />} />
               )}
 
               {configuration.enableRegistration && (
-                <Route path="/register" element={<RegisterPage />} />
+                <Route
+                  path="/register"
+                  element={<RegisterPage key="/register" />}
+                />
               )}
             </>
           )}

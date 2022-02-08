@@ -15,6 +15,7 @@ server/.vscode
 server/data.db
 server/test.db
 server/testDatabase
+*/src/i18n/locales/*/*.ts
 
 rest-api/index.js
 rest-api/index.ts

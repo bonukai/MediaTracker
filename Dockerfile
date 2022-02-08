@@ -38,14 +38,15 @@ COPY --from=build /app/server/public public
 COPY --from=build /app/server/build build
 COPY --from=server-build-production /server/node_modules node_modules
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ "curl", "127.0.0.1:7481" ]
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl "${HOSTNAME}:${PORT}"
 
 ENV DATABASE_PATH="/storage/data.db"
 ENV ASSETS_PATH="/assets"
 
 EXPOSE 7481
 EXPOSE $PORT
-ENV HOST=127.0.0.1
+
 ENV NODE_ENV=production
 ENV NODE_PATH=build
-CMD [ "node", "build/src/index.js"]
+
+CMD [ "node", "build/index.js"]

@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import clsx from 'clsx';
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { Trans, t } from '@lingui/macro';
 
 import { useUser } from 'src/api/user';
 import { SettingsPasswordPage } from 'src/pages/settings/Password';
@@ -63,7 +63,6 @@ export const SettingsPage: FunctionComponent = () => {
 const SettingsPageLayout: FunctionComponent = () => {
   const routeTitles = useRoutesTitle();
   const location = useLocation();
-  const { t } = useTranslation();
 
   const route = routeTitles.find(
     (route) => route.path === location.pathname.split('/').at(-1)
@@ -73,7 +72,9 @@ const SettingsPageLayout: FunctionComponent = () => {
     <>
       {route ? (
         <>
-          <div className="text-4xl">{t('Settings')}</div>
+          <div className="text-4xl">
+            <Trans>Settings</Trans>
+          </div>
           <div className="flex flex-col mt-2 sm:flex-row">
             <div className="flex flex-col px-3 border rounded sm:shrink-0 max-w-fit h-fit">
               {routeTitles.map(({ path, name }) => (
@@ -105,19 +106,18 @@ const SettingsPageLayout: FunctionComponent = () => {
 const useRoutesTitle = () => {
   const { user } = useUser();
   const { configuration } = useConfiguration();
-  const { t } = useTranslation();
 
   return [
-    ...(!configuration.demo ? [{ path: 'password', name: t('Password') }] : []),
-    { path: 'application-tokens', name: t('Application tokens') },
-    { path: 'notifications', name: t('Notifications') },
-    { path: 'preferences', name: t('Preferences') },
+    ...(!configuration.demo ? [{ path: 'password', name: t`Password` }] : []),
+    { path: 'application-tokens', name: t`Application tokens` },
+    { path: 'notifications', name: t`Notifications` },
+    { path: 'preferences', name: t`Preferences` },
     ...(user.admin
       ? [
-          { path: 'configuration', name: t('Configuration') },
+          { path: 'configuration', name: t`Configuration` },
           {
             path: 'metadata-providers-credentials',
-            name: t('Metadata providers credentials'),
+            name: t`Metadata providers credentials`,
           },
         ]
       : []),

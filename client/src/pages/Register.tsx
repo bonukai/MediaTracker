@@ -1,12 +1,10 @@
 import React, { FormEventHandler, FunctionComponent, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans } from '@lingui/macro';
 import { Link } from 'react-router-dom';
 import { useConfiguration } from 'src/api/configuration';
-import { useRegisterUser, useUser } from 'src/api/user';
+import { useRegisterUser } from 'src/api/user';
 
 export const RegisterPage: FunctionComponent = () => {
-  const { t } = useTranslation();
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -27,11 +25,13 @@ export const RegisterPage: FunctionComponent = () => {
   return (
     <div className="flex items-center">
       <div className="mx-auto mt-20">
-        <div className="mb-10 text-5xl">{t('Register')}</div>
+        <div className="mb-10 text-5xl">
+          <Trans>Register</Trans>
+        </div>
         <form onSubmit={onSubmit}>
           <div className="pb-5">
             <label htmlFor="username" className="block text-lg">
-              {t('Username')}:
+              <Trans>Username</Trans>:
             </label>
             <input
               id="username"
@@ -46,7 +46,7 @@ export const RegisterPage: FunctionComponent = () => {
 
           <div className="pb-5">
             <label htmlFor="password" className="block text-lg">
-              {t('Password')}:
+              <Trans>Password</Trans>:
             </label>
             <input
               id="password"
@@ -60,7 +60,7 @@ export const RegisterPage: FunctionComponent = () => {
 
           <div className="pb-5">
             <label htmlFor="confirmPassword" className="block text-lg">
-              {t('Confirm password')}:
+              <Trans>Confirm password</Trans>:
             </label>
             <input
               id="confirmPassword"
@@ -73,13 +73,17 @@ export const RegisterPage: FunctionComponent = () => {
           </div>
 
           <div>
-            <button className="w-full mt-2">{t('Register')}</button>
+            <button className="w-full mt-2">
+              <Trans>Register</Trans>
+            </button>
           </div>
         </form>
 
         {!configuration?.noUsers && (
           <Link to={'/login'}>
-            <button className="w-full mt-4">{t('Login')}</button>
+            <button className="w-full mt-4">
+              <Trans>Login</Trans>
+            </button>
           </Link>
         )}
 

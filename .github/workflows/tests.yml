@@ -1,66 +1,66 @@
 name: Tests
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-        
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
 jobs:
-  postgres:
-    strategy:
-      matrix:
-        node: [ '16', '17' ]
-        os: [ubuntu-20.04, ubuntu-18.04]
-    services:     
-      postgres:        
-        image: postgres        
+    postgres:
+        strategy:
+            matrix:
+                node: ['16', '17']
+                os: [ubuntu-20.04, ubuntu-18.04]
+        services:
+            postgres:
+                image: postgres
+                env:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                    POSTGRES_DB: postgres
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    env:
-      DATABASE_CLIENT: pg
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
-      DATABASE_DATABASE: postgres
-      DATABASE_HOST: localhost
-      DATABASE_PORT: 5432
-      
-    runs-on: ${{ matrix.os }}
-    name: "postgres: ${{ matrix.os }} Node ${{ matrix.node }}"
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
-      - run: npm run build
-      - run: npm run lint
-      - run: npm run test
-      
-  sqlite:      
-    strategy:
-      matrix:
-        node: [ '16', '17' ]
-        os: [ubuntu-20.04, ubuntu-18.04, windows-latest]
-    runs-on: ${{ matrix.os }}
-    name: "sqlite: ${{ matrix.os }} Node ${{ matrix.node }}"
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
-      - run: npm run build
-      - run: npm run lint
-      - run: npm run test
+            DATABASE_CLIENT: pg
+            DATABASE_USER: postgres
+            DATABASE_PASSWORD: postgres
+            DATABASE_DATABASE: postgres
+            DATABASE_HOST: localhost
+            DATABASE_PORT: 5432
+
+        runs-on: ${{ matrix.os }}
+        name: 'postgres: ${{ matrix.os }} Node ${{ matrix.node }}'
+        steps:
+            - uses: actions/checkout@v2
+            - name: Setup node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ matrix.node }}
+            - run: npm install
+            - run: npm run build
+            - run: npm run lint
+            - run: npm run test
+
+    sqlite:
+        strategy:
+            matrix:
+                node: ['16', '17']
+                os: [ubuntu-20.04, ubuntu-18.04, windows-latest]
+        runs-on: ${{ matrix.os }}
+        name: 'sqlite: ${{ matrix.os }} Node ${{ matrix.node }}'
+        steps:
+            - uses: actions/checkout@v2
+            - name: Setup node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ matrix.node }}
+            - run: npm install
+            - run: npm run build
+            - run: npm run lint
+            - run: npm run test

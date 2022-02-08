@@ -61,9 +61,6 @@ const PosterCss: FunctionComponent<{
   return (
     <>
       <div
-        onLoad={() => {
-          console.log('aa');
-        }}
         className={clsx(
           'flex items-end w-full',
           tailwindcssAspectRatioForMediaType(mediaType)
@@ -188,7 +185,7 @@ const PosterSpring: FunctionComponent<{
       >
         <div
           className={clsx(
-            'relative w-full h-full transition-shadow duration-100 rounded shadow-md overflow-clip shadow-black',
+            'relative w-full transition-shadow duration-100 rounded shadow-md overflow-clip shadow-black',
             href && 'hover:shadow-black hover:shadow-lg',
             tailwindcssAspectRatioForMediaType(itemMediaType)
           )}

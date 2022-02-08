@@ -1,3 +1,5 @@
+import { AudibleLang, ServerLang, TmdbLang } from 'src/entity/configuration';
+
 export const NODE_ENV = process.env['NODE_ENV'] as
     | 'development'
     | 'production'
@@ -28,3 +30,7 @@ export const IGDB_CLIENT_SECRET = process.env.IGDB_CLIENT_SECRET;
 
 export const HOSTNAME = process.env.HOSTNAME || '127.0.0.1';
 export const PORT = Number(process.env.PORT) || 7481;
+
+export const SERVER_LANG = process.env.SERVER_LANG as ServerLang;
+export const TMDB_LANG = process.env.TMDB_LANG as TmdbLang;
+export const AUDIBLE_LANG = process.env.AUDIBLE_LANG as AudibleLang;

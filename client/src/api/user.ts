@@ -28,6 +28,16 @@ export const useUser = () => {
   const loginMutation = useMutation(mediaTrackerApi.user.login, {
     onSuccess: () => {
       queryClient.invalidateQueries('user');
+
+      queryClient.removeQueries('metadataProviderCredentials');
+      queryClient.removeQueries('notificationPlatformsCredentials');
+      queryClient.removeQueries('tokens');
+      queryClient.removeQueries(['calendar']);
+      queryClient.removeQueries(['calendar']);
+      queryClient.removeQueries(['details']);
+      queryClient.removeQueries(['import']);
+      queryClient.removeQueries(['items']);
+      queryClient.removeQueries(['search']);
     },
   });
 

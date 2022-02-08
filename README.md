@@ -34,7 +34,7 @@ docker run \
     -p 7481:7481 \
     -v .config/mediatracker/data:/storage \
     -v assets:/assets \
-    -e TMDB_LANG=us \
+    -e TMDB_LANG=en \
     -e AUDIBLE_LANG=us \
     bonukai/mediatracker
 ```
@@ -53,7 +53,7 @@ services:
       - assetsVolume:/assets
     environment:
       LANG: en
-      TMDB_LANG: us
+      TMDB_LANG: en
       AUDIBLE_LANG: us
     image: bonukai/mediatracker
 
@@ -71,18 +71,20 @@ volumes:
 
 ### Environment variables
 
-| Name              | Description                                                                                          |
-| ----------------- | ---------------------------------------------------------------------------------------------------- |
-| TMDB_LANG         | [ISO 639-1 country code used by TMDB](https://developers.themoviedb.org/3/getting-started/languages) |
-| AUDIBLE_LANG      | ISO 639-1 country code used by audible, one of: au, ca, de, es, fr, in, it, jp, gb, us               |
-| DATABASE_CLIENT   | Database client: better-sqlite3 or pg                                                                |
-| DATABASE_PATH     | Only for sqlite, path to database                                                                    |
-| DATABASE_URL      | Connection string                                                                                    |
-| DATABASE_HOST     | Database host                                                                                        |
-| DATABASE_PORT     | Database port                                                                                        |
-| DATABASE_USER     | Database user                                                                                        |
-| DATABASE_PASSWORD | Database password                                                                                    |
-| DATABASE_DATABASE | Database name                                                                                        |
+| Name               | Description                                                                                          |
+| ------------------ | ---------------------------------------------------------------------------------------------------- |
+| TMDB_LANG          | [ISO 639-1 country code used by TMDB](https://developers.themoviedb.org/3/getting-started/languages) |
+| AUDIBLE_LANG       | ISO 639-1 country code used by audible, one of: au, ca, de, es, fr, in, it, jp, gb, us               |
+| DATABASE_CLIENT    | Database client: better-sqlite3 or pg                                                                |
+| DATABASE_PATH      | Only for sqlite, path to database                                                                    |
+| DATABASE_URL       | Connection string                                                                                    |
+| DATABASE_HOST      | Database host                                                                                        |
+| DATABASE_PORT      | Database port                                                                                        |
+| DATABASE_USER      | Database user                                                                                        |
+| DATABASE_PASSWORD  | Database password                                                                                    |
+| DATABASE_DATABASE  | Database name                                                                                        |
+| IGDB_CLIENT_ID     | IGDB API key, needed for game lookup                                                                 |
+| IGDB_CLIENT_SECRET | IGDB secret                                                                                          |
 
 ## Heroku
 
@@ -122,3 +124,7 @@ docker run -p 7481:7481 mediatracker
 -   [Pushbullet](https://www.pushbullet.com)
 -   [Pushover](https://pushover.net)
 -   [Pushsafer](https://www.pushsafer.com)
+
+# Contributors
+
+-   [URBANsUNITED](https://github.com/URBANsUNITED) (German translation)

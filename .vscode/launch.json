@@ -1,0 +1,30 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run test",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceRoot}/server/node_modules/.bin/jest",
+            "cwd": "${workspaceRoot}/server",
+            "env": {
+                "DATABASE_PATH": ":memory:"
+            },
+            "args": [
+                "--i",
+                "--config",
+                "--runTestsByPath",
+                "--color",
+                "${workspaceRoot}/server/jest.config.js",
+                "../${relativeFile}"
+            ],
+            "outputCapture": "std",
+            "windows": {
+                "program": "${workspaceFolder}/server/node_modules/jest/bin/jest"
+            }
+        }
+    ]
+}

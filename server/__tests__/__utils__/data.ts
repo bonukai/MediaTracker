@@ -32,6 +32,8 @@ export class InitialData {
         mediaType: 'tv',
         source: 'user',
         title: 'title',
+        poster: 'posterUrl',
+        backdrop: 'backdropUrl',
     };
 
     static season: TvSeason = {
@@ -42,6 +44,7 @@ export class InitialData {
         title: 'title',
         seasonNumber: 1,
         numberOfEpisodes: 1,
+        poster: 'posterUrl',
         isSpecialSeason: false,
     };
 
@@ -101,13 +104,14 @@ export class InitialData {
         userId: this.user.id,
     };
 
-    static notificationPlatformsCredentials: NotificationPlatformsCredentials = {
-        id: 1,
-        name: 'key',
-        platformName: 'platform',
-        userId: this.user.id,
-        value: 'value',
-    };
+    static notificationPlatformsCredentials: NotificationPlatformsCredentials =
+        {
+            id: 1,
+            name: 'key',
+            platformName: 'platform',
+            userId: this.user.id,
+            value: 'value',
+        };
 
     static notificationsHistory: NotificationsHistory = {
         id: 1,

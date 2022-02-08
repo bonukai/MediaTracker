@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import chalk from 'chalk';
-import { t } from 'i18next';
+import { plural, t } from '@lingui/macro';
 
 import {
     MediaItemBase,
@@ -11,12 +11,13 @@ import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason, TvSeasonFilters } from 'src/entity/tvseason';
 import { metadataProviders } from 'src/metadata/metadataProviders';
 import { mediaItemRepository } from 'src/repository/mediaItem';
-import { downloadAsset, durationToMilliseconds } from 'src/utils';
+import { durationToMilliseconds, updateAsset } from 'src/utils';
 import { tvEpisodeRepository } from 'src/repository/episode';
 import { tvSeasonRepository } from 'src/repository/season';
 import { Notifications } from 'src/notifications/notifications';
 import { userRepository } from 'src/repository/user';
 import { User } from 'src/entity/user';
+import { CancellationToken } from 'src/cancellationToken';
 
 const getItemsToDelete = (
     oldMediaItem: MediaItemBaseWithSeasons,
@@ -109,25 +110,27 @@ const downloadNewAssets = async (
     oldMediaItem: MediaItemBaseWithSeasons,
     newMediaItem: MediaItemBaseWithSeasons
 ) => {
-    if (oldMediaItem.poster && newMediaItem.poster !== oldMediaItem.poster) {
-        await downloadAsset({
-            assetsType: 'poster',
-            mediaItem: newMediaItem,
+    if (newMediaItem.poster && newMediaItem.poster !== oldMediaItem.poster) {
+        await updateAsset({
+            type: 'poster',
+            mediaItemId: oldMediaItem.id,
+            url: newMediaItem.poster,
         });
     }
 
     if (
-        oldMediaItem.backdrop &&
+        newMediaItem.backdrop &&
         newMediaItem.backdrop !== oldMediaItem.backdrop
     ) {
-        await downloadAsset({
-            assetsType: 'backdrop',
-            mediaItem: newMediaItem,
+        await updateAsset({
+            type: 'backdrop',
+            mediaItemId: oldMediaItem.id,
+            url: newMediaItem.backdrop,
         });
     }
 
-    const oldSeasonsMap = _.keyBy(
-        oldMediaItem.seasons,
+    const newSeasonsMap = _.keyBy(
+        newMediaItem.seasons,
         (season) => season.seasonNumber
     );
 
@@ -135,12 +138,16 @@ const downloadNewAssets = async (
         newMediaItem.seasons
             ?.filter((season) => season.poster)
             ?.filter(
-                (season) => season.poster !== oldSeasonsMap[season.id]?.poster
+                (season) =>
+                    season.id &&
+                    season.poster !== newSeasonsMap[season.id]?.poster
             )
             .map((season) =>
-                downloadAsset({
-                    assetsType: 'poster',
-                    season: season,
+                updateAsset({
+                    type: 'poster',
+                    mediaItemId: oldMediaItem.id,
+                    seasonId: season.id,
+                    url: season.poster,
                 })
             ) || []
     );
@@ -173,7 +180,7 @@ const sendNotifications = async (
         !(!newMediaItem.status && !oldMediaItem.status)
     ) {
         await send({
-            message: `Status changed for ${newMediaItem.title}: "${newMediaItem.status}"`,
+            message: t`Status changed for ${newMediaItem.title}: "${newMediaItem.status}"`,
             filter: (user) => user.sendNotificationWhenStatusChanges,
         });
     }
@@ -183,7 +190,7 @@ const sendNotifications = async (
         new Date(newMediaItem.releaseDate) > new Date()
     ) {
         await send({
-            message: `Release date changed for ${newMediaItem.title}: "${newMediaItem.releaseDate}"`,
+            message: t`Release date changed for ${newMediaItem.title}: "${newMediaItem.releaseDate}"`,
             filter: (user) => user.sendNotificationWhenReleaseDateChanges,
         });
     }
@@ -209,7 +216,7 @@ const sendNotifications = async (
                 ];
 
             await send({
-                message: `Season ${removedSeason.seasonNumber} of ${newMediaItem.title} has been canceled`,
+                message: t`Season ${removedSeason.seasonNumber} of ${newMediaItem.title} has been canceled`,
                 filter: (user) =>
                     user.sendNotificationWhenNumberOfSeasonsChanges,
             });
@@ -228,7 +235,7 @@ const sendNotifications = async (
             if (newSeason.releaseDate) {
                 if (new Date(newSeason.releaseDate) > new Date())
                     await send({
-                        message: `New season of ${
+                        message: t`New season of ${
                             newMediaItem.title
                         } will be released at ${new Date(
                             newSeason.releaseDate
@@ -238,7 +245,7 @@ const sendNotifications = async (
                     });
             } else {
                 await send({
-                    message: `${newMediaItem.title} got a new season`,
+                    message: t`${newMediaItem.title} got a new season`,
                     filter: (user) =>
                         user.sendNotificationWhenNumberOfSeasonsChanges,
                 });
@@ -259,7 +266,7 @@ const sendNotifications = async (
                 new Date(newMediaItemLastSeason.releaseDate) > new Date()
             ) {
                 await send({
-                    message: `Season ${
+                    message: t`Season ${
                         newMediaItemLastSeason.seasonNumber
                     } of ${newMediaItem.title} will be released at ${new Date(
                         newMediaItemLastSeason.releaseDate
@@ -275,6 +282,13 @@ const sendNotifications = async (
 export const updateMediaItem = async (
     oldMediaItem?: MediaItemBaseWithSeasons
 ) => {
+    const title = oldMediaItem.title;
+    const date = chalk.blue(
+        new Date(oldMediaItem.lastTimeUpdated).toLocaleString()
+    );
+
+    console.log(t`Updating: ${title} (last updated at: ${date}`);
+
     if (!oldMediaItem) {
         return;
     }
@@ -300,12 +314,11 @@ export const updateMediaItem = async (
         }
 
         if (newMediaItem.mediaType === 'tv') {
-            oldMediaItem.seasons = await mediaItemRepository.seasonsWithEpisodes(
-                oldMediaItem
-            );
+            oldMediaItem.seasons =
+                await mediaItemRepository.seasonsWithEpisodes(oldMediaItem);
         }
 
-        const updatedMediaItem = merge(oldMediaItem, newMediaItem);
+        let updatedMediaItem = merge(oldMediaItem, newMediaItem);
 
         if (newMediaItem.mediaType === 'tv') {
             const [episodesToDelete, seasonToDelete] = getItemsToDelete(
@@ -330,7 +343,7 @@ export const updateMediaItem = async (
             }
         }
 
-        await mediaItemRepository.update(updatedMediaItem);
+        updatedMediaItem = await mediaItemRepository.update(updatedMediaItem);
 
         await downloadNewAssets(oldMediaItem, updatedMediaItem);
 
@@ -366,28 +379,36 @@ const shouldUpdate = (mediaItem: MediaItemBase) => {
     return timePassed >= durationToMilliseconds({ hours: 24 });
 };
 
-export const updateMetadata = async (): Promise<void> => {
-    console.log(chalk.bold.green(t('Updating metadata')));
+export const updateMediaItems = async (args: {
+    mediaItems: MediaItemBaseWithSeasons[];
+    cancellationToken?: CancellationToken;
+    forceUpdate?: boolean;
+}) => {
+    const { mediaItems, cancellationToken, forceUpdate } = args;
+
+    console.log(
+        chalk.bold.green(
+            plural(mediaItems.length, {
+                one: 'Updating metadata for # item',
+                other: 'Updating metadata for # items',
+            })
+        )
+    );
 
     let numberOfUpdatedItems = 0;
     let numberOfFailures = 0;
-    const mediaItems = await mediaItemRepository.itemsToPossiblyUpdate();
 
     for (const mediaItem of mediaItems) {
-        const skip = !shouldUpdate(mediaItem);
+        if (cancellationToken?.shouldCancel) {
+            console.log(chalk.bold('Updating metadata canceled'));
+            break;
+        }
+
+        const skip = forceUpdate ? false : !shouldUpdate(mediaItem);
 
         if (skip) {
             continue;
         }
-
-        console.log(
-            t('Updating: {{ title }} (last updated at: {{ date }}', {
-                title: mediaItem.title,
-                data: chalk.blue(
-                    new Date(mediaItem.lastTimeUpdated).toLocaleString()
-                ),
-            })
-        );
 
         try {
             await updateMediaItem(mediaItem);
@@ -399,26 +420,37 @@ export const updateMetadata = async (): Promise<void> => {
     }
 
     if (numberOfUpdatedItems === 0 && numberOfFailures === 0) {
-        console.log(chalk.bold.green(t('Everything up to date')));
+        console.log(chalk.bold.green(t`Everything up to date`));
     } else {
+        const count = numberOfUpdatedItems;
+
         console.log(
             chalk.bold.green(
-                t('Updated {{ count }} items', {
-                    count: numberOfUpdatedItems,
-                    defaultValue_one: 'Updated 1 item',
+                plural(count, {
+                    one: 'Updated 1 item',
+                    other: 'Updated # items',
                 })
             )
         );
 
         if (numberOfFailures > 0) {
+            const count = numberOfFailures;
+
             console.log(
                 chalk.bold.red(
-                    t('Failed to update {{ count }} items', {
-                        count: numberOfUpdatedItems,
-                        defaultValue_one: 'Failed to update 1 item',
+                    plural(count, {
+                        one: 'Failed to update 1 item',
+                        other: 'Failed to update # items',
                     })
                 )
             );
         }
     }
+
+    cancellationToken?.complected();
+};
+
+export const updateMetadata = async (): Promise<void> => {
+    const mediaItems = await mediaItemRepository.itemsToPossiblyUpdate();
+    await updateMediaItems({ mediaItems: mediaItems });
 };

@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { t, Trans } from '@lingui/macro';
 
 import { addToWatchlist, removeFromWatchlist } from 'src/api/details';
 import { BadgeRating } from 'src/components/StarRating';
@@ -10,7 +10,11 @@ import {
   canBeOnWatchlist,
   canBeRated,
   formatEpisodeNumber,
+  isAudiobook,
+  isBook,
+  isMovie,
   isTvShow,
+  isVideoGame,
 } from '../utils';
 import { relativeTimeTo } from 'src/date';
 import { MediaItemItemsResponse, MediaType } from 'mediatracker-api';
@@ -44,14 +48,13 @@ export const GridItem: FunctionComponent<{
     showRating,
     showAddToWatchlistAndMarkAsSeenButtons,
   } = props.appearance || {};
-  const { t } = useTranslation();
 
   const mediaTypeString: Record<MediaType, string> = {
-    audiobook: t('Audiobook'),
-    book: t('Book'),
-    movie: t('Movie'),
-    tv: t('Tv'),
-    video_game: t('Video game'),
+    audiobook: t`Audiobook`,
+    book: t`Book`,
+    movie: t`Movie`,
+    tv: t`Tv`,
+    video_game: t`Video game`,
   };
 
   return (
@@ -74,18 +77,14 @@ export const GridItem: FunctionComponent<{
 
                         if (
                           confirm(
-                            t('Remove "{{ title }}" from watchlist?', {
-                              title: mediaItem.title,
-                            })
+                            t`Remove "${mediaItem.title}" from watchlist?`
                           )
                         ) {
                           removeFromWatchlist(mediaItem);
                         }
                       }}
                     >
-                      <span className="flex material-icons ">
-                        {t('bookmark')}
-                      </span>
+                      <span className="flex material-icons">bookmark</span>
                     </Item>
                   )}
                 </div>
@@ -135,47 +134,6 @@ export const GridItem: FunctionComponent<{
               <BadgeRating mediaItem={mediaItem} />
             </div>
           )}
-
-          {showAddToWatchlistAndMarkAsSeenButtons && (
-            <>
-              {!mediaItem.onWatchlist && (
-                <div className="absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full">
-                  {canBeOnWatchlist(mediaItem) && (
-                    <div
-                      className="my-1 pointer-events-auto btn dark:bg-gray-900 bg-zinc-100"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        addToWatchlist(mediaItem);
-                      }}
-                    >
-                      {t('Add to watchlist')}
-                    </div>
-                  )}
-                  {canBeMarkedAsSeen(mediaItem) && (
-                    <Modal
-                      openModal={(openModal) => (
-                        <>
-                          <div
-                            className="my-1 pointer-events-auto dark:bg-gray-900 bg-zinc-100 btn "
-                            onClick={() => openModal()}
-                          >
-                            {t('Mark as seen')}
-                          </div>
-                        </>
-                      )}
-                    >
-                      {(closeModal) => (
-                        <SelectSeenDate
-                          mediaItem={mediaItem}
-                          closeModal={closeModal}
-                        />
-                      )}
-                    </Modal>
-                  )}
-                </div>
-              )}
-            </>
-          )}
         </Poster>
 
         <div className="mt-1 overflow-hidden whitespace-nowrap text-ellipsis">
@@ -207,17 +165,66 @@ export const GridItem: FunctionComponent<{
                 </>
               )}
               {mediaItem.mediaType !== 'tv' && mediaItem.releaseDate && (
-                <>
-                  {t('Release {{ relativeTime }}', {
-                    relativeTime: relativeTimeTo(
-                      new Date(mediaItem.releaseDate)
-                    ),
-                  })}
-                </>
+                <Trans>
+                  Release {relativeTimeTo(new Date(mediaItem.releaseDate))}
+                </Trans>
               )}
             </>
           )}
         </div>
+
+        {showAddToWatchlistAndMarkAsSeenButtons && (
+          <>
+            {!mediaItem.onWatchlist && (
+              <div className="flex flex-col">
+                {canBeOnWatchlist(mediaItem) && (
+                  <div
+                    className="my-1 text-sm text-center pointer-events-auto btn dark:bg-gray-900 bg-zinc-100"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      addToWatchlist(mediaItem);
+                    }}
+                  >
+                    <Trans>Add to watchlist</Trans>
+                  </div>
+                )}
+                {canBeMarkedAsSeen(mediaItem) && (
+                  <Modal
+                    openModal={(openModal) => (
+                      <>
+                        <div
+                          className="my-1 text-sm text-center pointer-events-auto dark:bg-gray-900 bg-zinc-100 btn"
+                          onClick={() => openModal()}
+                        >
+                          {isAudiobook(mediaItem) && (
+                            <Trans>Mark as listened</Trans>
+                          )}
+
+                          {isBook(mediaItem) && <Trans>Mark as read</Trans>}
+
+                          {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
+                            <Trans>Mark as seen</Trans>
+                          )}
+
+                          {isVideoGame(mediaItem) && (
+                            <Trans>Mark as played</Trans>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  >
+                    {(closeModal) => (
+                      <SelectSeenDate
+                        mediaItem={mediaItem}
+                        closeModal={closeModal}
+                      />
+                    )}
+                  </Modal>
+                )}
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

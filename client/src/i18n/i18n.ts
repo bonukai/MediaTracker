@@ -1,25 +1,17 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import { i18n } from '@lingui/core';
+import * as plurals from 'make-plural/plurals';
+import { detect, fromNavigator } from '@lingui/detect-locale';
 
-import en from 'src/i18n/locale/en/translation.json';
-import de from 'src/i18n/locale/de/translation.json';
+import { messages as de } from 'src/i18n/locales/de/translation';
+import { messages as en } from 'src/i18n/locales/en/translation';
+import { messages as es } from 'src/i18n/locales/es/translation';
 
-const resources = <const>{
-  en: { translation: en },
-  de: { translation: de },
-};
+export const setupI18n = () => {
+  const locale = detect(fromNavigator(), 'en').split('-')?.at(0) || 'en';
 
-i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false,
-    },
-    react: {
-      transSupportBasicHtmlNodes: true,
-    },
-    resources: resources,
+  i18n.loadLocaleData({
+    [locale]: { plurals: plurals[locale] },
   });
+  i18n.load({ de: de, en: en, es: es });
+  i18n.activate(locale);
+};

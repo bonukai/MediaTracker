@@ -1,8 +1,8 @@
 import { MediaItemForProvider, MediaType } from 'src/entity/mediaItem';
-import { Audible } from 'src/metadata/metadataProvider/audible';
-import { IGDB } from 'src/metadata/metadataProvider/igdb';
-import { OpenLibrary } from 'src/metadata/metadataProvider/openlibrary';
-import { TMDbMovie, TMDbTv } from 'src/metadata/metadataProvider/tmdb';
+import { Audible } from 'src/metadata/provider/audible';
+import { IGDB } from 'src/metadata/provider/igdb';
+import { OpenLibrary } from 'src/metadata/provider/openlibrary';
+import { TMDbMovie, TMDbTv } from 'src/metadata/provider/tmdb';
 import _ from 'lodash';
 import { MetadataProvider } from 'src/metadata/metadataProvider';
 
@@ -66,7 +66,7 @@ type ToMetadataProviderCredentialsType<
     Result extends ReadonlyArray<unknown> = []
 > = Input extends readonly []
     ? Result
-    : Input extends readonly [infer First, ...(infer Rest)]
+    : Input extends readonly [infer First, ...infer Rest]
     ? MapType<First> extends never
         ? ToMetadataProviderCredentialsType<Rest, Result>
         : ToMetadataProviderCredentialsType<Rest, [...Result, MapType<First>]>

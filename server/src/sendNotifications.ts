@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import chalk from 'chalk';
 import { addHours, subHours } from 'date-fns';
-import { t } from 'i18next';
+import { plural, t } from '@lingui/macro';
 
 import { MediaItemBase } from 'src/entity/mediaItem';
 import { mediaItemRepository } from 'src/repository/mediaItem';
@@ -110,34 +110,30 @@ const sendNotificationForEpisodes = async (episodes: TvEpisode[]) => {
 
     const tvShow = episodes[0].tvShow;
 
-    const usersToNotify = await userRepository.findUsersWithMediaItemOnWatchlist(
-        {
+    const usersToNotify =
+        await userRepository.findUsersWithMediaItemOnWatchlist({
             mediaItemId: tvShow.id,
             sendNotificationForEpisodesReleases: true,
-        }
-    );
+        });
 
-    console.log(
-        t(
-            'Sending notification for new episodes of {{ title }} to {{ count }} users',
-            {
-                count: usersToNotify.length,
-                title: tvShow.title,
-                defaultValue_one:
-                    'Sending notification for new episodes of {{ title }} to 1 user',
-            }
-        )
-    );
+    const title = tvShow.title;
+    {
+        const count = usersToNotify.length;
 
-    const notificationMessage = t(
-        '{{ count }} episodes for **{{ title }}** has been released',
-        {
-            count: episodes.length,
-            title: tvShow.title,
-            defaultValue_one:
-                'New episode for **{{ title }}** has been released',
-        }
-    );
+        console.log(
+            plural(count, {
+                one: `Sending notification for new episodes of ${title} to # user`,
+                other: `Sending notification for new episodes of ${title} to # users`,
+            })
+        );
+    }
+
+    const count = episodes.length;
+
+    const notificationMessage = plural(count, {
+        one: `# episode for **${title}** has been released`,
+        other: `# episodes for **${title}** has been released`,
+    });
 
     await sendNotificationForItem({
         mediaItem: tvShow,
@@ -148,22 +144,21 @@ const sendNotificationForEpisodes = async (episodes: TvEpisode[]) => {
 };
 
 const sendNotificationForMediaItem = async (mediaItem: MediaItemBase) => {
-    const notificationMessage = t('{{ title }} has been released', {
-        title: mediaItem.title,
-    });
+    const title = mediaItem.title;
+    const notificationMessage = t`${title} has been released`;
 
-    const usersToNotify = await userRepository.findUsersWithMediaItemOnWatchlist(
-        {
+    const usersToNotify =
+        await userRepository.findUsersWithMediaItemOnWatchlist({
             mediaItemId: mediaItem.id,
             sendNotificationForReleases: true,
-        }
-    );
+        });
+
+    const count = usersToNotify.length;
 
     console.log(
-        t('Sending notification for {{ title }} to {{ count }} users', {
-            count: usersToNotify.length,
-            title: mediaItem.title,
-            defaultValue_one: 'Sending notification for {{ title }} to 1 user',
+        plural(count, {
+            one: `Sending notification for ${title} to # user`,
+            other: `Sending notification for ${title} to # users`,
         })
     );
 
@@ -185,9 +180,8 @@ const sendNotificationForItem = async (args: {
 
     for (const user of users) {
         const platform = user.notificationPlatform;
-        const credentials = await notificationPlatformsCredentialsRepository.get(
-            user.id
-        );
+        const credentials =
+            await notificationPlatformsCredentialsRepository.get(user.id);
 
         await Notifications.sendNotification(platform, {
             title: notificationTitle,
@@ -217,11 +211,7 @@ const errorHandler = async (fn: () => Promise<void>) => {
     try {
         await fn();
     } catch (error) {
-        console.log(
-            chalk.bold.red(
-                t('Error sending notifications: {{ error }}', { error: error })
-            )
-        );
+        console.log(chalk.bold.red(t`Error sending notifications: ${error}`));
     }
 };
 

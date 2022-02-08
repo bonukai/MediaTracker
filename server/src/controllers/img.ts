@@ -5,97 +5,48 @@ import { createExpressRoute } from 'typescript-routes-to-openapi-server';
 import { downloadAsset } from 'src/utils';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { tvSeasonRepository } from 'src/repository/season';
+import { imageRepository } from 'src/repository/image';
 
 type ImgSize = 'small' | 'original';
-
-export const getImagePath = (args: {
-    size: ImgSize;
-    type: 'poster' | 'backdrop';
-    mediaItemId?: number;
-    seasonId?: number;
-}) => {
-    const { size, mediaItemId, seasonId, type } = args;
-
-    return path.resolve(
-        'img',
-        type,
-        seasonId ? 'season' : 'media_item',
-        size,
-        (seasonId ? seasonId.toString() : mediaItemId.toString()) + '.webp'
-    );
-};
 
 /**
  * @openapi_tags Img
  */
 export class ImgController {
     /**
-     * @openapi_operationId GetPoster
+     * @openapi_operationId GetImage
      */
-    poster = createExpressRoute<{
+    image = createExpressRoute<{
         method: 'get';
-        path: '/img/poster';
+        path: '/img/:id';
         requestQuery: {
-            mediaItemId?: number;
-            seasonId?: number;
             size?: ImgSize;
         };
+        pathParams: {
+            id: string;
+        };
         /**
-         * @contentType image/png
+         * @contentType image/webp
          * @description Image
          */
         responseBody: string;
     }>(async (req, res) => {
-        const { mediaItemId, seasonId, size } = req.query;
+        const { size } = req.query;
+        const { id } = req.params;
 
-        if (!mediaItemId && !seasonId) {
-            res.sendStatus(404);
-            return;
-        }
+        const imagePath = path.resolve('img', size || 'original', `${id}.webp`);
 
-        const imagePath = getImagePath({
-            size: 'original',
-            mediaItemId: mediaItemId,
-            seasonId: seasonId,
-            type: 'poster',
-        });
+        if (!(await fs.pathExists(imagePath))) {
+            const image = await imageRepository.findOne({ id: id });
 
-        const imageSmallPath = getImagePath({
-            size: 'small',
-            mediaItemId: mediaItemId,
-            seasonId: seasonId,
-            type: 'poster',
-        });
+            if (!image) {
+                res.sendStatus(404);
+                return;
+            }
 
-        res.setHeader('Content-Type', 'image/webp');
-        res.set('Cache-Control', 'max-age=2592000');
-
-        if (
-            !(await fs.pathExists(imagePath)) ||
-            !(await fs.pathExists(imageSmallPath))
-        ) {
-            if (mediaItemId) {
-                const mediaItem = await mediaItemRepository.findOne({
-                    id: mediaItemId,
-                });
-
-                if (!mediaItem) {
-                    res.sendStatus(404);
-                    return;
-                }
-
-                if (!mediaItem.poster) {
-                    res.sendStatus(404);
-                    return;
-                }
-
-                await downloadAsset({
-                    assetsType: 'poster',
-                    mediaItem: mediaItem,
-                });
-            } else if (seasonId) {
+            if (image.seasonId) {
                 const season = await tvSeasonRepository.findOne({
-                    id: seasonId,
+                    id: image.seasonId,
                 });
 
                 if (!season.poster) {
@@ -104,80 +55,38 @@ export class ImgController {
                 }
 
                 await downloadAsset({
-                    assetsType: 'poster',
-                    season: season,
+                    imageId: image.id,
+                    url: season.poster,
+                });
+            } else {
+                const mediaItem = await mediaItemRepository.findOne({
+                    id: image.mediaItemId,
+                });
+
+                const url =
+                    image.type === 'poster'
+                        ? mediaItem.poster
+                        : mediaItem.backdrop;
+
+                if (!url) {
+                    res.sendStatus(404);
+                    return;
+                }
+
+                await downloadAsset({
+                    imageId: image.id,
+                    url: url,
                 });
             }
         }
 
-        if (size === 'small') {
-            res.sendFile(imageSmallPath);
-        } else {
-            res.sendFile(imagePath);
-        }
-    });
-
-    /**
-     * @openapi_operationId GetBackdrop
-     */
-    backdrop = createExpressRoute<{
-        method: 'get';
-        path: '/img/backdrop';
-        requestQuery: {
-            mediaItemId: number;
-            size?: ImgSize;
-        };
-        /**
-         * @contentType image/png
-         * @description Image
-         */
-        responseBody: string;
-    }>(async (req, res) => {
-        const { mediaItemId, size } = req.query;
-
-        const imagePath = getImagePath({
-            size: 'original',
-            mediaItemId: mediaItemId,
-            type: 'backdrop',
-        });
-
-        const imageSmallPath = getImagePath({
-            size: 'small',
-            mediaItemId: mediaItemId,
-            type: 'backdrop',
-        });
-
-        if (
-            !(await fs.pathExists(imagePath)) ||
-            !(await fs.pathExists(imageSmallPath))
-        ) {
-            const mediaItem = await mediaItemRepository.findOne({
-                id: mediaItemId,
-            });
-
-            if (!mediaItem) {
-                res.sendStatus(404);
-                return;
-            }
-
-            if (!mediaItem.poster) {
-                res.sendStatus(404);
-                return;
-            }
-
-            await downloadAsset({
-                assetsType: 'backdrop',
-                mediaItem: mediaItem,
-            });
+        if (!(await fs.pathExists(imagePath))) {
+            res.sendStatus(404);
+            return;
         }
 
         res.setHeader('Content-Type', 'image/webp');
-        res.set('Cache-Control', 'max-age=2592000');
-
-        if (size === 'small') {
-            res.sendFile(imageSmallPath);
-        } else {
-            res.sendFile(imagePath);
-        }
+        res.set('Cache-Control', 'max-age=31536000');
+        res.sendFile(imagePath);
     });
 }

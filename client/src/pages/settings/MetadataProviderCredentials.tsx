@@ -1,5 +1,7 @@
 import { MetadataProviderCredentials } from 'mediatracker-api';
 import React, { FunctionComponent, useEffect, useRef } from 'react';
+import { Trans } from '@lingui/macro';
+
 import { useMetadataProviderCredentials } from 'src/api/metadataProviderCredentials';
 import { SettingsSegment } from 'src/components/SettingsSegment';
 
@@ -11,14 +13,14 @@ export const SettingsMetadataProviderCredentialsPage: FunctionComponent =
           href="https://api-docs.igdb.com/#account-creation"
           className="block mb-2 underline"
         >
-          API keys cen be acquired here
+          <Trans>API keys can be acquired here</Trans>
         </a>
         <label>
-          Client ID
+          <Trans>Client ID</Trans>
           <input className="block mb-2" name="CLIENT_ID" />
         </label>
         <label>
-          Client Secret
+          <Trans>Client Secret</Trans>
           <input className="block" name="CLIENT_SECRET" />
         </label>
       </MetadataProviderCredentialsBaseComponent>
@@ -72,7 +74,9 @@ const MetadataProviderCredentialsBaseComponent: FunctionComponent<{
           }}
         >
           {children}
-          <button className="block mt-2 btn">Save</button>
+          <button className="block mt-2 btn">
+            <Trans>Save</Trans>
+          </button>
         </form>
       </div>
     </SettingsSegment>

@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { t } from '@lingui/macro';
 
 import { gotify } from 'src/notifications/platforms/gotify';
 import { ntfy } from 'src/notifications/platforms/ntfy';
@@ -36,7 +37,7 @@ export class Notifications {
 
         if (!platform) {
             throw new Error(
-                `Platform ${user.notificationPlatform} does not exist`
+                t`Platform ${user.notificationPlatform} does not exist`
             );
         }
 
@@ -64,7 +65,7 @@ export class Notifications {
         const platform = this.platformsByName[platformName];
 
         if (!platform) {
-            throw new Error(`Platform ${platformName} does not exist`);
+            throw new Error(t`Platform ${platformName} does not exist`);
         }
 
         await platform.sendFunction(args as never);

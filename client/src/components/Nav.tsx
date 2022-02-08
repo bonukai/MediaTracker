@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import clsx from 'clsx';
-import { useTranslation } from 'react-i18next';
-
+import { t, Trans } from '@lingui/macro';
 import { NavLink, useLocation } from 'react-router-dom';
 import { animated, Transition, Spring } from '@react-spring/web';
 
@@ -9,19 +8,18 @@ import { useUser } from 'src/api/user';
 import { useDarkMode } from 'src/hooks/darkMode';
 
 export const useRouteNames = () => {
-  const { t } = useTranslation();
-
   return [
-    { path: '/', name: t('Home') },
-    { path: '/tv', name: t('Tv') },
-    { path: '/movies', name: t('Movies') },
-    { path: '/games', name: t('Games') },
-    { path: '/books', name: t('Books') },
-    { path: '/audiobooks', name: t('Audiobooks') },
-    { path: '/upcoming', name: t('Upcoming') },
-    { path: '/continue-watching', name: t('Continue watching') },
-    { path: '/calendar', name: t('Calendar') },
-    { path: '/import', name: t('Import') },
+    { path: '/', name: t`Home` },
+    { path: '/tv', name: t`Tv` },
+    { path: '/movies', name: t`Movies` },
+    { path: '/games', name: t`Games` },
+    { path: '/books', name: t`Books` },
+    { path: '/audiobooks', name: t`Audiobooks` },
+    { path: '/upcoming', name: t`Upcoming` },
+    { path: '/continue-watching', name: t`Continue watching` },
+    { path: '/watchlist', name: t`Watchlist` },
+    { path: '/calendar', name: t`Calendar` },
+    { path: '/import', name: t`Import` },
   ];
 };
 
@@ -30,7 +28,6 @@ export const NavComponent: FunctionComponent = () => {
 
   const { darkMode, setDarkMode } = useDarkMode();
   const [showSidebar, setShowSidebar] = useState(false);
-  const { t } = useTranslation();
 
   const location = useLocation();
   const routes = useRouteNames();
@@ -91,7 +88,7 @@ export const NavComponent: FunctionComponent = () => {
                   logout();
                 }}
               >
-                {t('Logout')}
+                <Trans>Logout</Trans>
               </a>
             </div>
 

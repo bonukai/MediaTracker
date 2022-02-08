@@ -35,24 +35,15 @@ const config: Configuration = {
       },
       {
         test: /\.tsx?$/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              '@babel/preset-env',
-              '@babel/preset-react',
-              '@babel/preset-typescript',
-            ],
-            plugins: ['@babel/plugin-transform-runtime'],
-          },
-        },
+        loader: 'babel-loader',
         exclude: /node_modules/,
       },
     ],
   },
+
   resolve: {
     plugins: [new TsconfigPathsPlugin()],
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js', '.json'],
   },
   output: {
     filename: '[name]_[chunkhash:8].js',

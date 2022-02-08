@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
+import { t, Trans } from '@lingui/macro';
 
 import { FetchError } from 'src/api/api';
 import { useUser } from 'src/api/user';
@@ -16,7 +17,9 @@ export const SettingsPasswordPage = () => {
   return (
     <>
       <form onSubmit={(e) => e.preventDefault()}>
-        <div>Current password</div>
+        <div>
+          <Trans>Current password</Trans>
+        </div>
         <input
           type="password"
           value={currentPassword}
@@ -24,14 +27,18 @@ export const SettingsPasswordPage = () => {
           required
         />
 
-        <div>New password</div>
+        <div>
+          <Trans>New password</Trans>
+        </div>
         <input
           type="password"
           value={newPassword}
           required
           onChange={(e) => setNewPassword(e.currentTarget.value)}
         />
-        <div>Confirm new password</div>
+        <div>
+          <Trans>Confirm new password</Trans>
+        </div>
         <input
           type="password"
           value={confirmNewPassword}
@@ -44,7 +51,7 @@ export const SettingsPasswordPage = () => {
           onClick={async () => {
             if (newPassword !== confirmNewPassword) {
               setSuccess(false);
-              setMessage('Passwords do not match');
+              setMessage(t`Passwords do not match`);
               return;
             }
 
@@ -55,16 +62,16 @@ export const SettingsPasswordPage = () => {
               });
 
               setSuccess(true);
-              setMessage('Password has been changed');
+              setMessage(t`Password has been changed`);
             } catch (error) {
               if (error instanceof FetchError && error.status === 401) {
                 setSuccess(false);
-                setMessage('Current password is incorrect');
+                setMessage(t`Current password is incorrect`);
               }
             }
           }}
         >
-          Change password
+          <Trans>Change password</Trans>
         </button>
       </form>
       {success !== undefined && (

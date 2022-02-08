@@ -1,0 +1,26 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "targets": {
+                    "node": "14"
+                }
+            }
+        ],
+        "@babel/preset-typescript"
+    ],
+    "plugins": [
+        [
+            "module-resolver",
+            {
+                "extensions": [".ts", ".js", ".json"],
+                "alias": {
+                    "src": "./src",
+                    "__tests__": "./__tests__"
+                }
+            }
+        ],
+        "macros"
+    ]
+}

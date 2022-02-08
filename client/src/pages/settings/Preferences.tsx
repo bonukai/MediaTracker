@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import { t } from '@lingui/macro';
 import { useUser } from 'src/api/user';
 import { CheckboxWithTitleAndDescription } from 'src/components/Checkbox';
 
@@ -7,8 +8,8 @@ export const SettingsPreferencesPage: FunctionComponent = () => {
 
   return (
     <CheckboxWithTitleAndDescription
-      title="Public reviews"
-      description="Show your reviews to other users"
+      title={t`Public reviews`}
+      description={t`Show your reviews to other users`}
       checked={user.publicReviews}
       onChange={(value) => updateUser({ publicReviews: value })}
     />

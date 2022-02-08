@@ -1,10 +1,8 @@
 import _ from 'lodash';
 import {
-    mediaItemBackdropPath,
     MediaItemBase,
     mediaItemColumns,
     MediaItemItemsResponse,
-    mediaItemPosterPath,
 } from 'src/entity/mediaItem';
 import { knex } from 'src/dbconfig';
 
@@ -13,6 +11,7 @@ import { UserRating, userRatingColumns } from 'src/entity/userRating';
 import { GetItemsArgs } from 'src/repository/mediaItem';
 import { TvEpisode, tvEpisodeColumns } from 'src/entity/tvepisode';
 import { Watchlist, watchlistColumns } from 'src/entity/watchlist';
+import { Image } from 'src/entity/image';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getItemsKnex = async (args: any): Promise<any> => {
@@ -83,6 +82,9 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
             lastSeenAt: 'lastSeen.date',
             numberOfEpisodes: 'numberOfEpisodes',
             unseenEpisodesCount: 'unseenEpisodesCount',
+            seenEpisodesCount: 'seenEpisodesCount',
+            poster: 'poster.id',
+            backdrop: 'backdrop.id',
         })
         .from<MediaItemBase>('mediaItem')
         .leftJoin<Seen>(
@@ -104,7 +106,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
                     .select('tvShowId')
                     .count('*', { as: 'numberOfEpisodes' })
                     .from<TvEpisode>('episode')
-                    .whereNot('isSpecialEpisode', 1)
+                    .whereNot('isSpecialEpisode', true)
                     .andWhereNot('releaseDate', '')
                     .andWhereNot('releaseDate', null)
                     .andWhere('releaseDate', '<=', currentDateString)
@@ -131,7 +133,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
                     .min('episodeNumber', {
                         as: 'upcomingEpisodeEpisodeNumber',
                     })
-                    .whereNot('isSpecialEpisode', 1)
+                    .whereNot('isSpecialEpisode', true)
                     .where('releaseDate', '>=', currentDateString)
                     .groupBy('tvShowId')
                     .as('upcomingEpisodeHelper'),
@@ -152,6 +154,28 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
                         'upcomingEpisodeEpisodeNumber'
                     )
         )
+        // Seen episodes count
+        .leftJoin<TvEpisode>(
+            (qb) =>
+                qb
+                    .from<TvEpisode>('episode')
+                    .select('tvShowId')
+                    .count('*', { as: 'seenEpisodesCount' })
+                    .leftJoin(
+                        (qb) =>
+                            qb
+                                .distinct('userId', 'episodeId')
+                                .from<Seen>('seen')
+                                .as('seen'),
+                        'episodeId',
+                        'episode.id'
+                    )
+                    .where('userId', userId)
+                    .groupBy('tvShowId')
+                    .as('seenEpisodes'),
+            'seenEpisodes.tvShowId',
+            'mediaItem.id'
+        )
         // First unwatched episode and unseen episodes count
         .leftJoin<TvEpisode>(
             (qb) =>
@@ -163,7 +187,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
                     })
                     .count('*', { as: 'unseenEpisodesCount' })
                     .leftJoin<Seen>('seen', 'seen.episodeId', 'episode.id')
-                    .whereNot('episode.isSpecialEpisode', 1)
+                    .whereNot('episode.isSpecialEpisode', true)
                     .andWhereNot('episode.releaseDate', '')
                     .andWhereNot('episode.releaseDate', null)
                     .andWhere('episode.releaseDate', '<=', currentDateString)
@@ -195,6 +219,28 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
                 .andOnVal('userRating.userId', userId)
                 .andOnNull('userRating.episodeId')
                 .andOnNull('userRating.seasonId')
+        )
+        // Poster
+        .leftJoin<Image>(
+            (qb) =>
+                qb
+                    .from('image')
+                    .where('type', 'poster')
+                    .whereNull('seasonId')
+                    .as('poster'),
+            'poster.mediaItemId',
+            'mediaItem.id'
+        )
+        // Backdrop
+        .leftJoin<Image>(
+            (qb) =>
+                qb
+                    .from('image')
+                    .where('type', 'backdrop')
+                    .whereNull('seasonId')
+                    .as('backdrop'),
+            'backdrop.mediaItemId',
+            'mediaItem.id'
         );
 
     if (Array.isArray(mediaItemIds)) {
@@ -282,20 +328,8 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
         // nextEpisodesToWatchSubQuery
         if (onlyWithNextEpisodesToWatch === true) {
             query
-                .andWhereNot((qb) =>
-                    qb
-                        .where('mediaItem.mediaType', 'tv')
-                        .andWhere('firstUnwatchedEpisode.tvShowId', null)
-                )
-                .andWhere((qb) =>
-                    qb
-                        .where('mediaItem.mediaType', 'tv')
-                        .orWhere(
-                            'mediaItem.releaseDate',
-                            '<=',
-                            currentDateString
-                        )
-                );
+                .where('seenEpisodesCount', '>', 0)
+                .andWhere('unseenEpisodesCount', '>', 0);
         }
 
         if (onlyWithUserRating === true) {
@@ -432,15 +466,9 @@ const mapRawResult = (row: any): MediaItemItemsResponse => {
         url: row['mediaItem.url'],
         developer: row['mediaItem.developer'],
         lastSeenAt: row['lastSeenAt'],
-        poster: row['mediaItem.poster']
-            ? mediaItemPosterPath(row['mediaItem.id'], 'original')
-            : null,
-        posterSmall: row['mediaItem.poster']
-            ? mediaItemPosterPath(row['mediaItem.id'], 'small')
-            : null,
-        backdrop: row['mediaItem.backdrop']
-            ? mediaItemBackdropPath(row['mediaItem.id'])
-            : null,
+        poster: row['poster'] ? `/img/${row['poster']}` : null,
+        posterSmall: row['poster'] ? `/img/${row['poster']}?size=small` : null,
+        backdrop: row['backdrop'] ? `/img/${row['backdrop']}` : null,
         hasDetails: false,
         seen:
             row['mediaItem.mediaType'] === 'tv'

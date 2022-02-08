@@ -5,7 +5,7 @@ import session from 'express-session';
 import path from 'path';
 import chalk from 'chalk';
 import { nanoid } from 'nanoid';
-import { t } from 'i18next';
+import { t } from '@lingui/macro';
 
 import { runMigrations, knex } from 'src/dbconfig';
 import {
@@ -17,6 +17,9 @@ import {
     IGDB_CLIENT_SECRET,
     PORT,
     HOSTNAME,
+    SERVER_LANG,
+    TMDB_LANG,
+    AUDIBLE_LANG,
 } from 'src/config';
 import { generatedRoutes } from 'src/generated/routes/routes';
 import { metadataProviders } from 'src/metadata/metadataProviders';
@@ -24,15 +27,48 @@ import { AccessTokenMiddleware } from 'src/middlewares/token';
 import { SessionStore } from 'src/sessionStore';
 import { requireUserAuthentication } from 'src/auth';
 import { sessionKeyRepository } from 'src/repository/sessionKey';
-import { configurationRepository } from 'src/repository/globalSettings';
+import {
+    configurationRepository,
+    GlobalConfiguration,
+} from 'src/repository/globalSettings';
 import { sendNotifications } from 'src/sendNotifications';
-import { updateMetadata } from 'src/updateMetadata';
+import { updateMediaItems, updateMetadata } from 'src/updateMetadata';
 import { durationToMilliseconds } from 'src/utils';
 import { userRepository } from 'src/repository/user';
 import { metadataProviderCredentialsRepository } from 'src/repository/metadataProviderCredentials';
-import 'src/i18n/i18n';
+import { setupI18n } from 'src/i18n/i18n';
+import { mediaItemRepository } from 'src/repository/mediaItem';
+import { CancellationToken } from 'src/cancellationToken';
+
+let updateMetadataCancellationToken: CancellationToken;
+
+GlobalConfiguration.subscribe('tmdbLang', async (value) => {
+    console.log(
+        chalk.bold.green(
+            t`TMDB language changed to: "${value}", updating metadata for all items`
+        )
+    );
+
+    if (updateMetadataCancellationToken) {
+        await updateMetadataCancellationToken.cancel();
+    }
+
+    updateMetadataCancellationToken = new CancellationToken();
+
+    const mediaItems = await mediaItemRepository.find({
+        source: 'tmdb',
+    });
+
+    await updateMediaItems({
+        mediaItems: mediaItems,
+        cancellationToken: updateMetadataCancellationToken,
+        forceUpdate: true,
+    });
+});
 
 (async () => {
+    setupI18n(SERVER_LANG || 'en');
+
     const app = express();
 
     await runMigrations();
@@ -42,8 +78,17 @@ import 'src/i18n/i18n';
     if (!configuration) {
         await configurationRepository.create({
             enableRegistration: true,
-            serverLang: 'en',
-            audibleLang: 'US',
+            serverLang: SERVER_LANG || 'en',
+            tmdbLang: TMDB_LANG || 'en',
+            audibleLang: AUDIBLE_LANG || 'US',
+        });
+    } else {
+        GlobalConfiguration.configuration = configuration;
+
+        await configurationRepository.update({
+            serverLang: SERVER_LANG || configuration.serverLang,
+            tmdbLang: TMDB_LANG || configuration.tmdbLang,
+            audibleLang: AUDIBLE_LANG || configuration.audibleLang,
         });
     }
 
@@ -62,7 +107,7 @@ import 'src/i18n/i18n';
             enableRegistration: false,
         });
 
-        console.log(chalk.green.bold(t('DEMO mode enabled')));
+        console.log(chalk.green.bold(t`DEMO mode enabled`));
     }
 
     if (IGDB_CLIENT_ID && IGDB_CLIENT_SECRET) {
@@ -158,6 +203,8 @@ import 'src/i18n/i18n';
                 '/api/user/login',
                 '/api/user/register',
                 '/api/configuration',
+                '/oauth/device/code',
+                '/oauth/device/token',
             ].includes(req.path)
         ) {
             next();
@@ -169,11 +216,9 @@ import 'src/i18n/i18n';
     app.use(generatedRoutes);
 
     const server = app.listen(PORT, HOSTNAME, async () => {
-        console.log(
-            t('MediaTracker listening at {{ address }}', {
-                address: `http://${HOSTNAME}:${PORT}`,
-            })
-        );
+        const address = `http://${HOSTNAME}:${PORT}`;
+
+        console.log(t`MediaTracker listening at ${address}`);
 
         if (NODE_ENV === 'production') {
             await updateMetadata();

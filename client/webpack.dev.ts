@@ -12,19 +12,15 @@ const config = merge(commonConfig, {
         test: /\.tsx?$/,
         use: {
           loader: 'babel-loader',
+
           options: {
-            presets: [
-              '@babel/preset-env',
-              '@babel/preset-react',
-              '@babel/preset-typescript',
-            ],
+            extends: './babel.config.json',
             plugins: [
               [
                 '@babel/plugin-transform-runtime',
                 {
                   regenerator: true,
                 },
-                'react-refresh/babel',
               ],
             ],
           },

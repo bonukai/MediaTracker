@@ -56,7 +56,7 @@ export class CalendarController {
                 'episode.id'
             )
             .whereBetween('releaseDate', [start, end])
-            .where('isSpecialEpisode', 0)
+            .where('isSpecialEpisode', false)
             .orderBy('seasonNumber', 'asc')
             .orderBy('episodeNumber', 'asc')) as TvEpisode[];
 

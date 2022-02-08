@@ -1,0 +1,21 @@
+{
+   "locales": [
+      "de",
+      "en",
+      "es"
+   ],
+   "catalogs": [
+      {
+         "path": "src/i18n/locales/{locale}/translation",
+         "include": [
+            "src"
+         ]
+      }
+   ],
+   "fallbackLocales": {
+      "default": "en"
+   },
+   "format": "minimal",
+   "sourceLocale": "en",
+   "compileNamespace": "ts"
+}
