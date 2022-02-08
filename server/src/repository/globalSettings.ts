@@ -8,7 +8,7 @@ class ConfigurationRepository extends repository<Configuration>({
     primaryColumnName: 'id',
     booleanColumnNames: ['enableRegistration']
 }) {
-    public async update(value: Partial<Configuration>): Promise<void> {
+    public async update(value: Partial<Configuration>) {
         GlobalConfiguration.update(value);
         return await super.update(value);
     }
