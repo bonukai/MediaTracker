@@ -26,7 +26,7 @@ export type MediaItemBase = ExternalIds & {
     tmdbRating?: number;
     releaseDate?: string;
     overview?: string;
-    lastTimeUpdated: number;
+    lastTimeUpdated?: number;
     source: string;
     network?: string;
     url?: string;

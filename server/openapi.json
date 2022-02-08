@@ -1759,7 +1759,8 @@
                 "nullable": true
               },
               "lastTimeUpdated": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "source": {
                 "type": "string"
@@ -1818,7 +1819,6 @@
               }
             },
             "required": [
-              "lastTimeUpdated",
               "mediaType",
               "source",
               "title"
@@ -2159,7 +2159,8 @@
                 "nullable": true
               },
               "lastTimeUpdated": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "source": {
                 "type": "string"
@@ -2225,7 +2226,6 @@
               }
             },
             "required": [
-              "lastTimeUpdated",
               "mediaType",
               "source",
               "title"
