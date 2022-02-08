@@ -33,6 +33,7 @@
         "knex": "^1.0.2",
         "lodash": "^4.17.21",
         "make-plural": "^7.1.0",
+        "mediatracker": "file:..",
         "nanoid": "^3.2.0",
         "passport": "^0.5.2",
         "passport-local": "^1.0.0",
