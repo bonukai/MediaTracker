@@ -10,7 +10,11 @@ import {
   canBeOnWatchlist,
   canBeRated,
   formatEpisodeNumber,
+  isAudiobook,
+  isBook,
+  isMovie,
   isTvShow,
+  isVideoGame,
 } from '../utils';
 import { relativeTimeTo } from 'src/date';
 import { MediaItemItemsResponse, MediaType } from 'mediatracker-api';
@@ -192,7 +196,21 @@ export const GridItem: FunctionComponent<{
                           className="my-1 text-sm text-center pointer-events-auto dark:bg-gray-900 bg-zinc-100 btn"
                           onClick={() => openModal()}
                         >
+                        {isAudiobook(mediaItem) && (
+                          <Trans>Mark as listened</Trans>
+                        )}
+
+                        {isBook(mediaItem) && (
+                          <Trans>Mark as read</Trans>
+                        )}
+
+                        {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
                           <Trans>Mark as seen</Trans>
+                        )}
+
+                        {isVideoGame(mediaItem) && (
+                          <Trans>Mark as played</Trans>
+                        )}
                         </div>
                       </>
                     )}

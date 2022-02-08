@@ -71,8 +71,24 @@ export const canBeRated = (mediaItem: MediaItemItemsResponse | TvEpisode) => {
   return hasBeenReleased(mediaItem);
 };
 
+export const isAudiobook = (mediaItem: MediaItemItemsResponse) => {
+  return mediaItem.mediaType === 'audiobook';
+};
+
+export const isBook = (mediaItem: MediaItemItemsResponse) => {
+  return mediaItem.mediaType === 'book';
+};
+
+export const isMovie = (mediaItem: MediaItemItemsResponse) => {
+  return mediaItem.mediaType === 'movie';
+};
+
 export const isTvShow = (mediaItem: MediaItemItemsResponse) => {
   return mediaItem.mediaType === 'tv';
+};
+
+export const isVideoGame = (mediaItem: MediaItemItemsResponse) => {
+  return mediaItem.mediaType === 'video_game';
 };
 
 export const hasPoster = (mediaItem: MediaItemItemsResponse) => {
