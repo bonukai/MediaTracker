@@ -5,7 +5,7 @@
         "build-server": "babel src --out-dir build --extensions .ts --delete-dir-on-start",
         "build-docs": "npm run build --prefix ../docs",
         "build-routes": "babel-node --extensions .ts scripts/generateRoutes.ts && babel-node --extensions .ts scripts/generateApi.ts && npm run build --prefix ../rest-api",
-        "watch-routes": "nodemon --watch src --ignore src/generated --ext * --exec \"npx babel-node --extensions .ts scripts/generateRoutes.ts && npx babel-node --extensions .ts scripts/generateApi.ts\"",
+        "watch-routes": "nodemon --watch src --ignore src/generated --ext * --exec \"npm run build-routes",
         "watch-test": "cross-env DATABASE_PATH=:memory: jest --watchAll",
         "lingui:extract": "lingui extract",
         "lingui:compile": "lingui compile",
