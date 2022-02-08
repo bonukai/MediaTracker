@@ -99,7 +99,21 @@ const RemoveFromSeenHistoryButton: FunctionComponent<{
         ) && removeFromSeenHistory(mediaItem)
       }
     >
-      <Trans>Remove from seen history</Trans>
+      {isAudiobook(mediaItem) && (
+        <Trans>Remove from listened history</Trans>
+      )}
+
+      {isBook(mediaItem) && (
+        <Trans>Remove from read history</Trans>
+      )}
+
+      {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
+        <Trans>Remove from seen history</Trans>
+      )}
+
+      {isVideoGame(mediaItem) && (
+        <Trans>Remove from played history</Trans>
+      )}
     </div>
   );
 };
