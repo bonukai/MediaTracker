@@ -10,9 +10,11 @@
         "lingui:extract": "lingui extract",
         "lingui:compile": "lingui compile",
         "build": "npm run lingui:extract && npm run lingui:compile && npm run build-routes && npm run build-server",
-        "dev": "nodemon --watch src --ext * --exec \"npx babel-node --extensions .ts src/index.ts\"",
+        "dev": "nodemon --watch src --ignore *.test.ts --ext * --exec \"npx babel-node --extensions .ts src/index.ts\"",
         "start": "cross-env NODE_ENV=production node build/index.js",
-        "lint": "eslint src"
+        "check-types": "tsc --noEmit",
+        "lint": "eslint src && npm run check-types",
+        "watch-lint": "nodemon --watch src --ext * --exec \"npm run lint\""
     },
     "dependencies": {
         "@lingui/core": "^3.13.2",
