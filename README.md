@@ -105,6 +105,13 @@ docker run -p 7481:7481 mediatracker
 -   REST API
 -   watchlist
 -   docker image
+-   import from [Trakt](https://trakt.tv)
+
+# Import
+
+| Service                   | Imported data                       |
+| ------------------------- | ----------------------------------- |
+| [Trakt](https://trakt.tv) | Watchlist, watched history, ratings |
 
 # Metadata providers
 
