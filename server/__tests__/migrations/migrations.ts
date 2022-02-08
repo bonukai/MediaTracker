@@ -147,5 +147,28 @@ describe('migrations', () => {
         });
     });
 
+    test('20220208230635_numberOfPages', async () => {
+        await knex.migrate.up({
+            name: `20220208230635_numberOfPages.${MIGRATIONS_EXTENSION}`,
+            directory: migrationsDirectory,
+        });
+
+        await knex<MediaItemBase>('mediaItem').insert({
+            id: 777,
+            title: 'title',
+            source: 'user',
+            numberOfPages: 111,
+        });
+
+        await knex.migrate.down({
+            directory: migrationsDirectory,
+        });
+
+        await knex.migrate.up({
+            name: `20220208230635_numberOfPages.${MIGRATIONS_EXTENSION}`,
+            directory: migrationsDirectory,
+        });
+    });
+
     afterAll(clearDatabase);
 });

@@ -40,6 +40,7 @@ export type MediaItemBase = ExternalIds & {
     authors?: string[];
     narrators?: string[];
     language?: string;
+    numberOfPages?: number;
     needsDetails?: boolean;
     lockedAt?: number;
 };
