@@ -1,3 +1,5 @@
+import 'core-js/stable/array/at';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { App } from 'src/App';

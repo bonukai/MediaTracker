@@ -36,7 +36,7 @@ const config = merge(commonConfig, {
         target: 'http://127.0.0.1:7481',
         changeOrigin: true,
         secure: false,
-      } as unknown,
+      },
     ],
     hot: true,
     port: 7000,
