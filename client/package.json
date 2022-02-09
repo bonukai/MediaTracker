@@ -28,7 +28,7 @@
     "@lingui/cli": "^3.13.2",
     "@lingui/loader": "^3.13.2",
     "@lingui/macro": "^3.13.2",
-    "@parcel/transformer-sass": "^2.2.1",
+    "@parcel/transformer-sass": "^2.3.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.11",
