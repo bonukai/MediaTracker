@@ -9,7 +9,7 @@ export const CheckboxWithTitleAndDescription: FunctionComponent<{
   const { title, description, checked, onChange } = props;
 
   return (
-    <>
+    <div>
       {description && (
         <div className="font-light text-gray-600 dark:text-slate-200">
           {description}
@@ -24,6 +24,6 @@ export const CheckboxWithTitleAndDescription: FunctionComponent<{
         />
         <span>{title}</span>
       </div>
-    </>
+    </div>
   );
 };
