@@ -287,7 +287,7 @@ export const updateMediaItem = async (
         new Date(oldMediaItem.lastTimeUpdated).toLocaleString()
     );
 
-    console.log(t`Updating: ${title} (last updated at: ${date}`);
+    console.log(t`Updating: ${title} (last updated at: ${date})`);
 
     if (!oldMediaItem) {
         return;
