@@ -5,7 +5,7 @@ export async function up(knex: Knex): Promise<void> {
         table.double('progress');
         table.double('duration');
         table.double('startedAt');
-        table.text('action');
+        table.string('action');
         table.dropColumn('seasonId');
     });
 
