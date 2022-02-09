@@ -34,6 +34,7 @@ export class InitialData {
         title: 'title',
         poster: 'posterUrl',
         backdrop: 'backdropUrl',
+        runtime: 51,
     };
 
     static season: TvSeason = {
@@ -58,6 +59,7 @@ export class InitialData {
         title: 'Episode 1',
         releaseDate: '2001-02-20',
         seasonAndEpisodeNumber: 1001,
+        runtime: 41,
     };
 
     static watchlist: Watchlist = {
@@ -99,7 +101,6 @@ export class InitialData {
         id: 1,
         date: new Date().getTime(),
         mediaItemId: this.mediaItem.id,
-        seasonId: this.season.id,
         episodeId: this.episode.id,
         userId: this.user.id,
     };

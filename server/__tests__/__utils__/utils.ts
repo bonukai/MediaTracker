@@ -2,7 +2,7 @@ import { customAlphabet } from 'nanoid';
 import { knex } from 'src/dbconfig';
 import { migrationsDirectory } from 'src/knexfile';
 
-export const randomNumericId = () => Number(customAlphabet('123456789', 10)());
+export const randomNumericId = () => Number(customAlphabet('123456789', 7)());
 
 export const clearDatabase = async () => {
     await knex.schema

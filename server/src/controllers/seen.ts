@@ -124,7 +124,6 @@ export class SeenController {
                 await seenRepository.create({
                     userId: userId,
                     mediaItemId: mediaItemId,
-                    seasonId: episode.seasonId,
                     episodeId: episodeId,
                     date: date?.getTime() || 0,
                 });
@@ -234,7 +233,7 @@ export class SeenController {
                 episodeId: episodeId,
             });
         } else if (seasonId) {
-            await seenRepository.delete({
+            await seenRepository.deleteForTvSeason({
                 userId: userId,
                 seasonId: seasonId,
             });

@@ -31,7 +31,6 @@ const seenEpisodes: Seen[] = [
         mediaItemId: 1,
         userId: user.id,
         episodeId: 1,
-        seasonId: null,
     },
     {
         id: 2,
@@ -39,7 +38,6 @@ const seenEpisodes: Seen[] = [
         mediaItemId: 1,
         userId: user.id,
         episodeId: 2,
-        seasonId: null,
     },
     {
         id: 3,
@@ -47,7 +45,6 @@ const seenEpisodes: Seen[] = [
         mediaItemId: 1,
         userId: user.id,
         episodeId: 3,
-        seasonId: null,
     },
     {
         id: 4,
@@ -55,7 +52,6 @@ const seenEpisodes: Seen[] = [
         mediaItemId: 3,
         episodeId: null,
         userId: user.id,
-        seasonId: null,
     },
     {
         id: 5,
@@ -63,7 +59,6 @@ const seenEpisodes: Seen[] = [
         mediaItemId: 4,
         episodeId: 5,
         userId: user.id,
-        seasonId: null,
     },
     {
         id: 6,
@@ -71,7 +66,6 @@ const seenEpisodes: Seen[] = [
         mediaItemId: 5,
         episodeId: 7,
         userId: 2,
-        seasonId: null,
     },
     {
         id: 7,
@@ -79,7 +73,6 @@ const seenEpisodes: Seen[] = [
         mediaItemId: 5,
         episodeId: 8,
         userId: 2,
-        seasonId: null,
     },
 ];
 
@@ -272,7 +265,7 @@ describe('seenHistory', () => {
                         userId: user.id,
                     });
 
-                    expect(details.seenHistory).toEqual(
+                    expect(details.seenHistory).toMatchObject(
                         _.orderBy(value, (item) => item.date, 'desc')
                     );
                 }
@@ -296,7 +289,7 @@ describe('seenHistory', () => {
                         userId: user2.id,
                     });
 
-                    expect(details.seenHistory).toEqual(
+                    expect(details.seenHistory).toMatchObject(
                         _.orderBy(value, (item) => item.date, 'desc')
                     );
                 }
