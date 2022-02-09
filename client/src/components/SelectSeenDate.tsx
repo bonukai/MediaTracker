@@ -52,7 +52,7 @@ export const SelectSeenDate: FunctionComponent<{
 };
 
 export const SelectSeenDateComponent: FunctionComponent<{
-  mediaItem: mediaItem;
+  mediaItem: MediaItemItemsResponse;
   closeModal?: () => void;
   onSelected: (args?: { date?: Date; seenAt?: LastSeenAt }) => void;
 }> = (props) => {
