@@ -31,8 +31,6 @@ WORKDIR /assets
 VOLUME /storage
 VOLUME /assets
 
-WORKDIR /app/assets_cache
-
 WORKDIR /app
 
 COPY --from=build /app/server/public public
@@ -49,6 +47,5 @@ ENV ASSETS_PATH="/assets"
 
 
 ENV NODE_ENV=production
-ENV NODE_PATH=build
 
 CMD [ "node", "build/index.js"]
