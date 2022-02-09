@@ -55,8 +55,6 @@
     "postcss-cli": "^9.1.0",
     "postcss-import": "^14.0.2",
     "postcss-loader": "^6.2.1",
-    "prettier": "^2.5.1",
-    "prettier-plugin-tailwind": "^2.2.12",
     "react-reconciler": "^0.26.2",
     "react-refresh": "^0.11.0",
     "react-refresh-typescript": "^2.0.3",
