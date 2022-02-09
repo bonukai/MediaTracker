@@ -91,7 +91,7 @@ const StarRatingModal: FunctionComponent<
       : mediaItem.userRating?.review) || ''
   );
 
-  const onSetRating = async (value: number) => {
+  const onSetRating = async (value?: number) => {
     setRating({
       mediaItem: mediaItem,
       season: season,
@@ -115,7 +115,12 @@ const StarRatingModal: FunctionComponent<
               key={index}
               onClick={(e) => {
                 e.preventDefault();
-                onSetRating(index + 1);
+
+                if (index + 1 === rating) {
+                  onSetRating(null);
+                } else {
+                  onSetRating(index + 1);
+                }
               }}
               onPointerEnter={() => setHoverIndex(index + 1)}
               onPointerLeave={() => setHoverIndex(null)}
