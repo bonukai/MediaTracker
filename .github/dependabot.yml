@@ -1,16 +1,16 @@
 version: 2
 updates:
-    - package-ecosystem: 'npm'
-      directory: '/server'
-      schedule:
-          interval: 'weekly'
+  - package-ecosystem: 'npm'
+    directory: '/server'
+    schedule:
+      interval: 'weekly'
 
-    - package-ecosystem: 'npm'
-      directory: '/client'
-      schedule:
-          interval: 'weekly'
+  - package-ecosystem: 'npm'
+    directory: '/client'
+    schedule:
+      interval: 'weekly'
 
-    - package-ecosystem: 'npm'
-      directory: '/server/docs'
-      schedule:
-          interval: 'weekly'
+  - package-ecosystem: 'npm'
+    directory: '/server/docs'
+    schedule:
+      interval: 'weekly'

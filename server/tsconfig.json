@@ -1,23 +1,23 @@
 {
-    "extends": "@tsconfig/recommended/tsconfig.json",
-    "compilerOptions": {
-        "outDir": "build/src",
-        "module": "CommonJS",
-        "esModuleInterop": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "target": "ESNext",
-        "strict": false,
-        "noImplicitAny": true,
-        "noImplicitThis": true,
-        "sourceMap": true,
-        "moduleResolution": "node",
-        "baseUrl": ".",
-        "forceConsistentCasingInFileNames": true,
-        "skipLibCheck": true,
-        "resolveJsonModule": true,
-        "noEmit": true
-    },
-    "include": ["src", "__tests__", "scripts"],
-    "exclude": ["node_modules"]
+  "extends": "@tsconfig/recommended/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "build/src",
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "ESNext",
+    "strict": false,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "noEmit": true
+  },
+  "include": ["src", "__tests__", "scripts"],
+  "exclude": ["node_modules"]
 }

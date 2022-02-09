@@ -1,51 +1,51 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "type": "npm",
-            "script": "dev",
-            "path": "client/",
-            "problemMatcher": [],
-            "label": "client:dev"
-        },
-        {
-            "type": "npm",
-            "script": "watch:start",
-            "path": "server/",
-            "problemMatcher": [],
-            "label": "server:watch:start"
-        },
-        {
-            "type": "npm",
-            "script": "watch:routes",
-            "path": "server/",
-            "problemMatcher": [],
-            "label": "server:watch:routes"
-        },
-        {
-            "type": "npm",
-            "script": "watch:build:server",
-            "path": "server/",
-            "problemMatcher": [],
-            "label": "server:watch:build"
-        },
-        {
-            "type": "npm",
-            "script": "watch:lint",
-            "path": "server/",
-            "problemMatcher": [],
-            "label": "server:watch:lint"
-        },
-        {
-            "label": "dev",
-            "dependsOn": [
-                "client:dev",
-                "server:watch:routes",
-                "server:watch:build",
-                "server:watch:lint",
-                "server:watch:start"
-            ],
-            "problemMatcher": []
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "dev",
+      "path": "client/",
+      "problemMatcher": [],
+      "label": "client:dev"
+    },
+    {
+      "type": "npm",
+      "script": "watch:start",
+      "path": "server/",
+      "problemMatcher": [],
+      "label": "server:watch:start"
+    },
+    {
+      "type": "npm",
+      "script": "watch:routes",
+      "path": "server/",
+      "problemMatcher": [],
+      "label": "server:watch:routes"
+    },
+    {
+      "type": "npm",
+      "script": "watch:build:server",
+      "path": "server/",
+      "problemMatcher": [],
+      "label": "server:watch:build"
+    },
+    {
+      "type": "npm",
+      "script": "watch:lint",
+      "path": "server/",
+      "problemMatcher": [],
+      "label": "server:watch:lint"
+    },
+    {
+      "label": "dev",
+      "dependsOn": [
+        "client:dev",
+        "server:watch:routes",
+        "server:watch:build",
+        "server:watch:lint",
+        "server:watch:start"
+      ],
+      "problemMatcher": []
+    }
+  ]
 }

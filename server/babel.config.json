@@ -1,26 +1,26 @@
 {
-    "presets": [
-        [
-            "@babel/preset-env",
-            {
-                "targets": {
-                    "node": "14"
-                }
-            }
-        ],
-        "@babel/preset-typescript"
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "14"
+        }
+      }
     ],
-    "plugins": [
-        [
-            "module-resolver",
-            {
-                "extensions": [".ts", ".js", ".json"],
-                "alias": {
-                    "src": "./src",
-                    "__tests__": "./__tests__"
-                }
-            }
-        ],
-        "macros"
-    ]
+    "@babel/preset-typescript"
+  ],
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "extensions": [".ts", ".js", ".json"],
+        "alias": {
+          "src": "./src",
+          "__tests__": "./__tests__"
+        }
+      }
+    ],
+    "macros"
+  ]
 }

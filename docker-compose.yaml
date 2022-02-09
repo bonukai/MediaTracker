@@ -1,13 +1,13 @@
 version: '3'
 services:
-    mediatracker:
-        container_name: MediaTracker
-        ports:
-            - 7481:7481
-        volumes:
-            - ${HOME}/.config/mediatracker:/storage
-            - assetsVolume:/assets
-        image: bonukai/mediatracker
+  mediatracker:
+    container_name: MediaTracker
+    ports:
+      - 7481:7481
+    volumes:
+      - ${HOME}/.config/mediatracker:/storage
+      - assetsVolume:/assets
+    image: bonukai/mediatracker
 
 volumes:
-    assetsVolume: null
+  assetsVolume: null

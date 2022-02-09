@@ -100,13 +100,13 @@ docker run -p 7481:7481 mediatracker
 
 # Features
 
--   notifications
--   calendar
--   multiple users
--   REST API
--   watchlist
--   docker image
--   import from [Trakt](https://trakt.tv)
+- notifications
+- calendar
+- multiple users
+- REST API
+- watchlist
+- docker image
+- import from [Trakt](https://trakt.tv)
 
 # Import
 
@@ -127,12 +127,12 @@ docker run -p 7481:7481 mediatracker
 
 # Notification platforms
 
--   [gotify](https://gotify.net)
--   [ntfy](https://ntfy.sh)
--   [Pushbullet](https://www.pushbullet.com)
--   [Pushover](https://pushover.net)
--   [Pushsafer](https://www.pushsafer.com)
+- [gotify](https://gotify.net)
+- [ntfy](https://ntfy.sh)
+- [Pushbullet](https://www.pushbullet.com)
+- [Pushover](https://pushover.net)
+- [Pushsafer](https://www.pushsafer.com)
 
 # Contributors
 
--   [URBANsUNITED](https://github.com/URBANsUNITED) (German translation)
+- [URBANsUNITED](https://github.com/URBANsUNITED) (German translation)

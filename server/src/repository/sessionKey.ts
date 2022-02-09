@@ -2,6 +2,6 @@ import { SessionKey } from 'src/entity/sessionKey';
 import { repository } from 'src/repository/repository';
 
 export const sessionKeyRepository = new (repository<SessionKey>({
-    tableName: 'sessionKey',
-    primaryColumnName: 'id',
+  tableName: 'sessionKey',
+  primaryColumnName: 'id',
 }))();

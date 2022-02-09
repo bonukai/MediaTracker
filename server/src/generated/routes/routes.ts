@@ -5,61 +5,60 @@ import Ajv from 'ajv';
 import { ValidationError } from 'typescript-routes-to-openapi-server';
 
 const ajv = new Ajv({
-    allErrors: true,
-    coerceTypes: true,
-    verbose: true,
-    removeAdditional: true,
+  allErrors: true,
+  coerceTypes: true,
+  verbose: true,
+  removeAdditional: true,
 });
 
 const validatorHandler = (args: {
-    pathParamsSchema?: unknown;
-    requestQuerySchema?: unknown;
-    requestBodySchema?: unknown;
+  pathParamsSchema?: unknown;
+  requestQuerySchema?: unknown;
+  requestBodySchema?: unknown;
 }): RequestHandler => {
-    const { pathParamsSchema, requestQuerySchema, requestBodySchema } = args;
+  const { pathParamsSchema, requestQuerySchema, requestBodySchema } = args;
 
-    const pathParamsValidator =
-        pathParamsSchema && ajv.compile(pathParamsSchema);
-    const requestQueryValidator =
-        requestQuerySchema && ajv.compile(requestQuerySchema);
-    const requestBodySchemaValidator =
-        requestBodySchema && ajv.compile(requestBodySchema);
+  const pathParamsValidator = pathParamsSchema && ajv.compile(pathParamsSchema);
+  const requestQueryValidator =
+    requestQuerySchema && ajv.compile(requestQuerySchema);
+  const requestBodySchemaValidator =
+    requestBodySchema && ajv.compile(requestBodySchema);
 
-    return (req, res, next) => {
-        if (pathParamsValidator && !pathParamsValidator(req.params)) {
-            next(
-                new ValidationError(
-                    pathParamsValidator.errors,
-                    ajv.errorsText(pathParamsValidator.errors, {
-                        dataVar: 'Path params',
-                    })
-                )
-            );
-        } else if (requestQueryValidator && !requestQueryValidator(req.query)) {
-            next(
-                new ValidationError(
-                    requestQueryValidator.errors,
-                    ajv.errorsText(requestQueryValidator.errors, {
-                        dataVar: 'Query string',
-                    })
-                )
-            );
-        } else if (
-            requestBodySchemaValidator &&
-            !requestBodySchemaValidator(req.body)
-        ) {
-            next(
-                new ValidationError(
-                    requestBodySchemaValidator.errors,
-                    ajv.errorsText(requestBodySchemaValidator.errors, {
-                        dataVar: 'Request body',
-                    })
-                )
-            );
-        } else {
-            next();
-        }
-    };
+  return (req, res, next) => {
+    if (pathParamsValidator && !pathParamsValidator(req.params)) {
+      next(
+        new ValidationError(
+          pathParamsValidator.errors,
+          ajv.errorsText(pathParamsValidator.errors, {
+            dataVar: 'Path params',
+          })
+        )
+      );
+    } else if (requestQueryValidator && !requestQueryValidator(req.query)) {
+      next(
+        new ValidationError(
+          requestQueryValidator.errors,
+          ajv.errorsText(requestQueryValidator.errors, {
+            dataVar: 'Query string',
+          })
+        )
+      );
+    } else if (
+      requestBodySchemaValidator &&
+      !requestBodySchemaValidator(req.body)
+    ) {
+      next(
+        new ValidationError(
+          requestBodySchemaValidator.errors,
+          ajv.errorsText(requestBodySchemaValidator.errors, {
+            dataVar: 'Request body',
+          })
+        )
+      );
+    } else {
+      next();
+    }
+  };
 };
 
 import { CalendarController } from '../../controllers/calendar';
@@ -82,7 +81,7 @@ const _ImgController = new ImgController();
 const _MediaItemController = new MediaItemController();
 const _ItemsController = new ItemsController();
 const _MetadataProviderCredentialsController =
-    new MetadataProviderCredentialsController();
+  new MetadataProviderCredentialsController();
 const _RatingController = new RatingController();
 const _SearchController = new SearchController();
 const _SeenController = new SeenController();
@@ -94,787 +93,745 @@ const _TraktTvImportController = new TraktTvImportController();
 const router: Router = express.Router();
 
 router.get(
-    '/api/calendar',
-    validatorHandler({
-        requestQuerySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            type: 'object',
-            properties: {
-                start: { type: ['string', 'null'] },
-                end: { type: ['string', 'null'] },
-            },
-        },
-    }),
-    _CalendarController.get
+  '/api/calendar',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        start: { type: ['string', 'null'] },
+        end: { type: ['string', 'null'] },
+      },
+    },
+  }),
+  _CalendarController.get
 );
 router.patch(
-    '/api/configuration',
-    validatorHandler({
-        requestBodySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            definitions: {
-                TmdbLang: {
-                    enum: [
-                        'aa',
-                        'ab',
-                        'af',
-                        'am',
-                        'ar',
-                        'as',
-                        'ay',
-                        'az',
-                        'ba',
-                        'be',
-                        'bg',
-                        'bh',
-                        'bi',
-                        'bn',
-                        'bo',
-                        'br',
-                        'ca',
-                        'co',
-                        'cs',
-                        'cy',
-                        'da',
-                        'de',
-                        'dz',
-                        'el',
-                        'en',
-                        'eo',
-                        'es',
-                        'et',
-                        'eu',
-                        'fa',
-                        'fi',
-                        'fj',
-                        'fo',
-                        'fr',
-                        'fy',
-                        'ga',
-                        'gd',
-                        'gl',
-                        'gn',
-                        'gu',
-                        'ha',
-                        'he',
-                        'hi',
-                        'hr',
-                        'hu',
-                        'hy',
-                        'ia',
-                        'id',
-                        'ie',
-                        'ik',
-                        'is',
-                        'it',
-                        'iu',
-                        'ja',
-                        'jw',
-                        'ka',
-                        'kk',
-                        'kl',
-                        'km',
-                        'kn',
-                        'ko',
-                        'ks',
-                        'ku',
-                        'ky',
-                        'la',
-                        'ln',
-                        'lo',
-                        'lt',
-                        'lv',
-                        'mg',
-                        'mi',
-                        'mk',
-                        'ml',
-                        'mn',
-                        'mo',
-                        'mr',
-                        'ms',
-                        'mt',
-                        'my',
-                        'na',
-                        'ne',
-                        'nl',
-                        'no',
-                        'oc',
-                        'om',
-                        'or',
-                        'pa',
-                        'pl',
-                        'ps',
-                        'pt',
-                        'qu',
-                        'rm',
-                        'rn',
-                        'ro',
-                        'ru',
-                        'rw',
-                        'sa',
-                        'sd',
-                        'sg',
-                        'sh',
-                        'si',
-                        'sk',
-                        'sl',
-                        'sm',
-                        'sn',
-                        'so',
-                        'sq',
-                        'sr',
-                        'ss',
-                        'st',
-                        'su',
-                        'sv',
-                        'sw',
-                        'ta',
-                        'te',
-                        'tg',
-                        'th',
-                        'ti',
-                        'tk',
-                        'tl',
-                        'tn',
-                        'to',
-                        'tr',
-                        'ts',
-                        'tt',
-                        'tw',
-                        'ug',
-                        'uk',
-                        'ur',
-                        'uz',
-                        'vi',
-                        'vo',
-                        'wo',
-                        'xh',
-                        'yi',
-                        'yo',
-                        'za',
-                        'zh',
-                        'zu',
-                    ],
-                    type: 'string',
-                },
-                AudibleLang: {
-                    enum: [
-                        'au',
-                        'ca',
-                        'de',
-                        'es',
-                        'fr',
-                        'in',
-                        'it',
-                        'jp',
-                        'uk',
-                        'us',
-                    ],
-                    type: 'string',
-                },
-                ServerLang: { enum: ['de', 'en', 'es'], type: 'string' },
-            },
-            type: 'object',
-            properties: {
-                enableRegistration: { type: ['boolean', 'null'] },
-                tmdbLang: {
-                    oneOf: [
-                        { $ref: '#/definitions/TmdbLang' },
-                        { type: 'null' },
-                    ],
-                },
-                audibleLang: {
-                    oneOf: [
-                        { $ref: '#/definitions/AudibleLang' },
-                        { type: 'null' },
-                    ],
-                },
-                serverLang: {
-                    oneOf: [
-                        { $ref: '#/definitions/ServerLang' },
-                        { type: 'null' },
-                    ],
-                },
-            },
+  '/api/configuration',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        TmdbLang: {
+          enum: [
+            'aa',
+            'ab',
+            'af',
+            'am',
+            'ar',
+            'as',
+            'ay',
+            'az',
+            'ba',
+            'be',
+            'bg',
+            'bh',
+            'bi',
+            'bn',
+            'bo',
+            'br',
+            'ca',
+            'co',
+            'cs',
+            'cy',
+            'da',
+            'de',
+            'dz',
+            'el',
+            'en',
+            'eo',
+            'es',
+            'et',
+            'eu',
+            'fa',
+            'fi',
+            'fj',
+            'fo',
+            'fr',
+            'fy',
+            'ga',
+            'gd',
+            'gl',
+            'gn',
+            'gu',
+            'ha',
+            'he',
+            'hi',
+            'hr',
+            'hu',
+            'hy',
+            'ia',
+            'id',
+            'ie',
+            'ik',
+            'is',
+            'it',
+            'iu',
+            'ja',
+            'jw',
+            'ka',
+            'kk',
+            'kl',
+            'km',
+            'kn',
+            'ko',
+            'ks',
+            'ku',
+            'ky',
+            'la',
+            'ln',
+            'lo',
+            'lt',
+            'lv',
+            'mg',
+            'mi',
+            'mk',
+            'ml',
+            'mn',
+            'mo',
+            'mr',
+            'ms',
+            'mt',
+            'my',
+            'na',
+            'ne',
+            'nl',
+            'no',
+            'oc',
+            'om',
+            'or',
+            'pa',
+            'pl',
+            'ps',
+            'pt',
+            'qu',
+            'rm',
+            'rn',
+            'ro',
+            'ru',
+            'rw',
+            'sa',
+            'sd',
+            'sg',
+            'sh',
+            'si',
+            'sk',
+            'sl',
+            'sm',
+            'sn',
+            'so',
+            'sq',
+            'sr',
+            'ss',
+            'st',
+            'su',
+            'sv',
+            'sw',
+            'ta',
+            'te',
+            'tg',
+            'th',
+            'ti',
+            'tk',
+            'tl',
+            'tn',
+            'to',
+            'tr',
+            'ts',
+            'tt',
+            'tw',
+            'ug',
+            'uk',
+            'ur',
+            'uz',
+            'vi',
+            'vo',
+            'wo',
+            'xh',
+            'yi',
+            'yo',
+            'za',
+            'zh',
+            'zu',
+          ],
+          type: 'string',
         },
-    }),
-    _ConfigurationController.update
+        AudibleLang: {
+          enum: ['au', 'ca', 'de', 'es', 'fr', 'in', 'it', 'jp', 'uk', 'us'],
+          type: 'string',
+        },
+        ServerLang: { enum: ['de', 'en', 'es'], type: 'string' },
+      },
+      type: 'object',
+      properties: {
+        enableRegistration: { type: ['boolean', 'null'] },
+        tmdbLang: {
+          oneOf: [{ $ref: '#/definitions/TmdbLang' }, { type: 'null' }],
+        },
+        audibleLang: {
+          oneOf: [{ $ref: '#/definitions/AudibleLang' }, { type: 'null' }],
+        },
+        serverLang: {
+          oneOf: [{ $ref: '#/definitions/ServerLang' }, { type: 'null' }],
+        },
+      },
+    },
+  }),
+  _ConfigurationController.update
 );
 router.get(
-    '/api/configuration',
-    validatorHandler({}),
-    _ConfigurationController.get
+  '/api/configuration',
+  validatorHandler({}),
+  _ConfigurationController.get
 );
 router.get(
-    '/img/:id',
-    validatorHandler({
-        pathParamsSchema: {
-            type: 'object',
-            properties: { id: { type: 'string' } },
-            required: ['id'],
-            nullable: false,
+  '/img/:id',
+  validatorHandler({
+    pathParamsSchema: {
+      type: 'object',
+      properties: { id: { type: 'string' } },
+      required: ['id'],
+      nullable: false,
+    },
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        ImgSize: { enum: ['original', 'small'], type: 'string' },
+      },
+      type: 'object',
+      properties: {
+        size: {
+          oneOf: [{ $ref: '#/definitions/ImgSize' }, { type: 'null' }],
         },
-        requestQuerySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            definitions: {
-                ImgSize: { enum: ['original', 'small'], type: 'string' },
-            },
-            type: 'object',
-            properties: {
-                size: {
-                    oneOf: [
-                        { $ref: '#/definitions/ImgSize' },
-                        { type: 'null' },
-                    ],
-                },
-            },
-        },
-    }),
-    _ImgController.image
+      },
+    },
+  }),
+  _ImgController.image
 );
 router.get(
-    '/api/details/:mediaItemId',
-    validatorHandler({
-        pathParamsSchema: {
-            type: 'object',
-            properties: { mediaItemId: { type: 'number' } },
-            required: ['mediaItemId'],
-            nullable: false,
-        },
-    }),
-    _MediaItemController.details
+  '/api/details/:mediaItemId',
+  validatorHandler({
+    pathParamsSchema: {
+      type: 'object',
+      properties: { mediaItemId: { type: 'number' } },
+      required: ['mediaItemId'],
+      nullable: false,
+    },
+  }),
+  _MediaItemController.details
 );
 router.get(
-    '/api/items/paginated',
-    validatorHandler({
-        requestQuerySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            definitions: {
-                GetItemsRequest: {
-                    allOf: [
-                        {
-                            type: 'object',
-                            properties: {
-                                orderBy: {
-                                    oneOf: [
-                                        {
-                                            $ref: '#/definitions/MediaItemOrderBy',
-                                        },
-                                        { type: 'null' },
-                                    ],
-                                },
-                                sortOrder: {
-                                    oneOf: [
-                                        { $ref: '#/definitions/SortOrder' },
-                                        { type: 'null' },
-                                    ],
-                                },
-                                filter: { type: ['string', 'null'] },
-                                onlyOnWatchlist: { type: ['boolean', 'null'] },
-                                onlySeenItems: { type: ['boolean', 'null'] },
-                                onlyWithNextEpisodesToWatch: {
-                                    type: ['boolean', 'null'],
-                                },
-                                onlyWithNextAiring: {
-                                    type: ['boolean', 'null'],
-                                },
-                                onlyWithUserRating: {
-                                    type: ['boolean', 'null'],
-                                },
-                                onlyWithoutUserRating: {
-                                    type: ['boolean', 'null'],
-                                },
-                                page: { type: ['number', 'null'] },
-                            },
-                        },
-                        {
-                            type: 'object',
-                            properties: {
-                                mediaType: {
-                                    oneOf: [
-                                        { $ref: '#/definitions/MediaType' },
-                                        { type: 'null' },
-                                    ],
-                                },
-                            },
-                        },
-                    ],
-                },
-                MediaItemOrderBy: {
-                    enum: [
-                        'lastSeen',
-                        'mediaType',
-                        'nextAiring',
-                        'releaseDate',
-                        'status',
-                        'title',
-                        'unseenEpisodes',
-                    ],
-                    type: 'string',
-                },
-                SortOrder: { enum: ['asc', 'desc'], type: 'string' },
-                MediaType: {
-                    enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
-                    type: 'string',
-                },
-            },
-            $ref: '#/definitions/GetItemsRequest',
-        },
-    }),
-    _ItemsController.getPaginated
-);
-router.get(
-    '/api/items',
-    validatorHandler({
-        requestQuerySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            definitions: {
-                MediaType: {
-                    enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
-                    type: 'string',
-                },
-                MediaItemOrderBy: {
-                    enum: [
-                        'lastSeen',
-                        'mediaType',
-                        'nextAiring',
-                        'releaseDate',
-                        'status',
-                        'title',
-                        'unseenEpisodes',
-                    ],
-                    type: 'string',
-                },
-                SortOrder: { enum: ['asc', 'desc'], type: 'string' },
-            },
-            type: 'object',
-            properties: {
-                mediaType: {
-                    oneOf: [
-                        { $ref: '#/definitions/MediaType' },
-                        { type: 'null' },
-                    ],
-                },
+  '/api/items/paginated',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        GetItemsRequest: {
+          allOf: [
+            {
+              type: 'object',
+              properties: {
                 orderBy: {
-                    oneOf: [
-                        { $ref: '#/definitions/MediaItemOrderBy' },
-                        { type: 'null' },
-                    ],
+                  oneOf: [
+                    {
+                      $ref: '#/definitions/MediaItemOrderBy',
+                    },
+                    { type: 'null' },
+                  ],
                 },
                 sortOrder: {
-                    oneOf: [
-                        { $ref: '#/definitions/SortOrder' },
-                        { type: 'null' },
-                    ],
+                  oneOf: [
+                    { $ref: '#/definitions/SortOrder' },
+                    { type: 'null' },
+                  ],
                 },
                 filter: { type: ['string', 'null'] },
                 onlyOnWatchlist: { type: ['boolean', 'null'] },
                 onlySeenItems: { type: ['boolean', 'null'] },
-                onlyWithNextEpisodesToWatch: { type: ['boolean', 'null'] },
-                onlyWithNextAiring: { type: ['boolean', 'null'] },
-                onlyWithUserRating: { type: ['boolean', 'null'] },
-                onlyWithoutUserRating: { type: ['boolean', 'null'] },
+                onlyWithNextEpisodesToWatch: {
+                  type: ['boolean', 'null'],
+                },
+                onlyWithNextAiring: {
+                  type: ['boolean', 'null'],
+                },
+                onlyWithUserRating: {
+                  type: ['boolean', 'null'],
+                },
+                onlyWithoutUserRating: {
+                  type: ['boolean', 'null'],
+                },
+                page: { type: ['number', 'null'] },
+              },
             },
+            {
+              type: 'object',
+              properties: {
+                mediaType: {
+                  oneOf: [
+                    { $ref: '#/definitions/MediaType' },
+                    { type: 'null' },
+                  ],
+                },
+              },
+            },
+          ],
         },
-    }),
-    _ItemsController.get
+        MediaItemOrderBy: {
+          enum: [
+            'lastSeen',
+            'mediaType',
+            'nextAiring',
+            'releaseDate',
+            'status',
+            'title',
+            'unseenEpisodes',
+          ],
+          type: 'string',
+        },
+        SortOrder: { enum: ['asc', 'desc'], type: 'string' },
+        MediaType: {
+          enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
+          type: 'string',
+        },
+      },
+      $ref: '#/definitions/GetItemsRequest',
+    },
+  }),
+  _ItemsController.getPaginated
 );
 router.get(
-    '/api/metadata-provider-credentials',
-    validatorHandler({}),
-    _MetadataProviderCredentialsController.get
-);
-router.put(
-    '/api/metadata-provider-credentials',
-    validatorHandler({
-        requestBodySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            definitions: {
-                MetadataProviderCredentialsRequestType: {
-                    type: 'object',
-                    properties: {
-                        name: { type: 'string', enum: ['IGDB'] },
-                        credentials: {
-                            type: 'object',
-                            properties: {
-                                CLIENT_ID: { type: 'string' },
-                                CLIENT_SECRET: { type: 'string' },
-                            },
-                            required: ['CLIENT_ID', 'CLIENT_SECRET'],
-                        },
-                    },
-                    required: ['credentials', 'name'],
-                },
-            },
-            $ref: '#/definitions/MetadataProviderCredentialsRequestType',
+  '/api/items',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        MediaType: {
+          enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
+          type: 'string',
         },
-    }),
-    _MetadataProviderCredentialsController.set
-);
-router.put(
-    '/api/rating',
-    validatorHandler({
-        requestBodySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            type: 'object',
-            properties: {
-                mediaItemId: { type: 'number' },
-                seasonId: { type: ['number', 'null'] },
-                episodeId: { type: ['number', 'null'] },
-                rating: { type: ['number', 'null'] },
-                review: { type: ['string', 'null'] },
-            },
-            required: ['mediaItemId'],
+        MediaItemOrderBy: {
+          enum: [
+            'lastSeen',
+            'mediaType',
+            'nextAiring',
+            'releaseDate',
+            'status',
+            'title',
+            'unseenEpisodes',
+          ],
+          type: 'string',
         },
-    }),
-    _RatingController.add
+        SortOrder: { enum: ['asc', 'desc'], type: 'string' },
+      },
+      type: 'object',
+      properties: {
+        mediaType: {
+          oneOf: [{ $ref: '#/definitions/MediaType' }, { type: 'null' }],
+        },
+        orderBy: {
+          oneOf: [{ $ref: '#/definitions/MediaItemOrderBy' }, { type: 'null' }],
+        },
+        sortOrder: {
+          oneOf: [{ $ref: '#/definitions/SortOrder' }, { type: 'null' }],
+        },
+        filter: { type: ['string', 'null'] },
+        onlyOnWatchlist: { type: ['boolean', 'null'] },
+        onlySeenItems: { type: ['boolean', 'null'] },
+        onlyWithNextEpisodesToWatch: { type: ['boolean', 'null'] },
+        onlyWithNextAiring: { type: ['boolean', 'null'] },
+        onlyWithUserRating: { type: ['boolean', 'null'] },
+        onlyWithoutUserRating: { type: ['boolean', 'null'] },
+      },
+    },
+  }),
+  _ItemsController.get
 );
 router.get(
-    '/api/search',
-    validatorHandler({
-        requestQuerySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            definitions: {
-                MediaType: {
-                    enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
-                    type: 'string',
-                },
-            },
-            type: 'object',
-            properties: {
-                q: { type: 'string' },
-                mediaType: { $ref: '#/definitions/MediaType' },
-            },
-            required: ['mediaType', 'q'],
-        },
-    }),
-    _SearchController.search
+  '/api/metadata-provider-credentials',
+  validatorHandler({}),
+  _MetadataProviderCredentialsController.get
 );
 router.put(
-    '/api/seen',
-    validatorHandler({
-        requestQuerySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            definitions: {
-                LastSeenAt: {
-                    enum: ['custom_date', 'now', 'release_date', 'unknown'],
-                    type: 'string',
-                },
+  '/api/metadata-provider-credentials',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        MetadataProviderCredentialsRequestType: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', enum: ['IGDB'] },
+            credentials: {
+              type: 'object',
+              properties: {
+                CLIENT_ID: { type: 'string' },
+                CLIENT_SECRET: { type: 'string' },
+              },
+              required: ['CLIENT_ID', 'CLIENT_SECRET'],
             },
-            type: 'object',
-            properties: {
-                mediaItemId: { type: 'number' },
-                seasonId: { type: ['number', 'null'] },
-                episodeId: { type: ['number', 'null'] },
-                lastSeenEpisodeId: { type: ['number', 'null'] },
-                lastSeenAt: {
-                    oneOf: [
-                        { $ref: '#/definitions/LastSeenAt' },
-                        { type: 'null' },
-                    ],
-                },
-                progress: { type: ['number', 'null'] },
-                duration: { type: ['number', 'null'] },
-                startedAt: { type: ['number', 'null'] },
-                date: { type: ['number', 'null'] },
-            },
-            required: ['mediaItemId'],
+          },
+          required: ['credentials', 'name'],
         },
-    }),
-    _SeenController.add
-);
-router.delete(
-    '/api/seen/:seenId',
-    validatorHandler({
-        pathParamsSchema: {
-            type: 'object',
-            properties: { seenId: { type: 'number' } },
-            required: ['seenId'],
-            nullable: false,
-        },
-    }),
-    _SeenController.deleteById
-);
-router.delete(
-    '/api/seen/',
-    validatorHandler({
-        requestQuerySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            type: 'object',
-            properties: {
-                mediaItemId: { type: 'number' },
-                seasonId: { type: ['number', 'null'] },
-                episodeId: { type: ['number', 'null'] },
-            },
-            required: ['mediaItemId'],
-        },
-    }),
-    _SeenController.removeFromSeenHistory
+      },
+      $ref: '#/definitions/MetadataProviderCredentialsRequestType',
+    },
+  }),
+  _MetadataProviderCredentialsController.set
 );
 router.put(
-    '/api/tokens',
-    validatorHandler({
-        requestQuerySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            type: 'object',
-            properties: { description: { type: 'string' } },
-            required: ['description'],
+  '/api/rating',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        mediaItemId: { type: 'number' },
+        seasonId: { type: ['number', 'null'] },
+        episodeId: { type: ['number', 'null'] },
+        rating: { type: ['number', 'null'] },
+        review: { type: ['string', 'null'] },
+      },
+      required: ['mediaItemId'],
+    },
+  }),
+  _RatingController.add
+);
+router.get(
+  '/api/search',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        MediaType: {
+          enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
+          type: 'string',
         },
-    }),
-    _TokenController.add
+      },
+      type: 'object',
+      properties: {
+        q: { type: 'string' },
+        mediaType: { $ref: '#/definitions/MediaType' },
+      },
+      required: ['mediaType', 'q'],
+    },
+  }),
+  _SearchController.search
+);
+router.put(
+  '/api/seen',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        LastSeenAt: {
+          enum: ['custom_date', 'now', 'release_date', 'unknown'],
+          type: 'string',
+        },
+      },
+      type: 'object',
+      properties: {
+        mediaItemId: { type: 'number' },
+        seasonId: { type: ['number', 'null'] },
+        episodeId: { type: ['number', 'null'] },
+        lastSeenEpisodeId: { type: ['number', 'null'] },
+        lastSeenAt: {
+          oneOf: [{ $ref: '#/definitions/LastSeenAt' }, { type: 'null' }],
+        },
+        progress: { type: ['number', 'null'] },
+        duration: { type: ['number', 'null'] },
+        startedAt: { type: ['number', 'null'] },
+        date: { type: ['number', 'null'] },
+      },
+      required: ['mediaItemId'],
+    },
+  }),
+  _SeenController.add
 );
 router.delete(
-    '/api/tokens',
-    validatorHandler({
-        requestQuerySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            type: 'object',
-            properties: { description: { type: 'string' } },
-            required: ['description'],
-        },
-    }),
-    _TokenController.delete
+  '/api/seen/:seenId',
+  validatorHandler({
+    pathParamsSchema: {
+      type: 'object',
+      properties: { seenId: { type: 'number' } },
+      required: ['seenId'],
+      nullable: false,
+    },
+  }),
+  _SeenController.deleteById
+);
+router.delete(
+  '/api/seen/',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        mediaItemId: { type: 'number' },
+        seasonId: { type: ['number', 'null'] },
+        episodeId: { type: ['number', 'null'] },
+      },
+      required: ['mediaItemId'],
+    },
+  }),
+  _SeenController.removeFromSeenHistory
+);
+router.put(
+  '/api/tokens',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: { description: { type: 'string' } },
+      required: ['description'],
+    },
+  }),
+  _TokenController.add
+);
+router.delete(
+  '/api/tokens',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: { description: { type: 'string' } },
+      required: ['description'],
+    },
+  }),
+  _TokenController.delete
 );
 router.get('/api/tokens', validatorHandler({}), _TokenController.get);
 router.get('/api/user', validatorHandler({}), _UsersController.get);
 router.get('/api/user/logout', validatorHandler({}), _UsersController.logout);
 router.post(
-    '/api/user/login',
-    validatorHandler({
-        requestBodySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            type: 'object',
-            properties: {
-                username: { type: 'string' },
-                password: { type: 'string' },
-            },
-            required: ['password', 'username'],
-        },
-    }),
-    _UsersController.login
+  '/api/user/login',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        username: { type: 'string' },
+        password: { type: 'string' },
+      },
+      required: ['password', 'username'],
+    },
+  }),
+  _UsersController.login
 );
 router.post(
-    '/api/user/register',
-    validatorHandler({
-        requestBodySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            type: 'object',
-            properties: {
-                username: { type: 'string' },
-                password: { type: 'string' },
-                confirmPassword: { type: 'string' },
-            },
-            required: ['confirmPassword', 'password', 'username'],
-        },
-    }),
-    _UsersController.register
+  '/api/user/register',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        username: { type: 'string' },
+        password: { type: 'string' },
+        confirmPassword: { type: 'string' },
+      },
+      required: ['confirmPassword', 'password', 'username'],
+    },
+  }),
+  _UsersController.register
 );
 router.get(
-    '/api/user/notification-credentials',
-    validatorHandler({}),
-    _UsersController.getNotificationCredentials
+  '/api/user/notification-credentials',
+  validatorHandler({}),
+  _UsersController.getNotificationCredentials
 );
 router.put(
-    '/api/user/notification-credentials',
-    validatorHandler({
-        requestBodySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            definitions: {
-                NotificationPlatformsResponseType: {
-                    oneOf: [
-                        {
-                            type: 'object',
-                            properties: {
-                                platformName: {
-                                    type: 'string',
-                                    enum: ['gotify'],
-                                },
-                                credentials: {
-                                    type: 'object',
-                                    properties: {
-                                        url: { type: 'string' },
-                                        token: { type: 'string' },
-                                        priority: { type: 'string' },
-                                    },
-                                    required: ['priority', 'token', 'url'],
-                                },
-                            },
-                            required: ['credentials', 'platformName'],
-                        },
-                        {
-                            type: 'object',
-                            properties: {
-                                platformName: {
-                                    type: 'string',
-                                    enum: ['Pushbullet'],
-                                },
-                                credentials: {
-                                    type: 'object',
-                                    properties: { token: { type: 'string' } },
-                                    required: ['token'],
-                                },
-                            },
-                            required: ['credentials', 'platformName'],
-                        },
-                        {
-                            type: 'object',
-                            properties: {
-                                platformName: {
-                                    type: 'string',
-                                    enum: ['Pushover'],
-                                },
-                                credentials: {
-                                    type: 'object',
-                                    properties: { key: { type: 'string' } },
-                                    required: ['key'],
-                                },
-                            },
-                            required: ['credentials', 'platformName'],
-                        },
-                        {
-                            type: 'object',
-                            properties: {
-                                platformName: {
-                                    type: 'string',
-                                    enum: ['Pushsafer'],
-                                },
-                                credentials: {
-                                    type: 'object',
-                                    properties: { key: { type: 'string' } },
-                                    required: ['key'],
-                                },
-                            },
-                            required: ['credentials', 'platformName'],
-                        },
-                        {
-                            type: 'object',
-                            properties: {
-                                platformName: {
-                                    type: 'string',
-                                    enum: ['ntfy'],
-                                },
-                                credentials: {
-                                    type: 'object',
-                                    properties: {
-                                        url: { type: 'string' },
-                                        priority: { type: 'string' },
-                                        topic: { type: 'string' },
-                                    },
-                                    required: ['priority', 'topic', 'url'],
-                                },
-                            },
-                            required: ['credentials', 'platformName'],
-                        },
-                    ],
+  '/api/user/notification-credentials',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        NotificationPlatformsResponseType: {
+          oneOf: [
+            {
+              type: 'object',
+              properties: {
+                platformName: {
+                  type: 'string',
+                  enum: ['gotify'],
                 },
+                credentials: {
+                  type: 'object',
+                  properties: {
+                    url: { type: 'string' },
+                    token: { type: 'string' },
+                    priority: { type: 'string' },
+                  },
+                  required: ['priority', 'token', 'url'],
+                },
+              },
+              required: ['credentials', 'platformName'],
             },
-            $ref: '#/definitions/NotificationPlatformsResponseType',
+            {
+              type: 'object',
+              properties: {
+                platformName: {
+                  type: 'string',
+                  enum: ['Pushbullet'],
+                },
+                credentials: {
+                  type: 'object',
+                  properties: { token: { type: 'string' } },
+                  required: ['token'],
+                },
+              },
+              required: ['credentials', 'platformName'],
+            },
+            {
+              type: 'object',
+              properties: {
+                platformName: {
+                  type: 'string',
+                  enum: ['Pushover'],
+                },
+                credentials: {
+                  type: 'object',
+                  properties: { key: { type: 'string' } },
+                  required: ['key'],
+                },
+              },
+              required: ['credentials', 'platformName'],
+            },
+            {
+              type: 'object',
+              properties: {
+                platformName: {
+                  type: 'string',
+                  enum: ['Pushsafer'],
+                },
+                credentials: {
+                  type: 'object',
+                  properties: { key: { type: 'string' } },
+                  required: ['key'],
+                },
+              },
+              required: ['credentials', 'platformName'],
+            },
+            {
+              type: 'object',
+              properties: {
+                platformName: {
+                  type: 'string',
+                  enum: ['ntfy'],
+                },
+                credentials: {
+                  type: 'object',
+                  properties: {
+                    url: { type: 'string' },
+                    priority: { type: 'string' },
+                    topic: { type: 'string' },
+                  },
+                  required: ['priority', 'topic', 'url'],
+                },
+              },
+              required: ['credentials', 'platformName'],
+            },
+          ],
         },
-    }),
-    _UsersController.updateNotificationCredentials
+      },
+      $ref: '#/definitions/NotificationPlatformsResponseType',
+    },
+  }),
+  _UsersController.updateNotificationCredentials
 );
 router.put(
-    '/api/user/settings',
-    validatorHandler({
-        requestBodySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            type: 'object',
-            properties: {
-                name: { type: ['string', 'null'] },
-                publicReviews: { type: ['boolean', 'null'] },
-                sendNotificationWhenStatusChanges: {
-                    type: ['boolean', 'null'],
-                },
-                sendNotificationWhenReleaseDateChanges: {
-                    type: ['boolean', 'null'],
-                },
-                sendNotificationWhenNumberOfSeasonsChanges: {
-                    type: ['boolean', 'null'],
-                },
-                sendNotificationForReleases: { type: ['boolean', 'null'] },
-                sendNotificationForEpisodesReleases: {
-                    type: ['boolean', 'null'],
-                },
-                notificationPlatform: {
-                    enum: [
-                        'Pushbullet',
-                        'Pushover',
-                        'Pushsafer',
-                        'gotify',
-                        'ntfy',
-                        null,
-                    ],
-                    type: 'string',
-                },
-                hideOverviewForUnseenSeasons: { type: ['boolean', 'null'] },
-                hideEpisodeTitleForUnseenEpisodes: {
-                    type: ['boolean', 'null'],
-                },
-            },
+  '/api/user/settings',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        name: { type: ['string', 'null'] },
+        publicReviews: { type: ['boolean', 'null'] },
+        sendNotificationWhenStatusChanges: {
+          type: ['boolean', 'null'],
         },
-    }),
-    _UsersController.update
+        sendNotificationWhenReleaseDateChanges: {
+          type: ['boolean', 'null'],
+        },
+        sendNotificationWhenNumberOfSeasonsChanges: {
+          type: ['boolean', 'null'],
+        },
+        sendNotificationForReleases: { type: ['boolean', 'null'] },
+        sendNotificationForEpisodesReleases: {
+          type: ['boolean', 'null'],
+        },
+        notificationPlatform: {
+          enum: ['Pushbullet', 'Pushover', 'Pushsafer', 'gotify', 'ntfy', null],
+          type: 'string',
+        },
+        hideOverviewForUnseenSeasons: { type: ['boolean', 'null'] },
+        hideEpisodeTitleForUnseenEpisodes: {
+          type: ['boolean', 'null'],
+        },
+      },
+    },
+  }),
+  _UsersController.update
 );
 router.put(
-    '/api/user/password',
-    validatorHandler({
-        requestBodySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            type: 'object',
-            properties: {
-                currentPassword: { type: 'string' },
-                newPassword: { type: 'string' },
-            },
-            required: ['currentPassword', 'newPassword'],
-        },
-    }),
-    _UsersController.updatePassword
+  '/api/user/password',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        currentPassword: { type: 'string' },
+        newPassword: { type: 'string' },
+      },
+      required: ['currentPassword', 'newPassword'],
+    },
+  }),
+  _UsersController.updatePassword
 );
 router.get(
-    '/api/user/:userId',
-    validatorHandler({
-        pathParamsSchema: {
-            type: 'object',
-            properties: { userId: { type: 'number' } },
-            required: ['userId'],
-            nullable: false,
-        },
-    }),
-    _UsersController.getById
+  '/api/user/:userId',
+  validatorHandler({
+    pathParamsSchema: {
+      type: 'object',
+      properties: { userId: { type: 'number' } },
+      required: ['userId'],
+      nullable: false,
+    },
+  }),
+  _UsersController.getById
 );
 router.put(
-    '/api/watchlist',
-    validatorHandler({
-        requestQuerySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            type: 'object',
-            properties: { mediaItemId: { type: 'number' } },
-            required: ['mediaItemId'],
-        },
-    }),
-    _WatchlistController.add
+  '/api/watchlist',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: { mediaItemId: { type: 'number' } },
+      required: ['mediaItemId'],
+    },
+  }),
+  _WatchlistController.add
 );
 router.delete(
-    '/api/watchlist',
-    validatorHandler({
-        requestQuerySchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            type: 'object',
-            properties: { mediaItemId: { type: 'number' } },
-            required: ['mediaItemId'],
-        },
-    }),
-    _WatchlistController.delete
+  '/api/watchlist',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: { mediaItemId: { type: 'number' } },
+      required: ['mediaItemId'],
+    },
+  }),
+  _WatchlistController.delete
 );
 router.get(
-    '/api/import-trakttv/device-token',
-    validatorHandler({}),
-    _TraktTvImportController.traktTvGetUserCode
+  '/api/import-trakttv/device-token',
+  validatorHandler({}),
+  _TraktTvImportController.traktTvGetUserCode
 );
 router.get(
-    '/api/import-trakttv/state',
-    validatorHandler({}),
-    _TraktTvImportController.traktTvAuthenticated
+  '/api/import-trakttv/state',
+  validatorHandler({}),
+  _TraktTvImportController.traktTvAuthenticated
 );
 
 export { router as generatedRoutes };

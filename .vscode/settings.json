@@ -1,21 +1,21 @@
 {
-    "cSpell.words": [
-        "audiobooks",
-        "bonukai",
-        "buildx",
-        "checkin",
-        "corejs",
-        "daygrid",
-        "DOCKERHUB",
-        "flox",
-        "goodreads",
-        "languagedetector",
-        "lingui",
-        "ntfy",
-        "pmmmwh",
-        "scrobble",
-        "semibold",
-        "Trakt",
-        "trakttv"
-    ]
+  "cSpell.words": [
+    "audiobooks",
+    "bonukai",
+    "buildx",
+    "checkin",
+    "corejs",
+    "daygrid",
+    "DOCKERHUB",
+    "flox",
+    "goodreads",
+    "languagedetector",
+    "lingui",
+    "ntfy",
+    "pmmmwh",
+    "scrobble",
+    "semibold",
+    "Trakt",
+    "trakttv"
+  ]
 }
