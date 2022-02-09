@@ -32,7 +32,7 @@ docker run \
     -d \
     --name mediatracker \
     -p 7481:7481 \
-    -v .config/mediatracker/data:/storage \
+    -v /home/YOUR_HOME_DIRECTORY/.config/mediatracker/data:/storage \
     -v assets:/assets \
     -e TMDB_LANG=en \
     -e AUDIBLE_LANG=us \
@@ -49,7 +49,7 @@ services:
     ports:
       - 7481:7481
     volumes:
-      - .config/mediatracker/data:/storage
+      - /home/YOUR_HOME_DIRECTORY/.config/mediatracker/data:/storage
       - assetsVolume:/assets
     environment:
       LANG: en
