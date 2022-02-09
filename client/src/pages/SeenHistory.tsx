@@ -51,17 +51,13 @@ export const SeenHistoryPage: FunctionComponent = () => {
                     <Trans>No date</Trans>
                   )}
                   <div>
-                    {seenEntry.seasonId &&
-                      seenEntry.episodeId &&
-                      episodesMap[seenEntry.episodeId] && (
-                        <Trans>
-                          Episode{' '}
-                          {formatEpisodeNumber(
-                            episodesMap[seenEntry.episodeId]
-                          )}{' '}
-                          {episodesMap[seenEntry.episodeId].title}
-                        </Trans>
-                      )}
+                    {seenEntry.episodeId && episodesMap[seenEntry.episodeId] && (
+                      <Trans>
+                        Episode{' '}
+                        {formatEpisodeNumber(episodesMap[seenEntry.episodeId])}{' '}
+                        {episodesMap[seenEntry.episodeId].title}
+                      </Trans>
+                    )}
                   </div>
                 </li>
               ))}

@@ -3,6 +3,7 @@ import { t } from '@lingui/macro';
 import { useConfiguration } from 'src/api/configuration';
 import { CheckboxWithTitleAndDescription } from 'src/components/Checkbox';
 import { SettingsSegment } from 'src/components/SettingsSegment';
+import { AudibleLang, ServerLang, TmdbLang } from 'mediatracker-api';
 
 export const SettingsConfigurationPage: FunctionComponent = () => {
   const { configuration, update, isLoading } = useConfiguration();
@@ -26,7 +27,9 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
           <SettingsSegment title={t`Server language`}>
             <select
               value={configuration.serverLang || 'en'}
-              onChange={(e) => update({ serverLang: e.currentTarget.value })}
+              onChange={(e) =>
+                update({ serverLang: e.currentTarget.value as ServerLang })
+              }
             >
               <option value="en">English</option>
               <option value="de">German</option>
@@ -39,7 +42,9 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
           <SettingsSegment title={t`Audible language`}>
             <select
               value={configuration.audibleLang || 'US'}
-              onChange={(e) => update({ audibleLang: e.currentTarget.value })}
+              onChange={(e) =>
+                update({ audibleLang: e.currentTarget.value as AudibleLang })
+              }
             >
               <option value="AU">Australia (English)</option>
               <option value="CA">Canada (English)</option>
@@ -59,7 +64,9 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
           <SettingsSegment title={t`TMDB language`}>
             <select
               value={configuration.tmdbLang || 'en'}
-              onChange={(e) => update({ tmdbLang: e.currentTarget.value })}
+              onChange={(e) =>
+                update({ tmdbLang: e.currentTarget.value as TmdbLang })
+              }
             >
               {Object.entries(languagesCodes).map(([code, language]) => (
                 <option key={code} value={code}>
