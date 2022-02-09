@@ -4,3 +4,4 @@ server/build
 server/docs/dist
 server/coverage
 docs/dist
+translation.json
