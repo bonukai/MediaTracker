@@ -401,6 +401,7 @@ describe('mediaItemRepository', () => {
             },
         ]);
 
+        expect(res.newItems[0].lastTimeUpdated).toBeDefined();
         expect(updatedMediaItem).toMatchObject(searchResult[3]);
         expect(insertedMediaItem).toMatchObject(searchResult[2]);
     });

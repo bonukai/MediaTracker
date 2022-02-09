@@ -782,10 +782,14 @@ class MediaItemRepository extends repository<MediaItemBase>({
                 value.backdrop = backdropId ? `/img/${backdropId}` : null;
             });
 
-            const newItems = _.differenceBy(
+            const newItems: MediaItemBase[] = _.differenceBy(
                 searchResultWithId,
                 existingSearchResults,
                 'searchResultId'
+            );
+
+            newItems.forEach(
+                (item) => (item.lastTimeUpdated = new Date().getTime())
             );
 
             const newItemsId = await knex
