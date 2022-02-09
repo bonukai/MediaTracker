@@ -6,6 +6,8 @@ export const randomNumericId = () => Number(customAlphabet('123456789', 7)());
 
 export const clearDatabase = async () => {
     await knex.schema
+        .dropTableIfExists('listItem')
+        .dropTableIfExists('list')
         .dropTableIfExists('image')
         .dropTableIfExists('sessionKey')
         .dropTableIfExists('configuration')
