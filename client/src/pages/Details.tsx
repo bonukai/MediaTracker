@@ -472,23 +472,77 @@ export const DetailsPage: FunctionComponent = () => {
 
       {mediaItem.lastSeenAt > 0 && (
         <div className="mt-3">
-          <Trans>
-            Last seen at {new Date(mediaItem.lastSeenAt).toLocaleString()}
-          </Trans>
+          {isAudiobook(mediaItem) && (
+            <Trans>
+              Last listened at {new Date(mediaItem.lastSeenAt).toLocaleString()}
+            </Trans>
+          )}
+
+          {isBook(mediaItem) && (
+            <Trans>
+              Last read at {new Date(mediaItem.lastSeenAt).toLocaleString()}
+            </Trans>
+          )}
+
+          {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
+            <Trans>
+              Last seen at {new Date(mediaItem.lastSeenAt).toLocaleString()}
+            </Trans>
+          )}
+
+          {isVideoGame(mediaItem) && (
+            <Trans>
+              Last played at {new Date(mediaItem.lastSeenAt).toLocaleString()}
+            </Trans>
+          )}
         </div>
       )}
 
       {mediaItem.seenHistory?.length > 0 && (
         <div className="mt-3">
           <div>
-            <Plural
-              value={mediaItem.seenHistory.length}
-              one="Seen 1 time"
-              other="Seen # times"
-            />
+            {isAudiobook(mediaItem) && (
+              <Plural
+                value={mediaItem.seenHistory.length}
+                one="Listened 1 time"
+                other="Listened # times"
+              />
+            )}
+
+            {isBook(mediaItem) && (
+              <Plural
+                value={mediaItem.seenHistory.length}
+                one="Read 1 time"
+                other="Read # times"
+              />
+            )}
+
+            {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
+              <Plural
+                value={mediaItem.seenHistory.length}
+                one="Seen 1 time"
+                other="Seen # times"
+              />
+            )}
+
+            {isVideoGame(mediaItem) && (
+              <Plural
+                value={mediaItem.seenHistory.length}
+                one="Played 1 time"
+                other="Played # times"
+              />
+            )}
           </div>
           <Link to={`/seen-history/${mediaItem.id}`} className="underline">
-            <Trans>Seen history</Trans>
+            {isAudiobook(mediaItem) && <Trans>Listened history</Trans>}
+
+            {isBook(mediaItem) && <Trans>Read history</Trans>}
+
+            {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
+              <Trans>Seen history</Trans>
+            )}
+
+            {isVideoGame(mediaItem) && <Trans>Played history</Trans>}
           </Link>
         </div>
       )}

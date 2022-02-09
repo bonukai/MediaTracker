@@ -13,6 +13,8 @@ import {
   TvSeason,
 } from 'mediatracker-api';
 
+import { isAudiobook, isBook, isMovie, isTvShow, isVideoGame } from 'src/utils';
+
 export const SelectSeenDate: FunctionComponent<{
   mediaItem: MediaItemItemsResponse;
   season?: TvSeason;
@@ -33,6 +35,7 @@ export const SelectSeenDate: FunctionComponent<{
 
   return (
     <SelectSeenDateComponent
+      mediaItem={mediaItem}
       closeModal={closeModal}
       onSelected={async (args) => {
         closeModal();
@@ -49,16 +52,25 @@ export const SelectSeenDate: FunctionComponent<{
 };
 
 export const SelectSeenDateComponent: FunctionComponent<{
+  mediaItem: mediaItem;
   closeModal?: () => void;
   onSelected: (args?: { date?: Date; seenAt?: LastSeenAt }) => void;
 }> = (props) => {
-  const { onSelected, closeModal } = props;
+  const { mediaItem, onSelected, closeModal } = props;
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   return (
     <>
       <div className="my-3 text-3xl font-bold text-center">
-        <Trans>When did you see it?</Trans>
+        {isAudiobook(mediaItem) && <Trans>When did you listen it?</Trans>}
+
+        {isBook(mediaItem) && <Trans>When did you read it?</Trans>}
+
+        {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
+          <Trans>When did you see it?</Trans>
+        )}
+
+        {isVideoGame(mediaItem) && <Trans>When did you play it?</Trans>}
       </div>
       <div className="flex flex-col">
         <div
