@@ -283,11 +283,16 @@ export const updateMediaItem = async (
     oldMediaItem?: MediaItemBaseWithSeasons
 ) => {
     const title = oldMediaItem.title;
-    const date = chalk.blue(
-        new Date(oldMediaItem.lastTimeUpdated).toLocaleString()
-    );
 
-    console.log(t`Updating: ${title} (last updated at: ${date})`);
+    if (oldMediaItem.lastTimeUpdated) {
+        const date = chalk.blue(
+            new Date(oldMediaItem.lastTimeUpdated).toLocaleString()
+        );
+
+        console.log(t`Updating: ${title} (last updated at: ${date})`);
+    } else {
+        console.log(t`Updating: ${title}`);
+    }
 
     if (!oldMediaItem) {
         return;
