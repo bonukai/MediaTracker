@@ -4,7 +4,14 @@ import { Plural, Trans } from '@lingui/macro';
 
 import { TvEpisode } from 'mediatracker-api';
 import { useDetails } from 'src/api/details';
-import { formatEpisodeNumber } from 'src/utils';
+import {
+  formatEpisodeNumber,
+  isAudiobook,
+  isBook,
+  isMovie,
+  isTvShow,
+  isVideoGame,
+} from 'src/utils';
 
 export const SeenHistoryPage: FunctionComponent = () => {
   const { mediaItemId } = useParams();
@@ -31,11 +38,37 @@ export const SeenHistoryPage: FunctionComponent = () => {
       {mediaItem.seenHistory?.length > 0 && (
         <div className="mt-3">
           <div>
-            <Plural
-              value={mediaItem.seenHistory.length}
-              one="Seen 1 time"
-              other="Seen # times"
-            />
+            {isAudiobook(mediaItem) && (
+              <Plural
+                value={mediaItem.seenHistory.length}
+                one="Listened 1 time"
+                other="Listened # times"
+              />
+            )}
+
+            {isBook(mediaItem) && (
+              <Plural
+                value={mediaItem.seenHistory.length}
+                one="Read 1 time"
+                other="Read # times"
+              />
+            )}
+
+            {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
+              <Plural
+                value={mediaItem.seenHistory.length}
+                one="Seen 1 time"
+                other="Seen # times"
+              />
+            )}
+
+            {isVideoGame(mediaItem) && (
+              <Plural
+                value={mediaItem.seenHistory.length}
+                one="Played 1 time"
+                other="Played # times"
+              />
+            )}
           </div>
 
           <ul className="list-disc">
@@ -43,13 +76,41 @@ export const SeenHistoryPage: FunctionComponent = () => {
               .sort((a, b) => b.date - a.date)
               .map((seenEntry) => (
                 <li key={seenEntry.id}>
-                  {seenEntry.date > 0 ? (
-                    <Trans>
-                      Seen at {new Date(seenEntry.date).toLocaleString()}
-                    </Trans>
-                  ) : (
-                    <Trans>No date</Trans>
-                  )}
+                  {isAudiobook(mediaItem) &&
+                    (seenEntry.date > 0 ? (
+                      <Trans>
+                        Listened at {new Date(seenEntry.date).toLocaleString()}
+                      </Trans>
+                    ) : (
+                      <Trans>No date</Trans>
+                    ))}
+
+                  {isBook(mediaItem) &&
+                    (seenEntry.date > 0 ? (
+                      <Trans>
+                        Read at {new Date(seenEntry.date).toLocaleString()}
+                      </Trans>
+                    ) : (
+                      <Trans>No date</Trans>
+                    ))}
+
+                  {(isMovie(mediaItem) || isTvShow(mediaItem)) &&
+                    (seenEntry.date > 0 ? (
+                      <Trans>
+                        Seen at {new Date(seenEntry.date).toLocaleString()}
+                      </Trans>
+                    ) : (
+                      <Trans>No date</Trans>
+                    ))}
+
+                  {isVideoGame(mediaItem) &&
+                    (seenEntry.date > 0 ? (
+                      <Trans>
+                        Played at {new Date(seenEntry.date).toLocaleString()}
+                      </Trans>
+                    ) : (
+                      <Trans>No date</Trans>
+                    ))}
                   <div>
                     {seenEntry.episodeId && episodesMap[seenEntry.episodeId] && (
                       <Trans>

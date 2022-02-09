@@ -113,6 +113,7 @@ export const SelectLastSeenEpisode: FunctionComponent<{
             >
               {(closeModal) => (
                 <SelectSeenDateComponent
+                  mediaItem={tvShow}
                   closeModal={closeModal}
                   onSelected={async (args) => {
                     closeModal();
