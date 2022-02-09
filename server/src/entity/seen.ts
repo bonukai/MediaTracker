@@ -6,7 +6,7 @@ export type Seen = {
     progress?: number;
     duration?: number;
     startedAt?: number;
-    action?: string;
+    action?: 'watched';
     userId: number;
 };
 

@@ -747,6 +747,33 @@
                         }
                     },
                     {
+                        "name": "progress",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "duration",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "startedAt",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "nullable": true
+                        }
+                    },
+                    {
                         "name": "date",
                         "in": "query",
                         "required": false,
@@ -1537,12 +1564,25 @@
                     "mediaItemId": {
                         "type": "number"
                     },
-                    "seasonId": {
+                    "episodeId": {
                         "type": "number",
                         "nullable": true
                     },
-                    "episodeId": {
+                    "progress": {
                         "type": "number",
+                        "nullable": true
+                    },
+                    "duration": {
+                        "type": "number",
+                        "nullable": true
+                    },
+                    "startedAt": {
+                        "type": "number",
+                        "nullable": true
+                    },
+                    "action": {
+                        "type": "string",
+                        "enum": ["watched", null],
                         "nullable": true
                     },
                     "userId": {
@@ -1613,6 +1653,14 @@
                             },
                             "audibleId": {
                                 "type": "string",
+                                "nullable": true
+                            },
+                            "traktId": {
+                                "type": "number",
+                                "nullable": true
+                            },
+                            "goodreadsId": {
+                                "type": "number",
                                 "nullable": true
                             },
                             "id": {
@@ -1711,6 +1759,10 @@
                             },
                             "language": {
                                 "type": "string",
+                                "nullable": true
+                            },
+                            "numberOfPages": {
+                                "type": "number",
                                 "nullable": true
                             },
                             "needsDetails": {
@@ -1998,6 +2050,14 @@
                                 "type": "string",
                                 "nullable": true
                             },
+                            "traktId": {
+                                "type": "number",
+                                "nullable": true
+                            },
+                            "goodreadsId": {
+                                "type": "number",
+                                "nullable": true
+                            },
                             "id": {
                                 "type": "number",
                                 "nullable": true
@@ -2094,6 +2154,10 @@
                             },
                             "language": {
                                 "type": "string",
+                                "nullable": true
+                            },
+                            "numberOfPages": {
+                                "type": "number",
                                 "nullable": true
                             },
                             "needsDetails": {
