@@ -38,7 +38,7 @@
     "passport": "^0.5.2",
     "passport-local": "^1.0.0",
     "pg": "^8.7.3",
-    "sharp": "^0.30.0",
+    "sharp": "^0.30.1",
     "typescript-routes-to-openapi-server": "^0.0.7",
     "url-join": "^4.0.1"
   },
