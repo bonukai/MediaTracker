@@ -39,13 +39,14 @@ COPY --from=build /app/server/public public
 COPY --from=build /app/server/build build
 COPY --from=server-build-production /server/node_modules node_modules
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl "${HOSTNAME}:${PORT}"
+ENV PORT=7481
+EXPOSE $PORT
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl ${HOSTNAME}:${PORT}
 
 ENV DATABASE_PATH="/storage/data.db"
 ENV ASSETS_PATH="/assets"
 
-EXPOSE 7481
-EXPOSE $PORT
 
 ENV NODE_ENV=production
 ENV NODE_PATH=build
