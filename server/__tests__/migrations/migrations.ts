@@ -6,6 +6,7 @@ import { InitialData } from '__tests__/__utils__/data';
 import { Image } from 'src/entity/image';
 import { Configuration } from 'src/entity/configuration';
 import { MediaItemBase } from 'src/entity/mediaItem';
+import { Watchlist } from 'src/entity/watchlist';
 
 describe('migrations', () => {
     beforeAll(async () => {
@@ -166,6 +167,34 @@ describe('migrations', () => {
 
         await knex.migrate.up({
             name: `20220208230635_numberOfPages.${MIGRATIONS_EXTENSION}`,
+            directory: migrationsDirectory,
+        });
+    });
+
+    test('20220208234441_watchlist', async () => {
+        await knex.migrate.up({
+            name: `20220208234441_watchlist.${MIGRATIONS_EXTENSION}`,
+            directory: migrationsDirectory,
+        });
+
+        const watchlist: Watchlist = {
+            id: 777,
+            userId: 1,
+            mediaItemId: 1,
+            addedAt: new Date().getTime(),
+        };
+
+        await knex<Watchlist>('watchlist').insert(watchlist);
+        expect(
+            await knex('watchlist').where('id', watchlist.id).first()
+        ).toEqual(watchlist);
+
+        await knex.migrate.down({
+            directory: migrationsDirectory,
+        });
+
+        await knex.migrate.up({
+            name: `20220208234441_watchlist.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
     });

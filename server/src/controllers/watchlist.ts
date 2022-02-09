@@ -31,6 +31,7 @@ export class WatchlistController {
         await watchlistRepository.create({
             userId: userId,
             mediaItemId: mediaItemId,
+            addedAt: new Date().getTime(),
         });
 
         res.send();
