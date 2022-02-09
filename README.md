@@ -52,7 +52,7 @@ services:
       - /home/YOUR_HOME_DIRECTORY/.config/mediatracker/data:/storage
       - assetsVolume:/assets
     environment:
-      LANG: en
+      SERVER_LANG: en
       TMDB_LANG: en
       AUDIBLE_LANG: us
     image: bonukai/mediatracker
