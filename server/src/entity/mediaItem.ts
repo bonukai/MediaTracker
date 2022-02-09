@@ -138,6 +138,9 @@ export const mediaItemColumns = <const>[
     'authors',
     'narrators',
     'language',
+    'goodreadsId',
+    'numberOfPages',
+    'traktId',
 ];
 
 export const mediaItemPosterPath = (

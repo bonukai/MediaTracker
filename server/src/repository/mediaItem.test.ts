@@ -6,11 +6,7 @@ import {
 } from 'src/entity/mediaItem';
 import { imageRepository } from 'src/repository/image';
 import { mediaItemRepository } from 'src/repository/mediaItem';
-import {
-    clearDatabase,
-    randomNumericId,
-    runMigrations,
-} from '__tests__/__utils__/utils';
+import { clearDatabase, runMigrations } from '__tests__/__utils__/utils';
 
 describe('mediaItemRepository', () => {
     beforeAll(async () => {
@@ -441,6 +437,9 @@ const mediaItem: MediaItemBaseWithSeasons = {
     tmdbRating: null,
     tvmazeId: null,
     url: null,
+    goodreadsId: null,
+    numberOfPages: null,
+    traktId: null,
     seasons: [
         {
             id: 1,
@@ -558,6 +557,9 @@ const updatedMediaItem = {
     tmdbId: 123,
     tmdbRating: 8.1,
     tvmazeId: 456,
+    goodreadsId: 123,
+    numberOfPages: 761,
+    traktId: 3123,
     url: 'url',
     seasons: [
         mediaItem.seasons[0],
