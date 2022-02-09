@@ -9,6 +9,10 @@ export async function up(knex: Knex): Promise<void> {
         table.dropColumn('seasonId');
     });
 
+    await knex('seen').update({
+        action: 'watched',
+    });
+
     await knex('seen')
         .whereNotNull('episodeId')
         .update({
