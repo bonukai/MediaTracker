@@ -42,7 +42,11 @@ import { CancellationToken } from 'src/cancellationToken';
 
 let updateMetadataCancellationToken: CancellationToken;
 
-GlobalConfiguration.subscribe('tmdbLang', async (value) => {
+GlobalConfiguration.subscribe('tmdbLang', async (value, previousValue) => {
+    if (!previousValue) {
+        return;
+    }
+
     console.log(
         chalk.bold.green(
             t`TMDB language changed to: "${value}", updating metadata for all items`
@@ -83,8 +87,6 @@ GlobalConfiguration.subscribe('tmdbLang', async (value) => {
             audibleLang: AUDIBLE_LANG || 'US',
         });
     } else {
-        GlobalConfiguration.configuration = configuration;
-
         await configurationRepository.update({
             serverLang: SERVER_LANG || configuration.serverLang,
             tmdbLang: TMDB_LANG || configuration.tmdbLang,

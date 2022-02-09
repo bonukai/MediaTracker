@@ -20,7 +20,10 @@ export class GlobalConfiguration {
     static _configuration: Configuration = { enableRegistration: true };
     static listeners: {
         key: keyof Omit<Configuration, 'id'>;
-        handler: (value: unknown) => Promise<void> | void;
+        handler: (
+            value: unknown,
+            previousValue: unknown
+        ) => Promise<void> | void;
     }[] = [];
 
     public static update(value: Partial<Configuration>) {
@@ -35,7 +38,7 @@ export class GlobalConfiguration {
             this.listeners.forEach(async ({ key, handler }) => {
                 if (key in value && value[key] !== previousConfiguration[key]) {
                     try {
-                        await handler(value[key]);
+                        await handler(value[key], previousConfiguration[key]);
                     } catch (error) {
                         console.log(chalk.bold.red(error));
                     }
@@ -59,6 +62,11 @@ export class GlobalConfiguration {
         key: T,
         handler: (
             value: Configuration extends {
+                [K in T]?: infer A;
+            }
+                ? A
+                : never,
+            previousValue: Configuration extends {
                 [K in T]?: infer A;
             }
                 ? A
