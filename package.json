@@ -8,7 +8,7 @@
     },
     "scripts": {
         "postinstall": "npm install --prefix server && npm install --prefix client",
-        "build": "npm run lingui:compile --prefix server && npm run build-routes --prefix server && npm run build-server --prefix server && npm run build --prefix client",
+        "build": "npm run build --prefix server && npm run build --prefix client",
         "start": "npm run start --prefix server",
         "format": "prettier --list-different --write .",
         "lint": "npm run lint --prefix client && npm run lint --prefix server",
