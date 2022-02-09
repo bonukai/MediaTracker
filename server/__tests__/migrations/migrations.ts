@@ -10,6 +10,7 @@ import { Configuration } from 'src/entity/configuration';
 import { MediaItemBase } from 'src/entity/mediaItem';
 import { Watchlist } from 'src/entity/watchlist';
 import { Seen } from 'src/entity/seen';
+import { List, ListItem } from 'src/entity/list';
 
 describe('migrations', () => {
     beforeAll(async () => {
@@ -325,6 +326,38 @@ describe('migrations', () => {
 
         await knex.migrate.up({
             name: `20220209000937_seen.${MIGRATIONS_EXTENSION}`,
+            directory: migrationsDirectory,
+        });
+    });
+
+    test('20220209005700_list', async () => {
+        await knex.migrate.up({
+            name: `20220209005700_list.${MIGRATIONS_EXTENSION}`,
+            directory: migrationsDirectory,
+        });
+
+        await knex<List>('list').insert({
+            id: 1,
+            name: 'list',
+            createdAt: new Date().getTime(),
+            updatedAt: new Date().getTime(),
+            userId: 1,
+            description: 'description',
+            privacy: 'private',
+        });
+
+        await knex<ListItem>('listItem').insert({
+            addedAt: new Date().getTime(),
+            listId: 1,
+            mediaItemId: 1,
+        });
+
+        await knex.migrate.down({
+            directory: migrationsDirectory,
+        });
+
+        await knex.migrate.up({
+            name: `20220209005700_list.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
     });
