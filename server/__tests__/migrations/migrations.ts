@@ -378,7 +378,7 @@ describe('migrations', () => {
             directory: migrationsDirectory,
         });
 
-        const user: User = {
+        const user = {
             id: randomNumericId(),
             name: 'name',
             password: 'password',
@@ -396,6 +396,32 @@ describe('migrations', () => {
 
         await knex.migrate.up({
             name: `20220209014700_userPreferences.${MIGRATIONS_EXTENSION}`,
+            directory: migrationsDirectory,
+        });
+    });
+
+    test('20220209034100_userPreferences', async () => {
+        await knex.migrate.up({
+            name: `20220209034100_userPreferences.${MIGRATIONS_EXTENSION}`,
+            directory: migrationsDirectory,
+        });
+
+        const user = {
+            id: randomNumericId(),
+            name: 'name',
+            password: 'password',
+            hideEpisodeTitleForUnseenEpisodes: true,
+            hideOverviewForUnseenSeasons: true,
+        };
+
+        await knex('user').insert(user);
+
+        await knex.migrate.down({
+            directory: migrationsDirectory,
+        });
+
+        await knex.migrate.up({
+            name: `20220209034100_userPreferences.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
     });

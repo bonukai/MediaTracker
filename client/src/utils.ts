@@ -97,9 +97,9 @@ export const hasPoster = (mediaItem: MediaItemItemsResponse) => {
 };
 
 export const hideEpisodeTitle = (user: UserResponse) => {
-  return user.clientPreferences?.hideEpisodeTitleForUnseenEpisodes;
+  return user.hideEpisodeTitleForUnseenEpisodes;
 };
 
 export const hideSeasonOverview = (user: UserResponse) => {
-  return user.clientPreferences?.hideOverviewForUnseenSeasons;
+  return user.hideOverviewForUnseenSeasons;
 };

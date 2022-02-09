@@ -18,12 +18,10 @@ export const SettingsPreferencesPage: FunctionComponent = () => {
       <CheckboxWithTitleAndDescription
         title={t`Avoid episode spoilers`}
         description={t`Hide title of unseen episodes`}
-        checked={user.clientPreferences?.hideEpisodeTitleForUnseenEpisodes}
+        checked={user.hideEpisodeTitleForUnseenEpisodes}
         onChange={(value) =>
           updateUser({
-            clientPreferences: {
-              hideEpisodeTitleForUnseenEpisodes: value,
-            },
+            hideEpisodeTitleForUnseenEpisodes: value,
           })
         }
       />
@@ -31,12 +29,10 @@ export const SettingsPreferencesPage: FunctionComponent = () => {
       <CheckboxWithTitleAndDescription
         title={t`Avoid season spoilers`}
         description={t`Hide overview of unseen seasons`}
-        checked={user.clientPreferences?.hideOverviewForUnseenSeasons}
+        checked={user.hideOverviewForUnseenSeasons}
         onChange={(value) =>
           updateUser({
-            clientPreferences: {
-              hideOverviewForUnseenSeasons: value,
-            },
+            hideOverviewForUnseenSeasons: value,
           })
         }
       />

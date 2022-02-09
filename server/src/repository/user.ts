@@ -17,27 +17,10 @@ class UserRepository extends repository<User>({
         'sendNotificationWhenNumberOfSeasonsChanges',
         'sendNotificationWhenReleaseDateChanges',
         'sendNotificationWhenStatusChanges',
+        'hideEpisodeTitleForUnseenEpisodes',
+        'hideOverviewForUnseenSeasons',
     ],
 }) {
-    public deserialize(value: Partial<Record<keyof User, unknown>>): User {
-        return super.deserialize({
-            ...value,
-            clientPreferences:
-                typeof value.clientPreferences === 'string'
-                    ? JSON.parse(value.clientPreferences)
-                    : {},
-        });
-    }
-
-    public serialize(value: Partial<User>): unknown {
-        return super.serialize({
-            ...value,
-            clientPreferences: value.clientPreferences
-                ? JSON.stringify(value.clientPreferences)
-                : null,
-        } as unknown);
-    }
-
     public async find(where: Partial<User>): Promise<User[]> {
         const res = (await knex<User>(this.tableName)
             .where(where)

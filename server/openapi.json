@@ -1235,18 +1235,12 @@
                                         "type": "string",
                                         "nullable": true
                                     },
-                                    "clientPreferences": {
-                                        "type": "object",
-                                        "properties": {
-                                            "hideOverviewForUnseenSeasons": {
-                                                "type": "boolean",
-                                                "nullable": true
-                                            },
-                                            "hideEpisodeTitleForUnseenEpisodes": {
-                                                "type": "boolean",
-                                                "nullable": true
-                                            }
-                                        },
+                                    "hideOverviewForUnseenSeasons": {
+                                        "type": "boolean",
+                                        "nullable": true
+                                    },
+                                    "hideEpisodeTitleForUnseenEpisodes": {
+                                        "type": "boolean",
                                         "nullable": true
                                     }
                                 }
@@ -2497,31 +2491,16 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "clientPreferences": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ClientPreferences"
-                            }
-                        ],
+                    "hideOverviewForUnseenSeasons": {
+                        "type": "boolean",
+                        "nullable": true
+                    },
+                    "hideEpisodeTitleForUnseenEpisodes": {
+                        "type": "boolean",
                         "nullable": true
                     }
                 },
                 "required": ["id", "name"]
-            },
-            "ClientPreferences": {
-                "type": "object",
-                "properties": {
-                    "hideOverviewForUnseenSeasons": {
-                        "type": "boolean"
-                    },
-                    "hideEpisodeTitleForUnseenEpisodes": {
-                        "type": "boolean"
-                    }
-                },
-                "required": [
-                    "hideEpisodeTitleForUnseenEpisodes",
-                    "hideOverviewForUnseenSeasons"
-                ]
             },
             "RequestError": {
                 "type": "object",
