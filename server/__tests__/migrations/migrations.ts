@@ -11,6 +11,7 @@ import { MediaItemBase } from 'src/entity/mediaItem';
 import { Watchlist } from 'src/entity/watchlist';
 import { Seen } from 'src/entity/seen';
 import { List, ListItem } from 'src/entity/list';
+import { User } from 'src/entity/user';
 
 describe('migrations', () => {
     beforeAll(async () => {
@@ -189,6 +190,7 @@ describe('migrations', () => {
         };
 
         await knex<Watchlist>('watchlist').insert(watchlist);
+
         expect(
             await knex('watchlist').where('id', watchlist.id).first()
         ).toEqual(watchlist);
@@ -305,7 +307,7 @@ describe('migrations', () => {
                 .duration
         ).toEqual(mediaItem.runtime * 60 * 1000);
 
-        await knex<Seen>('seen').insert({
+        const seen = {
             id: randomNumericId(),
             userId: 1,
             mediaItemId: 1,
@@ -318,7 +320,9 @@ describe('migrations', () => {
             action: 'watched',
             date: new Date().getTime(),
             progress: 0.2,
-        });
+        };
+
+        await knex('seen').insert(seen);
 
         await knex.migrate.down({
             directory: migrationsDirectory,
@@ -336,7 +340,7 @@ describe('migrations', () => {
             directory: migrationsDirectory,
         });
 
-        await knex<List>('list').insert({
+        const list = {
             id: 1,
             name: 'list',
             createdAt: new Date().getTime(),
@@ -344,13 +348,16 @@ describe('migrations', () => {
             userId: 1,
             description: 'description',
             privacy: 'private',
-        });
+        };
 
-        await knex<ListItem>('listItem').insert({
+        const listItem = {
             addedAt: new Date().getTime(),
             listId: 1,
             mediaItemId: 1,
-        });
+        };
+
+        await knex('list').insert(list);
+        await knex('listItem').insert(listItem);
 
         await knex.migrate.down({
             directory: migrationsDirectory,
@@ -358,6 +365,37 @@ describe('migrations', () => {
 
         await knex.migrate.up({
             name: `20220209005700_list.${MIGRATIONS_EXTENSION}`,
+            directory: migrationsDirectory,
+        });
+
+        await knex('list').insert(list);
+        await knex('listItem').insert(listItem);
+    });
+
+    test('20220209014700_userPreferences', async () => {
+        await knex.migrate.up({
+            name: `20220209014700_userPreferences.${MIGRATIONS_EXTENSION}`,
+            directory: migrationsDirectory,
+        });
+
+        const user: User = {
+            id: randomNumericId(),
+            name: 'name',
+            password: 'password',
+            clientPreferences: {
+                hideEpisodeTitleForUnseenEpisodes: true,
+                hideOverviewForUnseenSeasons: true,
+            },
+        };
+
+        await knex('user').insert(user);
+
+        await knex.migrate.down({
+            directory: migrationsDirectory,
+        });
+
+        await knex.migrate.up({
+            name: `20220209014700_userPreferences.${MIGRATIONS_EXTENSION}`,
             directory: migrationsDirectory,
         });
     });

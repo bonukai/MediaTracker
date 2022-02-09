@@ -13,6 +13,12 @@ export type User = {
     sendNotificationForReleases?: boolean;
     sendNotificationForEpisodesReleases?: boolean;
     notificationPlatform?: keyof NotificationPlatformsCredentialsType;
+    clientPreferences?: ClientPreferences;
+};
+
+export type ClientPreferences = {
+    hideOverviewForUnseenSeasons: boolean;
+    hideEpisodeTitleForUnseenEpisodes: boolean;
 };
 
 export const userNonSensitiveColumns = <const>[
@@ -26,6 +32,7 @@ export const userNonSensitiveColumns = <const>[
     'sendNotificationForReleases',
     'sendNotificationForEpisodesReleases',
     'notificationPlatform',
+    'clientPreferences',
 ];
 
 export const userColumns = <const>[...userNonSensitiveColumns, 'password'];

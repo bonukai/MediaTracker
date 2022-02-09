@@ -806,6 +806,17 @@ router.put(
                     ],
                     type: 'string',
                 },
+                clientPreferences: {
+                    type: ['object', 'null'],
+                    properties: {
+                        hideOverviewForUnseenSeasons: {
+                            type: ['boolean', 'null'],
+                        },
+                        hideEpisodeTitleForUnseenEpisodes: {
+                            type: ['boolean', 'null'],
+                        },
+                    },
+                },
             },
         },
     }),

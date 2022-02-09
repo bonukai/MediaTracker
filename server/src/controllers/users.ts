@@ -1,6 +1,10 @@
 import _ from 'lodash';
 
-import { User, userNonSensitiveColumns } from 'src/entity/user';
+import {
+    ClientPreferences,
+    User,
+    userNonSensitiveColumns,
+} from 'src/entity/user';
 import { userRepository } from 'src/repository/user';
 import {
     Notifications,
@@ -196,15 +200,21 @@ export class UsersController {
         requestBody: Partial<
             Pick<
                 User,
-                Exclude<typeof userNonSensitiveColumns[number], 'id' | 'admin'>
-            >
+                Exclude<
+                    typeof userNonSensitiveColumns[number],
+                    'id' | 'admin' | 'clientPreferences'
+                >
+            > & { clientPreferences?: Partial<ClientPreferences> }
         >;
     }>(async (req, res) => {
+        const userId = Number(req.user);
         const newUserSettings = _.pick(req.body, userNonSensitiveColumns);
 
+        const user = await userRepository.findOne({ id: userId });
+
         await userRepository.update({
-            id: Number(req.user),
-            ...newUserSettings,
+            id: userId,
+            ..._.merge(user, newUserSettings),
         });
 
         res.sendStatus(200);

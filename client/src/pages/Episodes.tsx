@@ -10,19 +10,21 @@ import { Poster } from 'src/components/Poster';
 import { SelectSeenDate } from 'src/components/SelectSeenDate';
 import { BadgeRating } from 'src/components/StarRating';
 import { hasBeenReleased, useSelectedSeason } from 'src/mediaItem';
-import { canBeRated } from 'src/utils';
+import { canBeRated, hideEpisodeTitle, hideSeasonOverview } from 'src/utils';
 import {
   MediaItemDetailsResponse,
   MediaItemItemsResponse,
   TvEpisode,
   TvSeason,
 } from 'mediatracker-api';
+import { useUser } from 'src/api/user';
 
 const EpisodeComponent: FunctionComponent<{
   mediaItem: MediaItemItemsResponse;
   episode: TvEpisode;
 }> = (props) => {
   const { mediaItem, episode } = props;
+  const { user } = useUser();
 
   return (
     <div
@@ -39,7 +41,8 @@ const EpisodeComponent: FunctionComponent<{
           <span
             className={clsx({
               'bg-current hover:bg-transparent cursor-pointer transition-all':
-                !episode.seenHistory || episode.seenHistory?.length === 0,
+                hideEpisodeTitle(user) &&
+                (!episode.seenHistory || episode.seenHistory?.length === 0),
             })}
           >
             {episode.title}
@@ -184,6 +187,7 @@ const SeasonComponent: FunctionComponent<{
   season: TvSeason;
 }> = (props) => {
   const { mediaItem, season } = props;
+  const { user } = useUser();
 
   return (
     <>
@@ -231,7 +235,8 @@ const SeasonComponent: FunctionComponent<{
             <div
               className={clsx(
                 'inline py-1',
-                !season.seen &&
+                hideSeasonOverview(user) &&
+                  !season.seen &&
                   'bg-current hover:bg-transparent transition-all cursor-pointer'
               )}
             >

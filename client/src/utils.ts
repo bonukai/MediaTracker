@@ -4,6 +4,7 @@ import {
   MediaType,
   TvEpisode,
   TvSeason,
+  UserResponse,
 } from 'mediatracker-api';
 import { hasBeenReleased } from 'src/mediaItem';
 
@@ -93,4 +94,12 @@ export const isVideoGame = (mediaItem: MediaItemItemsResponse) => {
 
 export const hasPoster = (mediaItem: MediaItemItemsResponse) => {
   return mediaItem.posterSmall != undefined;
+};
+
+export const hideEpisodeTitle = (user: UserResponse) => {
+  return user.clientPreferences?.hideEpisodeTitleForUnseenEpisodes;
+};
+
+export const hideSeasonOverview = (user: UserResponse) => {
+  return user.clientPreferences?.hideOverviewForUnseenSeasons;
 };
