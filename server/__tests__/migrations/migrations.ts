@@ -85,7 +85,7 @@ describe('migrations', () => {
         });
 
         await knex<Configuration>('configuration').update({
-            audibleLang: 'US',
+            audibleLang: 'us',
             serverLang: 'en',
             tmdbLang: 'en',
         });

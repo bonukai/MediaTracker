@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { AudibleLang } from 'src/entity/configuration';
 
 import { MediaItemForProvider, ExternalIds } from 'src/entity/mediaItem';
 import { metadataProvider } from 'src/metadata/metadataProvider';
@@ -8,29 +9,28 @@ export class Audible extends metadataProvider({
     name: 'audible',
     mediaType: 'audiobook',
 }) {
-    private readonly languages: Record<string, string> = {
-        AU: 'au',
-        CA: 'ca',
-        DE: 'de',
-        FR: 'fr',
-        IN: 'in',
-        IT: 'it',
-        ES: 'es',
-        JP: 'co.jp',
-        UK: 'co.uk',
-        GB: 'co.uk',
-        US: 'com',
+    private readonly languages: Record<AudibleLang, string> = {
+        au: 'au',
+        ca: 'ca',
+        de: 'de',
+        fr: 'fr',
+        in: 'in',
+        it: 'it',
+        es: 'es',
+        jp: 'co.jp',
+        uk: 'co.uk',
+        us: 'com',
     };
 
     private domain() {
         const countryCode =
-            GlobalConfiguration.configuration.audibleLang?.toUpperCase();
+            GlobalConfiguration.configuration.audibleLang?.toLocaleLowerCase() as AudibleLang;
 
         if (countryCode in this.languages) {
             return this.languages[countryCode];
         }
 
-        return this.languages['US'];
+        return this.languages['us'];
     }
 
     private readonly queryParams = {

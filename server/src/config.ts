@@ -1,4 +1,11 @@
-import { AudibleLang, ServerLang, TmdbLang } from 'src/entity/configuration';
+import {
+    audibleLang,
+    AudibleLang,
+    serverLang,
+    ServerLang,
+    tmdbLang,
+    TmdbLang,
+} from 'src/entity/configuration';
 
 export const NODE_ENV = process.env['NODE_ENV'] as
     | 'development'
@@ -31,6 +38,21 @@ export const IGDB_CLIENT_SECRET = process.env.IGDB_CLIENT_SECRET;
 export const HOSTNAME = process.env.HOSTNAME || '127.0.0.1';
 export const PORT = Number(process.env.PORT) || 7481;
 
-export const SERVER_LANG = process.env.SERVER_LANG as ServerLang;
-export const TMDB_LANG = process.env.TMDB_LANG as TmdbLang;
-export const AUDIBLE_LANG = process.env.AUDIBLE_LANG as AudibleLang;
+export const SERVER_LANG = process.env.SERVER_LANG?.toLowerCase() as ServerLang;
+export const TMDB_LANG = process.env.TMDB_LANG?.toLowerCase() as TmdbLang;
+export const AUDIBLE_LANG =
+    process.env.AUDIBLE_LANG?.toLowerCase() as AudibleLang;
+
+export const validateConfig = () => {
+    if (SERVER_LANG && !serverLang.includes(SERVER_LANG)) {
+        throw new Error(`SERVER_LANG should be one of: ${serverLang}`);
+    }
+
+    if (TMDB_LANG && !tmdbLang.includes(TMDB_LANG)) {
+        throw new Error(`TMDB_LANG should be one of: ${tmdbLang}`);
+    }
+
+    if (AUDIBLE_LANG && !audibleLang.includes(AUDIBLE_LANG)) {
+        throw new Error(`AUDIBLE_LANG should be one of: ${audibleLang}`);
+    }
+};

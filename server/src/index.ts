@@ -20,6 +20,7 @@ import {
     SERVER_LANG,
     TMDB_LANG,
     AUDIBLE_LANG,
+    validateConfig,
 } from 'src/config';
 import { generatedRoutes } from 'src/generated/routes/routes';
 import { metadataProviders } from 'src/metadata/metadataProviders';
@@ -71,6 +72,13 @@ GlobalConfiguration.subscribe('tmdbLang', async (value, previousValue) => {
 });
 
 (async () => {
+    try {
+        validateConfig();
+    } catch (error) {
+        console.log(chalk.bold.red(error));
+        return;
+    }
+
     setupI18n(SERVER_LANG || 'en');
 
     const app = express();
@@ -84,7 +92,7 @@ GlobalConfiguration.subscribe('tmdbLang', async (value, previousValue) => {
             enableRegistration: true,
             serverLang: SERVER_LANG || 'en',
             tmdbLang: TMDB_LANG || 'en',
-            audibleLang: AUDIBLE_LANG || 'US',
+            audibleLang: AUDIBLE_LANG || 'us',
         });
     } else {
         await configurationRepository.update({

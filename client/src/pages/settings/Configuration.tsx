@@ -41,21 +41,21 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
 
           <SettingsSegment title={t`Audible language`}>
             <select
-              value={configuration.audibleLang || 'US'}
+              value={configuration.audibleLang?.toLowerCase() || 'us'}
               onChange={(e) =>
                 update({ audibleLang: e.currentTarget.value as AudibleLang })
               }
             >
-              <option value="AU">Australia (English)</option>
-              <option value="CA">Canada (English)</option>
-              <option value="DE">Deutschland (Deutsch)</option>
-              <option value="ES">España (Castellano)</option>
-              <option value="FR">France (Français)</option>
-              <option value="IN">India (English)</option>
-              <option value="IT">Italia (Italiano)</option>
-              <option value="UK">UK (English)</option>
-              <option value="US">United States (English)</option>
-              <option value="JP">日本 (日本語)</option>
+              <option value="au">Australia (English)</option>
+              <option value="ca">Canada (English)</option>
+              <option value="de">Deutschland (Deutsch)</option>
+              <option value="es">España (Castellano)</option>
+              <option value="fr">France (Français)</option>
+              <option value="in">India (English)</option>
+              <option value="it">Italia (Italiano)</option>
+              <option value="uk">UK (English)</option>
+              <option value="us">United States (English)</option>
+              <option value="jp">日本 (日本語)</option>
             </select>
           </SettingsSegment>
 
