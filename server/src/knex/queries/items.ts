@@ -187,7 +187,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           .andWhereNot('episode.releaseDate', null)
           .andWhere('episode.releaseDate', '<=', currentDateString)
           .andWhere((qb) => {
-            qb.where('seen.userId', '<>', userId).orWhere('seen.userId', null);
+            qb.where('seen.userId', '<>', userId).orWhereNull('seen.userId');
           })
           .groupBy('tvShowId')
           .as('firstUnwatchedEpisodeHelper'),
@@ -205,12 +205,19 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           )
     )
     // User rating
-    .leftJoin<UserRating>('userRating', (qb) =>
-      qb
-        .on('userRating.mediaItemId', 'mediaItem.id')
-        .andOnVal('userRating.userId', userId)
-        .andOnNull('userRating.episodeId')
-        .andOnNull('userRating.seasonId')
+    .leftJoin<UserRating>(
+      (qb) =>
+        qb
+          .from('userRating')
+          .whereNotNull('userRating.rating')
+          .orWhereNotNull('userRating.review')
+          .as('userRating'),
+      (qb) =>
+        qb
+          .on('userRating.mediaItemId', 'mediaItem.id')
+          .andOnVal('userRating.userId', userId)
+          .andOnNull('userRating.episodeId')
+          .andOnNull('userRating.seasonId')
     )
     // Poster
     .leftJoin<Image>(
@@ -302,7 +309,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
         });
       }
 
-      query.andWhereNot('watchlist.mediaItemId', null);
+      query.whereNotNull('watchlist.mediaItemId');
     }
 
     // nextEpisodesToWatchSubQuery
@@ -313,11 +320,11 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
     }
 
     if (onlyWithUserRating === true) {
-      query.andWhereNot('userRating.mediaItemId', null);
+      query.whereNotNull('userRating.rating');
     }
 
     if (onlyWithoutUserRating === true) {
-      query.andWhere('userRating.mediaItemId', null);
+      query.whereNull('userRating.rating');
     }
   }
 

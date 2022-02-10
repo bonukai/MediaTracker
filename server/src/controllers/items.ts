@@ -35,6 +35,7 @@ export class ItemsController {
       onlySeenItems,
       onlyOnWatchlist,
       onlyWithUserRating,
+      onlyWithoutUserRating,
     } = req.query;
 
     const orderBy = req.query.orderBy || 'title';
@@ -57,6 +58,7 @@ export class ItemsController {
       onlyWithNextEpisodesToWatch: onlyWithNextEpisodesToWatch,
       onlyWithNextAiring: onlyWithNextAiring,
       onlyWithUserRating: onlyWithUserRating,
+      onlyWithoutUserRating: onlyWithoutUserRating,
     });
 
     res.send(result);
@@ -83,6 +85,7 @@ export class ItemsController {
       onlySeenItems,
       onlyOnWatchlist,
       onlyWithUserRating,
+      onlyWithoutUserRating,
     } = req.query;
 
     const orderBy = req.query.orderBy || 'title';
@@ -99,6 +102,7 @@ export class ItemsController {
       onlyWithNextEpisodesToWatch: onlyWithNextEpisodesToWatch,
       onlyWithNextAiring: onlyWithNextAiring,
       onlyWithUserRating: onlyWithUserRating,
+      onlyWithoutUserRating: onlyWithoutUserRating,
     });
 
     res.send(result);
