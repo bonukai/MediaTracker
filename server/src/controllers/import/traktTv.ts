@@ -20,7 +20,7 @@ type ImportState =
   | 'importing'
   | 'imported';
 
-type Summary = {
+type TraktTvImportSummary = {
   watchlist: {
     movies: number;
     shows: number;
@@ -48,8 +48,8 @@ export class TraktTvImportController {
       deviceCode?: Awaited<
         ReturnType<typeof TraktTvExport.prototype.authenticate>
       >;
-      exportSummary?: Summary;
-      importSummary?: Summary;
+      exportSummary?: TraktTvImportSummary;
+      importSummary?: TraktTvImportSummary;
       progress?: number;
     }
   >();
@@ -325,8 +325,8 @@ export class TraktTvImportController {
     responseBody: {
       state: ImportState;
       progress?: number;
-      exportSummary?: Summary;
-      importSummary?: Summary;
+      exportSummary?: TraktTvImportSummary;
+      importSummary?: TraktTvImportSummary;
     };
   }>(async (req, res) => {
     const userId = Number(req.user);

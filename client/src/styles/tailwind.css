@@ -15,3 +15,13 @@
     @apply text-blue-800 btn dark:text-blue-300;
   }
 }
+
+@layer base {
+  .writing-mode-vertical {
+    writing-mode: vertical-lr;
+  }
+
+  .writing-mode-initial {
+    writing-mode: initial;
+  }
+}

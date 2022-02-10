@@ -73,6 +73,7 @@ import { SeenController } from '../../controllers/seen';
 import { TokenController } from '../../controllers/token';
 import { UsersController } from '../../controllers/users';
 import { WatchlistController } from '../../controllers/watchlist';
+import { GoodreadsImportController } from '../../controllers/import/goodreads';
 import { TraktTvImportController } from '../../controllers/import/traktTv';
 
 const _CalendarController = new CalendarController();
@@ -88,6 +89,7 @@ const _SeenController = new SeenController();
 const _TokenController = new TokenController();
 const _UsersController = new UsersController();
 const _WatchlistController = new WatchlistController();
+const _GoodreadsImportController = new GoodreadsImportController();
 const _TraktTvImportController = new TraktTvImportController();
 
 const router: Router = express.Router();
@@ -295,14 +297,10 @@ router.get(
     },
     requestQuerySchema: {
       $schema: 'http://json-schema.org/draft-07/schema#',
-      definitions: {
-        ImgSize: { enum: ['original', 'small'], type: 'string' },
-      },
+      definitions: { ImgSize: { enum: ['original', 'small'], type: 'string' } },
       type: 'object',
       properties: {
-        size: {
-          oneOf: [{ $ref: '#/definitions/ImgSize' }, { type: 'null' }],
-        },
+        size: { oneOf: [{ $ref: '#/definitions/ImgSize' }, { type: 'null' }] },
       },
     },
   }),
@@ -333,9 +331,7 @@ router.get(
               properties: {
                 orderBy: {
                   oneOf: [
-                    {
-                      $ref: '#/definitions/MediaItemOrderBy',
-                    },
+                    { $ref: '#/definitions/MediaItemOrderBy' },
                     { type: 'null' },
                   ],
                 },
@@ -348,18 +344,10 @@ router.get(
                 filter: { type: ['string', 'null'] },
                 onlyOnWatchlist: { type: ['boolean', 'null'] },
                 onlySeenItems: { type: ['boolean', 'null'] },
-                onlyWithNextEpisodesToWatch: {
-                  type: ['boolean', 'null'],
-                },
-                onlyWithNextAiring: {
-                  type: ['boolean', 'null'],
-                },
-                onlyWithUserRating: {
-                  type: ['boolean', 'null'],
-                },
-                onlyWithoutUserRating: {
-                  type: ['boolean', 'null'],
-                },
+                onlyWithNextEpisodesToWatch: { type: ['boolean', 'null'] },
+                onlyWithNextAiring: { type: ['boolean', 'null'] },
+                onlyWithUserRating: { type: ['boolean', 'null'] },
+                onlyWithoutUserRating: { type: ['boolean', 'null'] },
                 page: { type: ['number', 'null'] },
               },
             },
@@ -649,10 +637,7 @@ router.put(
             {
               type: 'object',
               properties: {
-                platformName: {
-                  type: 'string',
-                  enum: ['gotify'],
-                },
+                platformName: { type: 'string', enum: ['gotify'] },
                 credentials: {
                   type: 'object',
                   properties: {
@@ -668,10 +653,7 @@ router.put(
             {
               type: 'object',
               properties: {
-                platformName: {
-                  type: 'string',
-                  enum: ['Pushbullet'],
-                },
+                platformName: { type: 'string', enum: ['Pushbullet'] },
                 credentials: {
                   type: 'object',
                   properties: { token: { type: 'string' } },
@@ -683,10 +665,7 @@ router.put(
             {
               type: 'object',
               properties: {
-                platformName: {
-                  type: 'string',
-                  enum: ['Pushover'],
-                },
+                platformName: { type: 'string', enum: ['Pushover'] },
                 credentials: {
                   type: 'object',
                   properties: { key: { type: 'string' } },
@@ -698,10 +677,7 @@ router.put(
             {
               type: 'object',
               properties: {
-                platformName: {
-                  type: 'string',
-                  enum: ['Pushsafer'],
-                },
+                platformName: { type: 'string', enum: ['Pushsafer'] },
                 credentials: {
                   type: 'object',
                   properties: { key: { type: 'string' } },
@@ -713,10 +689,7 @@ router.put(
             {
               type: 'object',
               properties: {
-                platformName: {
-                  type: 'string',
-                  enum: ['ntfy'],
-                },
+                platformName: { type: 'string', enum: ['ntfy'] },
                 credentials: {
                   type: 'object',
                   properties: {
@@ -746,27 +719,19 @@ router.put(
       properties: {
         name: { type: ['string', 'null'] },
         publicReviews: { type: ['boolean', 'null'] },
-        sendNotificationWhenStatusChanges: {
-          type: ['boolean', 'null'],
-        },
-        sendNotificationWhenReleaseDateChanges: {
-          type: ['boolean', 'null'],
-        },
+        sendNotificationWhenStatusChanges: { type: ['boolean', 'null'] },
+        sendNotificationWhenReleaseDateChanges: { type: ['boolean', 'null'] },
         sendNotificationWhenNumberOfSeasonsChanges: {
           type: ['boolean', 'null'],
         },
         sendNotificationForReleases: { type: ['boolean', 'null'] },
-        sendNotificationForEpisodesReleases: {
-          type: ['boolean', 'null'],
-        },
+        sendNotificationForEpisodesReleases: { type: ['boolean', 'null'] },
         notificationPlatform: {
           enum: ['Pushbullet', 'Pushover', 'Pushsafer', 'gotify', 'ntfy', null],
           type: 'string',
         },
         hideOverviewForUnseenSeasons: { type: ['boolean', 'null'] },
-        hideEpisodeTitleForUnseenEpisodes: {
-          type: ['boolean', 'null'],
-        },
+        hideEpisodeTitleForUnseenEpisodes: { type: ['boolean', 'null'] },
       },
     },
   }),
@@ -822,6 +787,18 @@ router.delete(
     },
   }),
   _WatchlistController.delete
+);
+router.post(
+  '/api/import-goodreads',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: { url: { type: 'string' } },
+      required: ['url'],
+    },
+  }),
+  _GoodreadsImportController.import
 );
 router.get(
   '/api/import-trakttv/device-token',

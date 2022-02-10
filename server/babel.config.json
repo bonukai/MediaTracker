@@ -21,6 +21,12 @@
         }
       }
     ],
-    "macros"
+    "macros",
+    [
+      "babel-plugin-inline-import",
+      {
+        "extensions": [".xml"]
+      }
+    ]
   ]
 }
