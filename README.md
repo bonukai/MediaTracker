@@ -107,12 +107,14 @@ docker run -p 7481:7481 mediatracker
 - watchlist
 - docker image
 - import from [Trakt](https://trakt.tv)
+- import from [goodreads](https://www.goodreads.com)
 
 # Import
 
-| Service                   | Imported data                       |
-| ------------------------- | ----------------------------------- |
-| [Trakt](https://trakt.tv) | Watchlist, watched history, ratings |
+| Service                                | Imported data                                  |
+| -------------------------------------- | ---------------------------------------------- |
+| [Trakt](https://trakt.tv)              | Watchlist, watched history, ratings            |
+| [goodreads](https://www.goodreads.com) | Read, Currently Reading, Want to Read, ratings |
 
 # Metadata providers
 
