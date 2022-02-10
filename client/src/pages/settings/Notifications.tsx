@@ -27,7 +27,7 @@ export const SettingsNotificationsPage: FunctionComponent = () => {
       />
       <CheckboxWithTitleAndDescription
         title={t`Send notification when status changes`}
-        description={t`Receive notification for all media items on your watchlist, when it's status changes`}
+        description={t`Receive notification for all media items on your watchlist, when its status changes`}
         checked={user.sendNotificationWhenStatusChanges}
         onChange={(value) =>
           updateUser({ sendNotificationWhenStatusChanges: value })
@@ -35,7 +35,7 @@ export const SettingsNotificationsPage: FunctionComponent = () => {
       />
       <CheckboxWithTitleAndDescription
         title={t`Send notification when release date changes`}
-        description={t`Receive notification for all media items on your watchlist, when it's release date changes`}
+        description={t`Receive notification for all media items on your watchlist, when its release date changes`}
         checked={user.sendNotificationWhenReleaseDateChanges}
         onChange={(value) =>
           updateUser({ sendNotificationWhenReleaseDateChanges: value })
@@ -43,7 +43,7 @@ export const SettingsNotificationsPage: FunctionComponent = () => {
       />
       <CheckboxWithTitleAndDescription
         title={t`Send notification when number of seasons changes`}
-        description={t`Receive notification for all tv shows on your watchlist, when it's number of seasons changes`}
+        description={t`Receive notification for all tv shows on your watchlist, when its number of seasons changes`}
         checked={user.sendNotificationWhenNumberOfSeasonsChanges}
         onChange={(value) =>
           updateUser({ sendNotificationWhenNumberOfSeasonsChanges: value })
