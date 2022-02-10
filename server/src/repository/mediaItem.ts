@@ -544,6 +544,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
           .orWhereNotNull('userRating.id')
       )
       .whereNot('source', 'user')
+      .whereNot('source', 'goodreads')
       .groupBy('mediaItem.id');
   }
 
