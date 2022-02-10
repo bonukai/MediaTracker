@@ -59,7 +59,10 @@ const config: Configuration = {
       extensions: ['js', 'jsx', 'ts', 'tsx'],
     }),
     new CopyPlugin({
-      patterns: [{ from: 'public/logo', to: 'logo' }],
+      patterns: [
+        { from: 'public/logo', to: 'logo' },
+        { from: 'public/image', to: 'image' },
+      ],
     }),
     // new BundleAnalyzerPlugin(),
   ],
