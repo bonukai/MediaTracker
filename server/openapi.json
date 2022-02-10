@@ -19,7 +19,9 @@
   "paths": {
     "/api/calendar": {
       "get": {
-        "tags": ["Calendar"],
+        "tags": [
+          "Calendar"
+        ],
         "operationId": "get",
         "parameters": [
           {
@@ -62,7 +64,10 @@
                       }
                     }
                   },
-                  "required": ["episodes", "items"]
+                  "required": [
+                    "episodes",
+                    "items"
+                  ]
                 }
               }
             }
@@ -72,7 +77,9 @@
     },
     "/api/configuration": {
       "patch": {
-        "tags": ["Configuration"],
+        "tags": [
+          "Configuration"
+        ],
         "operationId": "update",
         "requestBody": {
           "required": true,
@@ -126,7 +133,9 @@
         }
       },
       "get": {
-        "tags": ["Configuration"],
+        "tags": [
+          "Configuration"
+        ],
         "operationId": "get",
         "responses": {
           "200": {
@@ -166,7 +175,9 @@
                           "nullable": true
                         }
                       },
-                      "required": ["enableRegistration"]
+                      "required": [
+                        "enableRegistration"
+                      ]
                     },
                     {
                       "type": "object",
@@ -178,7 +189,10 @@
                           "type": "boolean"
                         }
                       },
-                      "required": ["demo", "noUsers"]
+                      "required": [
+                        "demo",
+                        "noUsers"
+                      ]
                     }
                   ]
                 }
@@ -190,7 +204,9 @@
     },
     "/img/{id}": {
       "get": {
-        "tags": ["Img"],
+        "tags": [
+          "Img"
+        ],
         "operationId": "GetImage",
         "parameters": [
           {
@@ -231,7 +247,9 @@
     },
     "/api/details/{mediaItemId}": {
       "get": {
-        "tags": ["MediaItem"],
+        "tags": [
+          "MediaItem"
+        ],
         "operationId": "get",
         "parameters": [
           {
@@ -260,7 +278,9 @@
     "/api/items/paginated": {
       "get": {
         "description": "Get items",
-        "tags": ["Items"],
+        "tags": [
+          "Items"
+        ],
         "operationId": "paginated",
         "parameters": [
           {
@@ -423,7 +443,9 @@
     "/api/items": {
       "get": {
         "description": "Get items",
-        "tags": ["Items"],
+        "tags": [
+          "Items"
+        ],
         "operationId": "get",
         "parameters": [
           {
@@ -548,7 +570,9 @@
     },
     "/api/metadata-provider-credentials": {
       "get": {
-        "tags": ["MetadataProviderCredentials"],
+        "tags": [
+          "MetadataProviderCredentials"
+        ],
         "operationId": "get",
         "responses": {
           "200": {
@@ -568,7 +592,10 @@
                           "type": "string"
                         }
                       },
-                      "required": ["CLIENT_ID", "CLIENT_SECRET"],
+                      "required": [
+                        "CLIENT_ID",
+                        "CLIENT_SECRET"
+                      ],
                       "nullable": true
                     }
                   }
@@ -579,7 +606,9 @@
         }
       },
       "put": {
-        "tags": ["MetadataProviderCredentials"],
+        "tags": [
+          "MetadataProviderCredentials"
+        ],
         "operationId": "set",
         "requestBody": {
           "required": true,
@@ -605,7 +634,9 @@
     },
     "/api/rating": {
       "put": {
-        "tags": ["Rating"],
+        "tags": [
+          "Rating"
+        ],
         "operationId": "add",
         "requestBody": {
           "required": true,
@@ -634,7 +665,9 @@
                     "nullable": true
                   }
                 },
-                "required": ["mediaItemId"]
+                "required": [
+                  "mediaItemId"
+                ]
               }
             }
           }
@@ -653,7 +686,9 @@
     },
     "/api/search": {
       "get": {
-        "tags": ["Search"],
+        "tags": [
+          "Search"
+        ],
         "operationId": "search",
         "parameters": [
           {
@@ -692,7 +727,9 @@
     },
     "/api/seen": {
       "put": {
-        "tags": ["Seen"],
+        "tags": [
+          "Seen"
+        ],
         "operationId": "add",
         "parameters": [
           {
@@ -794,7 +831,9 @@
     },
     "/api/seen/{seenId}": {
       "delete": {
-        "tags": ["Seen"],
+        "tags": [
+          "Seen"
+        ],
         "operationId": "deleteById",
         "parameters": [
           {
@@ -820,7 +859,9 @@
     },
     "/api/seen/": {
       "delete": {
-        "tags": ["Seen"],
+        "tags": [
+          "Seen"
+        ],
         "operationId": "delete",
         "parameters": [
           {
@@ -865,7 +906,9 @@
     "/api/tokens": {
       "put": {
         "description": "Add token",
-        "tags": ["Token"],
+        "tags": [
+          "Token"
+        ],
         "operationId": "add",
         "parameters": [
           {
@@ -889,7 +932,9 @@
                       "type": "string"
                     }
                   },
-                  "required": ["token"]
+                  "required": [
+                    "token"
+                  ]
                 }
               }
             }
@@ -898,7 +943,9 @@
       },
       "delete": {
         "description": "Delete token",
-        "tags": ["Token"],
+        "tags": [
+          "Token"
+        ],
         "operationId": "delete",
         "parameters": [
           {
@@ -923,7 +970,9 @@
       },
       "get": {
         "description": "Get all tokens",
-        "tags": ["Token"],
+        "tags": [
+          "Token"
+        ],
         "operationId": "get",
         "responses": {
           "200": {
@@ -944,7 +993,9 @@
     },
     "/api/user": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "operationId": "get",
         "responses": {
           "200": {
@@ -967,7 +1018,9 @@
     },
     "/api/user/logout": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "operationId": "logout",
         "responses": {
           "200": {
@@ -983,7 +1036,9 @@
     },
     "/api/user/login": {
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "operationId": "login",
         "requestBody": {
           "required": true,
@@ -999,7 +1054,10 @@
                     "type": "string"
                   }
                 },
-                "required": ["password", "username"]
+                "required": [
+                  "password",
+                  "username"
+                ]
               }
             }
           }
@@ -1018,7 +1076,9 @@
     },
     "/api/user/register": {
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "operationId": "register",
         "requestBody": {
           "required": true,
@@ -1037,7 +1097,11 @@
                     "type": "string"
                   }
                 },
-                "required": ["confirmPassword", "password", "username"]
+                "required": [
+                  "confirmPassword",
+                  "password",
+                  "username"
+                ]
               }
             }
           }
@@ -1065,7 +1129,9 @@
     },
     "/api/user/notification-credentials": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "operationId": "getNotificationCredentials",
         "responses": {
           "200": {
@@ -1088,7 +1154,11 @@
                           "type": "string"
                         }
                       },
-                      "required": ["priority", "token", "url"],
+                      "required": [
+                        "priority",
+                        "token",
+                        "url"
+                      ],
                       "nullable": true
                     },
                     "Pushbullet": {
@@ -1098,7 +1168,9 @@
                           "type": "string"
                         }
                       },
-                      "required": ["token"],
+                      "required": [
+                        "token"
+                      ],
                       "nullable": true
                     },
                     "Pushover": {
@@ -1108,7 +1180,9 @@
                           "type": "string"
                         }
                       },
-                      "required": ["key"],
+                      "required": [
+                        "key"
+                      ],
                       "nullable": true
                     },
                     "Pushsafer": {
@@ -1118,7 +1192,9 @@
                           "type": "string"
                         }
                       },
-                      "required": ["key"],
+                      "required": [
+                        "key"
+                      ],
                       "nullable": true
                     },
                     "ntfy": {
@@ -1134,7 +1210,11 @@
                           "type": "string"
                         }
                       },
-                      "required": ["priority", "topic", "url"],
+                      "required": [
+                        "priority",
+                        "topic",
+                        "url"
+                      ],
                       "nullable": true
                     }
                   }
@@ -1145,7 +1225,9 @@
         }
       },
       "put": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "operationId": "updateNotificationCredentials",
         "requestBody": {
           "required": true,
@@ -1171,7 +1253,9 @@
     },
     "/api/user/settings": {
       "put": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "operationId": "update",
         "requestBody": {
           "required": true,
@@ -1247,7 +1331,9 @@
     },
     "/api/user/password": {
       "put": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "operationId": "updatePassword",
         "requestBody": {
           "required": true,
@@ -1263,7 +1349,10 @@
                     "type": "string"
                   }
                 },
-                "required": ["currentPassword", "newPassword"]
+                "required": [
+                  "currentPassword",
+                  "newPassword"
+                ]
               }
             }
           }
@@ -1282,7 +1371,9 @@
     },
     "/api/user/{userId}": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "operationId": "getById",
         "parameters": [
           {
@@ -1309,7 +1400,10 @@
                       "type": "string"
                     }
                   },
-                  "required": ["id", "name"],
+                  "required": [
+                    "id",
+                    "name"
+                  ],
                   "nullable": true
                 }
               }
@@ -1320,7 +1414,9 @@
     },
     "/api/watchlist": {
       "put": {
-        "tags": ["Watchlist"],
+        "tags": [
+          "Watchlist"
+        ],
         "operationId": "add",
         "parameters": [
           {
@@ -1344,7 +1440,9 @@
         }
       },
       "delete": {
-        "tags": ["Watchlist"],
+        "tags": [
+          "Watchlist"
+        ],
         "operationId": "delete",
         "parameters": [
           {
@@ -1368,9 +1466,46 @@
         }
       }
     },
+    "/api/import-goodreads": {
+      "post": {
+        "operationId": "import",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoodreadsImport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/import-trakttv/device-token": {
       "get": {
-        "tags": ["TraktTvImport"],
+        "tags": [
+          "TraktTvImport"
+        ],
         "operationId": "deviceToken",
         "responses": {
           "200": {
@@ -1387,7 +1522,10 @@
                       "type": "string"
                     }
                   },
-                  "required": ["userCode", "verificationUrl"]
+                  "required": [
+                    "userCode",
+                    "verificationUrl"
+                  ]
                 }
               }
             }
@@ -1397,7 +1535,9 @@
     },
     "/api/import-trakttv/state": {
       "get": {
-        "tags": ["TraktTvImport"],
+        "tags": [
+          "TraktTvImport"
+        ],
         "operationId": "state",
         "responses": {
           "200": {
@@ -1417,7 +1557,7 @@
                     "exportSummary": {
                       "allOf": [
                         {
-                          "$ref": "#/components/schemas/Summary"
+                          "$ref": "#/components/schemas/TraktTvImportSummary"
                         }
                       ],
                       "nullable": true
@@ -1425,13 +1565,15 @@
                     "importSummary": {
                       "allOf": [
                         {
-                          "$ref": "#/components/schemas/Summary"
+                          "$ref": "#/components/schemas/TraktTvImportSummary"
                         }
                       ],
                       "nullable": true
                     }
                   },
-                  "required": ["state"]
+                  "required": [
+                    "state"
+                  ]
                 }
               }
             }
@@ -1574,15 +1716,24 @@
             "nullable": true
           },
           "action": {
+            "enum": [
+              "progress",
+              "started",
+              "watched",
+              null
+            ],
             "type": "string",
-            "enum": ["watched", null],
             "nullable": true
           },
           "userId": {
             "type": "number"
           }
         },
-        "required": ["date", "mediaItemId", "userId"]
+        "required": [
+          "date",
+          "mediaItemId",
+          "userId"
+        ]
       },
       "UserRating": {
         "type": "object",
@@ -1617,7 +1768,11 @@
             "nullable": true
           }
         },
-        "required": ["date", "mediaItemId", "userId"]
+        "required": [
+          "date",
+          "mediaItemId",
+          "userId"
+        ]
       },
       "MediaItemItemsResponse": {
         "allOf": [
@@ -1763,7 +1918,11 @@
                 "nullable": true
               }
             },
-            "required": ["mediaType", "source", "title"]
+            "required": [
+              "mediaType",
+              "source",
+              "title"
+            ]
           },
           {
             "type": "object",
@@ -1844,7 +2003,13 @@
         ]
       },
       "MediaType": {
-        "enum": ["audiobook", "book", "movie", "tv", "video_game"],
+        "enum": [
+          "audiobook",
+          "book",
+          "movie",
+          "tv",
+          "video_game"
+        ],
         "type": "string"
       },
       "TmdbLang": {
@@ -1992,15 +2157,33 @@
         "type": "string"
       },
       "AudibleLang": {
-        "enum": ["au", "ca", "de", "es", "fr", "in", "it", "jp", "uk", "us"],
+        "enum": [
+          "au",
+          "ca",
+          "de",
+          "es",
+          "fr",
+          "in",
+          "it",
+          "jp",
+          "uk",
+          "us"
+        ],
         "type": "string"
       },
       "ServerLang": {
-        "enum": ["de", "en", "es"],
+        "enum": [
+          "de",
+          "en",
+          "es"
+        ],
         "type": "string"
       },
       "ImgSize": {
-        "enum": ["original", "small"],
+        "enum": [
+          "original",
+          "small"
+        ],
         "type": "string"
       },
       "MediaItemDetailsResponse": {
@@ -2154,7 +2337,11 @@
                 "nullable": true
               }
             },
-            "required": ["mediaType", "source", "title"]
+            "required": [
+              "mediaType",
+              "source",
+              "title"
+            ]
           },
           {
             "type": "object",
@@ -2302,7 +2489,11 @@
             "type": "boolean"
           }
         },
-        "required": ["isSpecialSeason", "seasonNumber", "title"]
+        "required": [
+          "isSpecialSeason",
+          "seasonNumber",
+          "title"
+        ]
       },
       "GetItemsRequest": {
         "allOf": [
@@ -2387,7 +2578,10 @@
         "type": "string"
       },
       "SortOrder": {
-        "enum": ["asc", "desc"],
+        "enum": [
+          "asc",
+          "desc"
+        ],
         "type": "string"
       },
       "MetadataProviderCredentialsRequestType": {
@@ -2395,7 +2589,9 @@
         "properties": {
           "name": {
             "type": "string",
-            "enum": ["IGDB"]
+            "enum": [
+              "IGDB"
+            ]
           },
           "credentials": {
             "type": "object",
@@ -2407,13 +2603,24 @@
                 "type": "string"
               }
             },
-            "required": ["CLIENT_ID", "CLIENT_SECRET"]
+            "required": [
+              "CLIENT_ID",
+              "CLIENT_SECRET"
+            ]
           }
         },
-        "required": ["credentials", "name"]
+        "required": [
+          "credentials",
+          "name"
+        ]
       },
       "LastSeenAt": {
-        "enum": ["custom_date", "now", "release_date", "unknown"],
+        "enum": [
+          "custom_date",
+          "now",
+          "release_date",
+          "unknown"
+        ],
         "type": "string"
       },
       "UserResponse": {
@@ -2474,7 +2681,10 @@
             "nullable": true
           }
         },
-        "required": ["id", "name"]
+        "required": [
+          "id",
+          "name"
+        ]
       },
       "RequestError": {
         "type": "object",
@@ -2484,10 +2694,15 @@
           },
           "MediaTrackerError": {
             "type": "boolean",
-            "enum": [true]
+            "enum": [
+              true
+            ]
           }
         },
-        "required": ["MediaTrackerError", "errorMessage"]
+        "required": [
+          "MediaTrackerError",
+          "errorMessage"
+        ]
       },
       "NotificationPlatformsResponseType": {
         "oneOf": [
@@ -2496,7 +2711,9 @@
             "properties": {
               "platformName": {
                 "type": "string",
-                "enum": ["gotify"]
+                "enum": [
+                  "gotify"
+                ]
               },
               "credentials": {
                 "type": "object",
@@ -2511,17 +2728,26 @@
                     "type": "string"
                   }
                 },
-                "required": ["priority", "token", "url"]
+                "required": [
+                  "priority",
+                  "token",
+                  "url"
+                ]
               }
             },
-            "required": ["credentials", "platformName"]
+            "required": [
+              "credentials",
+              "platformName"
+            ]
           },
           {
             "type": "object",
             "properties": {
               "platformName": {
                 "type": "string",
-                "enum": ["Pushbullet"]
+                "enum": [
+                  "Pushbullet"
+                ]
               },
               "credentials": {
                 "type": "object",
@@ -2530,17 +2756,24 @@
                     "type": "string"
                   }
                 },
-                "required": ["token"]
+                "required": [
+                  "token"
+                ]
               }
             },
-            "required": ["credentials", "platformName"]
+            "required": [
+              "credentials",
+              "platformName"
+            ]
           },
           {
             "type": "object",
             "properties": {
               "platformName": {
                 "type": "string",
-                "enum": ["Pushover"]
+                "enum": [
+                  "Pushover"
+                ]
               },
               "credentials": {
                 "type": "object",
@@ -2549,17 +2782,24 @@
                     "type": "string"
                   }
                 },
-                "required": ["key"]
+                "required": [
+                  "key"
+                ]
               }
             },
-            "required": ["credentials", "platformName"]
+            "required": [
+              "credentials",
+              "platformName"
+            ]
           },
           {
             "type": "object",
             "properties": {
               "platformName": {
                 "type": "string",
-                "enum": ["Pushsafer"]
+                "enum": [
+                  "Pushsafer"
+                ]
               },
               "credentials": {
                 "type": "object",
@@ -2568,17 +2808,24 @@
                     "type": "string"
                   }
                 },
-                "required": ["key"]
+                "required": [
+                  "key"
+                ]
               }
             },
-            "required": ["credentials", "platformName"]
+            "required": [
+              "credentials",
+              "platformName"
+            ]
           },
           {
             "type": "object",
             "properties": {
               "platformName": {
                 "type": "string",
-                "enum": ["ntfy"]
+                "enum": [
+                  "ntfy"
+                ]
               },
               "credentials": {
                 "type": "object",
@@ -2593,11 +2840,41 @@
                     "type": "string"
                   }
                 },
-                "required": ["priority", "topic", "url"]
+                "required": [
+                  "priority",
+                  "topic",
+                  "url"
+                ]
               }
             },
-            "required": ["credentials", "platformName"]
+            "required": [
+              "credentials",
+              "platformName"
+            ]
           }
+        ]
+      },
+      "GoodreadsImport": {
+        "type": "object",
+        "properties": {
+          "read": {
+            "type": "number"
+          },
+          "toRead": {
+            "type": "number"
+          },
+          "currentlyReading": {
+            "type": "number"
+          },
+          "ratings": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "currentlyReading",
+          "ratings",
+          "read",
+          "toRead"
         ]
       },
       "ImportState": {
@@ -2611,7 +2888,7 @@
         ],
         "type": "string"
       },
-      "Summary": {
+      "TraktTvImportSummary": {
         "type": "object",
         "properties": {
           "watchlist": {
@@ -2624,7 +2901,10 @@
                 "type": "number"
               }
             },
-            "required": ["movies", "shows"]
+            "required": [
+              "movies",
+              "shows"
+            ]
           },
           "seen": {
             "type": "object",
@@ -2636,7 +2916,10 @@
                 "type": "number"
               }
             },
-            "required": ["episodes", "movies"]
+            "required": [
+              "episodes",
+              "movies"
+            ]
           },
           "ratings": {
             "type": "object",
@@ -2654,10 +2937,19 @@
                 "type": "number"
               }
             },
-            "required": ["episodes", "movies", "seasons", "shows"]
+            "required": [
+              "episodes",
+              "movies",
+              "seasons",
+              "shows"
+            ]
           }
         },
-        "required": ["ratings", "seen", "watchlist"]
+        "required": [
+          "ratings",
+          "seen",
+          "watchlist"
+        ]
       }
     }
   }

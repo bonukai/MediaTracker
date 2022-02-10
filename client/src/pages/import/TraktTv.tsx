@@ -1,10 +1,11 @@
 import React, { FunctionComponent, useState } from 'react';
 import { useQuery } from 'react-query';
 import { Spring } from 'react-spring';
+import { t, Trans } from '@lingui/macro';
 
 import { mediaTrackerApi } from 'src/api/api';
-import { ImportState, Summary } from 'mediatracker-api';
-import { t, Trans } from '@lingui/macro';
+import { ImportState } from 'mediatracker-api';
+import { ImportSummaryTable } from 'src/components/ImportSummaryTable';
 
 const useTraktTvImport = () => {
   const [_state, setState] = useState<ImportState>();
@@ -97,15 +98,52 @@ export const TraktTvImportPage: FunctionComponent = () => {
           )}
         </div>
         {state?.exportSummary && (
-          <>
-            <div className="my-2 text-2xl">
-              <Trans>Summary</Trans>
-            </div>
-            <SummaryTable
-              exported={state.exportSummary}
-              imported={state.importSummary}
-            />
-          </>
+          <ImportSummaryTable
+            columns={[t`Movies`, t`Shows`, t`Seasons`, t`Episodes`]}
+            rows={[t`Watchlist`, t`Seen history`, t`Ratings`]}
+            exported={[
+              [
+                state.exportSummary?.watchlist?.movies,
+                state.exportSummary?.watchlist?.shows,
+                null,
+                null,
+              ],
+              [
+                state.exportSummary?.seen?.movies,
+                null,
+                null,
+                state.exportSummary?.seen?.episodes,
+                ,
+              ],
+              [
+                state.exportSummary?.ratings?.movies,
+                state.exportSummary?.ratings?.shows,
+                state.exportSummary?.ratings?.seasons,
+                state.exportSummary?.ratings?.episodes,
+              ],
+            ]}
+            imported={[
+              [
+                state.importSummary?.watchlist?.movies,
+                state.importSummary?.watchlist?.shows,
+                null,
+                null,
+              ],
+              [
+                state.importSummary?.seen?.movies,
+                null,
+                null,
+                state.importSummary?.seen?.episodes,
+                ,
+              ],
+              [
+                state.importSummary?.ratings?.movies,
+                state.importSummary?.ratings?.shows,
+                state.importSummary?.ratings?.seasons,
+                state.importSummary?.ratings?.episodes,
+              ],
+            ]}
+          />
         )}
       </div>
     </div>
@@ -119,118 +157,4 @@ const stateMap: Record<ImportState, string> = {
   'waiting-for-authentication': t`Waiting for authentication`,
   imported: t`Imported`,
   importing: t`Importing`,
-};
-
-const TableCell: FunctionComponent<{ imported?: number; exported: number }> = (
-  props
-) => {
-  const { imported, exported } = props;
-
-  if (!exported) {
-    return <></>;
-  }
-
-  return (
-    <>
-      {imported || '?'} / {exported}
-    </>
-  );
-};
-
-const SummaryTable: FunctionComponent<{
-  exported: Summary;
-  imported?: Summary;
-}> = (props) => {
-  const { exported, imported } = props;
-
-  return (
-    <table className="w-full divide-y divide-gray-300 table-auto">
-      <thead className="text-lg font-semibold ">
-        <tr className="divide-x">
-          <th></th>
-          <th>
-            <Trans>Movies</Trans>
-          </th>
-          <th>
-            <Trans>Shows</Trans>
-          </th>
-          <th>
-            <Trans>Seasons</Trans>
-          </th>
-          <th>
-            <Trans>Episodes</Trans>
-          </th>
-        </tr>
-      </thead>
-      <tbody className="text-sm divide-y ">
-        <tr className="divide-x ">
-          <td>
-            <Trans>Watchlist</Trans>
-          </td>
-          <td className="text-center">
-            <TableCell
-              imported={imported?.watchlist.movies}
-              exported={exported.watchlist.movies}
-            />
-          </td>
-          <td className="text-center">
-            <TableCell
-              imported={imported?.watchlist.shows}
-              exported={exported.watchlist.shows}
-            />
-          </td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr className="divide-x ">
-          <td>
-            <Trans>Seen history</Trans>
-          </td>
-          <td className="text-center">
-            <TableCell
-              imported={imported?.seen.movies}
-              exported={exported.seen.movies}
-            />
-          </td>
-          <td></td>
-          <td></td>
-          <td className="text-center">
-            <TableCell
-              imported={imported?.seen.episodes}
-              exported={exported.seen.episodes}
-            />
-          </td>
-        </tr>
-        <tr className="divide-x ">
-          <td>
-            <Trans>Ratings</Trans>
-          </td>
-          <td className="text-center">
-            <TableCell
-              imported={imported?.ratings.movies}
-              exported={exported.ratings.movies}
-            />
-          </td>
-          <td className="text-center">
-            <TableCell
-              imported={imported?.ratings.shows}
-              exported={exported.ratings.shows}
-            />
-          </td>
-          <td className="text-center">
-            <TableCell
-              imported={imported?.ratings.seasons}
-              exported={exported.ratings.seasons}
-            />
-          </td>
-          <td className="text-center">
-            <TableCell
-              imported={imported?.ratings.episodes}
-              exported={exported.ratings.episodes}
-            />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  );
 };

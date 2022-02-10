@@ -19,6 +19,7 @@ import { SeenHistoryPage } from 'src/pages/SeenHistory';
 import { ImportPage } from 'src/pages/Import';
 import { TraktTvImportPage } from 'src/pages/import/TraktTv';
 import { WatchlistPage } from 'src/pages/WatchlistPage';
+import { GoodreadsImportPage } from 'src/pages/import/Goodreads';
 
 export const MyRouter: FunctionComponent = () => {
   const { isLoading, user } = useUser();
@@ -106,6 +107,10 @@ export const MyRouter: FunctionComponent = () => {
               <Route
                 path="/import/trakttv"
                 element={<TraktTvImportPage key="/import/trakttv" />}
+              />
+              <Route
+                path="/import/goodreads"
+                element={<GoodreadsImportPage key="/import/goodreads" />}
               />
             </>
           ) : (
