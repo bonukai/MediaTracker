@@ -1,3 +1,5 @@
+project_id: 496753
+api_token_env: CROWDIN_PERSONAL_TOKEN
 files:
   - source: /client/src/i18n/locales/en/translation.json
     translation: /client/src/i18n/locales/%two_letters_code%/translation.json
