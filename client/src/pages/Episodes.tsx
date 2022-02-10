@@ -113,7 +113,7 @@ const EpisodeComponent: FunctionComponent<{
           onClick={() => {
             if (
               confirm(
-                t`Do you wont to remove episode ${episode.title} from seen history?`
+                t`Do you want to remove episode ${episode.title} from seen history?`
               )
             ) {
               markAsUnseen({ mediaItem, episode });

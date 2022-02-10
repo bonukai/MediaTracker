@@ -93,8 +93,8 @@ const RemoveFromSeenHistoryButton: FunctionComponent<{
       onClick={() =>
         confirm(
           plural(count, {
-            one: 'Do you wont to remove # seen history entry?',
-            other: 'Do you wont to remove all # seen history entries?',
+            one: 'Do you want to remove # seen history entry?',
+            other: 'Do you want to remove all # seen history entries?',
           })
         ) && removeFromSeenHistory(mediaItem)
       }
