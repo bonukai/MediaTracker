@@ -1,3 +1,4 @@
+client/tailwind.config.js
 client/webpack.config.js
 client/dist
 client/public

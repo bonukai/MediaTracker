@@ -1,27 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@layer components {
-  .btn {
-    @apply inline-block px-4 py-0.5 border rounded dark:border-current border-current hover:shadow shadow-current cursor-pointer select-none transition-all duration-150 hover:shadow-current disabled:shadow-none disabled:cursor-auto dark:disabled:bg-gray-500 disabled:bg-gray-300;
-  }
-
-  .btn-red {
-    @apply text-red-700 dark:text-red-500 btn;
-  }
-
-  .btn-blue {
-    @apply text-blue-800 btn dark:text-blue-300;
-  }
-}
-
-@layer base {
-  .writing-mode-vertical {
-    writing-mode: vertical-lr;
-  }
-
-  .writing-mode-initial {
-    writing-mode: initial;
-  }
-}
