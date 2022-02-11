@@ -31,6 +31,7 @@ module.exports = {
         transition: 'all 150ms',
         userSelect: 'none',
         padding: '2px 16px',
+        textAlign: 'center',
         '@apply dark:border-current border-current hover:shadow shadow-current hover:shadow-current disabled:shadow-none disabled:cursor-auto dark:disabled:bg-gray-500 disabled:bg-gray-300':
           {},
       };
