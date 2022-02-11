@@ -170,7 +170,7 @@ export const PaginatedGridItems: FunctionComponent<{
               <div className="flex">
                 <Trans>
                   Search for items or&nbsp;
-                  <Link to="/import" className="text-blue-500 underline">
+                  <Link to="/import" className="link">
                     import
                   </Link>
                 </Trans>

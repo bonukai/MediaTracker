@@ -16,6 +16,9 @@ module.exports = {
         '.writing-mode-initial': {
           'writing-mode': 'initial',
         },
+        '.link': {
+          '@apply text-blue-800 underline dark:text-blue-400': {},
+        },
       });
     }),
     plugin(({ addUtilities }) => {

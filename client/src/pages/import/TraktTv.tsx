@@ -45,7 +45,7 @@ export const TraktTvImportPage: FunctionComponent = () => {
                   Go to{' '}
                   <a
                     href={deviceCode.verificationUrl}
-                    className="text-blue-800 underline dark:text-blue-400"
+                    className="link"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

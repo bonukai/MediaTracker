@@ -34,7 +34,7 @@ export const GoodreadsImportPage: FunctionComponent = () => {
               Go to{' '}
               <a
                 href="https://www.goodreads.com/review/list"
-                className="text-blue-700 underline dark:text-blue-300"
+                className="link"
                 target="_blank"
                 rel="noopener noreferrer"
               >
