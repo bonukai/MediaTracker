@@ -53,7 +53,7 @@ export const HomePage: FunctionComponent = () => {
     sortOrder: 'desc',
     page: 1,
     onlySeenItems: true,
-    onlyWithUserRating: false,
+    onlyWithoutUserRating: true,
   });
 
   return (
