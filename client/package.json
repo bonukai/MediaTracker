@@ -59,7 +59,7 @@
     "react-refresh": "^0.11.0",
     "react-refresh-typescript": "^2.0.3",
     "sass": "^1.49.7",
-    "sass-loader": "^12.4.0",
+    "sass-loader": "^12.5.0",
     "style-loader": "^3.3.1",
     "tailwindcss": "^3.0.22",
     "ts-loader": "^9.2.6",
