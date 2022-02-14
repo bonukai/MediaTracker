@@ -4,7 +4,5 @@ preserve_hierarchy: true
 files:
   - source: /client/src/i18n/locales/en/translation.json
     translation: /client/src/i18n/locales/%two_letters_code%/translation.json
-    dest: /client/src/i18n/locales/en/translation.json
   - source: /server/src/i18n/locales/en/translation.json
     translation: /server/src/i18n/locales/%two_letters_code%/translation.json
-    dest: /server/src/i18n/locales/en/translation.json
