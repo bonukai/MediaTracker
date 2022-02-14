@@ -1,0 +1,10 @@
+project_id: 496753
+api_token_env: CROWDIN_PERSONAL_TOKEN
+preserve_hierarchy: true
+files:
+  - source: /client/src/i18n/locales/en/translation.json
+    translation: /client/src/i18n/locales/%two_letters_code%/translation.json
+    dest: /main/client/src/i18n/locales/en/translation.json
+  - source: /server/src/i18n/locales/en/translation.json
+    translation: /server/src/i18n/locales/%two_letters_code%/translation.json
+    dest: /main/server/src/i18n/locales/en/translation.json
