@@ -3,6 +3,7 @@
   "Changing server language to {lng}": "Cambiando el idioma del servidor a {lng}",
   "DEMO mode enabled": "Modo DEMO activado",
   "Everything up to date": "Todo está actualizado",
+  "MediaTracker listening at {address}": "MediaTracker escuchando en {address}",
   "Password cannot be empty": "La contraseña no puede estar vacía",
   "Passwords do not match": "Las contraseñas no coinciden",
   "Platform {0} does not exist": "La plataforma {0} no existe",
