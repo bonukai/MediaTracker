@@ -5,8 +5,19 @@
   "Everything up to date": "Todo está actualizado",
   "Password cannot be empty": "La contraseña no puede estar vacía",
   "Passwords do not match": "Las contraseñas no coinciden",
+  "Platform {0} does not exist": "La plataforma {0} no existe",
+  "Platform {platformName} does not exist": "La plataforma {platformName} no existe",
+  "Release date changed for {0}: \"{1}\"": "Fecha de estreno cambiada para {0}: \"{1}\"",
   "Running migrations": "Ejecutando migraciones",
+  "Status changed for {0}: \"{1}\"": "Estado cambiado para {0}: \"{1}\"",
+  "TMDB language changed to: \"{value}\", updating metadata for all items": "Idioma de TMDB cambiado a: \"{value}\", actualizando los metadatos de todos los elementos",
+  "Test message": "Mensaje de prueba",
   "Updating metadata": "Actualizando metadatos",
+  "Updating: {title}": "Actualizando: {title}",
+  "Updating: {title} (last updated at: {date}": "Actualizando: {title} (última actualización: {date}",
+  "Updating: {title} (last updated at: {date})": "Actualizando: {title} (última actualización: {date})",
   "User already exists": "El usuario ya existe",
-  "Username cannot be empty": "El nombre de usuario no puede estar vacío"
+  "Username cannot be empty": "El nombre de usuario no puede estar vacío",
+  "{count, plural, one {Updated 1 item} other {Updated # items}}": "{count, plural, one {Actualizado 1 elemento} other {Actualizado # elementos}}",
+  "{title} has been released": "{title} ha sido estrenado"
 }
