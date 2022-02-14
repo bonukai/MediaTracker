@@ -18,6 +18,7 @@ jobs:
       with:
         upload_translations: true
         download_translations: false
+        config: crowdin_github_action.yml
       env:
         CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
         CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
