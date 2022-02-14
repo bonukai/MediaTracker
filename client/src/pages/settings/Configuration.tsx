@@ -31,8 +31,9 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
                 update({ serverLang: e.currentTarget.value as ServerLang })
               }
             >
-              <option value="en">English</option>
+              <option value="da">Danish</option>
               <option value="de">German</option>
+              <option value="en">English</option>
               <option value="es">Spanish</option>
             </select>
           </SettingsSegment>
