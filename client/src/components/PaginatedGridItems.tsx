@@ -12,10 +12,11 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Plural, Trans } from '@lingui/macro';
 
 import { useSearch } from 'src/api/search';
-import { Items, MediaItemOrderBy, SortOrder } from 'mediatracker-api';
+import { Items } from 'mediatracker-api';
 import { useItems } from 'src/api/items';
 import { GridItemAppearanceArgs, GridItem } from 'src/components/GridItem';
-import { OrderByComponent } from 'src/components/OrderBy';
+import { useOrderByComponent } from 'src/components/OrderBy';
+import { useFilterBy } from 'src/components/FilterBy';
 
 const Search: FunctionComponent<{
   onSearch: (value: string) => void;
@@ -89,8 +90,20 @@ export const PaginatedGridItems: FunctionComponent<{
 
   const [page, _setPage] = useState(Number(searchParams?.get('page')) || 1);
 
-  const [orderBy, setSortBy] = useState<MediaItemOrderBy>(args.orderBy);
-  const [sortOrder, setSortOrder] = useState<SortOrder>(args.sortOrder);
+  const { orderBy, sortOrder, OrderByComponent } = useOrderByComponent({
+    sortOrder: args.sortOrder,
+    orderBy: args.orderBy,
+    mediaType: args.mediaType,
+  });
+  const { filter, FilterByComponent } = useFilterBy(args.mediaType);
+
+  useEffect(() => {
+    if (page !== 1) {
+      setPage(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderBy, sortOrder, filter]);
+
   const mainContainerRef = useRef<HTMLDivElement>();
 
   const setPage = useCallback(
@@ -123,6 +136,7 @@ export const PaginatedGridItems: FunctionComponent<{
     numberOfItemsTotal,
   } = useItems({
     ...args,
+    ...filter,
     page: page,
     orderBy: orderBy,
     sortOrder: sortOrder,
@@ -156,6 +170,8 @@ export const PaginatedGridItems: FunctionComponent<{
   }, [args.mediaType, searchQuery]);
 
   const isLoading = isLoadingSearchResult || isLoadingItems;
+  const noItems =
+    !isLoading && !searchQuery && items.length === 0 && filter === {};
 
   return (
     <>
@@ -166,8 +182,8 @@ export const PaginatedGridItems: FunctionComponent<{
               <Search onSearch={setSearchQuery} />
             )}
 
-            {showSearch && !isLoading && !searchQuery && items.length === 0 ? (
-              <div className="flex">
+            {showSearch && noItems ? (
+              <div className="flex ali">
                 <Trans>
                   Search for items or&nbsp;
                   <Link to="/import" className="text-blue-500 underline">
@@ -204,22 +220,17 @@ export const PaginatedGridItems: FunctionComponent<{
                         />
                       )}
                     </div>
+
                     {showSortOrderControls && !searchQuery && (
-                      <div className="ml-auto">
-                        <OrderByComponent
-                          orderBy={orderBy}
-                          setOrderBy={(value) => {
-                            setSortBy(value);
-                            setPage(1);
-                          }}
-                          sortOrder={sortOrder}
-                          setSortOrder={(value) => {
-                            setSortOrder(value);
-                            setPage(1);
-                          }}
-                          mediaType={args.mediaType}
-                        />
-                      </div>
+                      <>
+                        <div className="flex ml-auto">
+                          <FilterByComponent />
+                        </div>
+                        &nbsp;
+                        <div className="">
+                          <OrderByComponent />
+                        </div>
+                      </>
                     )}
                   </div>
                 )}
