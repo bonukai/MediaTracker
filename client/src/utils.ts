@@ -72,24 +72,34 @@ export const canBeRated = (mediaItem: MediaItemItemsResponse | TvEpisode) => {
   return hasBeenReleased(mediaItem);
 };
 
-export const isAudiobook = (mediaItem: MediaItemItemsResponse) => {
-  return mediaItem.mediaType === 'audiobook';
+export const isAudiobook = (mediaItem?: MediaItemItemsResponse | MediaType) => {
+  return typeof mediaItem === 'string'
+    ? mediaItem === 'audiobook'
+    : mediaItem?.mediaType === 'audiobook';
 };
 
-export const isBook = (mediaItem: MediaItemItemsResponse) => {
-  return mediaItem.mediaType === 'book';
+export const isBook = (mediaItem?: MediaItemItemsResponse | MediaType) => {
+  return typeof mediaItem === 'string'
+    ? mediaItem === 'book'
+    : mediaItem?.mediaType === 'book';
 };
 
-export const isMovie = (mediaItem: MediaItemItemsResponse) => {
-  return mediaItem.mediaType === 'movie';
+export const isMovie = (mediaItem?: MediaItemItemsResponse | MediaType) => {
+  return typeof mediaItem === 'string'
+    ? mediaItem === 'movie'
+    : mediaItem?.mediaType === 'movie';
 };
 
-export const isTvShow = (mediaItem: MediaItemItemsResponse) => {
-  return mediaItem.mediaType === 'tv';
+export const isTvShow = (mediaItem?: MediaItemItemsResponse | MediaType) => {
+  return typeof mediaItem === 'string'
+    ? mediaItem === 'tv'
+    : mediaItem?.mediaType === 'tv';
 };
 
-export const isVideoGame = (mediaItem: MediaItemItemsResponse) => {
-  return mediaItem.mediaType === 'video_game';
+export const isVideoGame = (mediaItem?: MediaItemItemsResponse | MediaType) => {
+  return typeof mediaItem === 'string'
+    ? mediaItem === 'video_game'
+    : mediaItem?.mediaType === 'video_game';
 };
 
 export const hasPoster = (mediaItem: MediaItemItemsResponse) => {
@@ -102,4 +112,12 @@ export const hideEpisodeTitle = (user: UserResponse) => {
 
 export const hideSeasonOverview = (user: UserResponse) => {
   return user.hideOverviewForUnseenSeasons;
+};
+
+export const reverseMap = <Keys extends string, Values extends string>(
+  map: Record<Keys, Values>
+): Record<Values, Keys> => {
+  return Object.fromEntries(
+    Object.entries(map).map(([key, value]) => [value, key])
+  );
 };
