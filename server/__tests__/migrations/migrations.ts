@@ -326,6 +326,9 @@ describe('migrations', () => {
       name: `20220209000937_seen.${MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
+
+    await knex('seen').where('id', seen.id).delete();
+    await knex('seen').insert(seen);
   });
 
   test('20220209005700_list', async () => {
@@ -392,6 +395,9 @@ describe('migrations', () => {
       name: `20220209014700_userPreferences.${MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
+
+    await knex('user').where('id', user.id).delete();
+    await knex('user').insert(user);
   });
 
   test('20220209034100_userPreferences', async () => {
@@ -418,6 +424,9 @@ describe('migrations', () => {
       name: `20220209034100_userPreferences.${MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
+
+    await knex('user').where('id', user.id).delete();
+    await knex('user').insert(user);
   });
 
   afterAll(clearDatabase);
