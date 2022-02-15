@@ -91,7 +91,7 @@
     "react-dom": "^17.0.2",
     "react-query": "^3.34.15",
     "react-router-dom": "^6.2.1",
-    "react-spring": "^9.4.2",
+    "react-spring": "^9.4.3",
     "styled-components": "^5.3.3"
   },
   "browserslist": "> 0.25%, not dead"
