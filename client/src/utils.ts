@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro';
 import {
   MediaItemDetailsResponse,
   MediaItemItemsResponse,
@@ -9,13 +10,13 @@ import {
 import { hasBeenReleased } from 'src/mediaItem';
 
 export const formatEpisodeNumber = (tvEpisode: TvEpisode): string => {
-  return `S${tvEpisode.seasonNumber
+  return t`S${tvEpisode.seasonNumber
     .toString()
     .padStart(2, '0')}E${tvEpisode.episodeNumber.toString().padStart(2, '0')}`;
 };
 
 export const formatSeasonNumber = (season: TvSeason): string => {
-  return `S${season.seasonNumber.toString().padStart(2, '0')}`;
+  return t`S${season.seasonNumber.toString().padStart(2, '0')}`;
 };
 
 export const findEpisodeBeId = (
