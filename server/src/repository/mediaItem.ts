@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { repository } from 'src/repository/repository';
+import { omitUndefinedValues, repository } from 'src/repository/repository';
 import { getItemsKnex, generateColumnNames } from 'src/knex/queries/items';
 import { knex } from 'src/dbconfig';
 import { getDetailsKnex } from 'src/knex/queries/details';
@@ -200,8 +200,8 @@ class MediaItemRepository extends repository<MediaItemBase>({
             season.numberOfEpisodes || season.episodes?.length || 0;
           season.tvShowId = mediaItem.id;
 
-          const newSeason = tvSeasonRepository.stripValue(
-            tvSeasonRepository.serialize(season)
+          const newSeason = omitUndefinedValues(
+            tvSeasonRepository.stripValue(tvSeasonRepository.serialize(season))
           );
 
           if (season.id) {
@@ -250,8 +250,10 @@ class MediaItemRepository extends repository<MediaItemBase>({
               episode.seasonId = season.id;
               episode.tvShowId = mediaItem.id;
 
-              const newEpisode = tvEpisodeRepository.stripValue(
-                tvEpisodeRepository.serialize(episode)
+              const newEpisode = omitUndefinedValues(
+                tvEpisodeRepository.stripValue(
+                  tvEpisodeRepository.serialize(episode)
+                )
               );
 
               if (episode.id) {
@@ -285,7 +287,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       };
 
       const res = await trx(this.tableName)
-        .insert(this.serialize(this.stripValue(mediaItem)))
+        .insert(this.serialize(omitUndefinedValues(this.stripValue(mediaItem))))
         .returning(this.primaryColumnName);
 
       result.id = res.at(0)[this.primaryColumnName];

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { knex } from 'src/dbconfig';
 
-const omitUndefinedValues = <T extends object>(value: Partial<T>) =>
+export const omitUndefinedValues = <T extends object>(value: Partial<T>) =>
   _.pickBy(value, (v) => v !== undefined) as Partial<T>;
 
 const BATCH_SIZE = 30;
