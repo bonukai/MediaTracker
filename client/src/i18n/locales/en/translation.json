@@ -145,6 +145,8 @@
   "Source": "Source",
   "Status": "Status",
   "Summary": "Summary",
+  "S{0}": "S{0}",
+  "S{0}E{1}": "S{0}E{1}",
   "TMDB language": "TMDB language",
   "This component can only be used with tv shows": "This component can only be used with tv shows",
   "Title": "Title",
