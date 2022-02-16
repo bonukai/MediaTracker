@@ -40,6 +40,7 @@ import { metadataProviderCredentialsRepository } from 'src/repository/metadataPr
 import { setupI18n } from 'src/i18n/i18n';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { CancellationToken } from 'src/cancellationToken';
+import { OpenLibrary } from 'src/metadata/provider/openlibrary';
 
 let updateMetadataCancellationToken: CancellationToken;
 

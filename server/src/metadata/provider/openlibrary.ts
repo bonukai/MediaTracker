@@ -1,7 +1,71 @@
 import axios from 'axios';
-import urljoin from 'url-join';
 import { ExternalIds, MediaItemForProvider } from 'src/entity/mediaItem';
 import { metadataProvider } from 'src/metadata/metadataProvider';
+
+export class OpenLibrary extends metadataProvider({
+  name: 'openlibrary',
+  mediaType: 'book',
+}) {
+  async search(query: string): Promise<MediaItemForProvider[]> {
+    const res = await axios.get('http://openlibrary.org/search.json', {
+      params: {
+        q: query,
+        fields: [
+          'key',
+          'type',
+          'title',
+          'first_publish_year',
+          'number_of_pages_median',
+          'lending_edition_s',
+          'edition_key',
+          'last_modified_i',
+          'first_sentence',
+          'language',
+          'edition_count',
+          'cover_i',
+          'author_name',
+        ].join(','),
+        type: 'work',
+        limit: 20,
+      },
+    });
+    const result = res.data as SearchResponse;
+
+    return result.docs?.map((doc) => {
+      return {
+        mediaType: this.mediaType,
+        source: this.name,
+        title: doc.title,
+        poster: doc.cover_i
+          ? `https://covers.openlibrary.org/b/id/${doc.cover_i}.jpg`
+          : undefined,
+        releaseDate: doc.first_publish_year?.toString(),
+
+        authors: doc.author_name,
+        openlibraryId: doc.key,
+      };
+    });
+  }
+
+  async details(mediaItem: ExternalIds): Promise<MediaItemForProvider> {
+    const res = await axios.get(
+      'https://openlibrary.org/' + mediaItem.openlibraryId + '.json'
+    );
+
+    const result = res.data as DetailsResponse;
+
+    return {
+      mediaType: this.mediaType,
+      source: this.name,
+      title: result.title,
+      overview:
+        typeof result.description === 'string'
+          ? result.description
+          : result.description?.value,
+      releaseDate: result.first_publish_date,
+    };
+  }
+}
 
 interface Document {
   cover_i: number;
@@ -74,69 +138,4 @@ interface DetailsResponse {
     type: string;
     value: string;
   };
-}
-
-export class OpenLibrary extends metadataProvider({
-  name: 'openlibrary',
-  mediaType: 'book',
-}) {
-  async search(query: string): Promise<MediaItemForProvider[]> {
-    const res = await axios.get('http://openlibrary.org/search.json', {
-      params: {
-        q: query,
-        fields: [
-          'key',
-          'type',
-          'title',
-          'first_publish_year',
-          'number_of_pages_median',
-          'lending_edition_s',
-          'edition_key',
-          'last_modified_i',
-          'first_sentence',
-          'language',
-          'edition_count',
-          'cover_i',
-          'author_name',
-        ].join(','),
-        type: 'work',
-        limit: 20,
-      },
-    });
-    const result = res.data as SearchResponse;
-
-    return result.docs?.map((doc) => {
-      return {
-        mediaType: this.mediaType,
-        source: this.name,
-        title: doc.title,
-        poster: doc.cover_i
-          ? `https://covers.openlibrary.org/b/id/${doc.cover_i}.jpg`
-          : undefined,
-        releaseDate: doc.first_publish_year?.toString(),
-
-        authors: doc.author_name,
-        openlibraryId: doc.key,
-      };
-    });
-  }
-
-  async details(mediaItem: ExternalIds): Promise<MediaItemForProvider> {
-    const res = await axios.get(
-      'https://openlibrary.org/' + mediaItem.openlibraryId + '.json'
-    );
-
-    const result = res.data as DetailsResponse;
-
-    return {
-      mediaType: this.mediaType,
-      source: this.name,
-      title: result.title,
-      overview:
-        typeof result.description === 'string'
-          ? result.description
-          : result.description?.value,
-      releaseDate: result.first_publish_date,
-    };
-  }
 }
