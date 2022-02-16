@@ -111,7 +111,7 @@
   "Receive notification for every episode for all tv shows on your watchlist, when it's released": "Erhalte eine Benachrichtigung für jede Folge deiner Serien auf deiner Watchlist, wenn sie veröffentlicht wird",
   "Register": "Registrieren",
   "Release date": "Erscheinungsdatum",
-  "Release {0}": "Veröffentlichung {0}",
+  "Release <0/>": "Veröffentlichung <0/>",
   "Remove \"{0}\" from watchlist?": "\"{0}\" von der Watchlist entfernen?",
   "Remove from listened history": "Von der Gehörtliste entfernen",
   "Remove from played history": "Von der Gespieltliste entfernen",

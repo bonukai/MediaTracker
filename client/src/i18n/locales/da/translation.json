@@ -111,7 +111,7 @@
   "Receive notification for every episode for all tv shows on your watchlist, when it's released": "Modtag notifikationer for hver episode i alle Tv-shows på din overvågningsliste, når de udgives",
   "Register": "Registrer",
   "Release date": "Udgivelsesdato",
-  "Release {0}": "Udgivelse {0}",
+  "Release <0/>": "Udgivelse <0/>",
   "Remove \"{0}\" from watchlist?": "Fjern \"{0}\" fra overvågningslisten?",
   "Remove from listened history": "Fjern fra historik",
   "Remove from played history": "Fjern fra afspilningshistorik",

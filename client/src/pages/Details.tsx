@@ -30,7 +30,7 @@ import {
   removeFromWatchlist,
   useDetails,
 } from 'src/api/details';
-import { relativeTimeTo } from 'src/date';
+import { RelativeTime } from 'src/components/date';
 import { Poster } from 'src/components/Poster';
 import { Modal } from 'src/components/Modal';
 import { useOtherUser } from 'src/api/user';
@@ -448,12 +448,9 @@ export const DetailsPage: FunctionComponent = () => {
           <div className="mt-3 font-bold">
             <Trans>Next episode</Trans>
             {mediaItem.upcomingEpisode.releaseDate && (
-              <>
-                {' '}
-                {relativeTimeTo(
-                  new Date(mediaItem.upcomingEpisode.releaseDate)
-                )}
-              </>
+              <RelativeTime
+                to={new Date(mediaItem.upcomingEpisode.releaseDate)}
+              />
             )}
             : {formatEpisodeNumber(mediaItem.upcomingEpisode)}{' '}
             {mediaItem.upcomingEpisode.title}

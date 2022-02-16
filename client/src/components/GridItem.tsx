@@ -16,7 +16,7 @@ import {
   isTvShow,
   isVideoGame,
 } from '../utils';
-import { relativeTimeTo } from 'src/date';
+import { RelativeTime } from 'src/components/date';
 import { MediaItemItemsResponse, MediaType } from 'mediatracker-api';
 import { Poster } from 'src/components/Poster';
 import { SelectSeenDate } from 'src/components/SelectSeenDate';
@@ -158,15 +158,15 @@ export const GridItem: FunctionComponent<{
                 <>
                   <div>
                     {formatEpisodeNumber(mediaItem.upcomingEpisode)}{' '}
-                    {relativeTimeTo(
-                      new Date(mediaItem.upcomingEpisode.releaseDate)
-                    )}
+                    <RelativeTime
+                      to={new Date(mediaItem.upcomingEpisode.releaseDate)}
+                    />
                   </div>
                 </>
               )}
               {mediaItem.mediaType !== 'tv' && mediaItem.releaseDate && (
                 <Trans>
-                  Release {relativeTimeTo(new Date(mediaItem.releaseDate))}
+                  Release <RelativeTime to={new Date(mediaItem.releaseDate)} />
                 </Trans>
               )}
             </>
