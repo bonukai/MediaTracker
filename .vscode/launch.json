@@ -14,7 +14,10 @@
       "request": "launch",
       "restart": true,
       "runtimeExecutable": "nodemon",
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/server/node_modules/**"
+      ],
       "type": "node"
     },
     {
@@ -27,7 +30,10 @@
       "request": "launch",
       "restart": true,
       "runtimeExecutable": "nodemon",
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/server/node_modules/**"
+      ],
       "type": "node",
       "env": {
         "DATABASE_CLIENT": "pg",
@@ -57,7 +63,11 @@
         "program": "${workspaceFolder}/server/node_modules/jest/bin/jest"
       },
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/server/node_modules/**"
+      ]
     },
     {
       "name": "Run test [PostgreSQL]",
@@ -83,7 +93,11 @@
         "program": "${workspaceFolder}/server/node_modules/jest/bin/jest"
       },
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/server/node_modules/**"
+      ]
     }
   ]
 }
