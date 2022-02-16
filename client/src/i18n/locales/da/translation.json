@@ -145,6 +145,8 @@
   "Source": "Kilde",
   "Status": "Status",
   "Summary": "Resumé",
+  "S{0}": "S{0}",
+  "S{0}E{1}": "S{0}E{1}",
   "TMDB language": "TMDB-sprog",
   "This component can only be used with tv shows": "Denne komponent kan kun bruges med Tv-shows",
   "Title": "Titel",
