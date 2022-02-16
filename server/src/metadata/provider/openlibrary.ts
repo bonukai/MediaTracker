@@ -39,7 +39,12 @@ interface SearchResponse {
 }
 
 interface DetailsResponse {
-  description: string;
+  description:
+    | string
+    | {
+        type: string;
+        value: string;
+      };
   title: string;
   covers: number[];
   subject_places: string[];
@@ -127,7 +132,10 @@ export class OpenLibrary extends metadataProvider({
       mediaType: this.mediaType,
       source: this.name,
       title: result.title,
-      overview: result.description,
+      overview:
+        typeof result.description === 'string'
+          ? result.description
+          : result.description?.value,
       releaseDate: result.first_publish_date,
     };
   }
