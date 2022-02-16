@@ -5,6 +5,39 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "server:watch [SQLite]",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "cwd": "${workspaceRoot}/server",
+      "outFiles": ["${workspaceFolder}/server/build/**/*.js"],
+      "program": "${workspaceFolder}/server/build/index.js",
+      "request": "launch",
+      "restart": true,
+      "runtimeExecutable": "nodemon",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
+    },
+    {
+      "name": "server:watch [PostgreSQL]",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "cwd": "${workspaceRoot}/server",
+      "outFiles": ["${workspaceFolder}/server/build/**/*.js"],
+      "program": "${workspaceFolder}/server/build/index.js",
+      "request": "launch",
+      "restart": true,
+      "runtimeExecutable": "nodemon",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "env": {
+        "DATABASE_CLIENT": "pg",
+        "DATABASE_HOST": "localhost",
+        "DATABASE_USER": "postgres",
+        "DATABASE_PASSWORD": "postgres",
+        "DATABASE_DATABASE": "postgres"
+      }
+    },
+    {
       "name": "Run test [SQLite]",
       "type": "node",
       "request": "launch",
@@ -17,14 +50,14 @@
         "--i",
         "--config",
         "--runTestsByPath",
-        "--color",
         "${workspaceRoot}/server/jest.config.js",
         "../${relativeFile}"
       ],
-      "outputCapture": "std",
       "windows": {
         "program": "${workspaceFolder}/server/node_modules/jest/bin/jest"
-      }
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     },
     {
       "name": "Run test [PostgreSQL]",
@@ -43,14 +76,14 @@
         "--i",
         "--config",
         "--runTestsByPath",
-        "--color",
         "${workspaceRoot}/server/jest.config.js",
         "../${relativeFile}"
       ],
-      "outputCapture": "std",
       "windows": {
         "program": "${workspaceFolder}/server/node_modules/jest/bin/jest"
-      }
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }
