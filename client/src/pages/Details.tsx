@@ -18,6 +18,7 @@ import {
   canBeOnWatchlist,
   canBeRated,
   formatEpisodeNumber,
+  hasProgress,
   isAudiobook,
   isBook,
   isMovie,
@@ -447,13 +448,8 @@ export const DetailsPage: FunctionComponent = () => {
           <div className="mt-3">
             <SetProgressButton mediaItem={mediaItem} />
           </div>
-          {mediaItem.progress >= 0 && mediaItem.progress !== 1 && (
-            <div className="mt-3">
-              <Trans>Progress</Trans>: {Math.round(mediaItem.progress * 100)}%
-            </div>
-          )}
-          {(mediaItem.progress === null ||
-            mediaItem.progress === undefined) && (
+
+          {!hasProgress(mediaItem) && (
             <div
               className="mt-3 text-sm btn"
               onClick={async () => {
@@ -468,6 +464,31 @@ export const DetailsPage: FunctionComponent = () => {
               {isAudiobook(mediaItem) && <Trans>I am listening it</Trans>}
               {isVideoGame(mediaItem) && <Trans>I am playing it</Trans>}
             </div>
+          )}
+
+          {hasProgress(mediaItem) && (
+            <>
+              <div
+                className="mt-3 text-sm btn"
+                onClick={async () => {
+                  addToProgress({
+                    mediaItemId: mediaItem.id,
+                    progress: 1,
+                  });
+                }}
+              >
+                {isMovie(mediaItem) && <Trans>I finished watching it</Trans>}
+                {isBook(mediaItem) && <Trans>I finished reading it</Trans>}
+                {isAudiobook(mediaItem) && (
+                  <Trans>I finished listening it</Trans>
+                )}
+                {isVideoGame(mediaItem) && <Trans>I finished playing it</Trans>}
+              </div>
+
+              <div className="mt-3">
+                <Trans>Progress</Trans>: {Math.round(mediaItem.progress * 100)}%
+              </div>
+            </>
           )}
         </>
       )}
