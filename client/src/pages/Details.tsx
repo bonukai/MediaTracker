@@ -25,6 +25,7 @@ import {
   isVideoGame,
 } from 'src/utils';
 import {
+  addToProgress,
   addToWatchlist,
   removeFromSeenHistory,
   removeFromWatchlist,
@@ -441,14 +442,31 @@ export const DetailsPage: FunctionComponent = () => {
         </Link>
       )}
 
-      {!isTvShow(mediaItem) && (
+      {hasBeenReleased(mediaItem) && !isTvShow(mediaItem) && (
         <>
           <div className="mt-3">
             <SetProgressButton mediaItem={mediaItem} />
           </div>
-          {mediaItem.progress > 0 && mediaItem.progress !== 1 && (
+          {mediaItem.progress >= 0 && mediaItem.progress !== 1 && (
             <div className="mt-3">
               <Trans>Progress: {Math.round(mediaItem.progress * 100)}%</Trans>
+            </div>
+          )}
+          {(mediaItem.progress === null ||
+            mediaItem.progress === undefined) && (
+            <div
+              className="mt-3 text-sm btn"
+              onClick={async () => {
+                addToProgress({
+                  mediaItemId: mediaItem.id,
+                  progress: 0,
+                });
+              }}
+            >
+              {isMovie(mediaItem) && <Trans>I am watching it</Trans>}
+              {isBook(mediaItem) && <Trans>I am reading it</Trans>}
+              {isAudiobook(mediaItem) && <Trans>I am listening it</Trans>}
+              {isVideoGame(mediaItem) && <Trans>I am playing it</Trans>}
             </div>
           )}
         </>
