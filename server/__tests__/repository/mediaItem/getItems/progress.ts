@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { mediaItemRepository } from 'src/repository/mediaItem';
-import { MediaItemBase, MediaItemBaseWithSeasons } from 'src/entity/mediaItem';
+import { MediaItemBase } from 'src/entity/mediaItem';
 import { User } from 'src/entity/user';
 import { userRepository } from 'src/repository/user';
 import { Seen } from 'src/entity/seen';
@@ -134,5 +134,28 @@ describe('progress', () => {
     });
 
     expect(res.progress).toEqual(progress2.progress);
+  });
+
+  test('should return null, when progress is 1', async () => {
+    await seenRepository.create({
+      date: new Date().getTime(),
+      mediaItemId: mediaItem.id,
+      userId: user.id,
+      progress: 1,
+      type: 'progress',
+    });
+
+    const [res] = await mediaItemRepository.items({
+      userId: user.id,
+    });
+
+    expect(res.progress).toBeNull();
+
+    const details = await mediaItemRepository.details({
+      mediaItemId: mediaItem.id,
+      userId: user.id,
+    });
+
+    expect(details.progress).toBeNull();
   });
 });

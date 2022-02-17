@@ -191,17 +191,24 @@ export const getDetailsKnex = async (params: {
     (image) => image.type
   );
 
+  const progressGroupedByDate = _(progress).groupBy('date');
+  const progressValue = _.maxBy(
+    progressGroupedByDate.get(progressGroupedByDate.keys().max()),
+    'progress'
+  )?.progress;
+
   return {
     ...mediaItem,
     hasDetails: true,
     genres: (mediaItem.genres as unknown as string)?.split(','),
     narrators: (mediaItem.narrators as unknown as string)?.split(','),
     authors: (mediaItem.authors as unknown as string)?.split(','),
-    progress: progress
-      ? _(progress)
-          .filter((value) => value.date === _.maxBy(progress, 'date')?.date)
-          .maxBy('progress')?.progress
-      : null,
+    progress:
+      progressValue !== 1
+        ? _(progress)
+            .filter((value) => value.date === _.maxBy(progress, 'date')?.date)
+            .maxBy('progress')?.progress
+        : null,
     seenHistory: seenHistory,
     seen: seen,
     seasons: seasons,
