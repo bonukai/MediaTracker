@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { PaginatedGridItems } from 'src/components/PaginatedGridItems';
 
-export const ContinueWatchingPage: FunctionComponent = () => {
+export const InProgressPage: FunctionComponent = () => {
   return (
     <PaginatedGridItems
       args={{

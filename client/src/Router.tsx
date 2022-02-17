@@ -8,7 +8,7 @@ import { ItemsPage } from 'src/pages/ItemsPage';
 import { useUser } from 'src/api/user';
 import { NavComponent } from 'src/components/Nav';
 import { UpcomingPage } from 'src/pages/Upcoming';
-import { ContinueWatchingPage } from 'src/pages/ContinueWatching';
+import { InProgressPage } from 'src/pages/InProgress';
 import { SettingsPage } from 'src/pages/Settings';
 import { EpisodesPage } from 'src/pages/Episodes';
 import { CalendarPage } from 'src/pages/Calendar';
@@ -83,8 +83,8 @@ export const MyRouter: FunctionComponent = () => {
               />
 
               <Route
-                path="/continue-watching"
-                element={<ContinueWatchingPage key="/continue-watching" />}
+                path="/in-progress"
+                element={<InProgressPage key="/in-progress" />}
               />
               <Route
                 path="/calendar"
