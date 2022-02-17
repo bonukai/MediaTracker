@@ -1,15 +1,15 @@
 import React, { FunctionComponent, useState } from 'react';
-import { plural, Plural, Trans } from '@lingui/macro';
+import { Plural, Trans } from '@lingui/macro';
 
 import { detailsKey } from 'src/api/details';
 
 import { MediaItemItemsResponse, MediaType } from 'mediatracker-api';
 
-import { isAudiobook, isBook, isMovie, isTvShow, isVideoGame } from 'src/utils';
+import { isAudiobook, isBook, isMovie, isVideoGame } from 'src/utils';
 import { mediaTrackerApi } from 'src/api/api';
 import { queryClient } from 'src/App';
 
-const Foo: FunctionComponent<{
+const InputComponent: FunctionComponent<{
   max: number;
   progress: number;
   setProgress: (value: number) => void;
@@ -54,7 +54,7 @@ export const SetProgressComponent: FunctionComponent<{
       </div>
       <div className="flex flex-col mt-4">
         {isBook(mediaItem) && mediaItem.numberOfPages && (
-          <Foo
+          <InputComponent
             max={mediaItem.numberOfPages}
             progress={progress}
             setProgress={setProgress}
@@ -64,7 +64,7 @@ export const SetProgressComponent: FunctionComponent<{
 
         {(isAudiobook(mediaItem) || isMovie(mediaItem)) &&
           mediaItem.runtime && (
-            <Foo
+            <InputComponent
               max={mediaItem.runtime}
               progress={progress}
               setProgress={setProgress}
