@@ -449,7 +449,7 @@ export const DetailsPage: FunctionComponent = () => {
           </div>
           {mediaItem.progress >= 0 && mediaItem.progress !== 1 && (
             <div className="mt-3">
-              <Trans>Progress: {Math.round(mediaItem.progress * 100)}%</Trans>
+              <Trans>Progress</Trans>: {Math.round(mediaItem.progress * 100)}%
             </div>
           )}
           {(mediaItem.progress === null ||
