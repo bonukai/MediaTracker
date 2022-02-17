@@ -97,13 +97,12 @@ export class InitialData {
     episodeId: this.episode.id,
   };
 
-  static seen: Seen = {
+  static seen = {
     id: 1,
     date: new Date().getTime(),
     mediaItemId: this.mediaItem.id,
     episodeId: this.episode.id,
     userId: this.user.id,
-    type: 'seen',
   };
 
   static notificationPlatformsCredentials: NotificationPlatformsCredentials = {
