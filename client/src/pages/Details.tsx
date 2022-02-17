@@ -445,10 +445,6 @@ export const DetailsPage: FunctionComponent = () => {
 
       {hasBeenReleased(mediaItem) && !isTvShow(mediaItem) && (
         <>
-          <div className="mt-3">
-            <SetProgressButton mediaItem={mediaItem} />
-          </div>
-
           {!hasProgress(mediaItem) && (
             <div
               className="mt-3 text-sm btn"
@@ -490,6 +486,10 @@ export const DetailsPage: FunctionComponent = () => {
               </div>
             </>
           )}
+
+          <div className="mt-3">
+            <SetProgressButton mediaItem={mediaItem} />
+          </div>
         </>
       )}
 
