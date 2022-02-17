@@ -115,6 +115,10 @@ export const hideSeasonOverview = (user: UserResponse) => {
   return user.hideOverviewForUnseenSeasons;
 };
 
+export const hasProgress = (mediaItem: MediaItemItemsResponse) => {
+  return mediaItem.progress !== null;
+};
+
 export const reverseMap = <Keys extends string, Values extends string>(
   map: Record<Keys, Values>
 ): Record<Values, Keys> => {
