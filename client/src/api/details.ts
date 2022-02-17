@@ -96,6 +96,24 @@ export const addToWatchlist = async (mediaItem: MediaItemItemsResponse) => {
   queryClient.invalidateQueries(['items']);
 };
 
+export const addToProgress = async (args: {
+  mediaItemId: number;
+  progress: number;
+  duration?: number;
+}) => {
+  const { mediaItemId, progress, duration } = args;
+
+  await mediaTrackerApi.progress.add({
+    mediaItemId: mediaItemId,
+    date: new Date().getTime(),
+    progress: progress,
+    duration: duration,
+  });
+
+  queryClient.invalidateQueries(detailsKey(mediaItemId));
+  queryClient.invalidateQueries(['items']);
+};
+
 export const markAsSeen = async (args: {
   mediaItem: MediaItemItemsResponse;
   season?: TvSeason;

@@ -1,13 +1,9 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Plural, Trans } from '@lingui/macro';
 
-import { detailsKey } from 'src/api/details';
-
 import { MediaItemItemsResponse, MediaType } from 'mediatracker-api';
-
+import { addToProgress } from 'src/api/details';
 import { isAudiobook, isBook, isMovie, isVideoGame } from 'src/utils';
-import { mediaTrackerApi } from 'src/api/api';
-import { queryClient } from 'src/App';
 
 const InputComponent: FunctionComponent<{
   max: number;
@@ -105,13 +101,11 @@ export const SetProgressComponent: FunctionComponent<{
         <div
           className="w-full btn"
           onClick={async () => {
-            await mediaTrackerApi.progress.add({
+            addToProgress({
               mediaItemId: mediaItem.id,
-              date: new Date().getTime(),
-              progress: progress / 100,
+              progress: progress * 100,
+              duration: duration,
             });
-            queryClient.invalidateQueries(detailsKey(mediaItem.id));
-            queryClient.invalidateQueries(['items']);
             closeModal();
           }}
         >
