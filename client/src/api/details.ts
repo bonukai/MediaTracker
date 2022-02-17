@@ -10,10 +10,7 @@ import {
 import { TvSeason } from 'mediatracker-api';
 import { mediaTrackerApi } from 'src/api/api';
 
-export const detailsKey = (mediaItemId: number) => [
-  'details',
-  { mediaItemId: mediaItemId },
-];
+export const detailsKey = (mediaItemId: number) => ['details', mediaItemId];
 
 const getDetails = async (mediaItemId: number) => {
   return mediaTrackerApi.details.get(mediaItemId);

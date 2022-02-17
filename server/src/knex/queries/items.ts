@@ -69,6 +69,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
     mediaItemIds,
     onlyWithUserRating,
     onlyWithoutUserRating,
+    onlyWithProgress,
   } = args;
 
   const currentDateString = new Date().toISOString();
@@ -86,6 +87,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
       seenEpisodesCount: 'seenEpisodesCount',
       poster: 'poster.id',
       backdrop: 'backdrop.id',
+      progress: 'progress',
     })
     .from<MediaItemBase>('mediaItem')
     .leftJoin<Seen>(
@@ -161,7 +163,11 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           .count('*', { as: 'seenEpisodesCount' })
           .leftJoin(
             (qb) =>
-              qb.distinct('userId', 'episodeId').from<Seen>('seen').as('seen'),
+              qb
+                .distinct('userId', 'episodeId')
+                .from<Seen>('seen')
+                .where('type', 'seen')
+                .as('seen'),
             'episodeId',
             'episode.id'
           )
@@ -181,7 +187,11 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
             as: 'seasonAndEpisodeNumber',
           })
           .count('*', { as: 'unseenEpisodesCount' })
-          .leftJoin<Seen>('seen', 'seen.episodeId', 'episode.id')
+          .leftJoin<Seen>(
+            (qb) => qb.from<Seen>('seen').as('seen').where('type', 'seen'),
+            'seen.episodeId',
+            'episode.id'
+          )
           .whereNot('episode.isSpecialEpisode', true)
           .andWhereNot('episode.releaseDate', '')
           .andWhereNot('episode.releaseDate', null)
@@ -240,6 +250,37 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           .as('backdrop'),
       'backdrop.mediaItemId',
       'mediaItem.id'
+    )
+    // Progress
+    .leftJoin<Seen>(
+      (qb) =>
+        qb
+          .from<Seen>('seen')
+          .select('mediaItemId')
+          .max('date', { as: 'progressDate' })
+          .whereNull('episodeId')
+          .where('type', 'progress')
+          .where('userId', userId)
+          .groupBy('mediaItemId')
+          .as('progressHelper'),
+      'progressHelper.mediaItemId',
+      'mediaItem.id'
+    )
+    .leftJoin<Seen>(
+      (qb) =>
+        qb
+          .from<Seen>('seen')
+          .select('date')
+          .max('progress', { as: 'progress' })
+          .groupBy('date')
+          .where('type', 'progress')
+          .where('userId', userId)
+          .whereNot('progress', 1)
+          .as('progress'),
+      (qb) =>
+        qb
+          .on('progressHelper.mediaItemId', 'mediaItem.id')
+          .andOn('progress.date', 'progressDate')
     );
 
   if (Array.isArray(mediaItemIds)) {
@@ -292,21 +333,19 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           query.andWhere('mediaItem.releaseDate', '>', currentDateString);
         }
       } else {
-        query.andWhere((qb) => {
-          qb.where((qb) => {
-            qb.whereNot('mediaItem.mediaType', 'tv').andWhere(
-              'mediaItem.releaseDate',
-              '>',
-              currentDateString
-            );
-          }).orWhere((qb) => {
-            qb.where('mediaItem.mediaType', 'tv').andWhere(
-              'upcomingEpisode.releaseDate',
-              '>',
-              currentDateString
-            );
-          });
-        });
+        query.andWhere((qb) =>
+          qb
+            .where((qb) =>
+              qb
+                .whereNot('mediaItem.mediaType', 'tv')
+                .andWhere('mediaItem.releaseDate', '>', currentDateString)
+            )
+            .orWhere((qb) =>
+              qb
+                .where('mediaItem.mediaType', 'tv')
+                .andWhere('upcomingEpisode.releaseDate', '>', currentDateString)
+            )
+        );
       }
 
       query.whereNotNull('watchlist.mediaItemId');
@@ -325,6 +364,20 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
 
     if (onlyWithoutUserRating === true) {
       query.whereNull('userRating.rating');
+    }
+
+    if (onlyWithProgress) {
+      query.where((qb) =>
+        qb
+          .where((qb) =>
+            qb.whereNot('mediaItem.mediaType', 'tv').whereNotNull('progress')
+          )
+          .orWhere((qb) =>
+            qb
+              .where('mediaItem.mediaType', 'tv')
+              .andWhere('unseenEpisodesCount', '>', 0)
+          )
+      );
     }
   }
 
@@ -368,12 +421,18 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
         break;
 
       case 'nextAiring':
-        query.orderByRaw(
-          knex.raw(`CASE
-        WHEN "mediaItem"."mediaType" = 'tv' THEN "upcomingEpisode"."releaseDate"
-        ELSE "mediaItem"."releaseDate"
-      END ${sortOrder} NULLS LAST`)
-        );
+        query.orderByRaw(`CASE
+                            WHEN "mediaItem"."mediaType" = 'tv' THEN "upcomingEpisode"."releaseDate"
+                            ELSE "mediaItem"."releaseDate"
+                          END ${sortOrder} NULLS LAST`);
+        query.orderBy('mediaItem.title', 'asc');
+        break;
+
+      case 'progress':
+        query.orderByRaw(`CASE
+                            WHEN "mediaItem"."mediaType" = 'tv' THEN "unseenEpisodesCount"
+                            ELSE "progress"
+                          END ${sortOrder}`);
         query.orderBy('mediaItem.title', 'asc');
         break;
 
@@ -453,6 +512,7 @@ const mapRawResult = (row: any): MediaItemItemsResponse => {
     url: row['mediaItem.url'],
     developer: row['mediaItem.developer'],
     lastSeenAt: row['lastSeenAt'],
+    progress: row['progress'],
     poster: row['poster'] ? `/img/${row['poster']}` : null,
     posterSmall: row['poster'] ? `/img/${row['poster']}?size=small` : null,
     backdrop: row['backdrop'] ? `/img/${row['backdrop']}` : null,

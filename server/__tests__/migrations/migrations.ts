@@ -285,20 +285,17 @@ describe('migrations', () => {
     });
 
     expect(
-      (await knex<Seen>('seen').where('id', seenEpisodeWithRuntime.id).first())
+      (await knex('seen').where('id', seenEpisodeWithRuntime.id).first())
         .duration
     ).toEqual(episodeWithRuntime.runtime * 60 * 1000);
 
     expect(
-      (
-        await knex<Seen>('seen')
-          .where('id', seenEpisodeWithoutRuntime.id)
-          .first()
-      ).duration
+      (await knex('seen').where('id', seenEpisodeWithoutRuntime.id).first())
+        .duration
     ).toEqual(show.runtime * 60 * 1000);
 
     expect(
-      (await knex<Seen>('seen').where('id', seenMediaItem.id).first()).duration
+      (await knex('seen').where('id', seenMediaItem.id).first()).duration
     ).toEqual(mediaItem.runtime * 60 * 1000);
 
     const seen = {
@@ -427,6 +424,75 @@ describe('migrations', () => {
 
     await knex('user').where('id', user.id).delete();
     await knex('user').insert(user);
+  });
+
+  test('20220217012900_progress', async () => {
+    const seen = {
+      id: randomNumericId(),
+      userId: InitialData.user.id,
+      mediaItemId: InitialData.mediaItem.id,
+      date: new Date().getTime(),
+      action: 'started',
+    };
+
+    const seen2 = {
+      id: randomNumericId(),
+      userId: InitialData.user.id,
+      mediaItemId: InitialData.mediaItem.id,
+      episodeId: InitialData.episode.id,
+      date: new Date().getTime(),
+      action: 'started',
+    };
+
+    await knex('seen').insert(seen);
+    await knex('seen').insert(seen2);
+
+    await knex.migrate.up({
+      name: `20220217012900_progress.${MIGRATIONS_EXTENSION}`,
+      directory: migrationsDirectory,
+    });
+
+    const progress = await knex('seen')
+      .where('type', 'progress')
+      .where('mediaItemId', seen.mediaItemId)
+      .whereNull('episodeId')
+      .first();
+
+    const progress2 = await knex('seen')
+      .where('type', 'progress')
+      .where('mediaItemId', seen2.mediaItemId)
+      .where('episodeId', seen2.episodeId)
+      .first();
+
+    expect(progress).toMatchObject({
+      userId: seen.userId,
+      progress: 0,
+      date: seen.date,
+    });
+
+    expect(progress2).toMatchObject({
+      userId: seen.userId,
+      progress: 0,
+      date: seen.date,
+    });
+
+    await knex.migrate.down({
+      directory: migrationsDirectory,
+    });
+
+    await knex.migrate.up({
+      name: `20220217012900_progress.${MIGRATIONS_EXTENSION}`,
+      directory: migrationsDirectory,
+    });
+
+    await knex('seen').insert({
+      userId: InitialData.user.id,
+      mediaItemId: InitialData.mediaItem.id,
+      progress: 0.1,
+      duration: 123,
+      date: new Date().getTime(),
+      type: 'progress',
+    });
   });
 
   afterAll(clearDatabase);

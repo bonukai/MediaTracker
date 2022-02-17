@@ -7,7 +7,7 @@ export const ContinueWatchingPage: FunctionComponent = () => {
       args={{
         orderBy: 'lastSeen',
         sortOrder: 'desc',
-        onlyWithNextEpisodesToWatch: true,
+        onlyWithProgress: true,
         onlyOnWatchlist: true,
       }}
       showSortOrderControls={false}

@@ -17,6 +17,7 @@ export const useMediaTypeOrderByNames = (): Record<
     nextAiring: t`Next airing`,
     unseenEpisodes: t`Unseen episodes count`,
     mediaType: t`Media type`,
+    progress: t`Progress`,
   };
 };
 

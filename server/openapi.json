@@ -373,6 +373,15 @@
             }
           },
           {
+            "name": "onlyWithProgress",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
             "name": "page",
             "in": "query",
             "required": false,
@@ -549,6 +558,15 @@
               "type": "boolean",
               "nullable": true
             }
+          },
+          {
+            "name": "onlyWithProgress",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
           }
         ],
         "responses": {
@@ -620,6 +638,111 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/progress": {
+      "put": {
+        "tags": [
+          "Progress"
+        ],
+        "operationId": "add",
+        "parameters": [
+          {
+            "name": "progress",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "mediaItemId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "episodeId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "duration",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "paused",
+                "playing",
+                null
+              ],
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/progress/{progressId}": {
+      "delete": {
+        "tags": [
+          "Progress"
+        ],
+        "operationId": "deleteById",
+        "parameters": [
+          {
+            "name": "progressId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -777,33 +900,6 @@
                   "$ref": "#/components/schemas/LastSeenAt"
                 }
               ],
-              "nullable": true
-            }
-          },
-          {
-            "name": "progress",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "number",
-              "nullable": true
-            }
-          },
-          {
-            "name": "duration",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "number",
-              "nullable": true
-            }
-          },
-          {
-            "name": "startedAt",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "number",
               "nullable": true
             }
           },
@@ -1703,6 +1799,16 @@
             "type": "number",
             "nullable": true
           },
+          "userId": {
+            "type": "number"
+          },
+          "type": {
+            "enum": [
+              "progress",
+              "seen"
+            ],
+            "type": "string"
+          },
           "progress": {
             "type": "number",
             "nullable": true
@@ -1711,27 +1817,20 @@
             "type": "number",
             "nullable": true
           },
-          "startedAt": {
-            "type": "number",
-            "nullable": true
-          },
           "action": {
             "enum": [
-              "progress",
-              "started",
-              "watched",
+              "paused",
+              "playing",
               null
             ],
             "type": "string",
             "nullable": true
-          },
-          "userId": {
-            "type": "number"
           }
         },
         "required": [
           "date",
           "mediaItemId",
+          "type",
           "userId"
         ]
       },
@@ -1996,6 +2095,10 @@
                     "$ref": "#/components/schemas/TvEpisode"
                   }
                 ],
+                "nullable": true
+              },
+              "progress": {
+                "type": "number",
                 "nullable": true
               }
             }
@@ -2417,6 +2520,10 @@
                   }
                 ],
                 "nullable": true
+              },
+              "progress": {
+                "type": "number",
+                "nullable": true
               }
             }
           }
@@ -2545,6 +2652,10 @@
                 "type": "boolean",
                 "nullable": true
               },
+              "onlyWithProgress": {
+                "type": "boolean",
+                "nullable": true
+              },
               "page": {
                 "type": "number",
                 "nullable": true
@@ -2571,6 +2682,7 @@
           "lastSeen",
           "mediaType",
           "nextAiring",
+          "progress",
           "releaseDate",
           "status",
           "title",

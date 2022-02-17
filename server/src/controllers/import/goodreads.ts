@@ -92,9 +92,9 @@ export const importFromGoodreadsRss = async (
       (item): Seen => ({
         mediaItemId: mediaItemByGoodreadsIdMap[item.book_id].id,
         userId: userId,
-        startedAt: new Date(item.user_date_added).getTime(),
-        date: new Date().getTime(),
-        action: 'started',
+        date: new Date(item.user_date_added).getTime(),
+        progress: 0,
+        type: 'progress',
       })
     );
 
@@ -104,9 +104,8 @@ export const importFromGoodreadsRss = async (
       (item): Seen => ({
         mediaItemId: mediaItemByGoodreadsIdMap[item.book_id].id,
         userId: userId,
-        startedAt: new Date(item.user_date_added).getTime(),
         date: item.user_read_at ? new Date(item.user_read_at).getTime() : null,
-        action: 'watched',
+        type: 'seen',
       })
     );
 
@@ -124,8 +123,8 @@ export const importFromGoodreadsRss = async (
 
   const seenUniqueBy = (value: Seen) => ({
     mediaItemId: value.mediaItemId,
-    startedAt: value.startedAt,
-    action: value.action,
+    date: value.date,
+    type: value.type,
   });
 
   await watchlistRepository.createMany(toRead);

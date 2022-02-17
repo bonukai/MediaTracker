@@ -24,24 +24,13 @@ export class SeenController {
       episodeId?: number;
       lastSeenEpisodeId?: number;
       lastSeenAt?: LastSeenAt;
-      progress?: number;
-      duration?: number;
-      startedAt?: number;
       date?: number;
     };
   }>(async (req, res) => {
     const userId = Number(req.user);
 
-    const {
-      mediaItemId,
-      seasonId,
-      episodeId,
-      lastSeenAt,
-      lastSeenEpisodeId,
-      duration,
-      progress,
-      startedAt,
-    } = req.query;
+    const { mediaItemId, seasonId, episodeId, lastSeenAt, lastSeenEpisodeId } =
+      req.query;
 
     let date = req.query.date ? new Date(req.query.date) : null;
 
@@ -50,7 +39,7 @@ export class SeenController {
     });
 
     if (!mediaItem) {
-      res.send(401);
+      res.send(400);
       return;
     }
 
@@ -121,7 +110,7 @@ export class SeenController {
               : date?.getTime() || 0,
           duration:
             episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
-          action: 'watched',
+          type: 'seen',
         }))
       );
     } else {
@@ -144,9 +133,7 @@ export class SeenController {
           mediaItemId: mediaItemId,
           episodeId: episodeId,
           date: date?.getTime() || 0,
-          duration:
-            episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
-          action: 'watched',
+          type: 'seen',
         });
       } else if (seasonId) {
         const episodes = await tvEpisodeRepository.find({
@@ -169,7 +156,7 @@ export class SeenController {
                   : date?.getTime() || 0,
               duration:
                 episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
-              action: 'watched',
+              type: 'seen',
             }))
         );
       } else {
@@ -193,7 +180,7 @@ export class SeenController {
                     : date?.getTime() || 0,
                 duration:
                   episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
-                action: 'watched',
+                type: 'seen',
               }))
           );
         } else {
@@ -202,8 +189,7 @@ export class SeenController {
             mediaItemId: mediaItemId,
             episodeId: null,
             date: date?.getTime() || 0,
-            duration: mediaItem.runtime * 60 * 1000,
-            action: 'watched',
+            type: 'seen',
           });
         }
       }

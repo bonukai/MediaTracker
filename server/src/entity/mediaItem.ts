@@ -87,6 +87,7 @@ export type MediaItemDetailsResponse = Omit<
   lastSeenAt?: number;
   seen?: boolean;
   firstUnwatchedEpisode?: TvEpisode;
+  progress?: number;
 };
 
 export type MediaItemItemsResponse = Omit<MediaItemBase, 'lockedAt'> & {
@@ -106,6 +107,7 @@ export type MediaItemItemsResponse = Omit<MediaItemBase, 'lockedAt'> & {
   lastSeenAt?: number;
   seen?: boolean;
   firstUnwatchedEpisode?: TvEpisode;
+  progress?: number;
 };
 
 export const mediaItemColumns = <const>[

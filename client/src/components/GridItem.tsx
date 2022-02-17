@@ -152,6 +152,17 @@ export const GridItem: FunctionComponent<{
             {mediaItem.title}
           </div>
 
+          {mediaItem.progress && (
+            <>
+              <div className="w-full h-2 mt-1 rounded bg-slate-300">
+                <div
+                  className="h-full rounded bg-slate-900"
+                  style={{ width: `${mediaItem.progress * 100}%` }}
+                />
+              </div>
+            </>
+          )}
+
           {showNextAiring && (
             <>
               {mediaItem.mediaType === 'tv' && mediaItem.upcomingEpisode && (
