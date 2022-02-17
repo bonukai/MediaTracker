@@ -440,7 +440,7 @@ describe('migrations', () => {
       userId: InitialData.user.id,
       mediaItemId: InitialData.mediaItem.id,
       episodeId: InitialData.episode.id,
-      date: new Date().getTime(),
+      date: new Date().getTime() - 10,
       action: 'started',
     };
 
@@ -471,9 +471,9 @@ describe('migrations', () => {
     });
 
     expect(progress2).toMatchObject({
-      userId: seen.userId,
+      userId: seen2.userId,
       progress: 0,
-      date: seen.date,
+      date: seen2.date,
     });
 
     await knex.migrate.down({
