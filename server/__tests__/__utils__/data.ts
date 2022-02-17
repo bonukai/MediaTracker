@@ -103,6 +103,7 @@ export class InitialData {
     mediaItemId: this.mediaItem.id,
     episodeId: this.episode.id,
     userId: this.user.id,
+    type: 'seen',
   };
 
   static notificationPlatformsCredentials: NotificationPlatformsCredentials = {
