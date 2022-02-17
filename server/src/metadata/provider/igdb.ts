@@ -57,14 +57,19 @@ export class IGDB extends metadataProvider({
     const res = (await this.get(
       'games',
       `fields 
-        *, 
+        name,
+        first_release_date,
+        summary,
         cover.image_id, 
+        involved_companies.company.name, 
+        involved_companies.developer, 
         platforms.name, 
         platforms.platform_logo.id, 
         genres.name, 
-        collection.*, 
-        franchises.*, 
-        websites.*; 
+        platforms.id,
+        release_dates.date,
+        release_dates.platform,
+        websites.url; 
       where id = ${gameId} & version_parent = null;`
     )) as Game[];
     if (res.length > 0) {
@@ -76,13 +81,19 @@ export class IGDB extends metadataProvider({
     return (await this.get(
       'games',
       `fields 
-        *, 
+        name,
+        first_release_date,
+        summary,
         cover.image_id, 
         involved_companies.company.name, 
         involved_companies.developer, 
-        platforms.platform_logo.image_id, 
+        platforms.name, 
+        platforms.platform_logo.id, 
         genres.name, 
-        websites.*; 
+        platforms.id,
+        release_dates.date,
+        release_dates.platform,
+        websites.url; 
       search "${query}"; 
       where version_parent = null; 
       limit 50;`
