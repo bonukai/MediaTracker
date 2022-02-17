@@ -51,7 +51,9 @@ export const useOrderByComponent = (args: {
   });
 
   return {
-    orderBy: mediaTypeOrderByStringMap[selectedValue] as MediaItemOrderBy,
+    orderBy: selectedValue
+      ? (mediaTypeOrderByStringMap[selectedValue] as MediaItemOrderBy)
+      : args.orderBy,
     sortOrder,
     OrderByComponent: () => (
       <Menu>
