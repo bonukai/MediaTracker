@@ -103,7 +103,7 @@ export const SetProgressComponent: FunctionComponent<{
           onClick={async () => {
             addToProgress({
               mediaItemId: mediaItem.id,
-              progress: progress * 100,
+              progress: progress / 100,
               duration: duration,
             });
             closeModal();
