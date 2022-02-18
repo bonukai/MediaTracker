@@ -64,6 +64,16 @@ export class ProgressController {
         userId: userId,
         mediaItemId: mediaItemId,
       });
+      await seenRepository.create({
+        userId: userId,
+        action: action,
+        type: 'seen',
+        date: date,
+        duration: duration,
+        episodeId: episodeId,
+        mediaItemId: mediaItemId,
+        progress: progress,
+      });
     } else {
       await watchlistRepository.create({
         userId: userId,
