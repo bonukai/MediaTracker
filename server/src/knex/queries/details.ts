@@ -203,12 +203,7 @@ export const getDetailsKnex = async (params: {
     genres: (mediaItem.genres as unknown as string)?.split(','),
     narrators: (mediaItem.narrators as unknown as string)?.split(','),
     authors: (mediaItem.authors as unknown as string)?.split(','),
-    progress:
-      progressValue !== 1
-        ? _(progress)
-            .filter((value) => value.date === _.maxBy(progress, 'date')?.date)
-            .maxBy('progress')?.progress || null
-        : null,
+    progress: progressValue !== 1 ? progressValue || null : null,
     seenHistory: seenHistory,
     seen: seen,
     seasons: seasons,
