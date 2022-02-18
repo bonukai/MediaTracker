@@ -207,7 +207,7 @@ export const getDetailsKnex = async (params: {
       progressValue !== 1
         ? _(progress)
             .filter((value) => value.date === _.maxBy(progress, 'date')?.date)
-            .maxBy('progress')?.progress
+            .maxBy('progress')?.progress || null
         : null,
     seenHistory: seenHistory,
     seen: seen,
