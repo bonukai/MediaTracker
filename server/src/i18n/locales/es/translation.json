@@ -31,6 +31,6 @@
   "{count, plural, one {Failed to update 1 item} other {Failed to update # items}}": "{count, plural, one {Error al actualizar 1 elemento} other {Error al actualizar # elementos}}",
   "{count, plural, one {Sending notification for new episodes of {title} to # user} other {Sending notification for new episodes of {title} to # users}}": "{count, plural, one {Enviando notificaciones de nuevos episodios de {title} a # usuario} other {Enviando notificaciones de nuevos episodios de {title} a # usuarios}}",
   "{count, plural, one {Sending notification for {title} to # user} other {Sending notification for {title} to # users}}": "{count, plural, one {Enviando notificación de {title} a # usuario} other {Enviando notificación de {title} a # usuarios}}",
-  "{count, plural, one {Updated 1 item} other {Updated # items}}": "{count, plural, one {Actualizado 1 elemento} other {Actualizado # elementos}}",
+  "{count, plural, one {Updated 1 item} other {Updated # items}}": "{count, plural, one {1 elemento actualizado} other {# elementos actualizados}}",
   "{title} has been released": "{title} ha sido estrenado"
 }
