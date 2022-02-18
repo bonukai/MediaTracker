@@ -362,7 +362,7 @@ export const DetailsPage: FunctionComponent = () => {
                 />
                 :{' '}
               </span>
-              {mediaItem.narrators.join(',')}
+              {mediaItem.narrators.sort().join(',')}
             </div>
           )}
 
