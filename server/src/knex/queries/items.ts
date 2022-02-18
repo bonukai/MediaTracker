@@ -375,6 +375,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           .orWhere((qb) =>
             qb
               .where('mediaItem.mediaType', 'tv')
+              .where('seenEpisodesCount', '>', 0)
               .andWhere('unseenEpisodesCount', '>', 0)
           )
       );
