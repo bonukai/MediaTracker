@@ -82,6 +82,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
     .select(generateColumnNames('mediaItem', mediaItemColumns))
     .select({
       lastSeenAt: 'lastSeen.date',
+      lastSeenAt2: 'lastSeen2.date',
       numberOfEpisodes: 'numberOfEpisodes',
       unseenEpisodesCount: 'unseenEpisodesCount',
       seenEpisodesCount: 'seenEpisodesCount',
@@ -100,6 +101,19 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           .groupBy('mediaItemId')
           .as('lastSeen'),
       'lastSeen.mediaItemId',
+      'mediaItem.id'
+    )
+    .leftJoin<Seen>(
+      (qb) =>
+        qb
+          .select('mediaItemId')
+          .max('date', { as: 'date' })
+          .from<Seen>('seen')
+          .where('userId', userId)
+          .where('type', 'seen')
+          .groupBy('mediaItemId')
+          .as('lastSeen2'),
+      'lastSeen2.mediaItemId',
       'mediaItem.id'
     )
     // Number of episodes
@@ -523,7 +537,7 @@ const mapRawResult = (row: any): MediaItemItemsResponse => {
     seen:
       row['mediaItem.mediaType'] === 'tv'
         ? row.numberOfEpisodes > 0 && !row.unseenEpisodesCount
-        : row['lastSeenAt'] != undefined,
+        : row['lastSeenAt2'] != undefined,
 
     onWatchlist: Boolean(row['watchlist.id']),
     unseenEpisodesCount: row.unseenEpisodesCount || 0,
