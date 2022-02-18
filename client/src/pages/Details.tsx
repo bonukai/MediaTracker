@@ -308,7 +308,7 @@ export const DetailsPage: FunctionComponent = () => {
                 />
                 :{' '}
               </span>
-              {mediaItem.genres.map((genre, index) => (
+              {mediaItem.genres.sort().map((genre, index) => (
                 <span key={genre}>
                   <span className="italic">{genre}</span>
 
