@@ -348,7 +348,7 @@ export const DetailsPage: FunctionComponent = () => {
                 />
                 :{' '}
               </span>
-              {mediaItem.authors.join(', ')}
+              {mediaItem.authors.sort().join(', ')}
             </div>
           )}
 
