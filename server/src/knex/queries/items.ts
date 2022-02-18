@@ -496,7 +496,9 @@ const mapRawResult = (row: any): MediaItemItemsResponse => {
     mediaType: row['mediaItem.mediaType'],
     numberOfSeasons: row['mediaItem.numberOfSeasons'],
     status: row['mediaItem.status'],
-    platform: row['mediaItem.platform'],
+    platform: row['mediaItem.platform']
+      ? JSON.parse(row['mediaItem.platform'])
+      : null,
     title: row['mediaItem.title'],
     originalTitle: row['mediaItem.originalTitle'],
     tmdbRating: row['mediaItem.tmdbRating'],

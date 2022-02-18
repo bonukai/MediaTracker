@@ -50,6 +50,7 @@ export class IGDB extends metadataProvider({
         searchResult.websites?.length > 0 ? searchResult.websites[0].url : null,
       developer: searchResult.involved_companies?.find((item) => item.developer)
         ?.company.name,
+      platform: searchResult.platforms?.map((value) => value.name),
     };
   }
 

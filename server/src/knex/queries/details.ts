@@ -199,6 +199,9 @@ export const getDetailsKnex = async (params: {
 
   return {
     ...mediaItem,
+    platform: mediaItem.platform
+      ? JSON.parse(mediaItem.platform as unknown as string)
+      : null,
     hasDetails: true,
     genres: (mediaItem.genres as unknown as string)?.split(','),
     narrators: (mediaItem.narrators as unknown as string)?.split(','),

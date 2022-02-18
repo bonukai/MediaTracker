@@ -112,6 +112,9 @@ class MediaItemRepository extends repository<MediaItemBase>({
       genres: (value.genres as unknown as string)?.split(',') || null,
       narrators: (value.narrators as unknown as string)?.split(',') || null,
       authors: (value.authors as unknown as string)?.split(',') || null,
+      platform: value.platform
+        ? JSON.parse(value.platform as unknown as string)
+        : null,
     });
   }
 
@@ -121,6 +124,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       genres: value.genres?.join(','),
       authors: value.authors?.join(','),
       narrators: value.narrators?.join(','),
+      platform: value.platform ? JSON.stringify(value.platform) : null,
     } as unknown);
   }
 

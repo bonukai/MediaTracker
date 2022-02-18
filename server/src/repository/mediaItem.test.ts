@@ -550,7 +550,7 @@ const updatedMediaItem = {
   numberOfSeasons: 5,
   openlibraryId: 'openlibraryId',
   originalTitle: 'originalTitle',
-  platform: 'platform',
+  platform: ['platform', 'platform2'],
   poster: 'poster',
   releaseDate: '2000-08-12',
   runtime: 51,

@@ -269,9 +269,14 @@ export const DetailsPage: FunctionComponent = () => {
           {mediaItem.platform && (
             <div>
               <span className="font-bold">
-                <Trans>Platform</Trans>:{' '}
+                <Plural
+                  value={mediaItem.platform.length}
+                  one="Platform"
+                  other="platforms"
+                />
+                :{' '}
               </span>
-              <span>{mediaItem.platform}</span>
+              <span>{mediaItem.platform.sort().join(', ')}</span>
             </div>
           )}
 

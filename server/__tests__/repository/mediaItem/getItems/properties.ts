@@ -18,7 +18,7 @@ const mediaItem: MediaItemBase = {
   openlibraryId: '1234567',
   originalTitle: 'originalTitle',
   overview: 'overview',
-  platform: 'platform',
+  platform: ['platform'],
   releaseDate: '2021-02-28',
   runtime: 30,
   source: 'user',

@@ -20,7 +20,7 @@ export type MediaItemBase = ExternalIds & {
   id?: number;
   numberOfSeasons?: number;
   status?: string;
-  platform?: string;
+  platform?: string[];
   title: string;
   originalTitle?: string;
   poster?: string;
