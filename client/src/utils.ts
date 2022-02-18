@@ -116,7 +116,7 @@ export const hideSeasonOverview = (user: UserResponse) => {
 };
 
 export const hasProgress = (mediaItem: MediaItemItemsResponse) => {
-  return mediaItem.progress !== null;
+  return mediaItem.progress !== null && mediaItem.progress !== undefined;
 };
 
 export const reverseMap = <Keys extends string, Values extends string>(
