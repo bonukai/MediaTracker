@@ -79,7 +79,7 @@ export const SetProgressComponent: FunctionComponent<{
           }}
         />
 
-        {isVideoGame(mediaItem) && (
+        {(isVideoGame(mediaItem) || isBook(mediaItem)) && (
           <div className="mb-4">
             <div className="text-lg">
               <Trans>Duration</Trans>:
