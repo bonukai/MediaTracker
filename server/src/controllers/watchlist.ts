@@ -24,7 +24,7 @@ export class WatchlistController {
     });
 
     if (result) {
-      res.sendStatus(400);
+      res.send();
       return;
     }
 

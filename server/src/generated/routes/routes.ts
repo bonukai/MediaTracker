@@ -67,6 +67,7 @@ import { ImgController } from '../../controllers/img';
 import { MediaItemController } from '../../controllers/item';
 import { ItemsController } from '../../controllers/items';
 import { MetadataProviderCredentialsController } from '../../controllers/metadataProviderCredentials';
+import { ProgressController } from '../../controllers/progress';
 import { RatingController } from '../../controllers/rating';
 import { SearchController } from '../../controllers/search';
 import { SeenController } from '../../controllers/seen';
@@ -83,6 +84,7 @@ const _MediaItemController = new MediaItemController();
 const _ItemsController = new ItemsController();
 const _MetadataProviderCredentialsController =
   new MetadataProviderCredentialsController();
+const _ProgressController = new ProgressController();
 const _RatingController = new RatingController();
 const _SearchController = new SearchController();
 const _SeenController = new SeenController();
@@ -348,6 +350,7 @@ router.get(
                 onlyWithNextAiring: { type: ['boolean', 'null'] },
                 onlyWithUserRating: { type: ['boolean', 'null'] },
                 onlyWithoutUserRating: { type: ['boolean', 'null'] },
+                onlyWithProgress: { type: ['boolean', 'null'] },
                 page: { type: ['number', 'null'] },
               },
             },
@@ -369,6 +372,7 @@ router.get(
             'lastSeen',
             'mediaType',
             'nextAiring',
+            'progress',
             'releaseDate',
             'status',
             'title',
@@ -402,6 +406,7 @@ router.get(
             'lastSeen',
             'mediaType',
             'nextAiring',
+            'progress',
             'releaseDate',
             'status',
             'title',
@@ -429,6 +434,7 @@ router.get(
         onlyWithNextAiring: { type: ['boolean', 'null'] },
         onlyWithUserRating: { type: ['boolean', 'null'] },
         onlyWithoutUserRating: { type: ['boolean', 'null'] },
+        onlyWithProgress: { type: ['boolean', 'null'] },
       },
     },
   }),
@@ -465,6 +471,37 @@ router.put(
     },
   }),
   _MetadataProviderCredentialsController.set
+);
+router.put(
+  '/api/progress',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        progress: { type: ['number', 'null'] },
+        mediaItemId: { type: 'number' },
+        episodeId: { type: ['number', 'null'] },
+        date: { type: 'number' },
+        duration: { type: ['number', 'null'] },
+        action: { enum: ['paused', 'playing', null], type: 'string' },
+      },
+      required: ['date', 'mediaItemId'],
+    },
+  }),
+  _ProgressController.add
+);
+router.delete(
+  '/api/progress/:progressId',
+  validatorHandler({
+    pathParamsSchema: {
+      type: 'object',
+      properties: { progressId: { type: 'number' } },
+      required: ['progressId'],
+      nullable: false,
+    },
+  }),
+  _ProgressController.deleteById
 );
 router.put(
   '/api/rating',
@@ -525,9 +562,6 @@ router.put(
         lastSeenAt: {
           oneOf: [{ $ref: '#/definitions/LastSeenAt' }, { type: 'null' }],
         },
-        progress: { type: ['number', 'null'] },
-        duration: { type: ['number', 'null'] },
-        startedAt: { type: ['number', 'null'] },
         date: { type: ['number', 'null'] },
       },
       required: ['mediaItemId'],

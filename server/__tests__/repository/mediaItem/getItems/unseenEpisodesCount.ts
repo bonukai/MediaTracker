@@ -31,41 +31,48 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user.id,
     episodeId: 1,
+    type: 'seen',
   },
   {
     date: new Date().getTime(),
     mediaItemId: 1,
     userId: user.id,
     episodeId: 2,
+    type: 'seen',
   },
   {
     date: new Date().getTime(),
     mediaItemId: 1,
     userId: user.id,
     episodeId: 3,
+    type: 'seen',
   },
   {
     date: new Date().getTime(),
     mediaItemId: 3,
     userId: user.id,
+    type: 'seen',
   },
   {
     date: new Date().getTime(),
     mediaItemId: 4,
     episodeId: 5,
     userId: user.id,
+    type: 'seen',
   },
   {
     date: new Date().getTime(),
     mediaItemId: 5,
     episodeId: 7,
     userId: 2,
+    type: 'seen',
   },
   {
     date: new Date().getTime(),
     mediaItemId: 5,
     episodeId: 8,
     userId: 2,
+    type: 'seen',
   },
 ];
 

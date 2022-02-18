@@ -30,6 +30,7 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user.id,
     episodeId: 1,
+    type: 'seen',
   },
   {
     id: 2,
@@ -37,6 +38,7 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user.id,
     episodeId: 2,
+    type: 'seen',
   },
   {
     id: 3,
@@ -44,6 +46,7 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user.id,
     episodeId: 3,
+    type: 'seen',
   },
   {
     id: 4,
@@ -51,6 +54,7 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user2.id,
     episodeId: 4,
+    type: 'seen',
   },
 ];
 

@@ -10,12 +10,13 @@ import {
   canBeOnWatchlist,
   canBeRated,
   formatEpisodeNumber,
+  hasProgress,
   isAudiobook,
   isBook,
   isMovie,
   isTvShow,
   isVideoGame,
-} from '../utils';
+} from 'src/utils';
 import { RelativeTime } from 'src/components/date';
 import { MediaItemItemsResponse, MediaType } from 'mediatracker-api';
 import { Poster } from 'src/components/Poster';
@@ -151,6 +152,17 @@ export const GridItem: FunctionComponent<{
           <div className="overflow-hidden text-lg overflow-ellipsis whitespace-nowrap">
             {mediaItem.title}
           </div>
+
+          {hasProgress(mediaItem) && (
+            <>
+              <div className="w-full h-2 mt-1 rounded bg-slate-300">
+                <div
+                  className="h-full rounded bg-slate-900"
+                  style={{ width: `${mediaItem.progress * 100}%` }}
+                />
+              </div>
+            </>
+          )}
 
           {showNextAiring && (
             <>

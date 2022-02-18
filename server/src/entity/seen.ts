@@ -3,11 +3,12 @@ export type Seen = {
   date: number;
   mediaItemId: number;
   episodeId?: number;
+  userId: number;
+
+  type: 'progress' | 'seen';
   progress?: number;
   duration?: number;
-  startedAt?: number;
-  action?: 'watched' | 'started' | 'progress';
-  userId: number;
+  action?: 'paused' | 'playing';
 };
 
 export const seenColumns = <const>[
@@ -16,10 +17,10 @@ export const seenColumns = <const>[
   'mediaItemId',
   'episodeId',
   'userId',
-  'action',
-  'duration',
+  'type',
   'progress',
-  'startedAt',
+  'duration',
+  'action',
 ];
 
 export class SeenFilters {

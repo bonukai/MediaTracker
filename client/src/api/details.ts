@@ -10,10 +10,7 @@ import {
 import { TvSeason } from 'mediatracker-api';
 import { mediaTrackerApi } from 'src/api/api';
 
-export const detailsKey = (mediaItemId: number) => [
-  'details',
-  { mediaItemId: mediaItemId },
-];
+export const detailsKey = (mediaItemId: number) => ['details', mediaItemId];
 
 const getDetails = async (mediaItemId: number) => {
   return mediaTrackerApi.details.get(mediaItemId);
@@ -96,6 +93,24 @@ export const removeFromWatchlist = async (
 export const addToWatchlist = async (mediaItem: MediaItemItemsResponse) => {
   await mediaTrackerApi.watchlist.add({ mediaItemId: mediaItem.id });
   await updateMediaItem(mediaItem);
+  queryClient.invalidateQueries(['items']);
+};
+
+export const addToProgress = async (args: {
+  mediaItemId: number;
+  progress: number;
+  duration?: number;
+}) => {
+  const { mediaItemId, progress, duration } = args;
+
+  await mediaTrackerApi.progress.add({
+    mediaItemId: mediaItemId,
+    date: new Date().getTime(),
+    progress: progress,
+    duration: duration,
+  });
+
+  queryClient.invalidateQueries(detailsKey(mediaItemId));
   queryClient.invalidateQueries(['items']);
 };
 

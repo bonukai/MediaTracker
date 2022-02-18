@@ -27,6 +27,7 @@ export const getDetailsKnex = async (params: {
     userRating,
     watchlist,
     images,
+    progress,
   } = await knex.transaction(async (trx) => {
     const mediaItem = await trx<MediaItemBase>('mediaItem')
       .where({
@@ -51,6 +52,7 @@ export const getDetailsKnex = async (params: {
       .where({
         mediaItemId: mediaItemId,
         userId: userId,
+        type: 'seen',
       })
       .orderBy('date', 'desc');
 
@@ -72,6 +74,13 @@ export const getDetailsKnex = async (params: {
       mediaItemId: mediaItemId,
     });
 
+    const progress = await trx<Seen>('seen').where({
+      mediaItemId: mediaItemId,
+      episodeId: null,
+      userId: userId,
+      type: 'progress',
+    });
+
     return {
       mediaItem,
       seasons,
@@ -80,6 +89,7 @@ export const getDetailsKnex = async (params: {
       userRating,
       watchlist,
       images,
+      progress,
     };
   });
 
@@ -181,12 +191,19 @@ export const getDetailsKnex = async (params: {
     (image) => image.type
   );
 
+  const progressGroupedByDate = _(progress).groupBy('date');
+  const progressValue = _.maxBy(
+    progressGroupedByDate.get(progressGroupedByDate.keys().max()),
+    'progress'
+  )?.progress;
+
   return {
     ...mediaItem,
     hasDetails: true,
     genres: (mediaItem.genres as unknown as string)?.split(','),
     narrators: (mediaItem.narrators as unknown as string)?.split(','),
     authors: (mediaItem.authors as unknown as string)?.split(','),
+    progress: progressValue !== 1 ? progressValue ?? null : null,
     seenHistory: seenHistory,
     seen: seen,
     seasons: seasons,

@@ -30,6 +30,7 @@ export type MediaItemOrderBy =
   | 'releaseDate'
   | 'nextAiring'
   | 'status'
+  | 'progress'
   | 'mediaType';
 export type SortOrder = 'asc' | 'desc';
 
@@ -78,6 +79,8 @@ export type GetItemsArgs = {
    * @description Return only items without user rating
    */
   onlyWithoutUserRating?: boolean;
+
+  onlyWithProgress?: boolean;
 
   page?: number;
   mediaItemIds?: number[];

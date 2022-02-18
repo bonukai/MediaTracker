@@ -7,6 +7,7 @@ import { LastSeenAt, mediaItemRepository } from 'src/repository/mediaItem';
 import { tvSeasonRepository } from 'src/repository/season';
 import { seenRepository } from 'src/repository/seen';
 import { watchlistRepository } from 'src/repository/watchlist';
+import { Seen } from 'src/entity/seen';
 
 /**
  * @openapi_tags Seen
@@ -24,24 +25,13 @@ export class SeenController {
       episodeId?: number;
       lastSeenEpisodeId?: number;
       lastSeenAt?: LastSeenAt;
-      progress?: number;
-      duration?: number;
-      startedAt?: number;
       date?: number;
     };
   }>(async (req, res) => {
     const userId = Number(req.user);
 
-    const {
-      mediaItemId,
-      seasonId,
-      episodeId,
-      lastSeenAt,
-      lastSeenEpisodeId,
-      duration,
-      progress,
-      startedAt,
-    } = req.query;
+    const { mediaItemId, seasonId, episodeId, lastSeenAt, lastSeenEpisodeId } =
+      req.query;
 
     let date = req.query.date ? new Date(req.query.date) : null;
 
@@ -50,7 +40,7 @@ export class SeenController {
     });
 
     if (!mediaItem) {
-      res.send(401);
+      res.send(400);
       return;
     }
 
@@ -121,7 +111,7 @@ export class SeenController {
               : date?.getTime() || 0,
           duration:
             episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
-          action: 'watched',
+          type: 'seen',
         }))
       );
     } else {
@@ -139,14 +129,17 @@ export class SeenController {
           id: episodeId,
         });
 
+        if (!episode) {
+          res.sendStatus(400);
+          return;
+        }
+
         await seenRepository.create({
           userId: userId,
           mediaItemId: mediaItemId,
           episodeId: episodeId,
           date: date?.getTime() || 0,
-          duration:
-            episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
-          action: 'watched',
+          type: 'seen',
         });
       } else if (seasonId) {
         const episodes = await tvEpisodeRepository.find({
@@ -158,19 +151,20 @@ export class SeenController {
             .filter(TvEpisodeFilters.unwatchedEpisodes)
             .filter(TvEpisodeFilters.nonSpecialEpisodes)
             .filter(TvEpisodeFilters.releasedEpisodes)
-            .map((episode) => ({
-              userId: userId,
-              mediaItemId: mediaItemId,
-              seasonId: episode.seasonId,
-              episodeId: episode.id,
-              date:
-                lastSeenAt === 'release_date'
-                  ? new Date(episode.releaseDate).getTime()
-                  : date?.getTime() || 0,
-              duration:
-                episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
-              action: 'watched',
-            }))
+            .map(
+              (episode): Seen => ({
+                userId: userId,
+                mediaItemId: mediaItemId,
+                episodeId: episode.id,
+                date:
+                  lastSeenAt === 'release_date'
+                    ? new Date(episode.releaseDate).getTime()
+                    : date?.getTime() || 0,
+                duration:
+                  episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
+                type: 'seen',
+              })
+            )
         );
       } else {
         if (mediaItem.mediaType === 'tv') {
@@ -182,19 +176,21 @@ export class SeenController {
             episodes
               .filter(TvEpisodeFilters.nonSpecialEpisodes)
               .filter(TvEpisodeFilters.releasedEpisodes)
-              .map((episode) => ({
-                userId: userId,
-                mediaItemId: mediaItemId,
-                seasonId: episode.seasonId,
-                episodeId: episode.id,
-                date:
-                  lastSeenAt === 'release_date'
-                    ? new Date(episode.releaseDate).getTime()
-                    : date?.getTime() || 0,
-                duration:
-                  episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
-                action: 'watched',
-              }))
+              .map(
+                (episode): Seen => ({
+                  userId: userId,
+                  mediaItemId: mediaItemId,
+                  episodeId: episode.id,
+                  date:
+                    lastSeenAt === 'release_date'
+                      ? new Date(episode.releaseDate).getTime()
+                      : date?.getTime() || 0,
+                  duration:
+                    episode.runtime * 60 * 1000 ||
+                    mediaItem.runtime * 60 * 1000,
+                  type: 'seen',
+                })
+              )
           );
         } else {
           await seenRepository.create({
@@ -202,8 +198,14 @@ export class SeenController {
             mediaItemId: mediaItemId,
             episodeId: null,
             date: date?.getTime() || 0,
-            duration: mediaItem.runtime * 60 * 1000,
-            action: 'watched',
+            type: 'seen',
+          });
+
+          await addProgress({
+            userId: userId,
+            mediaItemId: mediaItemId,
+            episodeId: null,
+            date: date?.getTime() || 0,
           });
         }
       }
@@ -274,3 +276,34 @@ export class SeenController {
     res.send();
   });
 }
+
+const addProgress = async (args: {
+  userId: number;
+  mediaItemId: number;
+  date?: number;
+  episodeId?: number;
+}) => {
+  const { date, mediaItemId, userId, episodeId } = args;
+
+  if (!date) {
+    return;
+  }
+
+  const progress = await seenRepository.find({
+    userId: userId,
+    mediaItemId: mediaItemId,
+    episodeId: episodeId,
+    type: 'progress',
+  });
+
+  if (_.maxBy(progress, 'date')?.date < date) {
+    await seenRepository.create({
+      userId: userId,
+      mediaItemId: mediaItemId,
+      episodeId: null,
+      date: date,
+      type: 'progress',
+      progress: 1,
+    });
+  }
+};

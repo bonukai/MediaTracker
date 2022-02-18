@@ -63,15 +63,16 @@ describe('Goodreads import', () => {
 
   test('read', async () => {
     const read = await knex<Seen>('seen').where({
-      action: 'watched',
       userId: user.id,
+      type: 'seen',
     });
     expect(read.length).toEqual(38);
   });
 
   test('toRead', async () => {
     const toRead = await knex<Seen>('seen').where({
-      action: 'started',
+      progress: 0,
+      type: 'progress',
       userId: user.id,
     });
     expect(toRead.length).toEqual(1);

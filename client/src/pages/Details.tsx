@@ -18,6 +18,7 @@ import {
   canBeOnWatchlist,
   canBeRated,
   formatEpisodeNumber,
+  hasProgress,
   isAudiobook,
   isBook,
   isMovie,
@@ -25,6 +26,7 @@ import {
   isVideoGame,
 } from 'src/utils';
 import {
+  addToProgress,
   addToWatchlist,
   removeFromSeenHistory,
   removeFromWatchlist,
@@ -34,6 +36,7 @@ import { RelativeTime } from 'src/components/date';
 import { Poster } from 'src/components/Poster';
 import { Modal } from 'src/components/Modal';
 import { useOtherUser } from 'src/api/user';
+import { SetProgressComponent } from 'src/components/SetProgress';
 
 const Review: FunctionComponent<{ userRating: UserRating }> = (props) => {
   const { userRating } = props;
@@ -398,7 +401,6 @@ export const DetailsPage: FunctionComponent = () => {
           </div>
         </div>
       </div>
-
       {canBeOnWatchlist(mediaItem) && (
         <div className="pt-5 mt-3">
           {mediaItem.onWatchlist ? (
@@ -418,7 +420,6 @@ export const DetailsPage: FunctionComponent = () => {
           )}
         </div>
       )}
-
       <div>
         {hasBeenReleased(mediaItem) && (
           <>
@@ -433,7 +434,6 @@ export const DetailsPage: FunctionComponent = () => {
           </>
         )}
       </div>
-
       {mediaItem.mediaType === 'tv' && (
         <Link
           to={`/episodes/${mediaItem.id}`}
@@ -441,6 +441,56 @@ export const DetailsPage: FunctionComponent = () => {
         >
           <Trans>Episodes page</Trans>
         </Link>
+      )}
+
+      {hasBeenReleased(mediaItem) && !isTvShow(mediaItem) && (
+        <>
+          {!hasProgress(mediaItem) && (
+            <div
+              className="mt-3 text-sm btn"
+              onClick={async () => {
+                addToProgress({
+                  mediaItemId: mediaItem.id,
+                  progress: 0,
+                });
+              }}
+            >
+              {isMovie(mediaItem) && <Trans>I am watching it</Trans>}
+              {isBook(mediaItem) && <Trans>I am reading it</Trans>}
+              {isAudiobook(mediaItem) && <Trans>I am listening it</Trans>}
+              {isVideoGame(mediaItem) && <Trans>I am playing it</Trans>}
+            </div>
+          )}
+
+          {hasProgress(mediaItem) && (
+            <>
+              <div
+                className="mt-3 text-sm btn"
+                onClick={async () => {
+                  addToProgress({
+                    mediaItemId: mediaItem.id,
+                    progress: 1,
+                  });
+                }}
+              >
+                {isMovie(mediaItem) && <Trans>I finished watching it</Trans>}
+                {isBook(mediaItem) && <Trans>I finished reading it</Trans>}
+                {isAudiobook(mediaItem) && (
+                  <Trans>I finished listening it</Trans>
+                )}
+                {isVideoGame(mediaItem) && <Trans>I finished playing it</Trans>}
+              </div>
+
+              <div className="mt-3">
+                <Trans>Progress</Trans>: {Math.round(mediaItem.progress * 100)}%
+              </div>
+            </>
+          )}
+
+          <div className="mt-3">
+            <SetProgressButton mediaItem={mediaItem} />
+          </div>
+        </>
       )}
 
       {mediaItem.upcomingEpisode && (
@@ -457,7 +507,6 @@ export const DetailsPage: FunctionComponent = () => {
           </div>
         </>
       )}
-
       {mediaItem.firstUnwatchedEpisode && (
         <div className="flex mt-3 font-bold">
           <Trans>First unwatched episode</Trans>:{' '}
@@ -466,7 +515,6 @@ export const DetailsPage: FunctionComponent = () => {
           <MarkAsSeenFirstUnwatchedEpisode mediaItem={mediaItem} />
         </div>
       )}
-
       {mediaItem.lastSeenAt > 0 && (
         <div className="mt-3">
           {isAudiobook(mediaItem) && (
@@ -494,7 +542,6 @@ export const DetailsPage: FunctionComponent = () => {
           )}
         </div>
       )}
-
       {mediaItem.seenHistory?.length > 0 && (
         <div className="mt-3">
           <div>
@@ -552,6 +599,26 @@ export const DetailsPage: FunctionComponent = () => {
         />
       )}
     </div>
+  );
+};
+
+const SetProgressButton: FunctionComponent<{
+  mediaItem: MediaItemDetailsResponse;
+}> = (props) => {
+  const { mediaItem } = props;
+
+  return (
+    <Modal
+      openModal={(openModal) => (
+        <div className="text-sm text-green-500 btn" onClick={() => openModal()}>
+          Set progress
+        </div>
+      )}
+    >
+      {(closeModal) => (
+        <SetProgressComponent mediaItem={mediaItem} closeModal={closeModal} />
+      )}
+    </Modal>
   );
 };
 

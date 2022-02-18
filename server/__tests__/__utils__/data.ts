@@ -97,7 +97,7 @@ export class InitialData {
     episodeId: this.episode.id,
   };
 
-  static seen: Seen = {
+  static seen = {
     id: 1,
     date: new Date().getTime(),
     mediaItemId: this.mediaItem.id,

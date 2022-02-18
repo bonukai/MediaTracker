@@ -1,13 +1,13 @@
 import React, { FunctionComponent } from 'react';
 import { PaginatedGridItems } from 'src/components/PaginatedGridItems';
 
-export const ContinueWatchingPage: FunctionComponent = () => {
+export const InProgressPage: FunctionComponent = () => {
   return (
     <PaginatedGridItems
       args={{
         orderBy: 'lastSeen',
         sortOrder: 'desc',
-        onlyWithNextEpisodesToWatch: true,
+        onlyWithProgress: true,
         onlyOnWatchlist: true,
       }}
       showSortOrderControls={false}
