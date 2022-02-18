@@ -365,6 +365,14 @@ export const DetailsPage: FunctionComponent = () => {
               {mediaItem.narrators.sort().join(',')}
             </div>
           )}
+          {mediaItem.numberOfPages && (
+            <div>
+              <span className="font-bold">
+                <Trans>Number of pages</Trans>:{' '}
+              </span>
+              {mediaItem.numberOfPages}
+            </div>
+          )}
 
           {isTvShow(mediaItem) && (
             <>

@@ -40,7 +40,7 @@ export class OpenLibrary extends metadataProvider({
           ? `https://covers.openlibrary.org/b/id/${doc.cover_i}.jpg`
           : undefined,
         releaseDate: doc.first_publish_year?.toString(),
-
+        numberOfPages: doc.number_of_pages_median,
         authors: doc.author_name,
         openlibraryId: doc.key,
       };
@@ -94,6 +94,7 @@ interface Document {
   text: string[];
   place: string[];
   publish_date: string[];
+  number_of_pages_median?: number;
 }
 
 interface SearchResponse {
