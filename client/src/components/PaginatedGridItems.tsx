@@ -102,14 +102,14 @@ export const PaginatedGridItems: FunctionComponent<{
       setPage(1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orderBy, sortOrder, filter]);
+  }, [orderBy, sortOrder, JSON.stringify(filter)]);
 
   const mainContainerRef = useRef<HTMLDivElement>();
 
   const setPage = useCallback(
     (value: number) => {
       _setPage(value);
-      window.document.body.scrollIntoView({ behavior: 'smooth' });
+      window.document.body.scrollIntoView({ behavior: 'auto' });
 
       if (value === 1) {
         setSearchParams(
