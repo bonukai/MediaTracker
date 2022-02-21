@@ -6,6 +6,7 @@ import { downloadAsset } from 'src/utils';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { tvSeasonRepository } from 'src/repository/season';
 import { imageRepository } from 'src/repository/image';
+import { ASSETS_PATH } from 'src/config';
 
 type ImgSize = 'small' | 'original';
 
@@ -34,7 +35,11 @@ export class ImgController {
     const { size } = req.query;
     const { id } = req.params;
 
-    const imagePath = path.resolve('img', size || 'original', `${id}.webp`);
+    const imagePath = path.resolve(
+      ASSETS_PATH,
+      size || 'original',
+      `${id}.webp`
+    );
 
     if (!(await fs.pathExists(imagePath))) {
       const image = await imageRepository.findOne({ id: id });

@@ -4,6 +4,7 @@ import fs, { pathExists, rm } from 'fs-extra';
 import path from 'path';
 import sharp from 'sharp';
 
+import { ASSETS_PATH } from 'src/config';
 import { getImageId, ImageType } from 'src/entity/image';
 import { imageRepository } from 'src/repository/image';
 
@@ -13,9 +14,9 @@ export const durationToMilliseconds = (duration: Duration) =>
 export const downloadAsset = async (args: { imageId: string; url: string }) => {
   const { imageId, url } = args;
 
-  const imagePath = path.resolve('img', 'original', `${imageId}.webp`);
+  const imagePath = path.resolve(ASSETS_PATH, 'original', `${imageId}.webp`);
 
-  const imageSmallPath = path.resolve('img', 'small', `${imageId}.webp`);
+  const imageSmallPath = path.resolve(ASSETS_PATH, 'small', `${imageId}.webp`);
 
   const response = await axios.get<Uint8Array>(url, {
     responseType: 'arraybuffer',
