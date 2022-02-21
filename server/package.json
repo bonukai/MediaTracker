@@ -44,7 +44,7 @@
     "url-join": "^4.0.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.17.0",
+    "@babel/cli": "^7.17.3",
     "@babel/core": "^7.17.2",
     "@babel/node": "^7.16.8",
     "@babel/preset-env": "^7.16.11",
