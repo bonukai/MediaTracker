@@ -150,7 +150,7 @@ export const Modal = <ReturnType,>(props: {
                           !isOpen && 'pointer-events-none'
                         )}
                         ref={mainContainerRef}
-                        onClick={onClick}
+                        onPointerDown={onClick}
                       >
                         <animated.div
                           style={transitionStyles}
