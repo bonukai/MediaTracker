@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useEffect } from 'react';
 import { Plural, Trans } from '@lingui/macro';
 
 import { MediaItemItemsResponse, MediaType } from 'mediatracker-api';
@@ -12,7 +12,12 @@ const InputComponent: FunctionComponent<{
   mediaType: MediaType;
 }> = (props) => {
   const { max, setProgress, progress, mediaType } = props;
-  const value = Math.floor((max * progress) / 100);
+  const [value, setValue] = useState<number>(0);
+
+  useEffect(
+    () => setValue(Math.floor((max * progress) / 100)),
+    [progress, max]
+  );
 
   return (
     <div>
@@ -23,6 +28,7 @@ const InputComponent: FunctionComponent<{
           max={max}
           value={value}
           onChange={(e) => {
+            setValue(Number(e.currentTarget.value));
             setProgress(Number((Number(e.currentTarget.value) / max) * 100));
           }}
         />{' '}
@@ -48,7 +54,18 @@ export const SetProgressComponent: FunctionComponent<{
       <div className="my-1 text-3xl font-bold text-center">
         <Trans>Set progress</Trans>
       </div>
-      <div className="flex flex-col mt-4">
+      <form
+        className="flex flex-col mt-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          addToProgress({
+            mediaItemId: mediaItem.id,
+            progress: progress / 100,
+            duration: duration,
+          });
+          closeModal();
+        }}
+      >
         {isBook(mediaItem) && mediaItem.numberOfPages && (
           <InputComponent
             max={mediaItem.numberOfPages}
@@ -89,29 +106,17 @@ export const SetProgressComponent: FunctionComponent<{
                 type="number"
                 min={0}
                 value={duration}
-                onChange={(e) => {
-                  setDuration(Number(e.currentTarget.value));
-                }}
+                onChange={(e) => setDuration(Number(e.currentTarget.value))}
               />{' '}
               <Plural value={duration} one="minute" other="minutes" />
             </label>
           </div>
         )}
 
-        <div
-          className="w-full btn"
-          onClick={async () => {
-            addToProgress({
-              mediaItemId: mediaItem.id,
-              progress: progress / 100,
-              duration: duration,
-            });
-            closeModal();
-          }}
-        >
+        <button className="w-full btn">
           <Trans>Set</Trans>
-        </div>
-      </div>
+        </button>
+      </form>
       <div className="w-full mt-3 btn-red" onClick={() => closeModal()}>
         <Trans>Cancel</Trans>
       </div>
