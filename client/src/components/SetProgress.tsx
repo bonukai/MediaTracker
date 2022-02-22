@@ -12,7 +12,7 @@ const InputComponent: FunctionComponent<{
   mediaType: MediaType;
 }> = (props) => {
   const { max, setProgress, progress, mediaType } = props;
-  const [value, setValue] = useState<number | string>(0);
+  const [value, setValue] = useState<number | ''>(0);
 
   useEffect(() => {
     const newValue = Math.round((max * progress) / 100);
