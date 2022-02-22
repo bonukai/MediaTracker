@@ -1564,6 +1564,9 @@
     },
     "/api/import-goodreads": {
       "post": {
+        "tags": [
+          "GoodreadsImport"
+        ],
         "operationId": "import",
         "requestBody": {
           "required": true,

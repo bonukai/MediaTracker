@@ -12,6 +12,9 @@ import { watchlistRepository } from 'src/repository/watchlist';
 import { seenRepository } from 'src/repository/seen';
 import { userRatingRepository } from 'src/repository/userRating';
 
+/**
+ * @openapi_tags GoodreadsImport
+ */
 export class GoodreadsImportController {
   /**
    * @openapi_operationId import
