@@ -645,7 +645,7 @@ const SetProgressButton: FunctionComponent<{
     <Modal
       openModal={(openModal) => (
         <div className="text-sm text-green-500 btn" onClick={() => openModal()}>
-          Set progress
+          <Trans>Set progress</Trans>
         </div>
       )}
     >
