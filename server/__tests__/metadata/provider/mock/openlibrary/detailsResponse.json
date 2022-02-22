@@ -1,0 +1,241 @@
+{
+    "description": "Harry Potter #1\r\n\r\nWhen mysterious letters start arriving on his doorstep, Harry Potter has never heard of Hogwarts School of Witchcraft and Wizardry.\r\n\r\nThey are swiftly confiscated by his aunt and uncle.\r\n\r\nThen, on Harry’s eleventh birthday, a strange man bursts in with some important news: Harry Potter is a wizard and has been awarded a place to study at Hogwarts.\r\n\r\nAnd so the first of the Harry Potter adventures is set to begin.\r\n([source][1])\r\n\r\n\r\n  [1]: https://www.jkrowling.com/book/harry-potter-philosophers-stone/",
+    "links": [
+        {
+            "title": "Harry Potter and the Philosopher's Stone - J.K. Rowling",
+            "url": "https://www.jkrowling.com/book/harry-potter-philosophers-stone/",
+            "type": {
+                "key": "/type/link"
+            }
+        },
+        {
+            "title": "Harry Potter and the Philosopher's Stone - Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Harry_Potter_and_the_Philosopher%27s_Stone",
+            "type": {
+                "key": "/type/link"
+            }
+        },
+        {
+            "title": "Harry Potter and the Philosopher's Stone by J.K. Rowling – review (theguardian.com)",
+            "url": "https://www.theguardian.com/childrens-books-site/2015/jul/29/harry-potter-and-the-philosophers-stone-j-k-rowling-review",
+            "type": {
+                "key": "/type/link"
+            }
+        },
+        {
+            "title": "Harry Potter and the Philosopher's Stone by J.K. Rowling - review (theguardian.com)",
+            "url": "https://www.theguardian.com/childrens-books-site/2015/mar/01/review-j-k-rowling-harry-potter-philosophers-stone",
+            "type": {
+                "key": "/type/link"
+            }
+        }
+    ],
+    "title": "Harry Potter and the Philosopher's Stone",
+    "covers": [
+        10521270,
+        8266542,
+        9383496,
+        10217621,
+        10484589,
+        10484588,
+        10515101,
+        1020319,
+        10469774,
+        10513095,
+        10485032,
+        10447552,
+        -1,
+        10864265,
+        7806094,
+        12376732,
+        10533160,
+        10533161,
+        10550239,
+        10705714,
+        12622431,
+        12584121
+    ],
+    "subject_places": [
+        "England",
+        "Hogwarts School of Witchcraft and Wizardry",
+        "4 Privet Drive",
+        "Diagon Alley",
+        "Leaky Cauldron",
+        "Gringotts Wizarding Bank",
+        "Forbidden Forest",
+        "King's Cross Station",
+        "Platform Nine and Three-quarters"
+    ],
+    "subject_people": [
+        "Harry Potter",
+        "Ron Weasley",
+        "Hermione Granger",
+        "Neville Longbottom",
+        "Rubeus Hagrid",
+        "Albus Dumbledore",
+        "Minerva McGonagall",
+        "Nicolas Flamel",
+        "Norbert",
+        "Sorting Hat",
+        "Severus Snape",
+        "Quirinus Quirrell",
+        "Petunia Dursley",
+        "Draco Malfoy",
+        "Argus Filch",
+        "Vernon Dursley",
+        "Dudley Dursley",
+        "Fred Weasley",
+        "George Weasley",
+        "Jorge",
+        "Ginny Weasley",
+        "Gina",
+        "Molly Weasley",
+        "Percy Weasley",
+        "Vincent Crabbe",
+        "Gregory Goyle",
+        "Lee Jordan",
+        "Scabbers",
+        "Hannah Abbott",
+        "Bloody Baron",
+        "Susan Bones",
+        "Terry Boot",
+        "Mandy Brocklehurst",
+        "Lavender Brown",
+        "Millicent Bulstrode",
+        "Nearly Headless Nick",
+        "Fat Friar",
+        "Fat Lady",
+        "Justin Finch-Fetchley",
+        "Seamus Finnigan",
+        "Morag MacDougal",
+        "Lily Moon",
+        "Pansy Parkinson",
+        "Padma Patil",
+        "Parvati Patil",
+        "Chapéu Seletor",
+        "Peeves",
+        "Dean Thomas",
+        "Lisa Turpin",
+        "Blaise Zabini",
+        "Lilá",
+        "Harry Potter (Fictitious character)",
+        "Hermine Granger",
+        "Ron Weasly"
+    ],
+    "key": "/works/OL82563W",
+    "authors": [
+        {
+            "author": {
+                "key": "/authors/OL23919A"
+            },
+            "type": {
+                "key": "/type/author_role"
+            }
+        }
+    ],
+    "excerpts": [
+        {
+            "author": {
+                "key": "/people/seabelis"
+            },
+            "excerpt": "Mr. And Mrs. Dursley, of number four, Privet Drive, were proud to say that they were perfectly normal, thank you very much.",
+            "comment": "first sentence"
+        }
+    ],
+    "type": {
+        "key": "/type/work"
+    },
+    "subjects": [
+        "Ghosts",
+        "Monsters",
+        "Vampires",
+        "Witches",
+        "Challenges and Overcoming Obstacles",
+        "Magic and Supernatural",
+        "Cleverness",
+        "School Life",
+        "school stories",
+        "Wizards",
+        "Magic",
+        "MAGIA",
+        "MAGOS",
+        "Juvenile fiction",
+        "Fiction",
+        "NOVELAS INGLESAS",
+        "Schools",
+        "orphans",
+        "fantasy fiction",
+        "England in fiction",
+        "Witches in fiction",
+        "Wizards in fiction",
+        "Alchemy",
+        "New York Times bestseller",
+        "Juvenile literature",
+        "Magic in fiction",
+        "Open Library Staff Picks",
+        "Juvenile audience",
+        "Children's stories",
+        "Juvenile works",
+        "Schools in fiction",
+        "Fantasy",
+        "Hogwarts School of Witchcraft and Wizardry (Imaginary place)",
+        "Harry Potter (Fictitious character)",
+        "Ficción juvenil",
+        "Escuelas",
+        "Hogwarts School of Witchcraft and Wizardry (Imaginary organization)",
+        "Translations from English",
+        "Chinese fiction",
+        "Hermione Granger (Fictitious character)",
+        "Reading Level-Grade 9",
+        "Reading Level-Grade 11",
+        "Reading Level-Grade 10",
+        "Reading Level-Grade 12",
+        "Hogwarts school of witchcraft and wizardry (imaginary organization), fiction",
+        "Children's fiction",
+        "Schools, fiction",
+        "England, fiction",
+        "Potter, harry (fictitious character), fiction",
+        "Wizards, fiction",
+        "Magic, fiction",
+        "Fiction, fantasy, general",
+        "Large type books",
+        "Magier",
+        "Fabeltiere",
+        "Lehrling",
+        "Kinderbuch",
+        "Stein der Weisen",
+        "Ungeheuer",
+        "Junge",
+        "English language",
+        "Translating into Welsh",
+        "Modern history to 20th century: c 1700 to c 1900",
+        "Literary theory",
+        "English literature",
+        "Ron Weasley (Fictitious character)",
+        "Latin language materials",
+        "Romans, nouvelles, etc. pour la jeunesse",
+        "Poudlard, école de sorcellerie (Organisation imaginaire)",
+        "Sorciers",
+        "Sorcières",
+        "Magie",
+        "Internats",
+        "Adventure and adventurers, fiction",
+        "Action & Adventure",
+        "Fantasy & Magic",
+        "Social Themes",
+        "Friendship",
+        "Harry Potter (Fictional character)",
+        "Friendship, fiction",
+        "German language materials"
+    ],
+    "latest_revision": 108,
+    "revision": 108,
+    "created": {
+        "type": "/type/datetime",
+        "value": "2009-10-17T07:07:29.461716"
+    },
+    "last_modified": {
+        "type": "/type/datetime",
+        "value": "2022-02-15T13:44:37.795231"
+    }
+}

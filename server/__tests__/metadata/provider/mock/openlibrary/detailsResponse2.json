@@ -1,0 +1,39 @@
+{
+    "description": {
+        "type": "/type/text",
+        "value": "En medio del ritmo acelerado del mundo actual, es necesario recogerse y elevar la mente y el corazón hacia el Señor. Estas concisas plegarias y reflexiones de Luis Fernando Figari, fundador de diversas asociaciones de la Iglesia, ofrecen la ocasión de centrarse en lo esencial y de recorrer el sendero de la existencia desde el realismo de la esperanza, con la mirada puesta en Aquel que es el Camino, la Verdad y la Vida."
+    },
+    "last_modified": {
+        "type": "/type/datetime",
+        "value": "2020-09-23T12:38:45.353111"
+    },
+    "title": "Oraciones y pensamientos",
+    "created": {
+        "type": "/type/datetime",
+        "value": "2009-12-09T22:43:32.202749"
+    },
+    "covers": [
+        5732360
+    ],
+    "first_sentence": {
+        "type": "/type/text",
+        "value": "En estas páginas se entremezclan oraciones y pensamientos. Se trata de elevaciones espirituales y de reflexiones que han brotado en apertura a los demás. Por ello, algunos de los temas son muy propios y otros muchos han surgido de una mirada que aspira a estar abierta a la caridad, pensando en los demás y en lo que necesitan. Todos son diálogos en presencia de Dios, con la propia mismidad y con los “tú” a los que procuran alcanzar por medio de las palabras, en el esperanzador horizonte del encuentro con el Altísimo, Comunión de Amor"
+    },
+    "first_publish_date": "2009",
+    "latest_revision": 4,
+    "key": "/works/OL2019091W",
+    "authors": [
+        {
+            "type": {
+                "key": "/type/author_role"
+            },
+            "author": {
+                "key": "/authors/OL243630A"
+            }
+        }
+    ],
+    "type": {
+        "key": "/type/work"
+    },
+    "revision": 4
+}
