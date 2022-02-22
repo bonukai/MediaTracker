@@ -1,0 +1,427 @@
+[
+    {
+        "id": 19560,
+        "cover": {
+            "id": 85062,
+            "image_id": "co1tmu"
+        },
+        "first_release_date": 1524182400,
+        "genres": [
+            {
+                "id": 25,
+                "name": "Hack and slash/Beat 'em up"
+            },
+            {
+                "id": 31,
+                "name": "Adventure"
+            }
+        ],
+        "involved_companies": [
+            {
+                "id": 36378,
+                "company": {
+                    "id": 10100,
+                    "name": "Sony Interactive Entertainment"
+                },
+                "developer": false
+            },
+            {
+                "id": 38707,
+                "company": {
+                    "id": 4357,
+                    "name": "SIE Santa Monica Studio"
+                },
+                "developer": true
+            },
+            {
+                "id": 154522,
+                "company": {
+                    "id": 38814,
+                    "name": "Jetpack Interactive"
+                },
+                "developer": false
+            }
+        ],
+        "name": "God of War",
+        "platforms": [
+            {
+                "id": 6,
+                "name": "PC (Microsoft Windows)",
+                "platform_logo": {
+                    "id": 203
+                }
+            },
+            {
+                "id": 48,
+                "name": "PlayStation 4",
+                "platform_logo": {
+                    "id": 231
+                }
+            }
+        ],
+        "release_dates": [
+            {
+                "id": 136684,
+                "date": 1524182400,
+                "platform": 48
+            },
+            {
+                "id": 321185,
+                "date": 1642118400,
+                "platform": 6
+            }
+        ],
+        "summary": "God of War is the sequel to God of War III as well as a continuation of the canon God of War chronology. Unlike previous installments, this game focuses on Norse mythology and follows an older and more seasoned Kratos and his son Atreus in the years since the third game. It is in this harsh, unforgiving world that he must fight to survive… and teach his son to do the same.",
+        "websites": [
+            {
+                "id": 7851,
+                "url": "https://godofwar.playstation.com"
+            },
+            {
+                "id": 7852,
+                "url": "https://www.facebook.com/godofwar"
+            },
+            {
+                "id": 69286,
+                "url": "https://en.wikipedia.org/wiki/God_of_War_(2018_video_game)"
+            },
+            {
+                "id": 148281,
+                "url": "https://godofwar.fandom.com/wiki/God_of_War_(2018)"
+            },
+            {
+                "id": 148282,
+                "url": "https://twitter.com/sonysantamonica"
+            },
+            {
+                "id": 148283,
+                "url": "https://instagram.com/santamonicastudio"
+            },
+            {
+                "id": 148284,
+                "url": "https://www.youtube.com/user/PlayStation/search"
+            },
+            {
+                "id": 238943,
+                "url": "https://store.steampowered.com/app/1593500/God_of_War?snr=1_7_15__13"
+            },
+            {
+                "id": 253263,
+                "url": "https://www.epicgames.com/store/p/god-of-war"
+            }
+        ]
+    },
+    {
+        "id": 551,
+        "cover": {
+            "id": 157484,
+            "image_id": "co3dik"
+        },
+        "first_release_date": 1173744000,
+        "genres": [
+            {
+                "id": 8,
+                "name": "Platform"
+            },
+            {
+                "id": 25,
+                "name": "Hack and slash/Beat 'em up"
+            },
+            {
+                "id": 31,
+                "name": "Adventure"
+            }
+        ],
+        "involved_companies": [
+            {
+                "id": 104743,
+                "company": {
+                    "id": 45,
+                    "name": "Sony Computer Entertainment, Inc. (SCEI)"
+                },
+                "developer": false
+            },
+            {
+                "id": 104744,
+                "company": {
+                    "id": 37,
+                    "name": "Capcom"
+                },
+                "developer": false
+            },
+            {
+                "id": 104745,
+                "company": {
+                    "id": 4357,
+                    "name": "SIE Santa Monica Studio"
+                },
+                "developer": true
+            }
+        ],
+        "name": "God of War II",
+        "platforms": [
+            {
+                "id": 8,
+                "name": "PlayStation 2",
+                "platform_logo": {
+                    "id": 254
+                }
+            }
+        ],
+        "release_dates": [
+            {
+                "id": 205445,
+                "date": 1173744000,
+                "platform": 8
+            },
+            {
+                "id": 205446,
+                "date": 1177632000,
+                "platform": 8
+            },
+            {
+                "id": 205447,
+                "date": 1178150400,
+                "platform": 8
+            },
+            {
+                "id": 205448,
+                "date": 1193270400,
+                "platform": 8
+            }
+        ],
+        "summary": "Kratos is now the God of War, having defeated the Olympian god Ares. Shunned by the other gods and still haunted by nightmares from his past, Kratos decides to join an army of Spartans in an attack on the city of Rhodes. Kratos also ignores a warning from the goddess Athena that his lust for revenge is alienating the other gods.",
+        "websites": [
+            {
+                "id": 99965,
+                "url": "https://en.wikipedia.org/wiki/God_of_War_II"
+            },
+            {
+                "id": 123246,
+                "url": "https://godofwar.fandom.com/wiki/God_of_War_II"
+            },
+            {
+                "id": 148315,
+                "url": "https://godofwar.playstation.com/"
+            },
+            {
+                "id": 148316,
+                "url": "https://www.facebook.com/godofwar"
+            },
+            {
+                "id": 148317,
+                "url": "https://twitter.com/sonysantamonica"
+            },
+            {
+                "id": 148318,
+                "url": "https://instagram.com/santamonicastudio"
+            },
+            {
+                "id": 148319,
+                "url": "https://www.youtube.com/user/PlayStation/search"
+            }
+        ]
+    },
+    {
+        "id": 117882,
+        "cover": {
+            "id": 157486,
+            "image_id": "co3dim"
+        },
+        "first_release_date": 1285977600,
+        "genres": [
+            {
+                "id": 25,
+                "name": "Hack and slash/Beat 'em up"
+            },
+            {
+                "id": 31,
+                "name": "Adventure"
+            }
+        ],
+        "involved_companies": [
+            {
+                "id": 82111,
+                "company": {
+                    "id": 1030,
+                    "name": "Bluepoint Games"
+                },
+                "developer": true
+            },
+            {
+                "id": 104759,
+                "company": {
+                    "id": 45,
+                    "name": "Sony Computer Entertainment, Inc. (SCEI)"
+                },
+                "developer": false
+            },
+            {
+                "id": 104760,
+                "company": {
+                    "id": 4357,
+                    "name": "SIE Santa Monica Studio"
+                },
+                "developer": false
+            }
+        ],
+        "name": "God of War II HD",
+        "platforms": [
+            {
+                "id": 9,
+                "name": "PlayStation 3",
+                "platform_logo": {
+                    "id": 79
+                }
+            }
+        ],
+        "release_dates": [
+            {
+                "id": 172958,
+                "date": 1285977600,
+                "platform": 9
+            },
+            {
+                "id": 172959,
+                "date": 1286064000,
+                "platform": 9
+            },
+            {
+                "id": 172960,
+                "date": 1286064000,
+                "platform": 9
+            },
+            {
+                "id": 172961,
+                "date": 1303344000,
+                "platform": 9
+            }
+        ],
+        "summary": "Kratos, the once mortal warrior turned ruthless god, sits atop his throne on Olympus as a threat far worse than his predecessor Ares had ever been, striking down anyone who crosses his path or the path of his beloved Sparta. The 'Ghost of Sparta' sets out to alter that which no mortal or god has ever changed. His fate.\n\nRemastered at a resolution of 720p.\nAnti-aliased graphics for 60 frames per second gameplay.",
+        "websites": [
+            {
+                "id": 111726,
+                "url": "https://en.wikipedia.org/wiki/God_of_War_II"
+            },
+            {
+                "id": 148356,
+                "url": "https://godofwar.playstation.com/"
+            },
+            {
+                "id": 148357,
+                "url": "https://godofwar.fandom.com/wiki/God_of_War_II"
+            },
+            {
+                "id": 148358,
+                "url": "https://www.facebook.com/godofwar"
+            },
+            {
+                "id": 148359,
+                "url": "https://twitter.com/sonysantamonica"
+            },
+            {
+                "id": 148360,
+                "url": "https://instagram.com/santamonicastudio"
+            }
+        ]
+    },
+    {
+        "id": 1291,
+        "cover": {
+            "id": 157478,
+            "image_id": "co3die"
+        },
+        "first_release_date": 1363046400,
+        "genres": [
+            {
+                "id": 25,
+                "name": "Hack and slash/Beat 'em up"
+            },
+            {
+                "id": 31,
+                "name": "Adventure"
+            }
+        ],
+        "involved_companies": [
+            {
+                "id": 3853,
+                "company": {
+                    "id": 45,
+                    "name": "Sony Computer Entertainment, Inc. (SCEI)"
+                },
+                "developer": false
+            },
+            {
+                "id": 38700,
+                "company": {
+                    "id": 4357,
+                    "name": "SIE Santa Monica Studio"
+                },
+                "developer": true
+            }
+        ],
+        "name": "God of War: Ascension",
+        "platforms": [
+            {
+                "id": 9,
+                "name": "PlayStation 3",
+                "platform_logo": {
+                    "id": 79
+                }
+            }
+        ],
+        "release_dates": [
+            {
+                "id": 103302,
+                "date": 1363046400,
+                "platform": 9
+            },
+            {
+                "id": 205137,
+                "date": 1363132800,
+                "platform": 9
+            },
+            {
+                "id": 205138,
+                "date": 1363219200,
+                "platform": 9
+            },
+            {
+                "id": 205139,
+                "date": 1383177600,
+                "platform": 9
+            }
+        ],
+        "summary": "Vengeance is born in the fires of betrayal in this prequel to the best-selling God of War franchise. Six months have passed since Kratos stood over the bodies of his wife and child, his hands stained with their blood - tricked by Ares into murdering the only people he ever loved. Swearing to avenge them, Kratos broke the blood oath that bound him to Ares, but oaths to Olympus are not so easily broken... Sentenced to an eternity chained within a prison for the living damned, Kratos battles insanity at the hands of the Furies. He will be tested as he seeks freedom, redemption for his sins, and the clarity to avenge his family.",
+        "websites": [
+            {
+                "id": 334,
+                "url": "http://godofwar.playstation.com"
+            },
+            {
+                "id": 147973,
+                "url": "https://godofwar.fandom.com/wiki/God_of_War:_Ascension"
+            },
+            {
+                "id": 147974,
+                "url": "https://en.wikipedia.org/wiki/God_of_War:_Ascension"
+            },
+            {
+                "id": 147975,
+                "url": "https://www.facebook.com/godofwar"
+            },
+            {
+                "id": 147976,
+                "url": "https://twitter.com/sonysantamonica"
+            },
+            {
+                "id": 147977,
+                "url": "https://instagram.com/santamonicastudio"
+            },
+            {
+                "id": 147978,
+                "url": "https://www.youtube.com/user/PlayStation/search"
+            }
+        ]
+    }
+]
