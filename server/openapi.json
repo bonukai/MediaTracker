@@ -115,6 +115,14 @@
                       }
                     ],
                     "nullable": true
+                  },
+                  "igdbClientId": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "igdbClientSecret": {
+                    "type": "string",
+                    "nullable": true
                   }
                 }
               }
@@ -172,6 +180,14 @@
                               "$ref": "#/components/schemas/ServerLang"
                             }
                           ],
+                          "nullable": true
+                        },
+                        "igdbClientId": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "igdbClientSecret": {
+                          "type": "string",
                           "nullable": true
                         }
                       },
@@ -580,70 +596,6 @@
                     "$ref": "#/components/schemas/MediaItemItemsResponse"
                   }
                 }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/metadata-provider-credentials": {
-      "get": {
-        "tags": [
-          "MetadataProviderCredentials"
-        ],
-        "operationId": "get",
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "IGDB": {
-                      "type": "object",
-                      "properties": {
-                        "CLIENT_ID": {
-                          "type": "string"
-                        },
-                        "CLIENT_SECRET": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "CLIENT_ID",
-                        "CLIENT_SECRET"
-                      ],
-                      "nullable": true
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "MetadataProviderCredentials"
-        ],
-        "operationId": "set",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MetadataProviderCredentialsRequestType"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/text": {
-                "schema": {}
               }
             }
           }
@@ -2705,36 +2657,6 @@
           "desc"
         ],
         "type": "string"
-      },
-      "MetadataProviderCredentialsRequestType": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "enum": [
-              "IGDB"
-            ]
-          },
-          "credentials": {
-            "type": "object",
-            "properties": {
-              "CLIENT_ID": {
-                "type": "string"
-              },
-              "CLIENT_SECRET": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "CLIENT_ID",
-              "CLIENT_SECRET"
-            ]
-          }
-        },
-        "required": [
-          "credentials",
-          "name"
-        ]
       },
       "LastSeenAt": {
         "enum": [

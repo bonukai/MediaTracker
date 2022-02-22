@@ -124,4 +124,18 @@ export class InitialData {
     id: 1,
     enableRegistration: true,
   };
+
+  static metadataProviderCredentials = {
+    id: 1,
+    providerName: 'IGDB',
+    name: 'CLIENT_ID',
+    value: '123',
+  };
+
+  static metadataProviderCredentials2 = {
+    id: 2,
+    providerName: 'IGDB',
+    name: 'CLIENT_SECRET',
+    value: '456',
+  };
 }

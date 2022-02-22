@@ -36,7 +36,6 @@ import { sendNotifications } from 'src/sendNotifications';
 import { updateMediaItems, updateMetadata } from 'src/updateMetadata';
 import { durationToMilliseconds } from 'src/utils';
 import { userRepository } from 'src/repository/user';
-import { metadataProviderCredentialsRepository } from 'src/repository/metadataProviderCredentials';
 import { setupI18n } from 'src/i18n/i18n';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { CancellationToken } from 'src/cancellationToken';
@@ -97,12 +96,16 @@ const catchAndPrintError = async (fn: () => Promise<void> | void) => {
       serverLang: SERVER_LANG || 'en',
       tmdbLang: TMDB_LANG || 'en',
       audibleLang: AUDIBLE_LANG || 'us',
+      igdbClientId: IGDB_CLIENT_ID,
+      igdbClientSecret: IGDB_CLIENT_SECRET,
     });
   } else {
     await configurationRepository.update({
       serverLang: SERVER_LANG || configuration.serverLang,
       tmdbLang: TMDB_LANG || configuration.tmdbLang,
       audibleLang: AUDIBLE_LANG || configuration.audibleLang,
+      igdbClientId: IGDB_CLIENT_ID || configuration.igdbClientId,
+      igdbClientSecret: IGDB_CLIENT_SECRET || configuration.igdbClientSecret,
     });
   }
 
@@ -123,27 +126,6 @@ const catchAndPrintError = async (fn: () => Promise<void> | void) => {
 
     console.log(chalk.green.bold(t`DEMO mode enabled`));
   }
-
-  if (IGDB_CLIENT_ID && IGDB_CLIENT_SECRET) {
-    await metadataProviderCredentialsRepository.delete({
-      providerName: 'IGDB',
-    });
-
-    await metadataProviderCredentialsRepository.createMany([
-      {
-        providerName: 'IGDB',
-        name: 'CLIENT_ID',
-        value: IGDB_CLIENT_ID,
-      },
-      {
-        providerName: 'IGDB',
-        name: 'CLIENT_SECRET',
-        value: IGDB_CLIENT_SECRET,
-      },
-    ]);
-  }
-
-  await metadataProviders.load();
 
   let sessionKey = await sessionKeyRepository.findOne();
 

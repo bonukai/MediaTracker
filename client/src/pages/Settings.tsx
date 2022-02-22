@@ -10,7 +10,6 @@ import { SettingsApplicationTokensPage } from 'src/pages/settings/ApplicationTok
 import { SettingsNotificationsPage } from 'src/pages/settings/Notifications';
 import { SettingsPreferencesPage } from 'src/pages/settings/Preferences';
 import { SettingsConfigurationPage } from 'src/pages/settings/Configuration';
-import { SettingsMetadataProviderCredentialsPage } from 'src/pages/settings/MetadataProviderCredentials';
 import { SettingsSegment } from 'src/components/SettingsSegment';
 import { useConfiguration } from 'src/api/configuration';
 
@@ -34,10 +33,6 @@ export const SettingsPage: FunctionComponent = () => {
 
           {Boolean(user.admin) && (
             <>
-              <Route
-                path="metadata-providers-credentials"
-                element={<SettingsMetadataProviderCredentialsPage />}
-              />
               <Route
                 path="configuration"
                 element={<SettingsConfigurationPage />}
@@ -112,14 +107,6 @@ const useRoutesTitle = () => {
     { path: 'application-tokens', name: t`Application tokens` },
     { path: 'notifications', name: t`Notifications` },
     { path: 'preferences', name: t`Preferences` },
-    ...(user.admin
-      ? [
-          { path: 'configuration', name: t`Configuration` },
-          {
-            path: 'metadata-providers-credentials',
-            name: t`Metadata providers credentials`,
-          },
-        ]
-      : []),
+    ...(user.admin ? [{ path: 'configuration', name: t`Configuration` }] : []),
   ];
 };

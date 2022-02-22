@@ -2,8 +2,9 @@ import urljoin from 'url-join';
 import axios from 'axios';
 
 import { ExternalIds, MediaItemForProvider } from 'src/entity/mediaItem';
-import { metadataProvider } from 'src/metadata/metadataProvider';
 import { RequestQueue } from 'src/requestQueue';
+import { MetadataProvider } from 'src/metadata/metadataProvider';
+import { GlobalConfiguration } from 'src/repository/globalSettings';
 
 const getPosterUrl = (path: string, size: CoverSize = 't_original') => {
   return urljoin(
@@ -13,11 +14,10 @@ const getPosterUrl = (path: string, size: CoverSize = 't_original') => {
   );
 };
 
-export class IGDB extends metadataProvider({
-  name: 'IGDB',
-  mediaType: 'video_game',
-  credentialNames: <const>['CLIENT_ID', 'CLIENT_SECRET'],
-}) {
+export class IGDB extends MetadataProvider {
+  readonly name = 'IGDB';
+  readonly mediaType = 'video_game';
+
   public async search(query: string): Promise<MediaItemForProvider[]> {
     const result = await this.searchGames(query);
 
@@ -108,7 +108,7 @@ export class IGDB extends metadataProvider({
       axios.post(urljoin('https://api.igdb.com/v4/', endpoint), query, {
         headers: {
           Authorization: 'Bearer ' + this.token.access_token,
-          'Client-ID': this.credentials.CLIENT_ID,
+          'Client-ID': GlobalConfiguration.configuration.igdbClientId,
         },
       })
     );
@@ -127,8 +127,8 @@ export class IGDB extends metadataProvider({
     const result = await this.requestQueue.request(() =>
       axios.post('https://id.twitch.tv/oauth2/token', null, {
         params: {
-          client_id: this.credentials.CLIENT_ID,
-          client_secret: this.credentials.CLIENT_SECRET,
+          client_id: GlobalConfiguration.configuration.igdbClientId,
+          client_secret: GlobalConfiguration.configuration.igdbClientSecret,
           grant_type: 'client_credentials',
         },
       })

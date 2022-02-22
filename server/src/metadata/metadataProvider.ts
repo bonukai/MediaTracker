@@ -5,9 +5,11 @@ import {
   MediaItemForProvider,
   MediaType,
 } from 'src/entity/mediaItem';
-import { metadataProviderCredentialsRepository } from 'src/repository/metadataProviderCredentials';
 
-export abstract class MetadataProvider {
+export abstract class MetadataProvider<Name extends string = string> {
+  public abstract readonly name: Name;
+  public abstract readonly mediaType: MediaType;
+
   async findByImdbId(imdbId: string): Promise<MediaItemForProvider> {
     throw new Error('Not implemented');
   }
@@ -28,46 +30,3 @@ export abstract class MetadataProvider {
    */
   abstract details(ids: ExternalIds): Promise<MediaItemForProvider>;
 }
-
-export const metadataProvider = <
-  Name extends string = string,
-  CredentialNames extends ReadonlyArray<string> = []
->(args: {
-  name: Name;
-  mediaType: MediaType;
-  credentialNames?: CredentialNames;
-}) => {
-  abstract class _MetadataProvider extends MetadataProvider {
-    public readonly name = args.name;
-    public readonly mediaType = args.mediaType;
-    public readonly credentialNames = args.credentialNames;
-
-    private _credentials: Record<CredentialNames[number], string>;
-
-    protected get credentials() {
-      return this._credentials;
-    }
-
-    async loadCredentials() {
-      if (!this.credentialNames) {
-        return;
-      }
-      const keys = await metadataProviderCredentialsRepository.find({
-        providerName: this.name,
-      });
-
-      this._credentials = _(keys)
-        .keyBy((value) => value.name)
-        .mapValues((value) => value.value)
-        .value() as Record<CredentialNames[number], string>;
-    }
-
-    hasCredentials() {
-      return (
-        this.credentialNames?.length === Object.keys(this.credentials).length
-      );
-    }
-  }
-
-  return _MetadataProvider;
-};

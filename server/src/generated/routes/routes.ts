@@ -66,7 +66,6 @@ import { ConfigurationController } from '../../controllers/configuration';
 import { ImgController } from '../../controllers/img';
 import { MediaItemController } from '../../controllers/item';
 import { ItemsController } from '../../controllers/items';
-import { MetadataProviderCredentialsController } from '../../controllers/metadataProviderCredentials';
 import { ProgressController } from '../../controllers/progress';
 import { RatingController } from '../../controllers/rating';
 import { SearchController } from '../../controllers/search';
@@ -82,8 +81,6 @@ const _ConfigurationController = new ConfigurationController();
 const _ImgController = new ImgController();
 const _MediaItemController = new MediaItemController();
 const _ItemsController = new ItemsController();
-const _MetadataProviderCredentialsController =
-  new MetadataProviderCredentialsController();
 const _ProgressController = new ProgressController();
 const _RatingController = new RatingController();
 const _SearchController = new SearchController();
@@ -278,6 +275,8 @@ router.patch(
         serverLang: {
           oneOf: [{ $ref: '#/definitions/ServerLang' }, { type: 'null' }],
         },
+        igdbClientId: { type: ['string', 'null'] },
+        igdbClientSecret: { type: ['string', 'null'] },
       },
     },
   }),
@@ -439,38 +438,6 @@ router.get(
     },
   }),
   _ItemsController.get
-);
-router.get(
-  '/api/metadata-provider-credentials',
-  validatorHandler({}),
-  _MetadataProviderCredentialsController.get
-);
-router.put(
-  '/api/metadata-provider-credentials',
-  validatorHandler({
-    requestBodySchema: {
-      $schema: 'http://json-schema.org/draft-07/schema#',
-      definitions: {
-        MetadataProviderCredentialsRequestType: {
-          type: 'object',
-          properties: {
-            name: { type: 'string', enum: ['IGDB'] },
-            credentials: {
-              type: 'object',
-              properties: {
-                CLIENT_ID: { type: 'string' },
-                CLIENT_SECRET: { type: 'string' },
-              },
-              required: ['CLIENT_ID', 'CLIENT_SECRET'],
-            },
-          },
-          required: ['credentials', 'name'],
-        },
-      },
-      $ref: '#/definitions/MetadataProviderCredentialsRequestType',
-    },
-  }),
-  _MetadataProviderCredentialsController.set
 );
 router.put(
   '/api/progress',

@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { ExternalIds, MediaItemForProvider } from 'src/entity/mediaItem';
-import { metadataProvider } from 'src/metadata/metadataProvider';
+import { MetadataProvider } from 'src/metadata/metadataProvider';
 
-export class OpenLibrary extends metadataProvider({
-  name: 'openlibrary',
-  mediaType: 'book',
-}) {
+export class OpenLibrary extends MetadataProvider {
+  readonly name = 'openlibrary';
+  readonly mediaType = 'book';
+
   async search(query: string): Promise<MediaItemForProvider[]> {
     const res = await axios.get('http://openlibrary.org/search.json', {
       params: {

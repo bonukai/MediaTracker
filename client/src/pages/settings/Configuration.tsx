@@ -1,5 +1,5 @@
-import React, { FunctionComponent } from 'react';
-import { t } from '@lingui/macro';
+import React, { FunctionComponent, useEffect, useState } from 'react';
+import { t, Trans } from '@lingui/macro';
 import { useConfiguration } from 'src/api/configuration';
 import { CheckboxWithTitleAndDescription } from 'src/components/Checkbox';
 import { SettingsSegment } from 'src/components/SettingsSegment';
@@ -76,9 +76,68 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
               ))}
             </select>
           </SettingsSegment>
+
+          <div className="mt-3" />
+
+          <IGDBcredentialsComponent />
         </>
       )}
     </>
+  );
+};
+
+const IGDBcredentialsComponent: FunctionComponent = () => {
+  const { configuration, update } = useConfiguration();
+
+  const [clientId, setClientId] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
+
+  useEffect(() => {
+    setClientId(configuration.igdbClientId);
+    setClientSecret(configuration.igdbClientSecret);
+  }, [configuration.igdbClientId, configuration.igdbClientSecret]);
+
+  return (
+    <SettingsSegment title={t`IGDB credentials`}>
+      <form
+        className="pb-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+
+          update({
+            igdbClientId: clientId,
+            igdbClientSecret: clientSecret,
+          });
+        }}
+      >
+        <a
+          href="https://api-docs.igdb.com/#account-creation"
+          className="block mb-2 underline"
+        >
+          <Trans>API keys can be acquired here</Trans>
+        </a>
+        <label>
+          <Trans>Client ID</Trans>
+          <input
+            className="block mb-2 w-60"
+            value={clientId}
+            onChange={(e) => setClientId(e.currentTarget.value)}
+          />
+        </label>
+        <label>
+          <Trans>Client Secret</Trans>
+          <input
+            className="block w-60"
+            value={clientSecret}
+            onChange={(e) => setClientSecret(e.currentTarget.value)}
+          />
+        </label>
+
+        <button className="block mt-2 btn">
+          <Trans>Save</Trans>
+        </button>
+      </form>
+    </SettingsSegment>
   );
 };
 
