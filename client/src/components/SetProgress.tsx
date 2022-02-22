@@ -84,17 +84,19 @@ export const SetProgressComponent: FunctionComponent<{
               mediaType={mediaItem.mediaType}
             />
           )}
-
-        <input
-          className="w-64 my-2"
-          type="range"
-          value={progress}
-          min={0}
-          max={100}
-          onChange={(e) => {
-            setProgress(Number(e.currentTarget.value));
-          }}
-        />
+        <div className="flex items-center">
+          <input
+            className="w-64 my-2"
+            type="range"
+            value={progress}
+            min={0}
+            max={100}
+            onChange={(e) => {
+              setProgress(Number(e.currentTarget.value));
+            }}
+          />
+          <span className="w-10 text-right">{Math.round(progress)}%</span>
+        </div>
 
         {(isVideoGame(mediaItem) || isBook(mediaItem)) && (
           <div className="mb-4">
