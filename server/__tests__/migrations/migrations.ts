@@ -9,9 +9,6 @@ import { Image } from 'src/entity/image';
 import { Configuration } from 'src/entity/configuration';
 import { MediaItemBase } from 'src/entity/mediaItem';
 import { Watchlist } from 'src/entity/watchlist';
-import { Seen } from 'src/entity/seen';
-import { List, ListItem } from 'src/entity/list';
-import { User } from 'src/entity/user';
 
 describe('migrations', () => {
   beforeAll(async () => {
@@ -41,6 +38,12 @@ describe('migrations', () => {
     await knex('notificationsHistory').insert(InitialData.notificationsHistory);
     await knex('notificationPlatformsCredentials').insert(
       InitialData.notificationPlatformsCredentials
+    );
+    await knex('metadataProviderCredentials').insert(
+      InitialData.metadataProviderCredentials
+    );
+    await knex('metadataProviderCredentials').insert(
+      InitialData.metadataProviderCredentials2
     );
   });
 
@@ -493,6 +496,30 @@ describe('migrations', () => {
       date: new Date().getTime(),
       type: 'progress',
     });
+  });
+
+  test('20220222153600_removeMetadataProviderCredentials', async () => {
+    await knex.migrate.up({
+      name: `20220222153600_removeMetadataProviderCredentials.${MIGRATIONS_EXTENSION}`,
+      directory: migrationsDirectory,
+    });
+
+    await knex.migrate.down({
+      directory: migrationsDirectory,
+    });
+
+    await knex.migrate.up({
+      name: `20220222153600_removeMetadataProviderCredentials.${MIGRATIONS_EXTENSION}`,
+      directory: migrationsDirectory,
+    });
+
+    const { igdbClientId, igdbClientSecret } =
+      (await knex('configuration').first()) || {};
+
+    expect(igdbClientId).toEqual(InitialData.metadataProviderCredentials.value);
+    expect(igdbClientSecret).toEqual(
+      InitialData.metadataProviderCredentials2.value
+    );
   });
 
   afterAll(clearDatabase);

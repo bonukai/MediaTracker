@@ -25,18 +25,6 @@ class MetadataProviders {
       .value()
   );
 
-  public load = async (): Promise<void> => {
-    await Promise.all(providers.map((provider) => provider.loadCredentials()));
-  };
-
-  public loadCredentials = async (providerName: string): Promise<void> => {
-    await Promise.all(
-      providers
-        .filter((provider) => provider.name === providerName)
-        .map((provider) => provider.loadCredentials())
-    );
-  };
-
   public has(mediaType: MediaType): boolean {
     return this.metadataProviders.has(mediaType);
   }
@@ -55,51 +43,3 @@ class MetadataProviders {
 }
 
 export const metadataProviders = new MetadataProviders();
-
-type ToMetadataProviderCredentialsType<
-  Input extends ReadonlyArray<unknown>,
-  Result extends ReadonlyArray<unknown> = []
-> = Input extends readonly []
-  ? Result
-  : Input extends readonly [infer First, ...infer Rest]
-  ? MapType<First> extends never
-    ? ToMetadataProviderCredentialsType<Rest, Result>
-    : ToMetadataProviderCredentialsType<Rest, [...Result, MapType<First>]>
-  : Result;
-
-type MetadataProviderCredentialsType = ToMetadataProviderCredentialsType<
-  typeof providers
->;
-
-type MapType<T> = T extends {
-  name: infer Name;
-  credentialNames: infer CredentialNames;
-}
-  ? Name extends string
-    ? CredentialNames extends readonly []
-      ? never
-      : CredentialNames extends ReadonlyArray<string>
-      ? {
-          name: Name;
-          credentials: Record<CredentialNames[number], string>;
-        }
-      : never
-    : never
-  : never;
-
-export type MetadataProvidersCredentialsResponseType = {
-  [K in Property<MetadataProviderCredentialsRequestType, 'name'>]: Property<
-    Extract<MetadataProviderCredentialsRequestType, { name: K }>,
-    'credentials'
-  >;
-};
-
-export type MetadataProviderCredentialsRequestType = Extract<
-  MetadataProviderCredentialsType[number],
-  { name: string; credentials: unknown }
->;
-
-type Property<
-  T extends Record<string, unknown>,
-  Name extends keyof T
-> = T extends { [Key in Name]: infer P } ? P : never;

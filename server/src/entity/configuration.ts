@@ -4,6 +4,8 @@ export type Configuration = {
   tmdbLang?: TmdbLang;
   audibleLang?: AudibleLang;
   serverLang?: ServerLang;
+  igdbClientId?: string;
+  igdbClientSecret?: string;
 };
 
 export type ServerLang = 'da' | 'de' | 'en' | 'es';

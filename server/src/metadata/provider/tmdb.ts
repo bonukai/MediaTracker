@@ -3,7 +3,7 @@ import path from 'path';
 import axios from 'axios';
 
 import { MediaItemForProvider, ExternalIds } from 'src/entity/mediaItem';
-import { metadataProvider } from 'src/metadata/metadataProvider';
+import { MetadataProvider } from 'src/metadata/metadataProvider';
 import { GlobalConfiguration } from 'src/repository/globalSettings';
 
 const TMDB_API_KEY = '779734046efc1e6127485c54d3b29627';
@@ -21,34 +21,37 @@ const getPosterUrl = (p: string, size: PosterSize = 'original') => {
   return urljoin('https://image.tmdb.org/t/p/', size, path.basename(p));
 };
 
-const mapItem = (
-  response:
-    | Partial<TMDbApi.TvDetailsResponse>
-    | Partial<TMDbApi.MovieDetailsResponse>
-): MediaItemForProvider => {
-  return {
-    source: undefined,
-    mediaType: undefined,
-    title: null,
-    backdrop: response.backdrop_path
-      ? getPosterUrl(response.backdrop_path)
-      : null,
-    poster: response.poster_path ? getPosterUrl(response.poster_path) : null,
-    tmdbId: response.id,
-    overview: response.overview || null,
-    status: response.status || null,
-    url: response.homepage || null,
-    genres: response.genres?.reduce(
-      (generes, genre) => [...generes, genre.name],
-      []
-    ),
-  };
-};
+abstract class TMDb extends MetadataProvider {
+  readonly name = 'tmdb';
 
-export class TMDbMovie extends metadataProvider({
-  name: 'tmdb',
-  mediaType: 'movie',
-}) {
+  protected mapItem(
+    response:
+      | Partial<TMDbApi.TvDetailsResponse>
+      | Partial<TMDbApi.MovieDetailsResponse>
+  ): MediaItemForProvider {
+    return {
+      source: this.name,
+      mediaType: this.mediaType,
+      title: null,
+      backdrop: response.backdrop_path
+        ? getPosterUrl(response.backdrop_path)
+        : null,
+      poster: response.poster_path ? getPosterUrl(response.poster_path) : null,
+      tmdbId: response.id,
+      overview: response.overview || null,
+      status: response.status || null,
+      url: response.homepage || null,
+      genres: response.genres?.reduce(
+        (generes, genre) => [...generes, genre.name],
+        []
+      ),
+    };
+  }
+}
+
+export class TMDbMovie extends TMDb {
+  readonly mediaType = 'movie';
+
   async search(query: string): Promise<MediaItemForProvider[]> {
     const res = await axios.get<TMDbApi.MovieSearchResponse>(
       'https://api.themoviedb.org/3/search/movie',
@@ -108,9 +111,7 @@ export class TMDbMovie extends metadataProvider({
   }
 
   private mapMovie(item: Partial<TMDbApi.MovieDetailsResponse>) {
-    const movie = mapItem(item);
-    movie.source = this.name;
-    movie.mediaType = this.mediaType;
+    const movie = this.mapItem(item);
     movie.imdbId = item.imdb_id;
     movie.originalTitle = item.original_title;
     movie.releaseDate = item.release_date || null;
@@ -122,10 +123,9 @@ export class TMDbMovie extends metadataProvider({
   }
 }
 
-export class TMDbTv extends metadataProvider({
-  name: 'tmdb',
-  mediaType: 'tv',
-}) {
+export class TMDbTv extends TMDb {
+  readonly mediaType = 'tv';
+
   async search(query: string): Promise<MediaItemForProvider[]> {
     const res = await axios.get<TMDbApi.TvSearchResponse>(
       'https://api.themoviedb.org/3/search/tv',
@@ -207,9 +207,7 @@ export class TMDbTv extends metadataProvider({
   }
 
   private mapTvShow(item: Partial<TMDbApi.TvDetailsResponse>) {
-    const tvShow = mapItem(item);
-    tvShow.source = this.name;
-    tvShow.mediaType = this.mediaType;
+    const tvShow = this.mapItem(item);
     tvShow.imdbId = item.external_ids?.imdb_id;
     tvShow.title = item.name;
     tvShow.originalTitle = item.original_name;
@@ -505,22 +503,3 @@ namespace TMDbApi {
     tv_results: TvSearchResponse[];
   }
 }
-
-// (async () => {
-//     const res = await axios.get('https://api.themoviedb.org/3/tv/changes', {
-//         params: {
-//             api_key: TMDB_API_KEY,
-//             start_date: subDays(new Date(), 14),
-//         },
-//     });
-
-//     console.log(res.data);
-
-//     const ids = res.data.results.map((item: { id: number }) => item.id);
-
-//     console.log(ids);
-
-//     const res2 = await knex('mediaItem').whereIn('tmdbId', ids);
-
-//     console.log(res2);
-// })();

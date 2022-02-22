@@ -2,13 +2,13 @@ import axios from 'axios';
 import { AudibleLang } from 'src/entity/configuration';
 
 import { MediaItemForProvider, ExternalIds } from 'src/entity/mediaItem';
-import { metadataProvider } from 'src/metadata/metadataProvider';
+import { MetadataProvider } from 'src/metadata/metadataProvider';
 import { GlobalConfiguration } from 'src/repository/globalSettings';
 
-export class Audible extends metadataProvider({
-  name: 'audible',
-  mediaType: 'audiobook',
-}) {
+export class Audible extends MetadataProvider {
+  readonly name = 'audible';
+  readonly mediaType = 'audiobook';
+
   private readonly languages: Record<AudibleLang, string> = {
     au: 'au',
     ca: 'ca',
