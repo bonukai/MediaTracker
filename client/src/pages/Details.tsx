@@ -5,6 +5,7 @@ import { formatDuration, intervalToDuration } from 'date-fns';
 import { Plural, plural, t, Trans } from '@lingui/macro';
 
 import {
+  AudibleLang,
   MediaItemDetailsResponse,
   MediaItemItemsResponse,
   TvEpisode,
@@ -37,6 +38,7 @@ import { Poster } from 'src/components/Poster';
 import { Modal } from 'src/components/Modal';
 import { useOtherUser } from 'src/api/user';
 import { SetProgressComponent } from 'src/components/SetProgress';
+import { useConfiguration } from 'src/api/configuration';
 
 const Review: FunctionComponent<{ userRating: UserRating }> = (props) => {
   const { userRating } = props;
@@ -160,10 +162,27 @@ const IconWithLink: FunctionComponent<{
   );
 };
 
+const audibleLanguages: Record<AudibleLang, string> = {
+  au: 'au',
+  ca: 'ca',
+  de: 'de',
+  fr: 'fr',
+  in: 'in',
+  it: 'it',
+  es: 'es',
+  jp: 'co.jp',
+  uk: 'co.uk',
+  us: 'com',
+};
+
 const ExternalLinks: FunctionComponent<{
   mediaItem: MediaItemDetailsResponse;
 }> = (props) => {
   const { mediaItem } = props;
+  const { configuration } = useConfiguration();
+
+  const audibleDomain =
+    audibleLanguages[configuration.audibleLang?.toLowerCase()] || 'com';
 
   return (
     <div className="flex h-5">
@@ -200,7 +219,7 @@ const ExternalLinks: FunctionComponent<{
 
       {mediaItem.audibleId && (
         <IconWithLink
-          href={`https://audible.com/pd/${mediaItem.audibleId}?overrideBaseCountry=true&ipRedirectOverride=true`}
+          href={`https://audible.${audibleDomain}/pd/${mediaItem.audibleId}?overrideBaseCountry=true&ipRedirectOverride=true`}
           src="logo/audible.png"
         />
       )}
