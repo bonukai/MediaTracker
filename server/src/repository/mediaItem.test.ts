@@ -441,6 +441,7 @@ const mediaItem: MediaItemBaseWithSeasons = {
   goodreadsId: null,
   numberOfPages: null,
   traktId: null,
+  audibleCountryCode: null,
   seasons: [
     {
       id: 1,

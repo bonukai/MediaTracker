@@ -182,7 +182,9 @@ const ExternalLinks: FunctionComponent<{
   const { configuration } = useConfiguration();
 
   const audibleDomain =
-    audibleLanguages[configuration.audibleLang?.toLowerCase()] || 'com';
+    audibleLanguages[
+      mediaItem.audibleCountryCode || configuration.audibleLang?.toLowerCase()
+    ] || 'com';
 
   return (
     <div className="flex h-5">

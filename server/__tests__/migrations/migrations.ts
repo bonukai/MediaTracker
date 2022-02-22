@@ -522,5 +522,27 @@ describe('migrations', () => {
     );
   });
 
+  test('20220222195700_audibleCountryCode', async () => {
+    await knex.migrate.up({
+      name: `20220222195700_audibleCountryCode.${MIGRATIONS_EXTENSION}`,
+      directory: migrationsDirectory,
+    });
+
+    await knex.migrate.down({
+      directory: migrationsDirectory,
+    });
+
+    await knex.migrate.up({
+      name: `20220222195700_audibleCountryCode.${MIGRATIONS_EXTENSION}`,
+      directory: migrationsDirectory,
+    });
+
+    await knex('mediaItem').insert({
+      title: 'Title',
+      source: 'audible',
+      audibleCountryCode: 'uk',
+    });
+  });
+
   afterAll(clearDatabase);
 });

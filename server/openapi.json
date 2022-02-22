@@ -1970,6 +1970,14 @@
                 "type": "number",
                 "nullable": true
               },
+              "audibleCountryCode": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/AudibleLang"
+                  }
+                ],
+                "nullable": true
+              },
               "needsDetails": {
                 "type": "boolean",
                 "nullable": true
@@ -2070,6 +2078,21 @@
           "movie",
           "tv",
           "video_game"
+        ],
+        "type": "string"
+      },
+      "AudibleLang": {
+        "enum": [
+          "au",
+          "ca",
+          "de",
+          "es",
+          "fr",
+          "in",
+          "it",
+          "jp",
+          "uk",
+          "us"
         ],
         "type": "string"
       },
@@ -2214,21 +2237,6 @@
           "za",
           "zh",
           "zu"
-        ],
-        "type": "string"
-      },
-      "AudibleLang": {
-        "enum": [
-          "au",
-          "ca",
-          "de",
-          "es",
-          "fr",
-          "in",
-          "it",
-          "jp",
-          "uk",
-          "us"
         ],
         "type": "string"
       },
@@ -2388,6 +2396,14 @@
               },
               "numberOfPages": {
                 "type": "number",
+                "nullable": true
+              },
+              "audibleCountryCode": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/AudibleLang"
+                  }
+                ],
                 "nullable": true
               },
               "needsDetails": {

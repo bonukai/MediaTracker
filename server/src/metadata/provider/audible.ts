@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AudibleLang } from 'src/entity/configuration';
+import { AudibleLang as AudibleCountryCode } from 'src/entity/configuration';
 
 import { MediaItemForProvider, ExternalIds } from 'src/entity/mediaItem';
 import { MetadataProvider } from 'src/metadata/metadataProvider';
@@ -9,7 +9,7 @@ export class Audible extends MetadataProvider {
   readonly name = 'audible';
   readonly mediaType = 'audiobook';
 
-  private readonly languages: Record<AudibleLang, string> = {
+  private readonly languages: Record<AudibleCountryCode, string> = {
     au: 'au',
     ca: 'ca',
     de: 'de',
@@ -22,10 +22,11 @@ export class Audible extends MetadataProvider {
     us: 'com',
   };
 
-  private domain() {
-    const countryCode =
-      GlobalConfiguration.configuration.audibleLang?.toLocaleLowerCase() as AudibleLang;
+  private countryCode() {
+    return GlobalConfiguration.configuration.audibleLang?.toLocaleLowerCase() as AudibleCountryCode;
+  }
 
+  private domain(countryCode: AudibleCountryCode) {
     if (countryCode in this.languages) {
       return this.languages[countryCode];
     }
@@ -41,8 +42,10 @@ export class Audible extends MetadataProvider {
   };
 
   async search(query: string): Promise<MediaItemForProvider[]> {
+    const countryCode = this.countryCode();
+
     const res = await axios.get<AudibleResponse.SearchResult>(
-      `https://api.audible.${this.domain()}/1.0/catalog/products`,
+      `https://api.audible.${this.domain(countryCode)}/1.0/catalog/products`,
       {
         params: {
           title: query,
@@ -54,34 +57,47 @@ export class Audible extends MetadataProvider {
     );
 
     if (res.status === 200) {
-      return res.data.products.map((product) => this.mapResponse(product));
+      return res.data.products.map((product) =>
+        this.mapResponse(product, countryCode)
+      );
     }
 
     throw new Error(`Error: ${res.status}`);
   }
 
-  async details(arg: ExternalIds): Promise<MediaItemForProvider> {
+  async details(
+    arg: ExternalIds & { countryCode?: AudibleCountryCode }
+  ): Promise<MediaItemForProvider> {
+    const { audibleId } = arg;
+
+    const countryCode =
+      arg.countryCode || GlobalConfiguration.configuration.audibleLang;
+
     const res = await axios.get<AudibleResponse.DetailsResult>(
-      `https://api.audible.${this.domain()}/1.0/catalog/products/${
-        arg.audibleId
-      }`,
+      `https://api.audible.${this.domain(
+        countryCode
+      )}/1.0/catalog/products/${audibleId}`,
       {
         params: this.queryParams,
       }
     );
 
     if (res.status === 200) {
-      return this.mapResponse(res.data.product);
+      return this.mapResponse(res.data.product, countryCode);
     }
 
     throw new Error(`Error: ${res.status}`);
   }
 
-  private mapResponse(item: AudibleResponse.Product): MediaItemForProvider {
+  private mapResponse(
+    item: AudibleResponse.Product,
+    countryCode: AudibleCountryCode
+  ): MediaItemForProvider {
     return {
       needsDetails: false,
       mediaType: this.mediaType,
       source: this.name,
+      audibleCountryCode: countryCode,
       title: item.title,
       audibleId: item.asin,
       authors: item.authors?.map((author) => author.name),

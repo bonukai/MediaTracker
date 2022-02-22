@@ -2,6 +2,7 @@ import { UserRating } from 'src/entity/userRating';
 import { Seen } from 'src/entity/seen';
 import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason } from 'src/entity/tvseason';
+import { AudibleLang } from 'src/entity/configuration';
 
 export type MediaType = 'tv' | 'movie' | 'book' | 'video_game' | 'audiobook';
 
@@ -41,6 +42,7 @@ export type MediaItemBase = ExternalIds & {
   narrators?: string[];
   language?: string;
   numberOfPages?: number;
+  audibleCountryCode?: AudibleLang;
   needsDetails?: boolean;
   lockedAt?: number;
 };
@@ -143,6 +145,7 @@ export const mediaItemColumns = <const>[
   'goodreadsId',
   'numberOfPages',
   'traktId',
+  'audibleCountryCode',
 ];
 
 export const mediaItemPosterPath = (
