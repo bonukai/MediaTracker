@@ -10,7 +10,7 @@
     "lingui:extract": "lingui extract",
     "lingui:compile": "lingui compile",
     "watch:build:server": "babel src --out-dir build --extensions .ts --source-maps true --watch --delete-dir-on-start",
-    "watch:start": "nodemon --watch build --ignore *.test.js --ext * --exec \"node build/index.js\"",
+    "watch:start": "nodemon --watch build --ignore *.test.js --ext .* --exec \"node build/index.js\"",
     "build": "npm run lingui:extract && npm run lingui:compile && npm run build:routes && npm run build:server",
     "start": "cross-env NODE_ENV=production node build/index.js",
     "check-types": "tsc --noEmit",
