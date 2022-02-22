@@ -40,7 +40,6 @@ import { metadataProviderCredentialsRepository } from 'src/repository/metadataPr
 import { setupI18n } from 'src/i18n/i18n';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { CancellationToken } from 'src/cancellationToken';
-import { OpenLibrary } from 'src/metadata/provider/openlibrary';
 
 let updateMetadataCancellationToken: CancellationToken;
 
@@ -72,13 +71,17 @@ GlobalConfiguration.subscribe('tmdbLang', async (value, previousValue) => {
   });
 });
 
-(async () => {
+const catchAndPrintError = async (fn: () => Promise<void> | void) => {
   try {
-    validateConfig();
+    await fn();
   } catch (error) {
     console.log(chalk.bold.red(error));
     return;
   }
+};
+
+(async () => {
+  await catchAndPrintError(validateConfig);
 
   setupI18n(SERVER_LANG || 'en');
 
@@ -229,12 +232,12 @@ GlobalConfiguration.subscribe('tmdbLang', async (value, previousValue) => {
     console.log(t`MediaTracker listening at ${address}`);
 
     if (NODE_ENV === 'production') {
-      await updateMetadata();
-      await sendNotifications();
+      await catchAndPrintError(updateMetadata);
+      await catchAndPrintError(sendNotifications);
 
       setInterval(async () => {
-        await sendNotifications();
-        await updateMetadata();
+        await catchAndPrintError(updateMetadata);
+        await catchAndPrintError(sendNotifications);
       }, durationToMilliseconds({ hours: 1 }));
     }
   });

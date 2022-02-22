@@ -11,6 +11,7 @@ import { TvEpisode } from 'src/entity/tvepisode';
 import { User } from 'src/entity/user';
 import { Notifications } from 'src/notifications/notifications';
 import { notificationPlatformsCredentialsRepository } from 'src/repository/notificationPlatformsCredentials';
+import { createLock } from 'src/lock';
 
 const notificationForPastItems = async () => {
   const releasedItems = await mediaItemRepository.itemsToNotify(
@@ -216,11 +217,11 @@ const addFutureNotification = (fn: () => Promise<void>, date: Date) => {
   setTimeout(() => errorHandler(fn), date.getTime() - new Date().getTime());
 };
 
-export const sendNotifications = async () => {
+export const sendNotifications = createLock(async () => {
   await errorHandler(async () => {
     await notificationForPastItems();
     await notificationForFutureItems();
     await notificationForPastEpisodes();
     await notificationForFutureEpisodes();
   });
-};
+});

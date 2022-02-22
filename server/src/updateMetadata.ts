@@ -18,6 +18,7 @@ import { Notifications } from 'src/notifications/notifications';
 import { userRepository } from 'src/repository/user';
 import { User } from 'src/entity/user';
 import { CancellationToken } from 'src/cancellationToken';
+import { createLock } from 'src/lock';
 
 const getItemsToDelete = (
   oldMediaItem: MediaItemBaseWithSeasons,
@@ -443,7 +444,7 @@ export const updateMediaItems = async (args: {
   cancellationToken?.complected();
 };
 
-export const updateMetadata = async (): Promise<void> => {
+export const updateMetadata = createLock(async (): Promise<void> => {
   const mediaItems = await mediaItemRepository.itemsToPossiblyUpdate();
   await updateMediaItems({ mediaItems: mediaItems });
-};
+});
