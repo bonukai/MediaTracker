@@ -12,12 +12,12 @@ const InputComponent: FunctionComponent<{
   mediaType: MediaType;
 }> = (props) => {
   const { max, setProgress, progress, mediaType } = props;
-  const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState<number | string>(0);
 
-  useEffect(
-    () => setValue(Math.floor((max * progress) / 100)),
-    [progress, max]
-  );
+  useEffect(() => {
+    const newValue = Math.round((max * progress) / 100);
+    Math.abs(progress - newValue) > 0.001 && setValue(newValue);
+  }, [max, progress]);
 
   return (
     <div>
@@ -28,8 +28,13 @@ const InputComponent: FunctionComponent<{
           max={max}
           value={value}
           onChange={(e) => {
-            setValue(Number(e.currentTarget.value));
-            setProgress(Number((Number(e.currentTarget.value) / max) * 100));
+            const newValue = Math.min(Number(e.currentTarget.value), max);
+            if (e.currentTarget.value === '') {
+              setValue('');
+            } else {
+              setValue(newValue);
+            }
+            setProgress(Number((newValue / max) * 100));
           }}
         />{' '}
         {isBook(mediaType) && <Plural value={value} one="page" other="pages" />}
