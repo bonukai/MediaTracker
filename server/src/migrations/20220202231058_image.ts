@@ -6,6 +6,7 @@ import { customAlphabet } from 'nanoid';
 import path from 'path';
 
 import { ASSETS_PATH } from 'src/config';
+import { logger } from 'src/logger';
 
 const nanoid = customAlphabet('1234567890abcdef', 32);
 
@@ -122,7 +123,7 @@ export async function up(knex: Knex): Promise<void> {
       });
     }
   } catch (error) {
-    console.log(chalk.bold.red(t`Failed to delete unused assets files`));
+    logger.error(chalk.bold.red(t`Failed to delete unused assets files`));
   }
 }
 

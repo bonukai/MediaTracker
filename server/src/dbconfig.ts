@@ -2,6 +2,7 @@ import knexLib from 'knex';
 import { t, plural } from '@lingui/macro';
 
 import config, { migrationsDirectory } from './knexfile';
+import { logger } from 'src/logger';
 
 export const runMigrations = async () => {
   const [batchNo, log] = await knex.migrate.latest({
@@ -12,15 +13,16 @@ export const runMigrations = async () => {
     const name = batchNo;
     const count = log.length;
 
-    console.log(t`Running migrations`);
+    logger.info(t`Running migrations`);
 
-    console.log(
+    logger.info(
       t`Batch ${name} run: ${plural(count, {
         one: '# migration',
         other: '# migrations',
       })}`
     );
-    console.log(log.join('\n'));
+
+    log.map((value: string) => logger.info(value));
   }
 };
 

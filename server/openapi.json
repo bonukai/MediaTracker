@@ -602,6 +602,29 @@
         }
       }
     },
+    "/api/logs": {
+      "get": {
+        "tags": [
+          "Logs"
+        ],
+        "operationId": "get",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LogEntry"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/progress": {
       "put": {
         "tags": [
@@ -2673,6 +2696,29 @@
           "desc"
         ],
         "type": "string"
+      },
+      "LogEntry": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string"
+          },
+          "stack": {
+            "type": "string",
+            "nullable": true
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "level",
+          "message",
+          "timestamp"
+        ]
       },
       "LastSeenAt": {
         "enum": [
