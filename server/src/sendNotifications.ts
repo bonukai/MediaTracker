@@ -12,6 +12,7 @@ import { User } from 'src/entity/user';
 import { Notifications } from 'src/notifications/notifications';
 import { notificationPlatformsCredentialsRepository } from 'src/repository/notificationPlatformsCredentials';
 import { createLock } from 'src/lock';
+import { logger } from 'src/logger';
 
 const notificationForPastItems = async () => {
   const releasedItems = await mediaItemRepository.itemsToNotify(
