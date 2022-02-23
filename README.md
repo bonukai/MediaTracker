@@ -125,7 +125,7 @@ docker run -p 7481:7481 mediatracker
 | [Audible API](https://audible.readthedocs.io/en/latest/misc/external_api.html) | audiobooks     |      ✓       |
 | [Open Library](https://openlibrary.org/)                                       | books          |      ✗       |
 
-\* IGDB has a limit of 4 requests per second. Because of that IGDB API key is not provided with MediaTracker, it can be acquired [here](https://api-docs.igdb.com/#account-creation) and set in `#/settings/metadata-providers-credentials`
+\* IGDB has a limit of 4 requests per second. Because of that IGDB API key is not provided with MediaTracker, it can be acquired [here](https://api-docs.igdb.com/#account-creation) and set in [http://localhost:7481/#/settings/configuration](http://localhost:7481/#/settings/configuration)
 
 # Notification platforms
 
