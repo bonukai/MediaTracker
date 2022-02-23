@@ -66,6 +66,7 @@ import { ConfigurationController } from '../../controllers/configuration';
 import { ImgController } from '../../controllers/img';
 import { MediaItemController } from '../../controllers/item';
 import { ItemsController } from '../../controllers/items';
+import { LogsController } from '../../controllers/logs';
 import { ProgressController } from '../../controllers/progress';
 import { RatingController } from '../../controllers/rating';
 import { SearchController } from '../../controllers/search';
@@ -81,6 +82,7 @@ const _ConfigurationController = new ConfigurationController();
 const _ImgController = new ImgController();
 const _MediaItemController = new MediaItemController();
 const _ItemsController = new ItemsController();
+const _LogsController = new LogsController();
 const _ProgressController = new ProgressController();
 const _RatingController = new RatingController();
 const _SearchController = new SearchController();
@@ -439,6 +441,7 @@ router.get(
   }),
   _ItemsController.get
 );
+router.get('/api/logs', validatorHandler({}), _LogsController.add);
 router.put(
   '/api/progress',
   validatorHandler({

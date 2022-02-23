@@ -44,6 +44,7 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl 
 
 ENV DATABASE_PATH="/storage/data.db"
 ENV ASSETS_PATH="/assets"
+ENV LOGS_PATH="/logs"
 ENV NODE_ENV=production
 
 CMD [ "node", "build/index.js"]

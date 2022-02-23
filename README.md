@@ -68,6 +68,7 @@ volumes:
 | -p 7481     | Port web API            |
 | -v /storage | Directory with database |
 | -v /assets  | Posters directory       |
+| -v /logs    | Logs directory          |
 
 ### Environment variables
 

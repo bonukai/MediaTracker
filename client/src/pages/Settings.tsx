@@ -12,6 +12,7 @@ import { SettingsPreferencesPage } from 'src/pages/settings/Preferences';
 import { SettingsConfigurationPage } from 'src/pages/settings/Configuration';
 import { SettingsSegment } from 'src/components/SettingsSegment';
 import { useConfiguration } from 'src/api/configuration';
+import { LogsPage } from 'src/pages/LogsPage';
 
 export const SettingsPage: FunctionComponent = () => {
   const { user } = useUser();
@@ -37,6 +38,7 @@ export const SettingsPage: FunctionComponent = () => {
                 path="configuration"
                 element={<SettingsConfigurationPage />}
               />
+              <Route path="logs" element={<LogsPage />} />
             </>
           )}
 
@@ -103,10 +105,37 @@ const useRoutesTitle = () => {
   const { configuration } = useConfiguration();
 
   return [
-    ...(!configuration.demo ? [{ path: 'password', name: t`Password` }] : []),
-    { path: 'application-tokens', name: t`Application tokens` },
-    { path: 'notifications', name: t`Notifications` },
-    { path: 'preferences', name: t`Preferences` },
-    ...(user.admin ? [{ path: 'configuration', name: t`Configuration` }] : []),
+    ...(!configuration.demo
+      ? [
+          {
+            path: 'password',
+            name: t`Password`,
+          },
+        ]
+      : []),
+    {
+      path: 'application-tokens',
+      name: t`Application tokens`,
+    },
+    {
+      path: 'notifications',
+      name: t`Notifications`,
+    },
+    {
+      path: 'preferences',
+      name: t`Preferences`,
+    },
+    ...(user.admin
+      ? [
+          {
+            path: 'configuration',
+            name: t`Configuration`,
+          },
+          {
+            path: 'logs',
+            name: t`Logs`,
+          },
+        ]
+      : []),
   ];
 };

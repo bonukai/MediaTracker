@@ -19,6 +19,7 @@ import { userRepository } from 'src/repository/user';
 import { User } from 'src/entity/user';
 import { CancellationToken } from 'src/cancellationToken';
 import { createLock } from 'src/lock';
+import { logger } from 'src/logger';
 
 const getItemsToDelete = (
   oldMediaItem: MediaItemBaseWithSeasons,
@@ -279,9 +280,9 @@ export const updateMediaItem = async (
       new Date(oldMediaItem.lastTimeUpdated).toLocaleString()
     );
 
-    console.log(t`Updating: ${title} (last updated at: ${date})`);
+    logger.info(t`Updating: ${title} (last updated at: ${date})`);
   } else {
-    console.log(t`Updating: ${title}`);
+    logger.info(t`Updating: ${title}`);
   }
 
   if (!oldMediaItem) {
@@ -380,7 +381,7 @@ export const updateMediaItems = async (args: {
 }) => {
   const { mediaItems, cancellationToken, forceUpdate } = args;
 
-  console.log(
+  logger.info(
     chalk.bold.green(
       plural(mediaItems.length, {
         one: 'Updating metadata for # item',
@@ -394,7 +395,7 @@ export const updateMediaItems = async (args: {
 
   for (const mediaItem of mediaItems) {
     if (cancellationToken?.shouldCancel) {
-      console.log(chalk.bold('Updating metadata canceled'));
+      logger.info(chalk.bold('Updating metadata canceled'));
       break;
     }
 
@@ -408,17 +409,17 @@ export const updateMediaItems = async (args: {
       await updateMediaItem(mediaItem);
       numberOfUpdatedItems++;
     } catch (error) {
-      console.log(chalk.red(error.toString()));
+      logger.error(chalk.red(error.toString()));
       numberOfFailures++;
     }
   }
 
   if (numberOfUpdatedItems === 0 && numberOfFailures === 0) {
-    console.log(chalk.bold.green(t`Everything up to date`));
+    logger.info(chalk.bold.green(t`Everything up to date`));
   } else {
     const count = numberOfUpdatedItems;
 
-    console.log(
+    logger.info(
       chalk.bold.green(
         plural(count, {
           one: 'Updated 1 item',
@@ -430,7 +431,7 @@ export const updateMediaItems = async (args: {
     if (numberOfFailures > 0) {
       const count = numberOfFailures;
 
-      console.log(
+      logger.error(
         chalk.bold.red(
           plural(count, {
             one: 'Failed to update 1 item',

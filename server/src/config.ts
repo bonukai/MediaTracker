@@ -13,6 +13,7 @@ export const NODE_ENV = process.env['NODE_ENV'] as
   | 'test';
 export const ASSETS_PATH = process.env['ASSETS_PATH'] || 'img';
 export const PUBLIC_PATH = 'public';
+export const LOGS_PATH = process.env['LOGS_PATH'] || 'logs';
 
 export const DATABASE_PATH = process.env.DATABASE_PATH || './data.db';
 export const DATABASE_CLIENT = process.env.DATABASE_CLIENT || 'better-sqlite3';
