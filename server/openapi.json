@@ -608,6 +608,71 @@
           "Logs"
         ],
         "operationId": "get",
+        "parameters": [
+          {
+            "name": "error",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "warn",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "info",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "debug",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "http",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -2697,27 +2762,204 @@
         ],
         "type": "string"
       },
-      "LogEntry": {
+      "LogLevels": {
         "type": "object",
         "properties": {
+          "error": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "warn": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "info": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "debug": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "http": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "LogEntry": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "level": {
+                "type": "string"
+              },
+              "stack": {
+                "type": "string",
+                "nullable": true
+              },
+              "timestamp": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "level",
+              "message",
+              "timestamp"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "level": {
+                    "type": "string"
+                  },
+                  "stack": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "timestamp": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "level",
+                  "message",
+                  "timestamp"
+                ]
+              },
+              {
+                "$ref": "#/components/schemas/HttpLogEntry"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "level": {
+                    "type": "string"
+                  },
+                  "stack": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "timestamp": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "level",
+                  "message",
+                  "timestamp"
+                ]
+              },
+              {
+                "$ref": "#/components/schemas/ValidationErrorLogEntry"
+              }
+            ]
+          }
+        ]
+      },
+      "HttpLogEntry": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "http"
+            ]
+          },
+          "url": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "ip": {
+            "type": "string"
+          },
+          "httpVersion": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "number"
+          },
+          "responseSize": {
+            "type": "number"
+          },
+          "duration": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "duration",
+          "httpVersion",
+          "ip",
+          "method",
+          "responseSize",
+          "statusCode",
+          "type",
+          "url"
+        ]
+      },
+      "ValidationErrorLogEntry": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "validationError"
+            ]
+          },
           "message": {
             "type": "string"
           },
-          "level": {
+          "error": {
             "type": "string"
           },
-          "stack": {
-            "type": "string",
-            "nullable": true
+          "body": {
+            "type": "string"
           },
-          "timestamp": {
+          "method": {
+            "type": "string"
+          },
+          "url": {
             "type": "string"
           }
         },
         "required": [
-          "level",
+          "body",
+          "error",
           "message",
-          "timestamp"
+          "method",
+          "type",
+          "url"
         ]
       },
       "LastSeenAt": {

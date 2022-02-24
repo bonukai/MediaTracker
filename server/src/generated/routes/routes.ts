@@ -441,7 +441,37 @@ router.get(
   }),
   _ItemsController.get
 );
-router.get('/api/logs', validatorHandler({}), _LogsController.add);
+router.get(
+  '/api/logs',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        LogLevels: {
+          type: 'object',
+          properties: {
+            error: { type: ['boolean', 'null'] },
+            warn: { type: ['boolean', 'null'] },
+            info: { type: ['boolean', 'null'] },
+            debug: { type: ['boolean', 'null'] },
+            http: { type: ['boolean', 'null'] },
+          },
+        },
+      },
+      allOf: [
+        { $ref: '#/definitions/LogLevels' },
+        {
+          type: 'object',
+          properties: {
+            count: { type: ['number', 'null'] },
+            from: { type: ['string', 'null'] },
+          },
+        },
+      ],
+    },
+  }),
+  _LogsController.add
+);
 router.put(
   '/api/progress',
   validatorHandler({
