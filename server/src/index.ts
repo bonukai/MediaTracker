@@ -71,7 +71,7 @@ GlobalConfiguration.subscribe('tmdbLang', async (value, previousValue) => {
   });
 });
 
-const catchAndPrintError = async (fn: () => Promise<void> | void) => {
+const catchAndLogError = async (fn: () => Promise<void> | void) => {
   try {
     await fn();
   } catch (error) {
@@ -81,7 +81,7 @@ const catchAndPrintError = async (fn: () => Promise<void> | void) => {
 };
 
 (async () => {
-  await catchAndPrintError(validateConfig);
+  await catchAndLogError(validateConfig);
 
   setupI18n(SERVER_LANG || 'en');
 
@@ -217,12 +217,12 @@ const catchAndPrintError = async (fn: () => Promise<void> | void) => {
     logger.info(t`MediaTracker listening at ${address}`);
 
     if (NODE_ENV === 'production') {
-      await catchAndPrintError(updateMetadata);
-      await catchAndPrintError(sendNotifications);
+      await catchAndLogError(updateMetadata);
+      await catchAndLogError(sendNotifications);
 
       setInterval(async () => {
-        await catchAndPrintError(updateMetadata);
-        await catchAndPrintError(sendNotifications);
+        await catchAndLogError(updateMetadata);
+        await catchAndLogError(sendNotifications);
       }, durationToMilliseconds({ hours: 1 }));
     }
   });
