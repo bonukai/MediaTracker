@@ -39,7 +39,8 @@ import { setupI18n } from 'src/i18n/i18n';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { CancellationToken } from 'src/cancellationToken';
 import { logger } from 'src/logger';
-import { httpLogMiddleware } from 'src/httpLogMiddleware';
+import { httpLogMiddleware } from 'src/middlewares/httpLogMiddleware';
+import { errorLoggerMiddleware } from 'src/middlewares/errorLoggerMiddleware';
 
 let updateMetadataCancellationToken: CancellationToken;
 
@@ -210,6 +211,7 @@ const catchAndLogError = async (fn: () => Promise<void> | void) => {
   });
 
   app.use(generatedRoutes);
+  app.use(errorLoggerMiddleware);
 
   const server = app.listen(PORT, HOSTNAME, async () => {
     const address = `http://${HOSTNAME}:${PORT}`;
@@ -234,7 +236,6 @@ const catchAndLogError = async (fn: () => Promise<void> | void) => {
   const onCloseHandler = async (signal: string) => {
     logger.info(t`Received signal ${signal}`);
     server.close();
-    logger.destroy();
 
     await knex.destroy();
 
