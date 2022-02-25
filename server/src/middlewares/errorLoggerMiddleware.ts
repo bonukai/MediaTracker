@@ -2,7 +2,12 @@ import { ErrorRequestHandler } from 'express';
 import { logger } from 'src/logger';
 import { ValidationError } from 'typescript-routes-to-openapi-server';
 
-export const errorLoggerMiddleware: ErrorRequestHandler = (err, req, res) => {
+export const errorLoggerMiddleware: ErrorRequestHandler = (
+  err,
+  req,
+  res,
+  next
+) => {
   if (err instanceof ValidationError) {
     logger.error({
       message: `ValidationError`,
