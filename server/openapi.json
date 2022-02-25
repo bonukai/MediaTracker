@@ -291,6 +291,34 @@
         }
       }
     },
+    "/api/details/update-metadata/{mediaItemId}": {
+      "get": {
+        "tags": [
+          "MediaItem"
+        ],
+        "operationId": "updateMetadata",
+        "parameters": [
+          {
+            "name": "mediaItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/items/paginated": {
       "get": {
         "description": "Get items",

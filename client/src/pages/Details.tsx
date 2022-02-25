@@ -32,6 +32,7 @@ import {
   removeFromSeenHistory,
   removeFromWatchlist,
   useDetails,
+  useUpdateMetadata,
 } from 'src/api/details';
 import { RelativeTime } from 'src/components/date';
 import { Poster } from 'src/components/Poster';
@@ -435,8 +436,13 @@ export const DetailsPage: FunctionComponent = () => {
           </div>
         </div>
       </div>
+
+      <div className="pt-3">
+        <UpdateMetadataButton mediaItem={mediaItem} />
+      </div>
+
       {canBeOnWatchlist(mediaItem) && (
-        <div className="pt-5 mt-3">
+        <div className="mt-3">
           {mediaItem.onWatchlist ? (
             <div
               className="text-sm btn-red"
@@ -633,6 +639,26 @@ export const DetailsPage: FunctionComponent = () => {
         />
       )}
     </div>
+  );
+};
+
+const UpdateMetadataButton: FunctionComponent<{
+  mediaItem: MediaItemItemsResponse;
+}> = (props) => {
+  const { mediaItem } = props;
+
+  const { updateMetadata, isLoading, isError } = useUpdateMetadata(
+    mediaItem.id
+  );
+
+  return (
+    <button
+      className="text-sm btn"
+      onClick={() => updateMetadata()}
+      disabled={isLoading}
+    >
+      <Trans>Update metadata</Trans>
+    </button>
   );
 };
 

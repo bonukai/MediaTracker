@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { queryClient } from 'src/App';
 import {
   MediaItemItemsResponse,
@@ -25,6 +25,18 @@ export const useDetails = (mediaItemId: number) => {
     isLoading: isLoading,
     error: error,
     mediaItem: data,
+  };
+};
+
+export const useUpdateMetadata = (mediaItemId: number) => {
+  const mutation = useMutation(() =>
+    mediaTrackerApi.details.updateMetadata(mediaItemId)
+  );
+
+  return {
+    updateMetadata: mutation.mutate,
+    isLoading: mutation.isLoading,
+    isError: mutation.isError,
   };
 };
 

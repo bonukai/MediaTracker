@@ -322,6 +322,18 @@ router.get(
   _MediaItemController.details
 );
 router.get(
+  '/api/details/update-metadata/:mediaItemId',
+  validatorHandler({
+    pathParamsSchema: {
+      type: 'object',
+      properties: { mediaItemId: { type: 'number' } },
+      required: ['mediaItemId'],
+      nullable: false,
+    },
+  }),
+  _MediaItemController.updateMetadata
+);
+router.get(
   '/api/items/paginated',
   validatorHandler({
     requestQuerySchema: {

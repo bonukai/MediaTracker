@@ -41,4 +41,30 @@ export class MediaItemController {
 
     res.send(details);
   });
+
+  /**
+   * @openapi_operationId updateMetadata
+   */
+  updateMetadata = createExpressRoute<{
+    method: 'get';
+    path: '/api/details/update-metadata/:mediaItemId';
+    pathParams: {
+      mediaItemId: number;
+    };
+  }>(async (req, res) => {
+    const { mediaItemId } = req.params;
+
+    const mediaItem = await mediaItemRepository.findOne({
+      id: mediaItemId,
+    });
+
+    if (!mediaItem) {
+      res.status(404).send();
+      return;
+    }
+
+    await updateMediaItem(mediaItem);
+
+    res.sendStatus(200);
+  });
 }
