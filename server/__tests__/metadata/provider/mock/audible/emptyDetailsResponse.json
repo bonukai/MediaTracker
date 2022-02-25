@@ -1,0 +1,45 @@
+{
+    "product": {
+        "asin": "B00WKKK2XI11",
+        "rating": {
+            "num_reviews": 0,
+            "overall_distribution": {
+                "average_rating": 0,
+                "display_average_rating": "0.0",
+                "display_stars": 0,
+                "num_five_star_ratings": 0,
+                "num_four_star_ratings": 0,
+                "num_one_star_ratings": 0,
+                "num_ratings": 0,
+                "num_three_star_ratings": 0,
+                "num_two_star_ratings": 0
+            },
+            "performance_distribution": {
+                "average_rating": 0,
+                "display_average_rating": "0.0",
+                "display_stars": 0,
+                "num_five_star_ratings": 0,
+                "num_four_star_ratings": 0,
+                "num_one_star_ratings": 0,
+                "num_ratings": 0,
+                "num_three_star_ratings": 0,
+                "num_two_star_ratings": 0
+            },
+            "story_distribution": {
+                "average_rating": 0,
+                "display_average_rating": "0.0",
+                "display_stars": 0,
+                "num_five_star_ratings": 0,
+                "num_four_star_ratings": 0,
+                "num_one_star_ratings": 0,
+                "num_ratings": 0,
+                "num_three_star_ratings": 0,
+                "num_two_star_ratings": 0
+            }
+        }
+    },
+    "response_groups": [
+        "always-returned",
+        "rating"
+    ]
+}

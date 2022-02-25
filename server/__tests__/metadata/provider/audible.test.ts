@@ -5,6 +5,7 @@ import { GlobalConfiguration } from 'src/repository/globalSettings';
 
 import searchResponse from './mock/audible/searchResponse.json';
 import detailsResponse from './mock/audible/detailsResponse.json';
+import emptyDetailsResponse from './mock/audible/emptyDetailsResponse.json';
 
 jest.mock('axios');
 
@@ -41,6 +42,19 @@ describe('audible', () => {
     });
 
     expect(res).toStrictEqual(detailsResult);
+  });
+
+  test('details with empty response', async () => {
+    mockedAxios.get.mockResolvedValue({
+      data: emptyDetailsResponse,
+      status: 200,
+    });
+
+    await expect(
+      audible.details({
+        audibleId: 'B017V4IM1G',
+      })
+    ).rejects.toThrowError(/B017V4IM1G/);
   });
 });
 
