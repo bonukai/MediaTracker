@@ -23,7 +23,6 @@ import {
   validateConfig,
 } from 'src/config';
 import { generatedRoutes } from 'src/generated/routes/routes';
-import { metadataProviders } from 'src/metadata/metadataProviders';
 import { AccessTokenMiddleware } from 'src/middlewares/token';
 import { SessionStore } from 'src/sessionStore';
 import { requireUserAuthentication } from 'src/auth';
@@ -39,6 +38,9 @@ import { userRepository } from 'src/repository/user';
 import { setupI18n } from 'src/i18n/i18n';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { CancellationToken } from 'src/cancellationToken';
+import { logger } from 'src/logger';
+import { httpLogMiddleware } from 'src/middlewares/httpLogMiddleware';
+import { errorLoggerMiddleware } from 'src/middlewares/errorLoggerMiddleware';
 
 let updateMetadataCancellationToken: CancellationToken;
 
@@ -47,7 +49,7 @@ GlobalConfiguration.subscribe('tmdbLang', async (value, previousValue) => {
     return;
   }
 
-  console.log(
+  logger.info(
     chalk.bold.green(
       t`TMDB language changed to: "${value}", updating metadata for all items`
     )
@@ -70,17 +72,17 @@ GlobalConfiguration.subscribe('tmdbLang', async (value, previousValue) => {
   });
 });
 
-const catchAndPrintError = async (fn: () => Promise<void> | void) => {
+const catchAndLogError = async (fn: () => Promise<void> | void) => {
   try {
     await fn();
   } catch (error) {
-    console.log(chalk.bold.red(error));
+    logger.error(error);
     return;
   }
 };
 
 (async () => {
-  await catchAndPrintError(validateConfig);
+  await catchAndLogError(validateConfig);
 
   setupI18n(SERVER_LANG || 'en');
 
@@ -124,7 +126,7 @@ const catchAndPrintError = async (fn: () => Promise<void> | void) => {
       enableRegistration: false,
     });
 
-    console.log(chalk.green.bold(t`DEMO mode enabled`));
+    logger.info(chalk.green.bold(t`DEMO mode enabled`));
   }
 
   let sessionKey = await sessionKeyRepository.findOne();
@@ -151,6 +153,8 @@ const catchAndPrintError = async (fn: () => Promise<void> | void) => {
       store: new SessionStore(),
     })
   );
+
+  app.use(httpLogMiddleware);
 
   app.use(cookieParser());
   app.use(express.json());
@@ -207,24 +211,40 @@ const catchAndPrintError = async (fn: () => Promise<void> | void) => {
   });
 
   app.use(generatedRoutes);
+  app.use(errorLoggerMiddleware);
 
   const server = app.listen(PORT, HOSTNAME, async () => {
     const address = `http://${HOSTNAME}:${PORT}`;
 
-    console.log(t`MediaTracker listening at ${address}`);
+    logger.info(t`MediaTracker listening at ${address}`);
 
     if (NODE_ENV === 'production') {
-      await catchAndPrintError(updateMetadata);
-      await catchAndPrintError(sendNotifications);
+      await catchAndLogError(updateMetadata);
+      await catchAndLogError(sendNotifications);
 
       setInterval(async () => {
-        await catchAndPrintError(updateMetadata);
-        await catchAndPrintError(sendNotifications);
+        await catchAndLogError(updateMetadata);
+        await catchAndLogError(sendNotifications);
       }, durationToMilliseconds({ hours: 1 }));
     }
   });
 
   server.on('close', async () => {
-    await knex.destroy();
+    logger.info(t`Server closed`);
   });
+
+  const onCloseHandler = async (signal: string) => {
+    logger.info(t`Received signal ${signal}`);
+    server.close();
+
+    await knex.destroy();
+
+    // eslint-disable-next-line no-process-exit
+    process.exit();
+  };
+
+  process.once('SIGHUP', onCloseHandler);
+  process.once('SIGINT', onCloseHandler);
+  process.once('SIGTERM', onCloseHandler);
+  process.once('SIGKILL ', onCloseHandler);
 })();

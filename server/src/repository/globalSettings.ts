@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import _ from 'lodash';
 import { Configuration } from 'src/entity/configuration';
+import { logger } from 'src/logger';
 import { repository } from 'src/repository/repository';
 
 class ConfigurationRepository extends repository<Configuration>({
@@ -37,7 +38,7 @@ export class GlobalConfiguration {
           try {
             await handler(value[key], previousConfiguration[key]);
           } catch (error) {
-            console.log(chalk.bold.red(error));
+            logger.error(error);
           }
         }
       });

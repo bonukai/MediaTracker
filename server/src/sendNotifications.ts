@@ -12,6 +12,7 @@ import { User } from 'src/entity/user';
 import { Notifications } from 'src/notifications/notifications';
 import { notificationPlatformsCredentialsRepository } from 'src/repository/notificationPlatformsCredentials';
 import { createLock } from 'src/lock';
+import { logger } from 'src/logger';
 
 const notificationForPastItems = async () => {
   const releasedItems = await mediaItemRepository.itemsToNotify(
@@ -118,7 +119,7 @@ const sendNotificationForEpisodes = async (episodes: TvEpisode[]) => {
   {
     const count = usersToNotify.length;
 
-    console.log(
+    logger.info(
       plural(count, {
         one: `Sending notification for new episodes of ${title} to # user`,
         other: `Sending notification for new episodes of ${title} to # users`,
@@ -152,7 +153,7 @@ const sendNotificationForMediaItem = async (mediaItem: MediaItemBase) => {
 
   const count = usersToNotify.length;
 
-  console.log(
+  logger.info(
     plural(count, {
       one: `Sending notification for ${title} to # user`,
       other: `Sending notification for ${title} to # users`,
@@ -209,7 +210,7 @@ const errorHandler = async (fn: () => Promise<void>) => {
   try {
     await fn();
   } catch (error) {
-    console.log(chalk.bold.red(t`Error sending notifications: ${error}`));
+    logger.error(chalk.bold.red(t`Error sending notifications: ${error}`));
   }
 };
 

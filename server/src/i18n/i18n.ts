@@ -2,12 +2,13 @@ import { i18n } from '@lingui/core';
 import { t } from '@lingui/macro';
 import * as plurals from 'make-plural/plurals';
 
+import { logger } from 'src/logger';
+import { GlobalConfiguration } from 'src/repository/globalSettings';
+
 import { messages as da } from 'src/i18n/locales/da/translation';
 import { messages as de } from 'src/i18n/locales/de/translation';
 import { messages as en } from 'src/i18n/locales/en/translation';
 import { messages as es } from 'src/i18n/locales/es/translation';
-
-import { GlobalConfiguration } from 'src/repository/globalSettings';
 
 export const setupI18n = (locale: string) => {
   i18n.loadLocaleData({
@@ -24,7 +25,7 @@ export const setupI18n = (locale: string) => {
       return;
     }
 
-    console.log(t`Changing server language to ${lng}`);
+    logger.info(t`Changing server language to ${lng}`);
     i18n.activate(lng);
   });
 };
