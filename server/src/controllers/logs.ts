@@ -1,6 +1,8 @@
-import { onlyForAdmin } from 'src/auth';
-import { getLogs, LogEntry, LogLevels } from 'src/logger';
 import { createExpressRoute } from 'typescript-routes-to-openapi-server';
+
+import { onlyForAdmin } from 'src/auth';
+import { LogEntry, LogLevels } from 'src/logger';
+import { getLogs } from 'src/logger/getLogs';
 
 /**
  * @openapi_tags Logs

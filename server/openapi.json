@@ -2944,7 +2944,8 @@
             "type": "string"
           },
           "body": {
-            "type": "string"
+            "type": "object",
+            "nullable": true
           },
           "method": {
             "type": "string"
@@ -2954,7 +2955,6 @@
           }
         },
         "required": [
-          "body",
           "error",
           "message",
           "method",
