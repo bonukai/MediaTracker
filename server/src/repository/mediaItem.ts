@@ -22,6 +22,7 @@ import {
 } from 'src/entity/mediaItem';
 import { imageRepository } from 'src/repository/image';
 import { getImageId, Image } from 'src/entity/image';
+import { subDays } from 'date-fns';
 
 export type MediaItemOrderBy =
   | 'title'
@@ -830,6 +831,12 @@ class MediaItemRepository extends repository<MediaItemBase>({
             .valueOf(),
       };
     });
+  }
+
+  public async unlockLockedMediaItems() {
+    return await knex<MediaItemBase>(this.tableName)
+      .update('lockedAt', null)
+      .where('lockedAt', '<=', subDays(new Date(), 1).getTime());
   }
 }
 

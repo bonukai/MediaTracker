@@ -446,6 +446,7 @@ export const updateMediaItems = async (args: {
 };
 
 export const updateMetadata = createLock(async (): Promise<void> => {
+  await mediaItemRepository.unlockLockedMediaItems();
   const mediaItems = await mediaItemRepository.itemsToPossiblyUpdate();
   await updateMediaItems({ mediaItems: mediaItems });
 });
