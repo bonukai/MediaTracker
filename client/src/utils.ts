@@ -126,3 +126,9 @@ export const reverseMap = <Keys extends string, Values extends string>(
     Object.entries(map).map(([key, value]) => [value, key])
   );
 };
+
+export const canMetadataBeUpdated = (mediaItem: MediaItemItemsResponse) => {
+  return ['igdb', 'tmdb', 'openlibrary', 'audible'].includes(
+    mediaItem.source?.toLowerCase()
+  );
+};

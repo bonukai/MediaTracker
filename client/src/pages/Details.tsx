@@ -18,6 +18,7 @@ import { hasBeenReleased, hasBeenSeenAtLeastOnce } from 'src/mediaItem';
 import {
   canBeOnWatchlist,
   canBeRated,
+  canMetadataBeUpdated,
   formatEpisodeNumber,
   hasProgress,
   isAudiobook,
@@ -437,9 +438,11 @@ export const DetailsPage: FunctionComponent = () => {
         </div>
       </div>
 
-      <div className="pt-3">
-        <UpdateMetadataButton mediaItem={mediaItem} />
-      </div>
+      {canMetadataBeUpdated(mediaItem) && (
+        <div className="pt-3">
+          <UpdateMetadataButton mediaItem={mediaItem} />
+        </div>
+      )}
 
       {canBeOnWatchlist(mediaItem) && (
         <div className="mt-3">
