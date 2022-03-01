@@ -29,8 +29,11 @@ export const useDetails = (mediaItemId: number) => {
 };
 
 export const useUpdateMetadata = (mediaItemId: number) => {
-  const mutation = useMutation(() =>
-    mediaTrackerApi.details.updateMetadata(mediaItemId)
+  const mutation = useMutation(
+    () => mediaTrackerApi.details.updateMetadata(mediaItemId),
+    {
+      onSuccess: () => queryClient.invalidateQueries(detailsKey(mediaItemId)),
+    }
   );
 
   return {
