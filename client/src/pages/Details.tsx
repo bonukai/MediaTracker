@@ -216,7 +216,7 @@ const ExternalLinks: FunctionComponent<{
 
       {mediaItem.openlibraryId && (
         <IconWithLink
-          href={`https://openlibrary.org/${mediaItem.openlibraryId}`}
+          href={`https://openlibrary.org${mediaItem.openlibraryId}`}
           src="logo/openlibrary.svg"
         />
       )}
@@ -348,7 +348,7 @@ export const DetailsPage: FunctionComponent = () => {
               <span className="font-bold">
                 <Trans>Overview</Trans>:{' '}
               </span>
-              <span>{mediaItem.overview}</span>
+              <span className="whitespace-pre-wrap">{mediaItem.overview}</span>
             </div>
           )}
 
