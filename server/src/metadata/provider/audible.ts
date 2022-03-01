@@ -73,13 +73,14 @@ export class Audible extends MetadataProvider {
     const countryCode =
       arg.countryCode || GlobalConfiguration.configuration.audibleLang;
 
-    const url = `https://api.audible.${this.domain(
-      countryCode
-    )}/1.0/catalog/products/${audibleId + 1}`;
-
-    const res = await axios.get<AudibleResponse.DetailsResult>(url, {
-      params: this.queryParams,
-    });
+    const res = await axios.get<AudibleResponse.DetailsResult>(
+      `https://api.audible.${this.domain(countryCode)}/1.0/catalog/products/${
+        audibleId + 1
+      }`,
+      {
+        params: this.queryParams,
+      }
+    );
 
     if (res.status !== 200) {
       throw new Error(`Error: ${res.status}`);
@@ -87,11 +88,9 @@ export class Audible extends MetadataProvider {
 
     if (res.data.product?.title === undefined) {
       throw new Error(
-        `No metadata from Audible for ID ${audibleId}. Url: ${url}. Response: ${JSON.stringify(
-          res.data,
-          null,
-          2
-        )}`
+        `No metadata from Audible for ID ${audibleId}. Url: ${
+          res.config.url
+        }. Response: ${JSON.stringify(res.data, null, 2)}`
       );
     }
 
