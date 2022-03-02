@@ -335,7 +335,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
     }
 
     if (onlySeenItems === true) {
-      query.whereNotNull('lastSeen.mediaItemId');
+      query.whereNotNull('lastSeen2.mediaItemId');
     }
 
     if (onlySeenItems === false) {
