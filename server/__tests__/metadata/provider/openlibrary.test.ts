@@ -28,6 +28,8 @@ describe('openlibrary', () => {
 
     const res = await openlibraryApi.details({
       openlibraryId: 'works/OL82563W',
+      numberOfPages: 123,
+      poster: 'poster',
     });
 
     expect(res).toStrictEqual(detailsResult);
@@ -106,6 +108,8 @@ const detailsResult = {
     '\r\n' +
     '  [1]: https://www.jkrowling.com/book/harry-potter-philosophers-stone/',
   releaseDate: undefined,
+  numberOfPages: 123,
+  poster: 'poster',
 } as unknown;
 
 const detailsResult2 = {
@@ -115,4 +119,6 @@ const detailsResult2 = {
   overview:
     'En medio del ritmo acelerado del mundo actual, es necesario recogerse y elevar la mente y el corazón hacia el Señor. Estas concisas plegarias y reflexiones de Luis Fernando Figari, fundador de diversas asociaciones de la Iglesia, ofrecen la ocasión de centrarse en lo esencial y de recorrer el sendero de la existencia desde el realismo de la esperanza, con la mirada puesta en Aquel que es el Camino, la Verdad y la Vida.',
   releaseDate: '2009',
-};
+  numberOfPages: undefined,
+  poster: 'https://covers.openlibrary.org/b/id/5732360.jpg',
+} as unknown;

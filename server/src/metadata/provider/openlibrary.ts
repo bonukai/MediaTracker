@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ExternalIds, MediaItemForProvider } from 'src/entity/mediaItem';
+import { MediaItemForProvider } from 'src/entity/mediaItem';
 import { MetadataProvider } from 'src/metadata/metadataProvider';
 
 export class OpenLibrary extends MetadataProvider {
@@ -47,22 +47,29 @@ export class OpenLibrary extends MetadataProvider {
     });
   }
 
-  async details(mediaItem: ExternalIds): Promise<MediaItemForProvider> {
-    const res = await axios.get(
-      'https://openlibrary.org/' + mediaItem.openlibraryId + '.json'
+  async details(args: {
+    openlibraryId: string;
+    numberOfPages?: number;
+    poster?: string;
+  }): Promise<MediaItemForProvider> {
+    const res = await axios.get<DetailsResponse>(
+      `https://openlibrary.org${args.openlibraryId}.json`
     );
-
-    const result = res.data as DetailsResponse;
 
     return {
       mediaType: this.mediaType,
       source: this.name,
-      title: result.title,
+      title: res.data.title,
       overview:
-        typeof result.description === 'string'
-          ? result.description
-          : result.description?.value,
-      releaseDate: result.first_publish_date,
+        typeof res.data.description === 'string'
+          ? res.data.description
+          : res.data.description?.value,
+      releaseDate: res.data.first_publish_date,
+      poster:
+        res.data.covers?.length > 0
+          ? `https://covers.openlibrary.org/b/id/${res.data.covers[0]}.jpg`
+          : args.poster,
+      numberOfPages: args.numberOfPages,
     };
   }
 }
