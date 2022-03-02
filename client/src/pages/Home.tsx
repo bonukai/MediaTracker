@@ -86,7 +86,7 @@ export const HomePage: FunctionComponent = () => {
         gridItemArgs={{
           showRating: true,
           showFirstUnwatchedEpisode: true,
-          showAddToWatchlistAndMarkAsSeenButtons: true,
+          showMarksAsSeenFirstUnwatchedEpisode: true,
           topBar: {
             showFirstUnwatchedEpisodeBadge: true,
             showOnWatchlistIcon: true,

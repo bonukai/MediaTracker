@@ -29,7 +29,7 @@ export type GridItemAppearanceArgs = {
   showFirstUnwatchedEpisode?: boolean;
   showRating?: boolean;
   showAddToWatchlistAndMarkAsSeenButtons?: boolean;
-
+  showMarksAsSeenFirstUnwatchedEpisode?: boolean;
   topBar?: {
     showOnWatchlistIcon?: boolean;
     showUnwatchedEpisodesCount?: boolean;
@@ -47,7 +47,7 @@ export const GridItem: FunctionComponent<{
     topBar,
     showNextAiring,
     showLastAiring,
-    showFirstUnwatchedEpisode,
+    showMarksAsSeenFirstUnwatchedEpisode,
     showRating,
     showAddToWatchlistAndMarkAsSeenButtons,
   } = props.appearance || {};
@@ -202,6 +202,45 @@ export const GridItem: FunctionComponent<{
             </div>
           )}
         </div>
+
+        {showMarksAsSeenFirstUnwatchedEpisode &&
+          (!isTvShow(mediaItem) ||
+            (isTvShow(mediaItem) && mediaItem.firstUnwatchedEpisode)) && (
+            <div className="flex flex-col">
+              <Modal
+                openModal={(openModal) => (
+                  <>
+                    <div
+                      className="my-1 text-sm dark:bg-gray-900 bg-zinc-100 btn"
+                      onClick={() => openModal()}
+                    >
+                      {isAudiobook(mediaItem) && (
+                        <Trans>Mark as listened</Trans>
+                      )}
+                      {isBook(mediaItem) && <Trans>Mark as read</Trans>}
+                      {isMovie(mediaItem) && <Trans>Mark as seen</Trans>}
+                      {isTvShow(mediaItem) && (
+                        <Trans>
+                          Mark{' '}
+                          {formatEpisodeNumber(mediaItem.firstUnwatchedEpisode)}{' '}
+                          as seen
+                        </Trans>
+                      )}
+                      {isVideoGame(mediaItem) && <Trans>Mark as played</Trans>}
+                    </div>
+                  </>
+                )}
+              >
+                {(closeModal) => (
+                  <SelectSeenDate
+                    mediaItem={mediaItem}
+                    episode={mediaItem.firstUnwatchedEpisode}
+                    closeModal={closeModal}
+                  />
+                )}
+              </Modal>
+            </div>
+          )}
 
         {showAddToWatchlistAndMarkAsSeenButtons && (
           <>
