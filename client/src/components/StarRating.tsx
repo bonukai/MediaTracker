@@ -7,6 +7,7 @@ import { setRating } from 'src/api/details';
 import { Modal, useOpenModalRef } from 'src/components/Modal';
 import { SelectSeenDate } from 'src/components/SelectSeenDate';
 import { formatEpisodeNumber, formatSeasonNumber } from 'src/utils';
+import { queryClient } from 'src/App';
 
 export const StarRating: FunctionComponent<
   | { mediaItem: MediaItemItemsResponse }
@@ -100,6 +101,11 @@ const StarRatingModal: FunctionComponent<
     });
   };
 
+  const _closeModal = () => {
+    closeModal();
+    queryClient.invalidateQueries(['items']);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center p-3 text-black select-none bottom-full min-w-max w-96">
       <div className="pb-2 text-4xl font-bold">
@@ -140,7 +146,7 @@ const StarRatingModal: FunctionComponent<
         className="w-full mt-4"
         onSubmit={async (e) => {
           e.preventDefault();
-          closeModal();
+          _closeModal();
 
           await setRating({
             mediaItem: mediaItem,
@@ -159,7 +165,7 @@ const StarRatingModal: FunctionComponent<
           <button className="btn-blue">
             <Trans>Save review</Trans>
           </button>
-          <div className="ml-auto btn-red" onClick={() => closeModal()}>
+          <div className="ml-auto btn-red" onClick={() => _closeModal()}>
             <Trans>Cancel</Trans>
           </div>
         </div>
