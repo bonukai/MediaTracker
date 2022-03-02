@@ -18,7 +18,7 @@ import {
   isVideoGame,
 } from 'src/utils';
 import { RelativeTime } from 'src/components/date';
-import { MediaItemItemsResponse, MediaType } from 'mediatracker-api';
+import { MediaItemItemsResponse, MediaType, TvEpisode } from 'mediatracker-api';
 import { Poster } from 'src/components/Poster';
 import { SelectSeenDate } from 'src/components/SelectSeenDate';
 import { Modal } from 'src/components/Modal';
@@ -30,6 +30,7 @@ export type GridItemAppearanceArgs = {
   showRating?: boolean;
   showAddToWatchlistAndMarkAsSeenButtons?: boolean;
   showMarksAsSeenFirstUnwatchedEpisode?: boolean;
+  showMarksAsSeenLastAiredEpisode?: boolean;
   topBar?: {
     showOnWatchlistIcon?: boolean;
     showUnwatchedEpisodesCount?: boolean;
@@ -48,6 +49,7 @@ export const GridItem: FunctionComponent<{
     showNextAiring,
     showLastAiring,
     showMarksAsSeenFirstUnwatchedEpisode,
+    showMarksAsSeenLastAiredEpisode,
     showRating,
     showAddToWatchlistAndMarkAsSeenButtons,
   } = props.appearance || {};
@@ -207,38 +209,21 @@ export const GridItem: FunctionComponent<{
           (!isTvShow(mediaItem) ||
             (isTvShow(mediaItem) && mediaItem.firstUnwatchedEpisode)) && (
             <div className="flex flex-col">
-              <Modal
-                openModal={(openModal) => (
-                  <>
-                    <div
-                      className="my-1 text-sm dark:bg-gray-900 bg-zinc-100 btn"
-                      onClick={() => openModal()}
-                    >
-                      {isAudiobook(mediaItem) && (
-                        <Trans>Mark as listened</Trans>
-                      )}
-                      {isBook(mediaItem) && <Trans>Mark as read</Trans>}
-                      {isMovie(mediaItem) && <Trans>Mark as seen</Trans>}
-                      {isTvShow(mediaItem) && (
-                        <Trans>
-                          Mark{' '}
-                          {formatEpisodeNumber(mediaItem.firstUnwatchedEpisode)}{' '}
-                          as seen
-                        </Trans>
-                      )}
-                      {isVideoGame(mediaItem) && <Trans>Mark as played</Trans>}
-                    </div>
-                  </>
-                )}
-              >
-                {(closeModal) => (
-                  <SelectSeenDate
-                    mediaItem={mediaItem}
-                    episode={mediaItem.firstUnwatchedEpisode}
-                    closeModal={closeModal}
-                  />
-                )}
-              </Modal>
+              <MarkAsSeenButton
+                mediaItem={mediaItem}
+                episode={mediaItem.firstUnwatchedEpisode}
+              />
+            </div>
+          )}
+
+        {showMarksAsSeenLastAiredEpisode &&
+          (!isTvShow(mediaItem) ||
+            (isTvShow(mediaItem) && mediaItem.lastAiredEpisode)) && (
+            <div className="flex flex-col">
+              <MarkAsSeenButton
+                mediaItem={mediaItem}
+                episode={mediaItem.lastAiredEpisode}
+              />
             </div>
           )}
 
@@ -258,37 +243,7 @@ export const GridItem: FunctionComponent<{
                   </div>
                 )}
                 {canBeMarkedAsSeen(mediaItem) && (
-                  <Modal
-                    openModal={(openModal) => (
-                      <>
-                        <div
-                          className="my-1 text-sm text-center pointer-events-auto dark:bg-gray-900 bg-zinc-100 btn"
-                          onClick={() => openModal()}
-                        >
-                          {isAudiobook(mediaItem) && (
-                            <Trans>Mark as listened</Trans>
-                          )}
-
-                          {isBook(mediaItem) && <Trans>Mark as read</Trans>}
-
-                          {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
-                            <Trans>Mark as seen</Trans>
-                          )}
-
-                          {isVideoGame(mediaItem) && (
-                            <Trans>Mark as played</Trans>
-                          )}
-                        </div>
-                      </>
-                    )}
-                  >
-                    {(closeModal) => (
-                      <SelectSeenDate
-                        mediaItem={mediaItem}
-                        closeModal={closeModal}
-                      />
-                    )}
-                  </Modal>
+                  <MarkAsSeenButton mediaItem={mediaItem} />
                 )}
               </div>
             )}
@@ -303,3 +258,42 @@ const Item = styled.div.attrs({
   className:
     'rounded bg-red-900 px-1 text-lg ml-1 text-white hover:text-yellow-600 shadow-sm shadow-black',
 })``;
+
+const MarkAsSeenButton: FunctionComponent<{
+  mediaItem: MediaItemItemsResponse;
+  episode?: TvEpisode;
+}> = (props) => {
+  const { mediaItem, episode } = props;
+
+  return (
+    <Modal
+      openModal={(openModal) => (
+        <>
+          <div
+            className="my-1 text-sm dark:bg-gray-900 bg-zinc-100 btn"
+            onClick={() => openModal()}
+          >
+            {isAudiobook(mediaItem) && <Trans>Mark as listened</Trans>}
+            {isBook(mediaItem) && <Trans>Mark as read</Trans>}
+            {isMovie(mediaItem) && <Trans>Mark as seen</Trans>}
+            {isTvShow(mediaItem) &&
+              (episode ? (
+                <Trans>Mark {formatEpisodeNumber(episode)} as seen</Trans>
+              ) : (
+                <Trans>Mark as seen</Trans>
+              ))}
+            {isVideoGame(mediaItem) && <Trans>Mark as played</Trans>}
+          </div>
+        </>
+      )}
+    >
+      {(closeModal) => (
+        <SelectSeenDate
+          mediaItem={mediaItem}
+          episode={mediaItem.lastAiredEpisode}
+          closeModal={closeModal}
+        />
+      )}
+    </Modal>
+  );
+};
