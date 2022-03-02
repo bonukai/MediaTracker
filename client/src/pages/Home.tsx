@@ -54,6 +54,7 @@ export const HomePage: FunctionComponent = () => {
     sortOrder: 'desc',
     page: 1,
     onlyOnWatchlist: true,
+    onlySeenItems: false,
   });
 
   const { items: unratedItems } = useItems({
