@@ -1,9 +1,9 @@
 import SwaggerUI from 'swagger-ui';
-import 'swagger-ui/dist/swagger-ui.css';
+import './node_modules/swagger-ui/dist/swagger-ui.css';
 
 const spec = require('../server/openapi.json');
 
-const ui = SwaggerUI({
+SwaggerUI({
   spec: spec,
   dom_id: '#swagger',
 });

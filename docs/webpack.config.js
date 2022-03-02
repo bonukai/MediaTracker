@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const outputPath = path.resolve(__dirname, 'dist');
@@ -15,6 +16,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js'],
+    fallback: {
+      stream: 'stream-browserify',
+      buffer: 'buffer',
+    },
   },
   module: {
     rules: [
@@ -27,6 +32,9 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'index.html',
+    }),
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
     }),
   ],
   output: {

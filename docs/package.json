@@ -6,6 +6,7 @@
     "build": "webpack --mode production"
   },
   "devDependencies": {
+    "buffer": "^6.0.3",
     "css-loader": "^6.6.0",
     "html-webpack-plugin": "^5.5.0",
     "style-loader": "^3.3.1",
@@ -14,6 +15,6 @@
     "webpack-cli": "^4.9.2"
   },
   "dependencies": {
-    "backend": "file:.."
+    "stream-browserify": "^3.0.0"
   }
 }
