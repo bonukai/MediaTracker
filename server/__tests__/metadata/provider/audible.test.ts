@@ -45,10 +45,11 @@ describe('audible', () => {
   });
 
   test('details with empty response', async () => {
-    mockedAxios.get.mockResolvedValue({
+    mockedAxios.get.mockImplementation(async (url, config) => ({
       data: emptyDetailsResponse,
       status: 200,
-    });
+      config: config,
+    }));
 
     await expect(
       audible.details({
