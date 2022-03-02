@@ -1,3 +1,4 @@
+import 'source-map-support/register';
 import express from 'express';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
