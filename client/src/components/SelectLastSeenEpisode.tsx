@@ -58,8 +58,10 @@ export const SelectLastSeenEpisode: FunctionComponent<{
         <Trans>Loading</Trans>
       ) : (
         <>
-          <div className="py-2 text-2xl font-bold text-center">
-            <Trans>What is the last episode you see?</Trans>
+          <div className="max-w-sm py-2 mx-5 text-2xl font-bold text-center">
+            <Trans>
+              What is the last episode of &quot;{tvShow.title}&quot; you see?
+            </Trans>
           </div>
           <div className="text-lg">
             {!season && (
