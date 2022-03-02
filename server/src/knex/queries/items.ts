@@ -78,6 +78,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
     .select(generateColumnNames('firstUnwatchedEpisode', tvEpisodeColumns))
     .select(generateColumnNames('watchlist', watchlistColumns))
     .select(generateColumnNames('upcomingEpisode', tvEpisodeColumns))
+    .select(generateColumnNames('lastAiredEpisode', tvEpisodeColumns))
     .select(generateColumnNames('userRating', userRatingColumns))
     .select(generateColumnNames('mediaItem', mediaItemColumns))
     .select({
@@ -145,12 +146,10 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
         qb
           .from<TvEpisode>('episode')
           .select('tvShowId')
-          .min('releaseDate', { as: 'upcomingEpisodeReleaseDate' })
-          .min('seasonNumber', { as: 'upcomingEpisodeSeasonNumber' })
-          .min('episodeNumber', {
-            as: 'upcomingEpisodeEpisodeNumber',
+          .min('seasonAndEpisodeNumber', {
+            as: 'upcomingEpisodeSeasonAndEpisodeNumber',
           })
-          .whereNot('isSpecialEpisode', true)
+          .where('isSpecialEpisode', false)
           .where('releaseDate', '>=', currentDateString)
           .groupBy('tvShowId')
           .as('upcomingEpisodeHelper'),
@@ -162,10 +161,35 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
       (qb) =>
         qb
           .on('upcomingEpisode.tvShowId', 'mediaItem.id')
-          .andOn('upcomingEpisode.seasonNumber', 'upcomingEpisodeSeasonNumber')
           .andOn(
-            'upcomingEpisode.episodeNumber',
-            'upcomingEpisodeEpisodeNumber'
+            'upcomingEpisode.seasonAndEpisodeNumber',
+            'upcomingEpisodeSeasonAndEpisodeNumber'
+          )
+    )
+    // Last aired episode
+    .leftJoin<TvEpisode>(
+      (qb) =>
+        qb
+          .from<TvEpisode>('episode')
+          .select('tvShowId')
+          .max('seasonAndEpisodeNumber', {
+            as: 'lastAiredEpisodeSeasonAndEpisodeNumber',
+          })
+          .where('isSpecialEpisode', false)
+          .where('releaseDate', '<', currentDateString)
+          .groupBy('tvShowId')
+          .as('lastAiredEpisodeHelper'),
+      'lastAiredEpisodeHelper.tvShowId',
+      'mediaItem.id'
+    )
+    .leftJoin<TvEpisode>(
+      (qb) => qb.from<TvEpisode>('episode').as('lastAiredEpisode'),
+      (qb) =>
+        qb
+          .on('lastAiredEpisode.tvShowId', 'mediaItem.id')
+          .andOn(
+            'lastAiredEpisode.seasonAndEpisodeNumber',
+            'lastAiredEpisodeSeasonAndEpisodeNumber'
           )
     )
     // Seen episodes count
@@ -443,6 +467,17 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
         query.orderBy('mediaItem.title', 'asc');
         break;
 
+      case 'lastAiring':
+        query.orderByRaw(`CASE
+                            WHEN "mediaItem"."mediaType" = 'tv' THEN "lastAiredEpisode"."releaseDate"
+                            ELSE CASE
+                              WHEN "mediaItem"."releaseDate" >= '${currentDateString}' THEN NULL
+                              ELSE "mediaItem"."releaseDate"
+                            END
+                          END ${sortOrder} NULLS LAST`);
+        query.orderBy('mediaItem.title', 'asc');
+        break;
+
       case 'progress':
         query.orderByRaw(`CASE
                             WHEN "mediaItem"."mediaType" = 'tv' THEN "unseenEpisodesCount"
@@ -542,7 +577,14 @@ const mapRawResult = (row: any): MediaItemItemsResponse => {
     onWatchlist: Boolean(row['watchlist.id']),
     unseenEpisodesCount: row.unseenEpisodesCount || 0,
     numberOfEpisodes: row.numberOfEpisodes,
-    nextAiring: row.nextAiring,
+    nextAiring:
+      row['mediaItem.mediaType'] === 'tv'
+        ? row['upcomingEpisode.releaseDate']
+        : row['mediaItem.releaseDate'],
+    lastAiring:
+      row['mediaItem.mediaType'] === 'tv'
+        ? row['lastAiredEpisode.releaseDate']
+        : row['mediaItem.releaseDate'],
     userRating: row['userRating.id']
       ? {
           id: row['userRating.id'],
@@ -590,6 +632,26 @@ const mapRawResult = (row: any): MediaItemItemsResponse => {
           imdbId: row['upcomingEpisode.imdbId'],
           seasonId: row['upcomingEpisode.seasonId'],
           isSpecialEpisode: Boolean(row['upcomingEpisode.isSpecialEpisode']),
+          userRating: undefined,
+          seenHistory: undefined,
+          lastSeenAt: undefined,
+          seen: false,
+        }
+      : undefined,
+    lastAiredEpisode: row['lastAiredEpisode.id']
+      ? {
+          id: row['lastAiredEpisode.id'],
+          title: row['lastAiredEpisode.title'],
+          description: row['lastAiredEpisode.description'],
+          episodeNumber: row['lastAiredEpisode.episodeNumber'],
+          seasonNumber: row['lastAiredEpisode.seasonNumber'],
+          releaseDate: row['lastAiredEpisode.releaseDate'],
+          runtime: row['lastAiredEpisode.runtime'],
+          tvShowId: row['lastAiredEpisode.tvShowId'],
+          tmdbId: row['lastAiredEpisode.tmdbId'],
+          imdbId: row['lastAiredEpisode.imdbId'],
+          seasonId: row['lastAiredEpisode.seasonId'],
+          isSpecialEpisode: Boolean(row['lastAiredEpisode.isSpecialEpisode']),
           userRating: undefined,
           seenHistory: undefined,
           lastSeenAt: undefined,

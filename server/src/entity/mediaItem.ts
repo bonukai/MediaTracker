@@ -84,7 +84,9 @@ export type MediaItemDetailsResponse = Omit<
   unseenEpisodesCount?: number;
   userRating?: UserRating;
   upcomingEpisode?: TvEpisode;
+  lastAiredEpisode?: TvEpisode;
   nextAiring?: string;
+  lastAiring?: string;
   onWatchlist?: boolean;
   lastSeenAt?: number;
   seen?: boolean;
@@ -104,7 +106,9 @@ export type MediaItemItemsResponse = Omit<MediaItemBase, 'lockedAt'> & {
   unseenEpisodesCount?: number;
   userRating?: UserRating;
   upcomingEpisode?: TvEpisode;
+  lastAiredEpisode?: TvEpisode;
   nextAiring?: string;
+  lastAiring?: string;
   onWatchlist?: boolean;
   lastSeenAt?: number;
   seen?: boolean;

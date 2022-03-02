@@ -2155,7 +2155,19 @@
                 ],
                 "nullable": true
               },
+              "lastAiredEpisode": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TvEpisode"
+                  }
+                ],
+                "nullable": true
+              },
               "nextAiring": {
+                "type": "string",
+                "nullable": true
+              },
+              "lastAiring": {
                 "type": "string",
                 "nullable": true
               },
@@ -2590,7 +2602,19 @@
                 ],
                 "nullable": true
               },
+              "lastAiredEpisode": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TvEpisode"
+                  }
+                ],
+                "nullable": true
+              },
               "nextAiring": {
+                "type": "string",
+                "nullable": true
+              },
+              "lastAiring": {
                 "type": "string",
                 "nullable": true
               },
@@ -2772,6 +2796,7 @@
       },
       "MediaItemOrderBy": {
         "enum": [
+          "lastAiring",
           "lastSeen",
           "mediaType",
           "nextAiring",

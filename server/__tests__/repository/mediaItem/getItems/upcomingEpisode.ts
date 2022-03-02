@@ -215,6 +215,8 @@ describe('upcomingEpisode', () => {
       lastSeenAt: undefined,
       seen: false,
     });
+
+    expect(itemsById[1].nextAiring).toBe(upcomingEpisode.releaseDate);
   });
 
   test('details, properties', async () => {
@@ -230,6 +232,8 @@ describe('upcomingEpisode', () => {
       lastSeenAt: undefined,
       seen: false,
     });
+
+    expect(fetchedMediaItem.nextAiring).toBe(upcomingEpisode.releaseDate);
   });
 
   test('items, no upcoming episode', async () => {

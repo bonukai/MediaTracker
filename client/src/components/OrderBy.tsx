@@ -15,6 +15,7 @@ export const useMediaTypeOrderByNames = (): Record<
     status: t`Status`,
     title: t`Title`,
     nextAiring: t`Next airing`,
+    lastAiring: t`Last airing`,
     unseenEpisodes: t`Unseen episodes count`,
     mediaType: t`Media type`,
     progress: t`Progress`,
@@ -34,6 +35,7 @@ export const useOrderByComponent = (args: {
     ...(!isTvShow(mediaType)
       ? {
           nextAiring: undefined,
+          lastAiring: undefined,
           unseenEpisodes: undefined,
         }
       : {}),

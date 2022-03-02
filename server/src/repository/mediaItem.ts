@@ -30,6 +30,7 @@ export type MediaItemOrderBy =
   | 'unseenEpisodes'
   | 'releaseDate'
   | 'nextAiring'
+  | 'lastAiring'
   | 'status'
   | 'progress'
   | 'mediaType';

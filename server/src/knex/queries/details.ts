@@ -1,10 +1,6 @@
 import _ from 'lodash';
 
-import {
-  MediaItemBase,
-  MediaItemDetailsResponse,
-  seasonPosterPath,
-} from 'src/entity/mediaItem';
+import { MediaItemBase, MediaItemDetailsResponse } from 'src/entity/mediaItem';
 import { TvEpisode, TvEpisodeFilters } from 'src/entity/tvepisode';
 import { UserRating, UserRatingFilters } from 'src/entity/userRating';
 import { TvSeason } from 'src/entity/tvseason';
@@ -161,6 +157,12 @@ export const getDetailsKnex = async (params: {
     .filter(TvEpisodeFilters.unreleasedEpisodes)
     .minBy((episode) => new Date(episode.releaseDate).getTime());
 
+  const lastAiredEpisode = _(episodes)
+    .filter(TvEpisodeFilters.withReleaseDateEpisodes)
+    .filter(TvEpisodeFilters.nonSpecialEpisodes)
+    .filter(TvEpisodeFilters.releasedEpisodes)
+    .maxBy((episode) => new Date(episode.releaseDate).getTime());
+
   const unseenEpisodesCount = _(episodes)
     .filter(TvEpisodeFilters.nonSpecialEpisodes)
     .filter(TvEpisodeFilters.withReleaseDateEpisodes)
@@ -177,6 +179,11 @@ export const getDetailsKnex = async (params: {
   const nextAiring =
     mediaItem.mediaType === 'tv'
       ? upcomingEpisode?.releaseDate
+      : mediaItem.releaseDate;
+
+  const lastAiring =
+    mediaItem.mediaType === 'tv'
+      ? lastAiredEpisode?.releaseDate
       : mediaItem.releaseDate;
 
   const seen =
@@ -211,11 +218,13 @@ export const getDetailsKnex = async (params: {
     seen: seen,
     seasons: seasons,
     upcomingEpisode: upcomingEpisode,
+    lastAiredEpisode: lastAiredEpisode,
     firstUnwatchedEpisode: firstUnwatchedEpisode,
     userRating: userRating.find(UserRatingFilters.mediaItemUserRating) || null,
     onWatchlist: Boolean(watchlist),
     unseenEpisodesCount: unseenEpisodesCount,
     nextAiring: nextAiring,
+    lastAiring: lastAiring,
     numberOfEpisodes: numberOfEpisodes,
     lastSeenAt: lastSeen,
     poster: poster?.id ? `/img/${poster?.id}` : null,

@@ -4,6 +4,7 @@ import { t } from '@lingui/macro';
 import { MediaItemItemsResponse } from 'mediatracker-api';
 import { useItems } from 'src/api/items';
 import { GridItem, GridItemAppearanceArgs } from 'src/components/GridItem';
+import { subDays } from 'date-fns';
 
 const Segment: FunctionComponent<{
   title: string;
@@ -48,6 +49,13 @@ export const HomePage: FunctionComponent = () => {
     onlyOnWatchlist: true,
   });
 
+  const { items: recentlyReleased } = useItems({
+    orderBy: 'lastAiring',
+    sortOrder: 'desc',
+    page: 1,
+    onlyOnWatchlist: true,
+  });
+
   const { items: unratedItems } = useItems({
     orderBy: 'lastSeen',
     sortOrder: 'desc',
@@ -78,6 +86,24 @@ export const HomePage: FunctionComponent = () => {
         gridItemArgs={{
           showRating: true,
           showFirstUnwatchedEpisode: true,
+          showAddToWatchlistAndMarkAsSeenButtons: true,
+          topBar: {
+            showFirstUnwatchedEpisodeBadge: true,
+            showOnWatchlistIcon: true,
+            showUnwatchedEpisodesCount: true,
+          },
+        }}
+      />
+
+      <Segment
+        title={t`Recently released`}
+        items={recentlyReleased?.filter(
+          (mediaItem) =>
+            new Date(mediaItem.lastAiring) > subDays(new Date(), 30)
+        )}
+        gridItemArgs={{
+          showRating: true,
+          showLastAiring: true,
           topBar: {
             showFirstUnwatchedEpisodeBadge: true,
             showOnWatchlistIcon: true,

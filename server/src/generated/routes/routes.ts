@@ -382,6 +382,7 @@ router.get(
         },
         MediaItemOrderBy: {
           enum: [
+            'lastAiring',
             'lastSeen',
             'mediaType',
             'nextAiring',
@@ -416,6 +417,7 @@ router.get(
         },
         MediaItemOrderBy: {
           enum: [
+            'lastAiring',
             'lastSeen',
             'mediaType',
             'nextAiring',

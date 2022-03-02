@@ -25,6 +25,7 @@ import { Modal } from 'src/components/Modal';
 
 export type GridItemAppearanceArgs = {
   showNextAiring?: boolean;
+  showLastAiring?: boolean;
   showFirstUnwatchedEpisode?: boolean;
   showRating?: boolean;
   showAddToWatchlistAndMarkAsSeenButtons?: boolean;
@@ -45,6 +46,7 @@ export const GridItem: FunctionComponent<{
   const {
     topBar,
     showNextAiring,
+    showLastAiring,
     showFirstUnwatchedEpisode,
     showRating,
     showAddToWatchlistAndMarkAsSeenButtons,
@@ -165,15 +167,13 @@ export const GridItem: FunctionComponent<{
           )}
 
           {showNextAiring && (
-            <>
+            <div className='overflow-hidden overflow-ellipsis whitespace-nowrap"'>
               {mediaItem.mediaType === 'tv' && mediaItem.upcomingEpisode && (
                 <>
-                  <div>
-                    {formatEpisodeNumber(mediaItem.upcomingEpisode)}{' '}
-                    <RelativeTime
-                      to={new Date(mediaItem.upcomingEpisode.releaseDate)}
-                    />
-                  </div>
+                  {formatEpisodeNumber(mediaItem.upcomingEpisode)}{' '}
+                  <RelativeTime
+                    to={new Date(mediaItem.upcomingEpisode.releaseDate)}
+                  />
                 </>
               )}
               {mediaItem.mediaType !== 'tv' && mediaItem.releaseDate && (
@@ -181,7 +181,25 @@ export const GridItem: FunctionComponent<{
                   Release <RelativeTime to={new Date(mediaItem.releaseDate)} />
                 </Trans>
               )}
-            </>
+            </div>
+          )}
+
+          {showLastAiring && (
+            <div className="overflow-hidden overflow-ellipsis whitespace-nowrap">
+              {mediaItem.mediaType === 'tv' && mediaItem.lastAiredEpisode && (
+                <>
+                  {formatEpisodeNumber(mediaItem.lastAiredEpisode)}{' '}
+                  <RelativeTime
+                    to={new Date(mediaItem.lastAiredEpisode.releaseDate)}
+                  />
+                </>
+              )}
+              {mediaItem.mediaType !== 'tv' && mediaItem.releaseDate && (
+                <Trans>
+                  Released <RelativeTime to={new Date(mediaItem.releaseDate)} />
+                </Trans>
+              )}
+            </div>
           )}
         </div>
 
