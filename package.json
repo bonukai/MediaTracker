@@ -30,7 +30,7 @@
     "node": ">=14"
   },
   "devDependencies": {
-    "@types/jest": "^27.4.0",
+    "@types/jest": "^27.4.1",
     "prettier": "^2.5.1"
   }
 }

@@ -9,7 +9,7 @@
     "css-loader": "^6.6.0",
     "html-webpack-plugin": "^5.5.0",
     "style-loader": "^3.3.1",
-    "swagger-ui": "^4.5.2",
+    "swagger-ui": "^4.6.0",
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2"
   },
