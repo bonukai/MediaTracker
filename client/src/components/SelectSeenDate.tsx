@@ -13,7 +13,14 @@ import {
   TvSeason,
 } from 'mediatracker-api';
 
-import { isAudiobook, isBook, isMovie, isTvShow, isVideoGame } from 'src/utils';
+import {
+  formatEpisodeNumber,
+  isAudiobook,
+  isBook,
+  isMovie,
+  isTvShow,
+  isVideoGame,
+} from 'src/utils';
 
 export const SelectSeenDate: FunctionComponent<{
   mediaItem: MediaItemItemsResponse;
@@ -36,6 +43,7 @@ export const SelectSeenDate: FunctionComponent<{
   return (
     <SelectSeenDateComponent
       mediaItem={mediaItem}
+      episode={episode}
       closeModal={closeModal}
       onSelected={async (args) => {
         closeModal();
@@ -53,24 +61,41 @@ export const SelectSeenDate: FunctionComponent<{
 
 export const SelectSeenDateComponent: FunctionComponent<{
   mediaItem: MediaItemItemsResponse;
+  episode?: TvEpisode;
   closeModal?: () => void;
   onSelected: (args?: { date?: Date; seenAt?: LastSeenAt }) => void;
 }> = (props) => {
-  const { mediaItem, onSelected, closeModal } = props;
+  const { mediaItem, episode, onSelected, closeModal } = props;
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   return (
     <>
-      <div className="my-3 text-3xl font-bold text-center">
-        {isAudiobook(mediaItem) && <Trans>When did you listen it?</Trans>}
-
-        {isBook(mediaItem) && <Trans>When did you read it?</Trans>}
-
-        {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
-          <Trans>When did you see it?</Trans>
+      <div className="max-w-sm mx-5 my-3 text-3xl font-bold text-center">
+        {isAudiobook(mediaItem) && (
+          <Trans>When did you listen to &quot;{mediaItem.title}&quot;?</Trans>
         )}
 
-        {isVideoGame(mediaItem) && <Trans>When did you play it?</Trans>}
+        {isBook(mediaItem) && (
+          <Trans>When did you read &quot;{mediaItem.title}&quot;?</Trans>
+        )}
+
+        {isMovie(mediaItem) && (
+          <Trans>When did you see &quot;{mediaItem.title}&quot;?</Trans>
+        )}
+
+        {isTvShow(mediaItem) && (
+          <Trans>
+            When did you see &quot;
+            {episode
+              ? `${mediaItem.title} ${formatEpisodeNumber(episode)}`
+              : mediaItem.title}
+            &quot;?
+          </Trans>
+        )}
+
+        {isVideoGame(mediaItem) && (
+          <Trans>When did you play &quot;{mediaItem.title}&quot;?</Trans>
+        )}
       </div>
       <div className="flex flex-col">
         <div
