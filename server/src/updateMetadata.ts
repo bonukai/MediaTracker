@@ -165,7 +165,7 @@ const sendNotifications = async (
     filter: (user: User) => boolean;
   }) => {
     await Promise.all(
-      users.map((user) =>
+      users.filter(args.filter).map((user) =>
         Notifications.send({
           userId: user.id,
           message: args.message,
