@@ -45,7 +45,7 @@ docker run \
 version: "3"
 services:
   mediatracker:
-    container_name: MediaTracker
+    container_name: mediatracker
     ports:
       - 7481:7481
     volumes:
