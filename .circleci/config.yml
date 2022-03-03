@@ -6,10 +6,6 @@ jobs:
     steps:
       - test
 commands:
-  store-coverage-data:
-    steps:
-      - store_artifacts:
-          path: server/coverage
   test:
     steps:
       - checkout
@@ -28,6 +24,8 @@ commands:
             npm run test
       - store_test_results:
           path: ./reports/junit/
+      - store_artifacts:
+          path: server/coverage
 
 workflows:
   version: 2
