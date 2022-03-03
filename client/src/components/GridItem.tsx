@@ -290,7 +290,7 @@ const MarkAsSeenButton: FunctionComponent<{
       {(closeModal) => (
         <SelectSeenDate
           mediaItem={mediaItem}
-          episode={mediaItem.lastAiredEpisode}
+          episode={episode}
           closeModal={closeModal}
         />
       )}
