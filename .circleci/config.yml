@@ -5,8 +5,7 @@ jobs:
       - image: circleci/node:16
     steps:
       - test
-      - store-coverage-data
-
+      -  store-coverage-data
 commands:
   store-coverage-data:
     steps:
@@ -25,11 +24,12 @@ commands:
           paths:
             - $HOME/.npm
       - run:
-          name: test
+          name: unit test
           command: |
             npm run test
       - store_artifacts:
           path: server/coverage
+      
 
 workflows:
   version: 2
