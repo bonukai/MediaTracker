@@ -6,7 +6,7 @@ jobs:
     steps:
       - test
       - store-coverage-data
-      
+
 commands:
   store-coverage-data:
     steps:
@@ -25,12 +25,11 @@ commands:
           paths:
             - $HOME/.npm
       - run:
-          name: unit test
+          name: test
           command: |
             npm run test
-      - store_test_results:
-          path: ./reports/junit/
-      
+      - store_artifacts:
+          path: server/coverage
 
 workflows:
   version: 2
