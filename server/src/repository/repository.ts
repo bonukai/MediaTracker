@@ -89,7 +89,7 @@ export const repository = <T extends object>(args: {
         )) as T[];
 
       if (res) {
-        return res.map((value) => this.deserialize(value));
+        return res.map((value) => _.omit(this.deserialize(value), 'deletedAt'));
       }
     }
 
@@ -100,7 +100,7 @@ export const repository = <T extends object>(args: {
         .first()) as T;
 
       if (res) {
-        return this.deserialize(res);
+        return _.omit(this.deserialize(res), 'deletedAt');
       }
     }
 
