@@ -14,4 +14,5 @@ module.exports = {
     '!src/**/*.d.ts',
     '!src/i18n/locales',
   ],
+  collectCoverage: true,
 };
