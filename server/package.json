@@ -76,6 +76,7 @@
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-node": "^11.1.0",
     "jest": "^27.5.1",
+    "jest-junit": "^13.0.0",
     "jest-mock-extended": "^2.0.4",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1",
