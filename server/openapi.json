@@ -1067,6 +1067,26 @@
         }
       }
     },
+    "/api/statistics/summary": {
+      "get": {
+        "tags": [
+          "Statistics"
+        ],
+        "operationId": "summary",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsSummaryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/tokens": {
       "put": {
         "description": "Add token",
@@ -3023,6 +3043,153 @@
           "unknown"
         ],
         "type": "string"
+      },
+      "StatisticsSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "tv": {
+            "type": "object",
+            "properties": {
+              "numberOfPages": {
+                "type": "number",
+                "nullable": true
+              },
+              "duration": {
+                "type": "number"
+              },
+              "episodes": {
+                "type": "number"
+              },
+              "items": {
+                "type": "number"
+              },
+              "plays": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "duration",
+              "episodes",
+              "items",
+              "plays"
+            ]
+          },
+          "movie": {
+            "type": "object",
+            "properties": {
+              "numberOfPages": {
+                "type": "number",
+                "nullable": true
+              },
+              "duration": {
+                "type": "number"
+              },
+              "episodes": {
+                "type": "number"
+              },
+              "items": {
+                "type": "number"
+              },
+              "plays": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "duration",
+              "episodes",
+              "items",
+              "plays"
+            ]
+          },
+          "book": {
+            "type": "object",
+            "properties": {
+              "numberOfPages": {
+                "type": "number",
+                "nullable": true
+              },
+              "duration": {
+                "type": "number"
+              },
+              "episodes": {
+                "type": "number"
+              },
+              "items": {
+                "type": "number"
+              },
+              "plays": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "duration",
+              "episodes",
+              "items",
+              "plays"
+            ]
+          },
+          "video_game": {
+            "type": "object",
+            "properties": {
+              "numberOfPages": {
+                "type": "number",
+                "nullable": true
+              },
+              "duration": {
+                "type": "number"
+              },
+              "episodes": {
+                "type": "number"
+              },
+              "items": {
+                "type": "number"
+              },
+              "plays": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "duration",
+              "episodes",
+              "items",
+              "plays"
+            ]
+          },
+          "audiobook": {
+            "type": "object",
+            "properties": {
+              "numberOfPages": {
+                "type": "number",
+                "nullable": true
+              },
+              "duration": {
+                "type": "number"
+              },
+              "episodes": {
+                "type": "number"
+              },
+              "items": {
+                "type": "number"
+              },
+              "plays": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "duration",
+              "episodes",
+              "items",
+              "plays"
+            ]
+          }
+        },
+        "required": [
+          "audiobook",
+          "book",
+          "movie",
+          "tv",
+          "video_game"
+        ]
       },
       "UserResponse": {
         "type": "object",

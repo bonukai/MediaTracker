@@ -5,6 +5,7 @@ import { MediaItemItemsResponse } from 'mediatracker-api';
 import { useItems } from 'src/api/items';
 import { GridItem, GridItemAppearanceArgs } from 'src/components/GridItem';
 import { subDays } from 'date-fns';
+import { StatisticsSummary } from 'src/components/StatisticsSummary';
 
 const Segment: FunctionComponent<{
   title: string;
@@ -66,66 +67,70 @@ export const HomePage: FunctionComponent = () => {
   });
 
   return (
-    <div className="px-2">
-      <Segment
-        title={t`Upcoming`}
-        items={upcomingEpisodes}
-        gridItemArgs={{
-          showRating: true,
-          showNextAiring: true,
-          topBar: {
-            showFirstUnwatchedEpisodeBadge: true,
-            showOnWatchlistIcon: true,
-            showUnwatchedEpisodesCount: true,
-          },
-        }}
-      />
+    <>
+      <div className="px-2">
+        <StatisticsSummary />
 
-      <Segment
-        title={t`Next episode to watch`}
-        items={continueWatching}
-        gridItemArgs={{
-          showRating: true,
-          showFirstUnwatchedEpisode: true,
-          showMarksAsSeenFirstUnwatchedEpisode: true,
-          topBar: {
-            showFirstUnwatchedEpisodeBadge: true,
-            showOnWatchlistIcon: true,
-            showUnwatchedEpisodesCount: true,
-          },
-        }}
-      />
+        <Segment
+          title={t`Upcoming`}
+          items={upcomingEpisodes}
+          gridItemArgs={{
+            showRating: true,
+            showNextAiring: true,
+            topBar: {
+              showFirstUnwatchedEpisodeBadge: true,
+              showOnWatchlistIcon: true,
+              showUnwatchedEpisodesCount: true,
+            },
+          }}
+        />
 
-      <Segment
-        title={t`Recently released`}
-        items={recentlyReleased?.filter(
-          (mediaItem) =>
-            new Date(mediaItem.lastAiring) > subDays(new Date(), 30)
-        )}
-        gridItemArgs={{
-          showRating: true,
-          showLastAiring: true,
-          showMarksAsSeenLastAiredEpisode: true,
-          topBar: {
-            showFirstUnwatchedEpisodeBadge: true,
-            showOnWatchlistIcon: true,
-            showUnwatchedEpisodesCount: true,
-          },
-        }}
-      />
+        <Segment
+          title={t`Next episode to watch`}
+          items={continueWatching}
+          gridItemArgs={{
+            showRating: true,
+            showFirstUnwatchedEpisode: true,
+            showMarksAsSeenFirstUnwatchedEpisode: true,
+            topBar: {
+              showFirstUnwatchedEpisodeBadge: true,
+              showOnWatchlistIcon: true,
+              showUnwatchedEpisodesCount: true,
+            },
+          }}
+        />
 
-      <Segment
-        title={t`Unrated`}
-        items={unratedItems}
-        gridItemArgs={{
-          showRating: true,
-          topBar: {
-            showFirstUnwatchedEpisodeBadge: true,
-            showOnWatchlistIcon: true,
-            showUnwatchedEpisodesCount: true,
-          },
-        }}
-      />
-    </div>
+        <Segment
+          title={t`Recently released`}
+          items={recentlyReleased?.filter(
+            (mediaItem) =>
+              new Date(mediaItem.lastAiring) > subDays(new Date(), 30)
+          )}
+          gridItemArgs={{
+            showRating: true,
+            showLastAiring: true,
+            showMarksAsSeenLastAiredEpisode: true,
+            topBar: {
+              showFirstUnwatchedEpisodeBadge: true,
+              showOnWatchlistIcon: true,
+              showUnwatchedEpisodesCount: true,
+            },
+          }}
+        />
+
+        <Segment
+          title={t`Unrated`}
+          items={unratedItems}
+          gridItemArgs={{
+            showRating: true,
+            topBar: {
+              showFirstUnwatchedEpisodeBadge: true,
+              showOnWatchlistIcon: true,
+              showUnwatchedEpisodesCount: true,
+            },
+          }}
+        />
+      </div>
+    </>
   );
 };

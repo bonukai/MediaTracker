@@ -71,6 +71,7 @@ import { ProgressController } from '../../controllers/progress';
 import { RatingController } from '../../controllers/rating';
 import { SearchController } from '../../controllers/search';
 import { SeenController } from '../../controllers/seen';
+import { StatisticsController } from '../../controllers/statisticsController';
 import { TokenController } from '../../controllers/token';
 import { UsersController } from '../../controllers/users';
 import { WatchlistController } from '../../controllers/watchlist';
@@ -87,6 +88,7 @@ const _ProgressController = new ProgressController();
 const _RatingController = new RatingController();
 const _SearchController = new SearchController();
 const _SeenController = new SeenController();
+const _StatisticsController = new StatisticsController();
 const _TokenController = new TokenController();
 const _UsersController = new UsersController();
 const _WatchlistController = new WatchlistController();
@@ -610,6 +612,11 @@ router.delete(
     },
   }),
   _SeenController.removeFromSeenHistory
+);
+router.get(
+  '/api/statistics/summary',
+  validatorHandler({}),
+  _StatisticsController.add
 );
 router.put(
   '/api/tokens',
