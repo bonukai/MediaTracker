@@ -82,17 +82,21 @@ describe('unlockLockedMediaItems.test', () => {
 
   test('should find only one item', async () => {
     const [res] = await tvSeasonRepository.find({});
-    expect(res).toMatchObject(seasons[0]);
+    expect(res).toMatchObject(_.omit(seasons[0], 'deletedAt'));
 
     const [res2] = await tvSeasonRepository.find({}, false);
-    expect(res2).toMatchObject(seasons[0]);
+    expect(res2).toMatchObject(_.omit(seasons[0], 'deletedAt'));
   });
 
   test('should include soft deleted items', async () => {
     const res = await tvSeasonRepository.find({}, true);
-    expect(res).toMatchObject(seasons);
+    expect(res).toMatchObject(
+      seasons.map((season) => _.omit(season, 'deletedAt'))
+    );
 
     const res2 = await tvEpisodeRepository.find({}, true);
-    expect(res2).toMatchObject(episodes);
+    expect(res2).toMatchObject(
+      episodes.map((season) => _.omit(season, 'deletedAt'))
+    );
   });
 });
