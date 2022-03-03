@@ -18,5 +18,12 @@
     "semibold",
     "Trakt",
     "trakttv"
-  ]
+  ],
+  "search.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "server/build": true,
+    "server/public": true,
+    "**/package-lock.json": true
+  }
 }
