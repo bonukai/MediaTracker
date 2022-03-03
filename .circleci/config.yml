@@ -1,0 +1,43 @@
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@3.0.0
+
+jobs:
+  node-v16:
+    docker:
+      - image: circleci/node:16
+    steps:
+      - test
+      
+commands:
+  store-coverage-data:
+    steps:
+      - store_artifacts:
+          path: server/coverage
+  test:
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: install-dependancies
+          command: npm ci
+      - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - $HOME/.npm
+      - run:
+          name: test
+          command: |
+            npm run test
+      - store_test_results:
+          path: server/junit.xml
+      - codecov/upload:
+          file: server/coverage 
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - node-v16
