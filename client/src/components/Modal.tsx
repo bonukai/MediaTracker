@@ -145,10 +145,9 @@ export const Modal = <ReturnType,>(props: {
                     {(springStyles) => (
                       <animated.div
                         style={springStyles}
-                        className={clsx(
-                          'fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center',
-                          !isOpen && 'pointer-events-none'
-                        )}
+                        className={
+                          'fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center'
+                        }
                         ref={mainContainerRef}
                         onPointerDown={onClick}
                       >
