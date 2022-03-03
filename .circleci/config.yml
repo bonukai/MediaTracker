@@ -5,7 +5,7 @@ jobs:
       - image: circleci/node:16
     steps:
       - test
-      -  store-coverage-data
+      
 commands:
   store-coverage-data:
     steps:
@@ -28,7 +28,7 @@ commands:
           command: |
             npm run test
       - store_test_results:
-          path: server/coverage/clover.xml   
+          path: server/coverage/coverage-final.json
 
 workflows:
   version: 2
