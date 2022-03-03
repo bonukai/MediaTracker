@@ -1,4 +1,13 @@
 {
+  "<0><1/> </0>listening": "<0><1/> </0>listening",
+  "<0><1/> </0>playing": "<0><1/> </0>playing",
+  "<0><1/> </0>reading": "<0><1/> </0>reading",
+  "<0><1/> </0>watching": "<0><1/> </0>watching",
+  "<0>{0}</0> audiobooks (<1>{1}</1> plays)": "<0>{0}</0> audiobooks (<1>{1}</1> plays)",
+  "<0>{0}</0> books (<1>{1}</1> reads)": "<0>{0}</0> books (<1>{1}</1> reads)",
+  "<0>{0}</0> episodes (<1>{1}</1> plays of <2>{2}</2> shows)": "<0>{0}</0> episodes (<1>{1}</1> plays of <2>{2}</2> shows)",
+  "<0>{0}</0> movies (<1>{1}</1> plays)": "<0>{0}</0> movies (<1>{1}</1> plays)",
+  "<0>{0}</0> video games (<1>{1}</1> plays)": "<0>{0}</0> video games (<1>{1}</1> plays)",
   "API keys can be acquired here": "API keys can be acquired here",
   "Access Token": "Access Token",
   "Add season to seen history": "Add season to seen history",
