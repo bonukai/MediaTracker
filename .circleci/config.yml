@@ -28,7 +28,7 @@ commands:
           command: |
             npm run test
       - store_test_results:
-          path: server/coverage
+          path: server/junit.xml
 
 workflows:
   version: 2
