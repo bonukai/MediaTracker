@@ -24,15 +24,14 @@ commands:
           paths:
             - $HOME/.npm
       - run:
-          name: unit test
+          name: test
           command: |
             npm run test
-      - store_artifacts:
-          path: server/coverage
-      
+      - store_test_results:
+          path: server/coverage/clover.xml   
 
 workflows:
   version: 2
-  build_and_test:
+  test:
     jobs:
       - node-v16
