@@ -1,4 +1,8 @@
 version: 2.1
+
+orbs:
+  codecov: codecov/codecov@3.0.0
+
 jobs:
   node-v16:
     docker:
@@ -29,6 +33,8 @@ commands:
             npm run test
       - store_test_results:
           path: server/junit.xml
+      - codecov/upload:
+          file: server/coverage 
 
 workflows:
   version: 2
