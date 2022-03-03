@@ -35,12 +35,14 @@ export const getDetailsKnex = async (params: {
       .where({
         tvShowId: mediaItemId,
       })
+      .whereNull('deletedAt')
       .orderBy('seasonNumber', 'asc');
 
     const episodes = await trx<TvEpisode>('episode')
       .where({
         tvShowId: mediaItemId,
       })
+      .where('deletedAt', null)
       .orderBy('seasonNumber', 'asc')
       .orderBy('episodeNumber', 'asc');
 

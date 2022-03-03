@@ -389,14 +389,23 @@ class MediaItemRepository extends repository<MediaItemBase>({
     );
   }
 
-  public async seasonsWithEpisodes(mediaItem: MediaItemBase) {
-    const seasons = await tvSeasonRepository.find({
-      tvShowId: Number(mediaItem.id),
-    });
+  public async seasonsWithEpisodes(
+    mediaItem: MediaItemBase,
+    includeDeleted?: boolean
+  ) {
+    const seasons = await tvSeasonRepository.find(
+      {
+        tvShowId: Number(mediaItem.id),
+      },
+      includeDeleted
+    );
 
-    const episodes = await tvEpisodeRepository.find({
-      tvShowId: Number(mediaItem.id),
-    });
+    const episodes = await tvEpisodeRepository.find(
+      {
+        tvShowId: Number(mediaItem.id),
+      },
+      includeDeleted
+    );
 
     const groupedEpisodes = _.groupBy(episodes, (episode) => episode.seasonId);
 
@@ -594,6 +603,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
         to.toISOString(),
       ])
       .where('episode.isSpecialEpisode', false)
+      .whereNull('episode.deletedAt')
       .whereNull('notificationsHistory.id');
 
     return res.map((row) =>

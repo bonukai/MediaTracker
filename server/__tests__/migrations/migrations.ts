@@ -544,5 +544,48 @@ describe('migrations', () => {
     });
   });
 
+  test('20220302173600_softDeleteSeasonAndEpisode', async () => {
+    await knex.migrate.up({
+      name: `20220302173600_softDeleteSeasonAndEpisode.${MIGRATIONS_EXTENSION}`,
+      directory: migrationsDirectory,
+    });
+
+    await knex.migrate.down({
+      directory: migrationsDirectory,
+    });
+
+    await knex.migrate.up({
+      name: `20220302173600_softDeleteSeasonAndEpisode.${MIGRATIONS_EXTENSION}`,
+      directory: migrationsDirectory,
+    });
+
+    await knex('mediaItem').insert({
+      id: 9999,
+      title: 'title',
+      source: 'user',
+    });
+
+    await knex('season').insert({
+      id: 9999,
+      title: 'title',
+      seasonNumber: 1,
+      numberOfEpisodes: 1,
+      isSpecialSeason: false,
+      tvShowId: 9999,
+      deletedAt: new Date().getTime(),
+    });
+
+    await knex('episode').insert({
+      title: 'title',
+      seasonNumber: 1,
+      episodeNumber: 1,
+      tvShowId: 9999,
+      seasonId: 9999,
+      isSpecialEpisode: false,
+      seasonAndEpisodeNumber: 1001,
+      deletedAt: new Date().getTime(),
+    });
+  });
+
   afterAll(clearDatabase);
 });

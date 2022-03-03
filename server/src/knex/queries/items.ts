@@ -128,6 +128,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           .andWhereNot('releaseDate', '')
           .andWhereNot('releaseDate', null)
           .andWhere('releaseDate', '<=', currentDateString)
+          .whereNull('deletedAt')
           .groupBy('tvShowId')
           .as('numberOfEpisodes'),
       'numberOfEpisodes.tvShowId',
@@ -151,6 +152,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           })
           .where('isSpecialEpisode', false)
           .where('releaseDate', '>=', currentDateString)
+          .whereNull('deletedAt')
           .groupBy('tvShowId')
           .as('upcomingEpisodeHelper'),
       'upcomingEpisodeHelper.tvShowId',
@@ -177,6 +179,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           })
           .where('isSpecialEpisode', false)
           .where('releaseDate', '<', currentDateString)
+          .whereNull('deletedAt')
           .groupBy('tvShowId')
           .as('lastAiredEpisodeHelper'),
       'lastAiredEpisodeHelper.tvShowId',
@@ -210,6 +213,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
             'episode.id'
           )
           .where('userId', userId)
+          .whereNull('deletedAt')
           .groupBy('tvShowId')
           .as('seenEpisodes'),
       'seenEpisodes.tvShowId',
@@ -237,6 +241,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           .andWhere((qb) => {
             qb.where('seen.userId', '<>', userId).orWhereNull('seen.userId');
           })
+          .whereNull('deletedAt')
           .groupBy('tvShowId')
           .as('firstUnwatchedEpisodeHelper'),
       'firstUnwatchedEpisodeHelper.tvShowId',

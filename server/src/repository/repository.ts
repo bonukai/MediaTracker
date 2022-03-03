@@ -12,6 +12,7 @@ export const repository = <T extends object>(args: {
   columnNames?: ReadonlyArray<keyof T>;
   booleanColumnNames?: ReadonlyArray<keyof T>;
   uniqueBy?: (value: Partial<T>) => Partial<T>;
+  hasSoftDelete?: boolean;
 }) => {
   const {
     primaryColumnName,
@@ -19,6 +20,7 @@ export const repository = <T extends object>(args: {
     columnNames,
     booleanColumnNames,
     uniqueBy,
+    hasSoftDelete,
   } = args;
 
   return class Repository {
@@ -27,6 +29,7 @@ export const repository = <T extends object>(args: {
     public readonly primaryColumnName = primaryColumnName;
     public readonly booleanColumnNames = booleanColumnNames;
     public readonly uniqueBy = uniqueBy;
+    public readonly hasSoftDelete = hasSoftDelete;
 
     public serialize(value: Partial<T>): unknown {
       if (!this.booleanColumnNames) {
@@ -71,16 +74,19 @@ export const repository = <T extends object>(args: {
     public async count(where?: Partial<T>): Promise<number> {
       const res = await knex(this.tableName)
         .where(omitUndefinedValues(where) || {})
+        .where(this.hasSoftDelete ? { deletedAt: null } : {})
         .count<{ count: number }[]>('* as count')
         .first();
 
       return Number(res.count);
     }
 
-    public async find(where?: Partial<T>) {
-      const res = (await knex<T>(this.tableName).where(
-        omitUndefinedValues(where) || {}
-      )) as T[];
+    public async find(where?: Partial<T>, includeDeleted?: boolean) {
+      const res = (await knex(this.tableName)
+        .where(omitUndefinedValues(where) || {})
+        .where(
+          this.hasSoftDelete && !includeDeleted ? { deletedAt: null } : {}
+        )) as T[];
 
       if (res) {
         return res.map((value) => this.deserialize(value));
@@ -88,8 +94,9 @@ export const repository = <T extends object>(args: {
     }
 
     public async findOne(where?: Partial<T>) {
-      const res = (await knex<T>(this.tableName)
+      const res = (await knex(this.tableName)
         .where(omitUndefinedValues(where) || {})
+        .where(this.hasSoftDelete ? { deletedAt: null } : {})
         .first()) as T;
 
       if (res) {
@@ -108,6 +115,14 @@ export const repository = <T extends object>(args: {
     ) {
       return knex(this.tableName)
         .delete()
+        .whereIn(primaryColumnName.toString(), ids);
+    }
+
+    public async softDeleteManyById<A extends typeof args.primaryColumnName>(
+      ids: (T extends { [K in A]: infer Type } ? Type : never)[]
+    ) {
+      return knex(this.tableName)
+        .update('deletedAt', new Date().getTime())
         .whereIn(primaryColumnName.toString(), ids);
     }
 

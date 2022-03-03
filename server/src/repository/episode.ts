@@ -7,6 +7,7 @@ class EpisodeRepository extends repository<TvEpisode>({
   columnNames: tvEpisodeColumns,
   primaryColumnName: 'id',
   booleanColumnNames: ['isSpecialEpisode'],
+  hasSoftDelete: true,
 }) {
   public async create(value: Partial<TvEpisode>) {
     return await super.create({
