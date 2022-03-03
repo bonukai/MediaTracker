@@ -28,7 +28,7 @@ commands:
           command: |
             npm run test
       - store_test_results:
-          path: server/coverage/coverage-final.json
+          path: server/coverage
 
 workflows:
   version: 2
