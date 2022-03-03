@@ -5,7 +5,6 @@ version: 2.1
 # See: https://circleci.com/docs/2.0/orb-intro/
 orbs:
   node: circleci/node@4.7
-  codecov: codecov/codecov@3.0.0
 
 jobs:
   test:
