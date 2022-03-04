@@ -32,7 +32,7 @@ export const StatisticsSummary: FunctionComponent = () => {
     <>
       {data && (
         <div className="flex flex-wrap">
-          {data.tv.plays > 0 && (
+          {data.tv?.plays > 0 && (
             <div className="mb-6 mr-6">
               <div className="text-lg font-bold">
                 <Trans>Tv</Trans>
@@ -57,7 +57,7 @@ export const StatisticsSummary: FunctionComponent = () => {
               </div>
             </div>
           )}
-          {data.movie.plays > 0 && (
+          {data.movie?.plays > 0 && (
             <div className="mb-6 mr-6">
               <div className="text-lg font-bold">
                 <Trans>Movies</Trans>{' '}
@@ -82,7 +82,7 @@ export const StatisticsSummary: FunctionComponent = () => {
               </div>
             </div>
           )}
-          {data.video_game.plays > 0 && (
+          {data.video_game?.plays > 0 && (
             <div className="mb-6 mr-6">
               <div className="text-lg font-bold">
                 <Trans>Games</Trans>
@@ -107,7 +107,7 @@ export const StatisticsSummary: FunctionComponent = () => {
               </div>
             </div>
           )}
-          {data.book.plays > 0 && (
+          {data.book?.plays > 0 && (
             <div className="mb-6 mr-6">
               <div className="text-lg font-bold">
                 <Trans>Books</Trans>
@@ -132,7 +132,7 @@ export const StatisticsSummary: FunctionComponent = () => {
               </div>
             </div>
           )}
-          {data.audiobook.plays > 0 && (
+          {data.audiobook?.plays > 0 && (
             <div className="mb-6 mr-6">
               <div className="text-lg font-bold">
                 <Trans>Audiobooks</Trans>
