@@ -9,6 +9,9 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      - name: Get current tiemstamp
+        id: date
+        run: echo "::set-output name=timestamp::$(date +'%Y-%m-%dT%H-%M-%S')"
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -24,4 +27,4 @@ jobs:
         with:
           platforms: linux/amd64
           push: true
-          tags: bonukai/mediatracker:latest
+          tags: bonukai/mediatracker:latest,bonukai/mediatracker:${{ steps.date.outputs.timestamp }}
