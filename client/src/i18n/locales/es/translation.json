@@ -1,4 +1,13 @@
 {
+  "<0><1/> </0>listening": "<0><1/> </0>escuchando",
+  "<0><1/> </0>playing": "<0><1/> </0>jugando",
+  "<0><1/> </0>reading": "<0><1/> </0>leyendo",
+  "<0><1/> </0>watching": "<0><1/> </0>viendo",
+  "<0>{0}</0> audiobooks (<1>{1}</1> plays)": "<0>{0}</0> audiolibros (<1>{1}</1> escuchas)",
+  "<0>{0}</0> books (<1>{1}</1> reads)": "<0>{0}</0> libros (<1>{1}</1> lecturas)",
+  "<0>{0}</0> episodes (<1>{1}</1> plays of <2>{2}</2> shows)": "<0>{0}</0> episodios (<1>{1}</1> reproducciones de <2>{2}</2> series y programas)",
+  "<0>{0}</0> movies (<1>{1}</1> plays)": "<0>{0}</0> películas (<1>{1}</1> reproducciones)",
+  "<0>{0}</0> video games (<1>{1}</1> plays)": "<0>{0}</0> videojuegos (<1>{1}</1> ejecuciones)",
   "API keys can be acquired here": "Las claves API se pueden obtener aquí",
   "Access Token": "Token de acceso",
   "Add season to seen history": "Marcar temporada como vista",
