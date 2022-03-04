@@ -1,4 +1,13 @@
 {
+  "<0><1/> </0>listening": "<0><1/> </0> lytter",
+  "<0><1/> </0>playing": "<0><1/> </0> afspiller",
+  "<0><1/> </0>reading": "<0><1/> </0> læser",
+  "<0><1/> </0>watching": "<0><1/> </0> afspiller",
+  "<0>{0}</0> audiobooks (<1>{1}</1> plays)": "<0>{0}</0> lydbøger (<1>{1}</1> afspilninger)",
+  "<0>{0}</0> books (<1>{1}</1> reads)": "<0>{0}</0> bøger (<1>{1}</1> læste)",
+  "<0>{0}</0> episodes (<1>{1}</1> plays of <2>{2}</2> shows)": "<0>{0}</0> episoder (<1>{1}</1> afspilninger af <2>{2}</2> serier)",
+  "<0>{0}</0> movies (<1>{1}</1> plays)": "<0>{0}</0> film (<1>{1}</1> afspilninger)",
+  "<0>{0}</0> video games (<1>{1}</1> plays)": "<0>{0}</0> videospil (<1>{1}</1> afspilninger)",
   "API keys can be acquired here": "API-nøgler kan findes her",
   "Access Token": "Adgangstoken",
   "Add season to seen history": "Tilføj sæson til historik",
