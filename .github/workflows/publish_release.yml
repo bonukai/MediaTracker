@@ -24,6 +24,7 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
       - name: Update package.json
+        continue-on-error: true
         run: |
           cd server
           npm version from-git --no-git-tag-version
