@@ -65,7 +65,7 @@
     "@types/passport-local": "^1.0.34",
     "@types/sharp": "^0.29.5",
     "@types/url-join": "^4.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/eslint-plugin": "^5.14.0",
     "@typescript-eslint/parser": "^5.13.0",
     "babel-jest": "^27.5.1",
     "babel-plugin-inline-import": "^3.0.0",
