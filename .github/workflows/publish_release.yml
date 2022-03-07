@@ -20,6 +20,8 @@ jobs:
           git_user_signingkey: true
           git_commit_gpgsign: true
       - uses: actions/setup-node@v2
+        with:
+          registry-url: 'https://registry.npmjs.org'
       - name: Update package.json
         run: |
           cd server
@@ -33,9 +35,9 @@ jobs:
           npm run build
           cp README.md server/README.md
           cd server
-          npm publish
+          npm publish        
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}        
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -58,4 +60,4 @@ jobs:
         with:
           platforms: linux/amd64
           push: true
-          tags: bonukai/mediatracker:${{ github.event.release.tag_name }}
+          tags: bonukai/mediatracker:${{ github.event.release.tag_name }},bonukai/mediatracker:stable
