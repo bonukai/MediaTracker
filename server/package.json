@@ -1,5 +1,23 @@
 {
-  "name": "backend",
+  "name": "mediatracker",
+  "version": "0.0.1",
+  "description": "Self hosted media tracker for movies, tv shows, video games, books and audiobooks",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bonukai/MediaTracker.git"
+  },
+  "keywords": [
+    "self hosted"
+  ],
+  "author": {
+    "name": "bonukai",
+    "url": "https://github.com/bonukai"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bonukai/MediaTracker/issues"
+  },
+  "homepage": "https://github.com/bonukai/MediaTracker#readme",
   "scripts": {
     "test": "cross-env DATABASE_PATH=:memory: jest",
     "build:server": "babel src --out-dir build --extensions .ts --source-maps true --delete-dir-on-start",
@@ -22,8 +40,8 @@
     "ajv": "^8.10.0",
     "argon2": "^0.28.5",
     "axios": "^0.26.0",
-    "better-sqlite3": "^7.4.6",
-    "chalk": "~4.1.2",
+    "better-sqlite3": "7.4.6",
+    "chalk": "4.1.2",
     "cookie-parser": "^1.4.6",
     "cross-env": "^7.0.3",
     "date-fns": "^2.28.0",
@@ -35,7 +53,6 @@
     "knex": "^1.0.3",
     "lodash": "^4.17.21",
     "make-plural": "^7.1.0",
-    "mediatracker": "file:..",
     "nanoid": "^3.3.1",
     "passport": "^0.5.2",
     "passport-local": "^1.0.0",
@@ -93,5 +110,10 @@
     "env": {
       "NODE_ENV": "development"
     }
-  }
+  },
+  "files": [
+    "build",
+    "public"
+  ],
+  "bin": "build/index.js"
 }

@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+/* eslint-disable node/shebang */
+
 import 'source-map-support/register';
 import express from 'express';
 import passport from 'passport';

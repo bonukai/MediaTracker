@@ -1,33 +1,13 @@
 {
   "name": "mediatracker",
-  "version": "0.0.1",
-  "description": "Self hosted media tracker for movies, tv shows, video games, books and audiobooks",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bonukai/MediaTracker.git"
-  },
+  "private": true,
   "scripts": {
-    "postinstall": "npm install --prefix server && npm install --prefix client",
+    "postinstall": "cd server && npm install && cd ../client && npm install",
     "build": "npm run build --prefix server && npm run build --prefix client",
     "start": "npm run start --prefix server",
     "format": "prettier --list-different --write .",
     "lint": "npm run lint --prefix client && npm run lint --prefix server",
     "test": "npm run test --prefix server"
-  },
-  "keywords": [
-    "self hosted"
-  ],
-  "author": {
-    "name": "bonukai",
-    "url": "https://github.com/bonukai"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/bonukai/MediaTracker/issues"
-  },
-  "homepage": "https://github.com/bonukai/MediaTracker#readme",
-  "engines": {
-    "node": ">=14"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
