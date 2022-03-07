@@ -1,3 +1,5 @@
+import path from 'path';
+
 import {
   audibleLang,
   AudibleLang,
@@ -12,7 +14,7 @@ export const NODE_ENV = process.env['NODE_ENV'] as
   | 'production'
   | 'test';
 export const ASSETS_PATH = process.env['ASSETS_PATH'] || 'img';
-export const PUBLIC_PATH = 'public';
+export const PUBLIC_PATH = path.join(__dirname, '../public');
 export const LOGS_PATH = process.env['LOGS_PATH'] || 'logs';
 
 export const DATABASE_PATH = process.env.DATABASE_PATH || './data.db';
