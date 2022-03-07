@@ -60,4 +60,4 @@ jobs:
         with:
           platforms: linux/amd64
           push: true
-          tags: bonukai/mediatracker:${{ github.event.release.tag_name }},bonukai/mediatracker:stable
+          tags: bonukai/mediatracker:${{ github.event.release.tag_name }},bonukai/mediatracker:latest,bonukai/mediatracker:stable
