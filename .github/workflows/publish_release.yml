@@ -9,6 +9,9 @@ jobs:
     name: Publish release
     runs-on: ubuntu-latest
     steps:
+      - if: startsWith(${{ github.event.release.tag_name }}, "v")
+        id: version  
+        run: echo "::set-output name=version::$(echo ${{ github.event.release.tag_name }} | cut -c2-)"
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -27,7 +30,7 @@ jobs:
           cd server
           npm version from-git --no-git-tag-version
           git add package.json
-          git commit -m "${{ github.event.release.tag_name }}"
+          git commit -m "${{ steps.version.outputs.version }}"
           git push
       - if: ${{ github.event.action == 'preleased' }}
         name: Publish on npmjs.com [prelease]
@@ -64,11 +67,11 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64/v8
           push: true
-          tags: bonukai/mediatracker:${{ github.event.release.tag_name }},bonukai/mediatracker:beta
+          tags: bonukai/mediatracker:${{ steps.version.outputs.version }},bonukai/mediatracker:beta
       - if: ${{ github.event.action == 'released' }}
         name: Publish to Docker Hub
         uses: docker/build-push-action@v2
         with:
           platforms: linux/amd64,linux/arm64/v8
           push: true
-          tags: bonukai/mediatracker:${{ github.event.release.tag_name }},bonukai/mediatracker:latest
+          tags: bonukai/mediatracker:${{ steps.version.outputs.version }},bonukai/mediatracker:latest
