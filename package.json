@@ -7,7 +7,8 @@
     "start": "npm run start --prefix server",
     "format": "prettier --list-different --write .",
     "lint": "npm run lint --prefix client && npm run lint --prefix server",
-    "test": "npm run test --prefix server"
+    "test": "npm run test --prefix server",
+    "test:coverage": "npm run test:coverage --prefix server"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",

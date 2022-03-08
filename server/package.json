@@ -20,6 +20,7 @@
   "homepage": "https://github.com/bonukai/MediaTracker#readme",
   "scripts": {
     "test": "cross-env DATABASE_PATH=:memory: jest",
+    "test:coverage": "cross-env DATABASE_PATH=:memory: jest --coverage",
     "build:server": "babel src --out-dir build --extensions .ts --source-maps true --delete-dir-on-start",
     "build:docs": "npm run build --prefix ../docs",
     "build:routes": "babel-node --extensions .ts scripts/generateRoutes.ts && babel-node --extensions .ts scripts/generateApi.ts && npm run build --prefix ../rest-api",

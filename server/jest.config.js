@@ -15,5 +15,4 @@ module.exports = {
     '!src/i18n/locales',
   ],
   reporters: ['default', 'jest-junit'],
-  collectCoverage: true,
 };

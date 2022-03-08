@@ -3,7 +3,9 @@ name: Codecov
 on:
   push:
     branches: [main]
-    
+  pull_request:
+    branches: [main]
+
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -15,11 +17,11 @@ jobs:
         with:
           node-version: 17
       - run: npm install
-      - run: npm run test
+      - run: npm run test:coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}          
+          token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
           files: server/coverage/clover.xml
           verbose: true
