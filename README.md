@@ -28,10 +28,10 @@ npm run start
 
 ## Version Tags
 
-| Tag     | Description     |
-| ------- | --------------- |
-| latest  | stable releases |
-| ustable | pre-releases    |
+| Tag      | Description     |
+| -------- | --------------- |
+| latest   | stable releases |
+| unstable | pre-releases    |
 
 ```bash
 docker volume create assets
