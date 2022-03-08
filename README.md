@@ -26,6 +26,13 @@ npm run start
 
 ## With docker
 
+## Version Tags
+
+| Tag     | Description     |
+| ------- | --------------- |
+| latest  | stable releases |
+| ustable | pre-releases    |
+
 ```bash
 docker volume create assets
 docker run \
@@ -36,7 +43,7 @@ docker run \
     -v assets:/assets \
     -e TMDB_LANG=en \
     -e AUDIBLE_LANG=us \
-    bonukai/mediatracker
+    bonukai/mediatracker:latest
 ```
 
 ## With docker-compose
@@ -55,7 +62,7 @@ services:
       SERVER_LANG: en
       TMDB_LANG: en
       AUDIBLE_LANG: us
-    image: bonukai/mediatracker
+    image: bonukai/mediatracker:latest
 
 volumes:
   assetsVolume: null
