@@ -39,7 +39,7 @@ jobs:
           npm run build
           cp README.md server/README.md
           cd server
-          npm publish --tag beta
+          npm publish --tag unstable
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - if: ${{ github.event.action == 'released' }}
@@ -67,7 +67,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64/v8
           push: true
-          tags: bonukai/mediatracker:${{ steps.version.outputs.version }},bonukai/mediatracker:beta
+          tags: bonukai/mediatracker:${{ steps.version.outputs.version }},bonukai/mediatracker:unstable
       - if: ${{ github.event.action == 'released' }}
         name: Publish to Docker Hub
         uses: docker/build-push-action@v2
