@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - 'main'
+    paths:
+      - 'server/openapi.json'
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
