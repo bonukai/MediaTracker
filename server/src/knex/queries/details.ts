@@ -35,12 +35,14 @@ export const getDetailsKnex = async (params: {
       .where({
         tvShowId: mediaItemId,
       })
+      .whereNull('deletedAt')
       .orderBy('seasonNumber', 'asc');
 
     const episodes = await trx<TvEpisode>('episode')
       .where({
         tvShowId: mediaItemId,
       })
+      .where('deletedAt', null)
       .orderBy('seasonNumber', 'asc')
       .orderBy('episodeNumber', 'asc');
 
@@ -117,6 +119,7 @@ export const getDetailsKnex = async (params: {
     episode.lastSeenAt = _.first(episode.seenHistory)?.date;
     episode.seen = episode.seenHistory?.length > 0;
     delete episode.seasonAndEpisodeNumber;
+    delete (episode as TvEpisode & { deletedAt: number }).deletedAt;
   });
 
   const groupedEpisodes = _.groupBy(episodes, (episode) => episode.seasonId);
@@ -143,6 +146,8 @@ export const getDetailsKnex = async (params: {
         ?.filter(TvEpisodeFilters.withReleaseDateEpisodes)
         .filter(TvEpisodeFilters.releasedEpisodes)
         .filter(TvEpisodeFilters.unwatchedEpisodes).length === 0;
+
+    delete (season as TvSeason & { deletedAt: number }).deletedAt;
   });
 
   const firstUnwatchedEpisode = _(episodes)

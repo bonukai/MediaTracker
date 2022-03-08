@@ -311,7 +311,8 @@ export const updateMediaItem = async (
 
     if (newMediaItem.mediaType === 'tv') {
       oldMediaItem.seasons = await mediaItemRepository.seasonsWithEpisodes(
-        oldMediaItem
+        oldMediaItem,
+        true
       );
     }
 
@@ -327,14 +328,14 @@ export const updateMediaItem = async (
         const episodesIdToDelete = [
           ...episodesToDelete.map((episode) => episode.id),
           ...seasonToDelete.flatMap((season) =>
-            season.episodes.map((episode) => episode.id)
+            season.episodes?.map((episode) => episode.id)
           ),
-        ];
+        ].filter(Boolean);
 
         const seasonsIdsToDelete = seasonToDelete.map((season) => season.id);
 
-        await tvEpisodeRepository.deleteManyById(episodesIdToDelete);
-        await tvSeasonRepository.deleteManyById(seasonsIdsToDelete);
+        await tvEpisodeRepository.softDeleteManyById(episodesIdToDelete);
+        await tvSeasonRepository.softDeleteManyById(seasonsIdsToDelete);
       }
     }
 

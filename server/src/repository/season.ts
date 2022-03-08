@@ -9,6 +9,7 @@ class TvSeasonRepository extends repository<TvSeason>({
   columnNames: tvSeasonColumns,
   primaryColumnName: 'id',
   booleanColumnNames: ['isSpecialSeason'],
+  hasSoftDelete: true,
 }) {
   public async withMissingPosters(seasonIdsWithPoster: number[]) {
     return await knex<TvSeason>(this.tableName)

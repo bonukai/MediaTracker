@@ -57,6 +57,7 @@ export class CalendarController {
       )
       .whereBetween('releaseDate', [start, end])
       .where('isSpecialEpisode', false)
+      .whereNull('deletedAt')
       .orderBy('seasonNumber', 'asc')
       .orderBy('episodeNumber', 'asc')) as TvEpisode[];
 
