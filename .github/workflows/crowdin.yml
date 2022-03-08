@@ -3,7 +3,9 @@ name: Crowdin Action
 on:
   push:
     branches: [ main ]
-
+    paths:
+      - '**/translation.json'
+    
 jobs:
   synchronize-with-crowdin:
     runs-on: ubuntu-latest
