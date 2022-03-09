@@ -54,7 +54,7 @@ describe('config', () => {
         };
       }
 
-      throw new Error('Not implemented ');
+      throw new Error('Not implemented');
     });
 
     const moveSyncSpy = jest.spyOn(fs, 'moveSync').mockImplementation(jest.fn);
