@@ -10,5 +10,5 @@ jobs:
       - uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           working-directory: server
-          test-script: npm run test:coverage
-          coverage-file: coverage/coverage-final.json
+        env:
+          DATABASE_PATH: ":memory:"
