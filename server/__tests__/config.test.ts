@@ -63,6 +63,5 @@ describe('config', () => {
 
     expect(moveSyncSpy).toBeCalledWith(oldImgPath, newImgPath);
     expect(moveSyncSpy).toBeCalledWith(oldLogsPath, newLogsPath);
-    expect(moveSyncSpy).toBeCalledTimes(2);
   });
 });
