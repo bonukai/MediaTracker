@@ -9,5 +9,6 @@ jobs:
       - uses: actions/checkout@v1
       - uses: ArtiomTr/jest-coverage-report-action@v2
         with:
+          working-directory: server
           test-script: npm run test:coverage
-          coverage-file: server/coverage/coverage-final.json
+          coverage-file: coverage/coverage-final.json
