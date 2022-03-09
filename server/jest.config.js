@@ -16,9 +16,4 @@ module.exports = {
   ],
   reporters: ['default', 'jest-junit'],
   testLocationInResults: true,
-  coverageThreshold: {
-    global: {
-      lines: 80,
-    },
-  },
 };
