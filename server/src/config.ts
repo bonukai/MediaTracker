@@ -68,15 +68,21 @@ export class Config {
 
   static validate() {
     if (this.SERVER_LANG && !serverLang.includes(this.SERVER_LANG)) {
-      throw new Error(`SERVER_LANG should be one of: ${serverLang}`);
+      throw new Error(
+        `SERVER_LANG should be one of: ${serverLang}, received: ${this.SERVER_LANG}`
+      );
     }
 
     if (this.TMDB_LANG && !tmdbLang.includes(this.TMDB_LANG)) {
-      throw new Error(`TMDB_LANG should be one of: ${tmdbLang}`);
+      throw new Error(
+        `TMDB_LANG should be one of: ${tmdbLang}, received: ${this.TMDB_LANG}`
+      );
     }
 
     if (this.AUDIBLE_LANG && !audibleLang.includes(this.AUDIBLE_LANG)) {
-      throw new Error(`AUDIBLE_LANG should be one of: ${audibleLang}`);
+      throw new Error(
+        `AUDIBLE_LANG should be one of: ${audibleLang}, received: ${this.AUDIBLE_LANG}`
+      );
     }
   }
 

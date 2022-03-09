@@ -1,5 +1,3 @@
-import knexLib, { Knex } from 'knex';
-
 import { customAlphabet } from 'nanoid';
 import { Database } from 'src/dbconfig';
 

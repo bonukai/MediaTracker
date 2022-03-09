@@ -1,6 +1,20 @@
 import { join, resolve } from 'path';
 import { homedir } from 'os';
-import fs from 'fs-extra';
+import fs, { StatSyncFn } from 'fs-extra';
+
+jest.mock('src/config', () => {
+  const r = {
+    ...jest.requireActual('src/config'),
+    Config: {
+      ...jest.requireActual('src/config').Config,
+      validate: jest.requireActual('src/config').Config.validate,
+      migrate: jest.requireActual('src/config').Config.migrate,
+      AUDIBLE_LANG: 'abc',
+    },
+  };
+
+  return r;
+});
 
 import { Config } from 'src/config';
 
@@ -18,7 +32,9 @@ describe('config', () => {
     expect(Config.LOGS_PATH).toBe(newLogsPath);
   });
 
-  test('migrate', () => {
+  afterEach(jest.clearAllMocks);
+
+  test('should copy directories to new config', () => {
     jest.spyOn(fs, 'existsSync').mockImplementation((path) => {
       if (
         path === join(homedir(), '.mediatracker') ||
@@ -40,8 +56,7 @@ describe('config', () => {
       throw new Error('Not implemented');
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    jest.spyOn(fs, 'statSync').mockImplementation((path): any => {
+    jest.spyOn(fs, 'statSync').mockImplementation(((path: string) => {
       if (path === oldImgPath || path === oldLogsPath) {
         return {
           isDirectory: () => true,
@@ -55,7 +70,7 @@ describe('config', () => {
       }
 
       throw new Error('Not implemented');
-    });
+    }) as unknown as StatSyncFn);
 
     const moveSyncSpy = jest.spyOn(fs, 'moveSync').mockImplementation(jest.fn);
 
@@ -63,5 +78,23 @@ describe('config', () => {
 
     expect(moveSyncSpy).toBeCalledWith(oldImgPath, newImgPath);
     expect(moveSyncSpy).toBeCalledWith(oldLogsPath, newLogsPath);
+  });
+
+  test('should do nothing if new config directory exists', () => {
+    jest.spyOn(fs, 'existsSync').mockReturnValue(true);
+
+    const statSyncSpy = jest
+      .spyOn(fs, 'statSync')
+      .mockImplementation(jest.fn as unknown as StatSyncFn);
+    const moveSyncSpy = jest.spyOn(fs, 'moveSync').mockImplementation(jest.fn);
+
+    Config.migrate();
+
+    expect(statSyncSpy).toBeCalledTimes(0);
+    expect(moveSyncSpy).toBeCalledTimes(0);
+  });
+
+  test('validate should throw on invalid option', () => {
+    expect(() => Config.validate()).toThrowError(/AUDIBLE_LANG.*abc/);
   });
 });

@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { nanoid } from 'nanoid';
 import path from 'path';
 import {
   createLogger,
@@ -12,14 +11,9 @@ import {
 import { configMigrationLogs, Config } from 'src/config';
 import {
   httpLogFormatter,
+  logWithId,
   validationErrorLogFormatter,
 } from 'src/logger/formatters';
-
-export const logWithId = format((info) => {
-  info.id = nanoid(36);
-
-  return info;
-});
 
 const fileTransport = (filename: string) => {
   return new transports.File({
