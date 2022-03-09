@@ -1,4 +1,3 @@
-import { knex } from 'src/dbconfig';
 import { TvEpisode, tvEpisodeColumns } from 'src/entity/tvepisode';
 import { repository } from 'src/repository/repository';
 

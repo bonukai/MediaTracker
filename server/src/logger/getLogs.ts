@@ -2,7 +2,7 @@ import { readdir, readFile } from 'fs-extra';
 import _ from 'lodash';
 import path from 'path';
 
-import { LOGS_PATH } from 'src/config';
+import { Config } from 'src/config';
 import { LogEntry, LogLevels } from 'src/logger';
 
 export const getLogs = async (args?: {
@@ -27,11 +27,11 @@ export const getLogs = async (args?: {
   const logs: LogEntry[] = (
     await Promise.all(
       (
-        await readdir(LOGS_PATH)
+        await readdir(Config.LOGS_PATH)
       )
         ?.filter((filename) => filename.match(/(debug|http)\d*.log/))
         ?.sort()
-        ?.map((filename) => path.join(LOGS_PATH, filename))
+        ?.map((filename) => path.join(Config.LOGS_PATH, filename))
         ?.map((filename) => readFile(filename, 'utf8'))
     )
   )

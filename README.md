@@ -24,6 +24,13 @@ npm run build
 npm run start
 ```
 
+## From npm
+
+```
+npm install -g mediatracker
+mediatracker
+```
+
 ## With docker
 
 ## Version Tags

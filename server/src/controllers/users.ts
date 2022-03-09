@@ -12,7 +12,7 @@ import { localAuthentication } from 'src/auth';
 import { notificationPlatformsCredentialsRepository } from 'src/repository/notificationPlatformsCredentials';
 import { configurationRepository } from 'src/repository/globalSettings';
 import { RequestError, toRequestErrorObject } from 'src/requestError';
-import { DEMO } from 'src/config';
+import { Config } from 'src/config';
 import { t } from '@lingui/macro';
 
 type UserResponse = Omit<User, 'password'>;
@@ -77,7 +77,7 @@ export class UsersController {
     responseBody: UserResponse | RequestError;
   }>(
     async (req, res, next) => {
-      if (DEMO) {
+      if (Config.DEMO) {
         res.sendStatus(401);
         return;
       }
@@ -223,7 +223,7 @@ export class UsersController {
       newPassword: string;
     };
   }>(async (req, res) => {
-    if (DEMO) {
+    if (Config.DEMO) {
       res.sendStatus(403);
       return;
     }

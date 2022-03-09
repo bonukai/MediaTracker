@@ -5,7 +5,7 @@ import { onlyForAdmin } from 'src/auth';
 import { Configuration } from 'src/entity/configuration';
 import { configurationRepository } from 'src/repository/globalSettings';
 import { userRepository } from 'src/repository/user';
-import { DEMO } from 'src/config';
+import { Config } from 'src/config';
 
 /**
  * @openapi_tags Configuration
@@ -41,7 +41,7 @@ export class ConfigurationController {
     res.send({
       ..._.omit(configuration, 'id'),
       noUsers: numberOfUsers === 0,
-      demo: DEMO,
+      demo: Config.DEMO,
     });
   });
 }

@@ -5,7 +5,7 @@ import { TvEpisode } from 'src/entity/tvepisode';
 import { Watchlist } from 'src/entity/watchlist';
 import { getItemsKnex } from 'src/knex/queries/items';
 import { createExpressRoute } from 'typescript-routes-to-openapi-server';
-import { knex } from 'src/dbconfig';
+import { Database } from 'src/dbconfig';
 import { Seen } from 'src/entity/seen';
 
 /**
@@ -31,7 +31,7 @@ export class CalendarController {
 
     const { start, end } = req.query;
 
-    const episodes = (await knex<TvEpisode>('episode')
+    const episodes = (await Database.knex<TvEpisode>('episode')
       .select('*')
       .select({
         seen: 'seen.episodeId',
@@ -67,7 +67,7 @@ export class CalendarController {
 
     const tvShowsMap = _.mapKeys(tvShows, (tvShow) => tvShow.id);
 
-    const mediaItems = (await knex<MediaItemBase>('mediaItem')
+    const mediaItems = (await Database.knex<MediaItemBase>('mediaItem')
       .leftJoin<Watchlist>(
         (qb) =>
           qb

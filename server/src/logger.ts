@@ -1,9 +1,15 @@
 import _ from 'lodash';
 import { nanoid } from 'nanoid';
 import path from 'path';
-import { createLogger, format, transports, LeveledLogMethod } from 'winston';
+import {
+  createLogger,
+  format,
+  transports,
+  LeveledLogMethod,
+  Logger,
+} from 'winston';
 
-import { LOGS_PATH, NODE_ENV } from 'src/config';
+import { configMigrationLogs, Config } from 'src/config';
 import {
   httpLogFormatter,
   validationErrorLogFormatter,
@@ -23,71 +29,88 @@ const fileTransport = (filename: string) => {
     tailable: true,
     format: format.combine(format.uncolorize(), format.json()),
     eol: '\n',
-    silent: NODE_ENV === 'test',
+    silent: Config.NODE_ENV === 'test',
   });
 };
 
-const formats = format.combine(
-  logWithId(),
-  format.errors({ stack: true }),
-  format.colorize(),
-  format.timestamp(),
-  format.prettyPrint()
-);
+export class logger {
+  private static httpLogger: Logger;
+  private static debugLogger: Logger;
 
-const http = createLogger({
-  level: 'http',
-  format: formats,
-  levels: {
-    http: 3,
-  },
-  transports: [fileTransport(path.join(LOGS_PATH, 'http.log'))],
-});
+  static init() {
+    const formats = format.combine(
+      logWithId(),
+      format.errors({ stack: true }),
+      format.colorize(),
+      format.timestamp(),
+      format.prettyPrint()
+    );
 
-const debug = createLogger({
-  level: 'debug',
-  format: formats,
-  levels: {
-    error: 0,
-    warn: 1,
-    info: 2,
-    debug: 5,
-  },
-  transports: [
-    new transports.Console({
-      handleExceptions: true,
-      format: format.combine(
-        validationErrorLogFormatter(),
-        httpLogFormatter(),
-        format.cli({
-          all: false,
-          message: false,
-          levels: {
-            error: 5,
-            warn: 4,
-            info: 4,
-            http: 4,
-            debug: 5,
-          },
-        })
-      ),
-      silent: NODE_ENV === 'test',
-    }),
-    fileTransport(path.join(LOGS_PATH, 'debug.log')),
-  ],
-});
+    this.httpLogger = createLogger({
+      level: 'http',
+      format: formats,
+      levels: {
+        http: 3,
+      },
+      transports: [fileTransport(path.join(Config.LOGS_PATH, 'http.log'))],
+    });
 
-export const logger: {
-  [Key in 'error' | 'warn' | 'info' | 'debug']: LeveledLogMethod;
-} & {
-  http: (msg: HttpLogEntry) => void;
-} = {
-  error: (msg) => debug.error(msg),
-  warn: (msg) => debug.warn(msg),
-  info: (msg) => debug.info(msg),
-  debug: (msg) => debug.debug(msg),
-  http: (msg) => http.http('', msg),
-};
+    this.debugLogger = createLogger({
+      level: 'debug',
+      format: formats,
+      levels: {
+        error: 0,
+        warn: 1,
+        info: 2,
+        debug: 5,
+      },
+      transports: [
+        new transports.Console({
+          handleExceptions: true,
+          format: format.combine(
+            validationErrorLogFormatter(),
+            httpLogFormatter(),
+            format.cli({
+              all: false,
+              message: false,
+              levels: {
+                error: 5,
+                warn: 4,
+                info: 4,
+                http: 4,
+                debug: 5,
+              },
+            })
+          ),
+          silent: Config.NODE_ENV === 'test',
+        }),
+        fileTransport(path.join(Config.LOGS_PATH, 'debug.log')),
+      ],
+    });
+
+    configMigrationLogs().forEach(this.debugLogger.info);
+  }
+
+  static http(msg: HttpLogEntry): void {
+    this.httpLogger?.http('', msg);
+  }
+
+  static error: LeveledLogMethod = (msg) => {
+    return this.debugLogger?.error(msg);
+  };
+
+  static warn: LeveledLogMethod = (msg) => {
+    return this.debugLogger?.warn(msg);
+  };
+
+  static info: LeveledLogMethod = (msg) => {
+    return this.debugLogger?.info(msg);
+  };
+
+  static debug: LeveledLogMethod = (msg) => {
+    return this.debugLogger?.debug(msg);
+  };
+}
 
 export type LogEntry = {
   message: string;

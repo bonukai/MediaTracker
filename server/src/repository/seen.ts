@@ -2,7 +2,7 @@ import { Seen, seenColumns } from 'src/entity/seen';
 import { TvEpisode } from 'src/entity/tvepisode';
 import { tvEpisodeRepository } from 'src/repository/episode';
 import { repository } from 'src/repository/repository';
-import { knex } from 'src/dbconfig';
+import { Database } from 'src/dbconfig';
 
 class SeenRepository extends repository<Seen>({
   tableName: 'seen',
@@ -12,12 +12,14 @@ class SeenRepository extends repository<Seen>({
   async deleteForTvSeason(params: { userId: number; seasonId: number }) {
     const { seasonId, userId } = params;
 
-    await knex.transaction(async (trx) => {
-      const episodes = await knex<TvEpisode>(tvEpisodeRepository.tableName)
+    await Database.knex.transaction(async (trx) => {
+      const episodes = await Database.knex<TvEpisode>(
+        tvEpisodeRepository.tableName
+      )
         .where('seasonId', seasonId)
         .transacting(trx);
 
-      await knex<Seen>(this.tableName)
+      await Database.knex<Seen>(this.tableName)
         .delete()
         .where({
           userId: userId,

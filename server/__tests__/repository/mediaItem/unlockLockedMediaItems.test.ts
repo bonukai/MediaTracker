@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { knex } from 'src/dbconfig';
+import { Database } from 'src/dbconfig';
 import { MediaItemBase } from 'src/entity/mediaItem';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { clearDatabase, runMigrations } from '../../__utils__/utils';
@@ -39,7 +39,7 @@ const mediaItems: MediaItemBase[] = [
 describe('unlockLockedMediaItems.test', () => {
   beforeAll(async () => {
     await runMigrations();
-    await knex('mediaItem').insert(mediaItems);
+    await Database.knex('mediaItem').insert(mediaItems);
   });
 
   afterAll(clearDatabase);
@@ -49,7 +49,10 @@ describe('unlockLockedMediaItems.test', () => {
 
     expect(res).toEqual(1);
 
-    const updatedMediaItems = await knex('mediaItem').orderBy('id', 'asc');
+    const updatedMediaItems = await Database.knex('mediaItem').orderBy(
+      'id',
+      'asc'
+    );
 
     expect(
       updatedMediaItems.map((item) => ({

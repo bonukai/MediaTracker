@@ -5,7 +5,7 @@ import { Knex } from 'knex';
 import { customAlphabet } from 'nanoid';
 import path from 'path';
 
-import { ASSETS_PATH } from 'src/config';
+import { Config } from 'src/config';
 import { logger } from 'src/logger';
 
 const nanoid = customAlphabet('1234567890abcdef', 32);
@@ -17,7 +17,7 @@ const moveAsset = (
   posterId: string
 ) => {
   const posterPath = path.resolve(
-    ASSETS_PATH,
+    Config.ASSETS_PATH,
     type,
     itemType,
     'original',
@@ -27,12 +27,12 @@ const moveAsset = (
   if (existsSync(posterPath)) {
     moveSync(
       posterPath,
-      path.resolve(ASSETS_PATH, 'original', `${posterId}.webp`)
+      path.resolve(Config.ASSETS_PATH, 'original', `${posterId}.webp`)
     );
   }
 
   const posterSmallPath = path.resolve(
-    ASSETS_PATH,
+    Config.ASSETS_PATH,
     type,
     itemType,
     'small',
@@ -42,7 +42,7 @@ const moveAsset = (
   if (existsSync(posterSmallPath)) {
     moveSync(
       posterSmallPath,
-      path.resolve(ASSETS_PATH, 'small', `${posterId}.webp`)
+      path.resolve(Config.ASSETS_PATH, 'small', `${posterId}.webp`)
     );
   }
 };
@@ -109,15 +109,15 @@ export async function up(knex: Knex): Promise<void> {
   }
 
   try {
-    if (existsSync(path.resolve(ASSETS_PATH, 'backdrop'))) {
-      rmSync(path.resolve(ASSETS_PATH, 'backdrop'), {
+    if (existsSync(path.resolve(Config.ASSETS_PATH, 'backdrop'))) {
+      rmSync(path.resolve(Config.ASSETS_PATH, 'backdrop'), {
         recursive: true,
         force: true,
       });
     }
 
-    if (existsSync(path.resolve(ASSETS_PATH, 'poster'))) {
-      rmSync(path.resolve(ASSETS_PATH, 'poster'), {
+    if (existsSync(path.resolve(Config.ASSETS_PATH, 'poster'))) {
+      rmSync(path.resolve(Config.ASSETS_PATH, 'poster'), {
         recursive: true,
         force: true,
       });

@@ -1,40 +1,28 @@
-import { Knex } from 'knex';
-import path from 'path';
-import {
-  DATABASE_CLIENT,
-  DATABASE_VERSION,
-  DATABASE_URL,
-  DATABASE_HOST,
-  DATABASE_PORT,
-  DATABASE_USER,
-  DATABASE_PASSWORD,
-  DATABASE_DATABASE,
-  DATABASE_SSL,
-  DATABASE_PATH,
-  MIGRATIONS_EXTENSION,
-} from 'src/config';
+// import { Knex } from 'knex';
+// import path from 'path';
+// import { Config } from 'src/config';
 
-export const migrationsDirectory = path.resolve(__dirname, 'migrations');
+// export const migrationsDirectory = path.resolve(__dirname, 'migrations');
 
-const knexConfig: Record<string, Knex.Config> = {
-  production: {
-    client: DATABASE_CLIENT,
-    version: DATABASE_VERSION,
-    connection: {
-      connectionString: DATABASE_URL,
-      host: DATABASE_HOST,
-      port: DATABASE_PORT,
-      user: DATABASE_USER,
-      password: DATABASE_PASSWORD,
-      database: DATABASE_DATABASE,
-      ssl: DATABASE_SSL ? { rejectUnauthorized: false } : undefined,
-      filename: DATABASE_PATH,
-    },
-    useNullAsDefault: true,
-    migrations: {
-      extension: MIGRATIONS_EXTENSION,
-    },
-  },
-};
+// const knexConfig: Record<string, Knex.Config> = {
+//   production: {
+//     client: Config.DATABASE_CLIENT,
+//     version: Config.DATABASE_VERSION,
+//     connection: {
+//       connectionString: Config.DATABASE_URL,
+//       host: Config.DATABASE_HOST,
+//       port: Config.DATABASE_PORT,
+//       user: Config.DATABASE_USER,
+//       password: Config.DATABASE_PASSWORD,
+//       database: Config.DATABASE_DATABASE,
+//       ssl: Config.DATABASE_SSL ? { rejectUnauthorized: false } : undefined,
+//       filename: Config.DATABASE_PATH,
+//     },
+//     useNullAsDefault: true,
+//     migrations: {
+//       extension: Config.MIGRATIONS_EXTENSION,
+//     },
+//   },
+// };
 
-export default knexConfig;
+// export default knexConfig;

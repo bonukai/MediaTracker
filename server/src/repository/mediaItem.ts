@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import { omitUndefinedValues, repository } from 'src/repository/repository';
 import { getItemsKnex, generateColumnNames } from 'src/knex/queries/items';
-import { knex } from 'src/dbconfig';
+import { Database } from 'src/dbconfig';
 import { getDetailsKnex } from 'src/knex/queries/details';
 import { Seen } from 'src/entity/seen';
 import { Watchlist } from 'src/entity/watchlist';
@@ -137,7 +137,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       throw new Error('mediaItem.id filed is required');
     }
 
-    return await knex.transaction(async (trx) => {
+    return await Database.knex.transaction(async (trx) => {
       const result = {
         ..._.cloneDeep(mediaItem),
         lastTimeUpdated: mediaItem.lastTimeUpdated
@@ -287,7 +287,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
   }
 
   public async create(mediaItem: MediaItemBaseWithSeasons) {
-    return await knex.transaction(async (trx) => {
+    return await Database.knex.transaction(async (trx) => {
       const result = {
         ..._.cloneDeep(mediaItem),
         lastTimeUpdated: mediaItem.lastTimeUpdated
@@ -335,7 +335,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       seasons?.forEach((season) => delete season.episodes);
 
       if (seasons?.length > 0) {
-        const seasonsId = await knex
+        const seasonsId = await Database.knex
           .batchInsert('season', seasons, 30)
           .transacting(trx)
           .returning('id');
@@ -347,7 +347,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
         );
 
         if (seasonsWithPosters.length > 0) {
-          await knex
+          await Database.knex
             .batchInsert(
               imageRepository.tableName,
               seasonsWithPosters.map((season) => ({
@@ -372,7 +372,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
         );
 
         if (episodes?.length > 0) {
-          await knex
+          await Database.knex
             .batchInsert('episode', episodes, 30)
             .transacting(trx)
             .returning('id');
@@ -417,7 +417,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
     mediaType: MediaType;
   }) {
     return (
-      await knex<MediaItemBase>(this.tableName)
+      await Database.knex<MediaItemBase>(this.tableName)
         .where({ mediaType: params.mediaType })
         .andWhere((qb) => {
           if (params.tmdbId) {
@@ -450,7 +450,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
 
   public async findByExternalId(params: ExternalIds, mediaType: MediaType) {
     return this.deserialize(
-      await knex<MediaItemBase>(this.tableName)
+      await Database.knex<MediaItemBase>(this.tableName)
         .where({ mediaType: mediaType })
         .andWhere((qb) => {
           if (params.tmdbId) {
@@ -491,8 +491,11 @@ class MediaItemRepository extends repository<MediaItemBase>({
       return;
     }
 
-    const qb = knex<MediaItemBase>(this.tableName)
-      .select('*', knex.raw(`LENGTH(title) - ${params.title.length} AS rank`))
+    const qb = Database.knex<MediaItemBase>(this.tableName)
+      .select(
+        '*',
+        Database.knex.raw(`LENGTH(title) - ${params.title.length} AS rank`)
+      )
       .where('mediaType', params.mediaType)
       .where((qb) =>
         qb
@@ -520,7 +523,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       return;
     }
 
-    const qb = knex<MediaItemBase>(this.tableName)
+    const qb = Database.knex<MediaItemBase>(this.tableName)
       .where('mediaType', params.mediaType)
       .where((qb) =>
         qb
@@ -539,7 +542,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
   }
 
   public async itemsToPossiblyUpdate(): Promise<MediaItemBase[]> {
-    return await knex<MediaItemBase>('mediaItem')
+    return await Database.knex<MediaItemBase>('mediaItem')
       .select('mediaItem.*')
       .leftJoin<Seen>('seen', 'seen.mediaItemId', 'mediaItem.id')
       .leftJoin<Watchlist>('watchlist', 'watchlist.mediaItemId', 'mediaItem.id')
@@ -560,7 +563,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
   }
 
   public async itemsToNotify(from: Date, to: Date): Promise<MediaItemBase[]> {
-    return await knex<MediaItemBase>(this.tableName)
+    return await Database.knex<MediaItemBase>(this.tableName)
       .select('mediaItem.*')
       .select('notificationsHistory.mediaItemId')
       .select('notificationsHistory.id AS notificationsHistory.id')
@@ -578,7 +581,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
   }
 
   public async episodesToNotify(from: Date, to: Date) {
-    const res = await knex<TvEpisode>('episode')
+    const res = await Database.knex<TvEpisode>('episode')
       .select(generateColumnNames('episode', tvEpisodeColumns))
       .select(generateColumnNames('mediaItem', mediaItemColumns))
       .select('notificationsHistory.mediaItemId')
@@ -612,7 +615,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
   }
 
   public async lock(mediaItemId: number) {
-    const res = await knex<MediaItemBase>(this.tableName)
+    const res = await Database.knex<MediaItemBase>(this.tableName)
       .update({ lockedAt: new Date().getTime() })
       .where('id', mediaItemId)
       .where('lockedAt', null);
@@ -623,13 +626,13 @@ class MediaItemRepository extends repository<MediaItemBase>({
   }
 
   public async unlock(mediaItemId: number) {
-    await knex<MediaItemBase>(this.tableName)
+    await Database.knex<MediaItemBase>(this.tableName)
       .update({ lockedAt: null })
       .where('id', mediaItemId);
   }
 
   public async mediaItemsWithMissingPosters(mediaItemIdsWithPoster: number[]) {
-    return await knex<MediaItemBase>(this.tableName)
+    return await Database.knex<MediaItemBase>(this.tableName)
       .whereNotIn('id', mediaItemIdsWithPoster)
       .whereNotNull('poster')
       .whereNot('poster', '');
@@ -638,7 +641,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
   public async mediaItemsWithMissingBackdrop(
     mediaItemIdsWithBackdrop: number[]
   ) {
-    return await knex<MediaItemBase>(this.tableName)
+    return await Database.knex<MediaItemBase>(this.tableName)
       .whereNotIn('id', mediaItemIdsWithBackdrop)
       .whereNotNull('backdrop')
       .whereNot('backdrop', '');
@@ -672,7 +675,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       )
       .value();
 
-    return await knex.transaction(async (trx) => {
+    return await Database.knex.transaction(async (trx) => {
       const existingItems = (
         await trx<MediaItemBase>(this.tableName)
           .where({ mediaType: mediaType })
@@ -762,7 +765,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
 
       newItems.forEach((item) => (item.lastTimeUpdated = new Date().getTime()));
 
-      const newItemsId = await knex
+      const newItemsId = await Database.knex
         .batchInsert(
           this.tableName,
           newItems.map((item) => this.serialize(this.stripValue(item))),
@@ -775,7 +778,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
         searchResultId: number;
       })[] = _.merge(newItems, newItemsId);
 
-      await knex
+      await Database.knex
         .batchInsert(
           imageRepository.tableName,
           newItemsWithId
@@ -797,7 +800,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
         .transacting(trx)
         .returning('id');
 
-      await knex
+      await Database.knex
         .batchInsert(
           imageRepository.tableName,
           newItemsWithId
@@ -835,7 +838,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
   }
 
   public async unlockLockedMediaItems() {
-    return await knex<MediaItemBase>(this.tableName)
+    return await Database.knex<MediaItemBase>(this.tableName)
       .update('lockedAt', null)
       .where('lockedAt', '<=', subDays(new Date(), 1).getTime());
   }

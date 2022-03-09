@@ -11,21 +11,8 @@ import chalk from 'chalk';
 import { nanoid } from 'nanoid';
 import { t } from '@lingui/macro';
 
-import { runMigrations, knex } from 'src/dbconfig';
-import {
-  PUBLIC_PATH,
-  ASSETS_PATH,
-  NODE_ENV,
-  DEMO,
-  IGDB_CLIENT_ID,
-  IGDB_CLIENT_SECRET,
-  PORT,
-  HOSTNAME,
-  SERVER_LANG,
-  TMDB_LANG,
-  AUDIBLE_LANG,
-  validateConfig,
-} from 'src/config';
+import { Config } from 'src/config';
+import { Database } from 'src/dbconfig';
 import { generatedRoutes } from 'src/generated/routes/routes';
 import { AccessTokenMiddleware } from 'src/middlewares/token';
 import { SessionStore } from 'src/sessionStore';
@@ -80,42 +67,47 @@ const catchAndLogError = async (fn: () => Promise<void> | void) => {
   try {
     await fn();
   } catch (error) {
+    console.log(error);
     logger.error(error);
     return;
   }
 };
 
 (async () => {
-  await catchAndLogError(validateConfig);
-
-  setupI18n(SERVER_LANG || 'en');
+  await catchAndLogError(async () => {
+    Config.migrate();
+    Config.validate();
+    setupI18n(Config.SERVER_LANG || 'en');
+    logger.init();
+    Database.init();
+    await Database.runMigrations();
+  });
 
   const app = express();
-
-  await runMigrations();
 
   const configuration = await configurationRepository.findOne();
 
   if (!configuration) {
     await configurationRepository.create({
       enableRegistration: true,
-      serverLang: SERVER_LANG || 'en',
-      tmdbLang: TMDB_LANG || 'en',
-      audibleLang: AUDIBLE_LANG || 'us',
-      igdbClientId: IGDB_CLIENT_ID,
-      igdbClientSecret: IGDB_CLIENT_SECRET,
+      serverLang: Config.SERVER_LANG || 'en',
+      tmdbLang: Config.TMDB_LANG || 'en',
+      audibleLang: Config.AUDIBLE_LANG || 'us',
+      igdbClientId: Config.IGDB_CLIENT_ID,
+      igdbClientSecret: Config.IGDB_CLIENT_SECRET,
     });
   } else {
     await configurationRepository.update({
-      serverLang: SERVER_LANG || configuration.serverLang,
-      tmdbLang: TMDB_LANG || configuration.tmdbLang,
-      audibleLang: AUDIBLE_LANG || configuration.audibleLang,
-      igdbClientId: IGDB_CLIENT_ID || configuration.igdbClientId,
-      igdbClientSecret: IGDB_CLIENT_SECRET || configuration.igdbClientSecret,
+      serverLang: Config.SERVER_LANG || configuration.serverLang,
+      tmdbLang: Config.TMDB_LANG || configuration.tmdbLang,
+      audibleLang: Config.AUDIBLE_LANG || configuration.audibleLang,
+      igdbClientId: Config.IGDB_CLIENT_ID || configuration.igdbClientId,
+      igdbClientSecret:
+        Config.IGDB_CLIENT_SECRET || configuration.igdbClientSecret,
     });
   }
 
-  if (DEMO) {
+  if (Config.DEMO) {
     const demoUser = await userRepository.findOne({ name: 'demo' });
 
     if (!demoUser) {
@@ -194,8 +186,8 @@ const catchAndLogError = async (fn: () => Promise<void> | void) => {
     next();
   });
 
-  app.use(express.static(PUBLIC_PATH));
-  app.use(express.static(ASSETS_PATH));
+  app.use(express.static(Config.PUBLIC_PATH));
+  app.use(express.static(Config.ASSETS_PATH));
 
   app.use((req, res, next) => {
     if (
@@ -217,12 +209,12 @@ const catchAndLogError = async (fn: () => Promise<void> | void) => {
   app.use(generatedRoutes);
   app.use(errorLoggerMiddleware);
 
-  const server = app.listen(PORT, HOSTNAME, async () => {
-    const address = `http://${HOSTNAME}:${PORT}`;
+  const server = app.listen(Config.PORT, Config.HOSTNAME, async () => {
+    const address = `http://${Config.HOSTNAME}:${Config.PORT}`;
 
     logger.info(t`MediaTracker listening at ${address}`);
 
-    if (NODE_ENV === 'production') {
+    if (Config.NODE_ENV === 'production') {
       await catchAndLogError(updateMetadata);
       await catchAndLogError(sendNotifications);
 
@@ -241,7 +233,7 @@ const catchAndLogError = async (fn: () => Promise<void> | void) => {
     logger.info(t`Received signal ${signal}`);
     server.close();
 
-    await knex.destroy();
+    await Database.knex.destroy();
 
     // eslint-disable-next-line no-process-exit
     process.exit();
