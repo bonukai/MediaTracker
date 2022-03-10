@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { knex } from 'src/dbconfig';
+import { Database } from 'src/dbconfig';
 
 export const omitUndefinedValues = <T extends object>(value: Partial<T>) =>
   _.pickBy(value, (v) => v !== undefined) as Partial<T>;
@@ -69,7 +69,7 @@ export const repository = <T extends object>(args: {
     }
 
     public async count(where?: Partial<T>): Promise<number> {
-      const res = await knex(this.tableName)
+      const res = await Database.knex(this.tableName)
         .where(omitUndefinedValues(where) || {})
         .count<{ count: number }[]>('* as count')
         .first();
@@ -78,7 +78,7 @@ export const repository = <T extends object>(args: {
     }
 
     public async find(where?: Partial<T>) {
-      const res = (await knex<T>(this.tableName).where(
+      const res = (await Database.knex<T>(this.tableName).where(
         omitUndefinedValues(where) || {}
       )) as T[];
 
@@ -88,7 +88,7 @@ export const repository = <T extends object>(args: {
     }
 
     public async findOne(where?: Partial<T>) {
-      const res = (await knex<T>(this.tableName)
+      const res = (await Database.knex<T>(this.tableName)
         .where(omitUndefinedValues(where) || {})
         .first()) as T;
 
@@ -98,7 +98,7 @@ export const repository = <T extends object>(args: {
     }
 
     public async delete(where?: Partial<T>) {
-      return knex<T>(this.tableName)
+      return Database.knex<T>(this.tableName)
         .delete()
         .where(omitUndefinedValues(where) || {});
     }
@@ -106,7 +106,7 @@ export const repository = <T extends object>(args: {
     public async deleteManyById<A extends typeof args.primaryColumnName>(
       ids: (T extends { [K in A]: infer Type } ? Type : never)[]
     ) {
-      return knex(this.tableName)
+      return Database.knex(this.tableName)
         .delete()
         .whereIn(primaryColumnName.toString(), ids);
     }
@@ -116,7 +116,7 @@ export const repository = <T extends object>(args: {
         return this.createUnique(value, this.uniqueBy);
       }
 
-      const res = await knex(this.tableName)
+      const res = await Database.knex(this.tableName)
         .insert(this.serialize(omitUndefinedValues(this.stripValue(value))))
         .returning(this.primaryColumnName as string);
 
@@ -129,7 +129,7 @@ export const repository = <T extends object>(args: {
       value: Partial<T>,
       uniqueBy: (value: Partial<T>) => Partial<T>
     ) {
-      return await knex.transaction(async (trx) => {
+      return await Database.knex.transaction(async (trx) => {
         const existingItem = await trx(this.tableName)
           .where(omitUndefinedValues(uniqueBy(value)))
           .first();
@@ -155,7 +155,7 @@ export const repository = <T extends object>(args: {
         return this.createManyUnique(values, uniqueBy);
       }
 
-      const res = await knex
+      const res = await Database.knex
         .batchInsert(
           this.tableName,
           values.map((value) =>
@@ -178,7 +178,7 @@ export const repository = <T extends object>(args: {
       values: Partial<T>[],
       uniqueBy: (value: Partial<T>) => Partial<T>
     ) {
-      return await knex.transaction(async (trx) => {
+      return await Database.knex.transaction(async (trx) => {
         const existingItems: Partial<T>[] = _.concat(
           ...(await Promise.all(
             _.chunk(values, BATCH_SIZE).flatMap((chunk) => {
@@ -200,7 +200,7 @@ export const repository = <T extends object>(args: {
           .value();
 
         if (newItems.length > 0) {
-          const res = await knex
+          const res = await Database.knex
             .batchInsert(
               this.tableName,
               newItems.map((value) =>
@@ -223,7 +223,7 @@ export const repository = <T extends object>(args: {
     }
 
     public async update(value: Partial<T>): Promise<Partial<T>> {
-      const qb = knex(this.tableName).update(
+      const qb = Database.knex(this.tableName).update(
         this.serialize(omitUndefinedValues(this.stripValue(value)))
       );
 
@@ -239,7 +239,7 @@ export const repository = <T extends object>(args: {
     public async updateWhere(params: { where: Partial<T>; value: Partial<T> }) {
       const { value, where } = params;
 
-      await knex(this.tableName)
+      await Database.knex(this.tableName)
         .update(this.serialize(omitUndefinedValues(this.stripValue(value))))
         .where(where);
     }
@@ -250,7 +250,7 @@ export const repository = <T extends object>(args: {
     }) {
       const { value, where } = params;
 
-      await knex.transaction(async (trx) => {
+      await Database.knex.transaction(async (trx) => {
         const existingItem = await trx(this.tableName)
           .where(omitUndefinedValues(where))
           .first();

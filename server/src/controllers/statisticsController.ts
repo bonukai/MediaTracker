@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { createExpressRoute } from 'typescript-routes-to-openapi-server';
 
-import { knex } from 'src/dbconfig';
+import { Database } from 'src/dbconfig';
 import { MediaType } from 'src/entity/mediaItem';
 
 /**
@@ -33,9 +33,9 @@ type StatisticsSummaryResponse = {
 };
 
 export const userStatisticsSummary = async (userId: number) => {
-  const res = await knex('seen')
+  const res = await Database.knex('seen')
     .sum({
-      runtime: knex.raw(`CASE
+      runtime: Database.knex.raw(`CASE
                            WHEN "episode"."runtime" IS NOT NULL THEN "episode"."runtime"
                            ELSE "mediaItem"."runtime"
                          END 
@@ -44,7 +44,7 @@ export const userStatisticsSummary = async (userId: number) => {
                            WHEN "seen"."type" = 'seen' THEN 1
                            ELSE "seen"."progress"
                          END`),
-      numberOfPages: knex.raw(`CASE
+      numberOfPages: Database.knex.raw(`CASE
                                  WHEN "mediaItem"."numberOfPages" IS NOT NULL THEN "mediaItem"."numberOfPages"
                                  ELSE 0
                                END
@@ -53,15 +53,15 @@ export const userStatisticsSummary = async (userId: number) => {
                                  WHEN "seen"."type" = 'seen' THEN 1
                                  ELSE "seen"."progress"
                                END`),
-      duration: knex.raw(`CASE
+      duration: Database.knex.raw(`CASE
                             WHEN "seen"."duration" IS NOT NULL THEN "seen"."duration"
                             ELSE 0
                           END `),
     })
     .select('mediaItem.mediaType')
     .count({
-      episodes: knex.raw('DISTINCT "episode"."id"'),
-      items: knex.raw('DISTINCT "mediaItem"."id"'),
+      episodes: Database.knex.raw('DISTINCT "episode"."id"'),
+      items: Database.knex.raw('DISTINCT "mediaItem"."id"'),
       plays: '*',
     })
     .where('userId', userId)

@@ -1,11 +1,14 @@
 import axios from 'axios';
+import { Config } from 'src/config';
 
 import { importFromGoodreadsRss } from 'src/controllers/import/goodreads';
-import { knex } from 'src/dbconfig';
+import { Database } from 'src/dbconfig';
+
 import { Seen } from 'src/entity/seen';
 import { User } from 'src/entity/user';
 import { UserRating } from 'src/entity/userRating';
 import { Watchlist } from 'src/entity/watchlist';
+import { logger } from 'src/logger';
 import { clearDatabase, runMigrations } from '__tests__/__utils__/utils';
 import GoodReadsXML from './goodreads.xml';
 
@@ -24,7 +27,7 @@ describe('Goodreads import', () => {
   afterAll(clearDatabase);
 
   beforeAll(async () => {
-    await knex('user').insert(user);
+    await Database.knex('user').insert(user);
   });
 
   test('import', async () => {
@@ -48,21 +51,21 @@ describe('Goodreads import', () => {
   });
 
   test('watchlist', async () => {
-    const watchlist = await knex<Watchlist>('watchlist').where({
+    const watchlist = await Database.knex<Watchlist>('watchlist').where({
       userId: user.id,
     });
     expect(watchlist.length).toEqual(7);
   });
 
   test('ratings', async () => {
-    const ratings = await knex<UserRating>('userRating').where({
+    const ratings = await Database.knex<UserRating>('userRating').where({
       userId: user.id,
     });
     expect(ratings.length).toEqual(38);
   });
 
   test('read', async () => {
-    const read = await knex<Seen>('seen').where({
+    const read = await Database.knex<Seen>('seen').where({
       userId: user.id,
       type: 'seen',
     });
@@ -70,7 +73,7 @@ describe('Goodreads import', () => {
   });
 
   test('toRead', async () => {
-    const toRead = await knex<Seen>('seen').where({
+    const toRead = await Database.knex<Seen>('seen').where({
       progress: 0,
       type: 'progress',
       userId: user.id,
@@ -79,7 +82,7 @@ describe('Goodreads import', () => {
   });
 
   test('book details', async () => {
-    const book = await knex('mediaItem')
+    const book = await Database.knex('mediaItem')
       .where({
         title: 'The Brothers Karamazov',
         source: 'goodreads',

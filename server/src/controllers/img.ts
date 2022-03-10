@@ -6,7 +6,7 @@ import { downloadAsset } from 'src/utils';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { tvSeasonRepository } from 'src/repository/season';
 import { imageRepository } from 'src/repository/image';
-import { ASSETS_PATH } from 'src/config';
+import { Config } from 'src/config';
 
 type ImgSize = 'small' | 'original';
 
@@ -36,7 +36,7 @@ export class ImgController {
     const { id } = req.params;
 
     const imagePath = path.resolve(
-      ASSETS_PATH,
+      Config.ASSETS_PATH,
       size || 'original',
       `${id}.webp`
     );

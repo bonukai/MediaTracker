@@ -1,7 +1,7 @@
 import argon2 from 'argon2';
 import _ from 'lodash';
 
-import { knex } from 'src/dbconfig';
+import { Database } from 'src/dbconfig';
 import { User, userColumns, userNonSensitiveColumns } from 'src/entity/user';
 import { repository } from 'src/repository/repository';
 
@@ -22,7 +22,7 @@ class UserRepository extends repository<User>({
   ],
 }) {
   public async find(where: Partial<User>): Promise<User[]> {
-    const res = (await knex<User>(this.tableName)
+    const res = (await Database.knex<User>(this.tableName)
       .where(where)
       .select(userNonSensitiveColumns)) as User[];
 
@@ -32,7 +32,7 @@ class UserRepository extends repository<User>({
   }
 
   public async findOne(where: Partial<User>): Promise<User> {
-    const res = (await knex<User>(this.tableName)
+    const res = (await Database.knex<User>(this.tableName)
       .where(where)
       .select(userNonSensitiveColumns)
       .first()) as unknown as User;
@@ -52,7 +52,7 @@ class UserRepository extends repository<User>({
       sendNotificationForReleases,
       sendNotificationForEpisodesReleases,
     } = args;
-    const qb = knex(this.tableName)
+    const qb = Database.knex(this.tableName)
       .leftJoin('watchlist', 'watchlist.userId', 'user.id')
       .where('watchlist.mediaItemId', mediaItemId)
       .whereNotNull('watchlist.id')
@@ -74,7 +74,7 @@ class UserRepository extends repository<User>({
   public async usersWithMediaItemOnWatchlist(
     mediaItemId: number
   ): Promise<User[]> {
-    return await knex(this.tableName)
+    return await Database.knex(this.tableName)
       .leftJoin('watchlist', 'watchlist.userId', 'user.id')
       .where('watchlist.mediaItemId', mediaItemId)
 
@@ -85,7 +85,7 @@ class UserRepository extends repository<User>({
   }
 
   public async findOneWithPassword(where: Partial<User>): Promise<User> {
-    return await knex<User>(this.tableName).where(where).first();
+    return await Database.knex<User>(this.tableName).where(where).first();
   }
 
   public async create(user: Omit<User, 'id'>) {

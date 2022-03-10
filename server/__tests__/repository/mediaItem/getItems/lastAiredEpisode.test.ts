@@ -4,7 +4,7 @@ import { mediaItemRepository } from 'src/repository/mediaItem';
 import { MediaItemBaseWithSeasons } from 'src/entity/mediaItem';
 import { TvEpisode } from 'src/entity/tvepisode';
 import { User } from 'src/entity/user';
-import { knex } from 'src/dbconfig';
+import { Database } from 'src/dbconfig';
 import { TvSeason } from 'src/entity/tvseason';
 import { clearDatabase, runMigrations } from '../../../__utils__/utils';
 
@@ -129,12 +129,12 @@ const user: User = {
 describe('lastAiredEpisode', () => {
   beforeAll(async () => {
     await runMigrations();
-    await knex('user').insert(user);
-    await knex('mediaItem').insert(mediaItem);
+    await Database.knex('user').insert(user);
+    await Database.knex('mediaItem').insert(mediaItem);
 
-    await knex('season').insert(seasons);
-    await knex('episode').insert(episodes);
-    await knex('watchlist').insert({
+    await Database.knex('season').insert(seasons);
+    await Database.knex('episode').insert(episodes);
+    await Database.knex('watchlist').insert({
       mediaItemId: mediaItem.id,
       userId: user.id,
     });

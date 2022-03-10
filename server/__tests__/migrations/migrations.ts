@@ -1,142 +1,145 @@
 import { milliseconds } from 'date-fns';
+import knexLib, { Knex } from 'knex';
 
-import { knex } from 'src/dbconfig';
-import { MIGRATIONS_EXTENSION } from 'src/config';
-import { migrationsDirectory } from 'src/knexfile';
+import { Config } from 'src/config';
 import { clearDatabase, randomNumericId } from '../__utils__/utils';
 import { InitialData } from '__tests__/__utils__/data';
 import { Image } from 'src/entity/image';
 import { Configuration } from 'src/entity/configuration';
 import { MediaItemBase } from 'src/entity/mediaItem';
 import { Watchlist } from 'src/entity/watchlist';
+import { Database, migrationsDirectory } from 'src/dbconfig';
 
 describe('migrations', () => {
   beforeAll(async () => {
-    await knex.migrate.rollback(
+    Database.init();
+    await Database.knex.migrate.rollback(
       {
         directory: migrationsDirectory,
       },
       true
     );
 
-    await knex.migrate.up({
-      name: `20210818142342_init.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20210818142342_init.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex('user').insert(InitialData.user);
-    await knex('configuration').insert(InitialData.configuration);
-    await knex('accessToken').insert(InitialData.accessToken);
-    await knex('mediaItem').insert(InitialData.mediaItem);
-    await knex('season').insert(InitialData.season);
-    await knex('episode').insert(InitialData.episode);
-    await knex('seen').insert(InitialData.seen);
-    await knex('watchlist').insert(InitialData.watchlist);
-    await knex('userRating').insert(InitialData.userRating);
-    await knex('userRating').insert(InitialData.userRating2);
-    await knex('userRating').insert(InitialData.userRating3);
-    await knex('notificationsHistory').insert(InitialData.notificationsHistory);
-    await knex('notificationPlatformsCredentials').insert(
+    await Database.knex('user').insert(InitialData.user);
+    await Database.knex('configuration').insert(InitialData.configuration);
+    await Database.knex('accessToken').insert(InitialData.accessToken);
+    await Database.knex('mediaItem').insert(InitialData.mediaItem);
+    await Database.knex('season').insert(InitialData.season);
+    await Database.knex('episode').insert(InitialData.episode);
+    await Database.knex('seen').insert(InitialData.seen);
+    await Database.knex('watchlist').insert(InitialData.watchlist);
+    await Database.knex('userRating').insert(InitialData.userRating);
+    await Database.knex('userRating').insert(InitialData.userRating2);
+    await Database.knex('userRating').insert(InitialData.userRating3);
+    await Database.knex('notificationsHistory').insert(
+      InitialData.notificationsHistory
+    );
+    await Database.knex('notificationPlatformsCredentials').insert(
       InitialData.notificationPlatformsCredentials
     );
-    await knex('metadataProviderCredentials').insert(
+    await Database.knex('metadataProviderCredentials').insert(
       InitialData.metadataProviderCredentials
     );
-    await knex('metadataProviderCredentials').insert(
+    await Database.knex('metadataProviderCredentials').insert(
       InitialData.metadataProviderCredentials2
     );
   });
 
   test('20220121025651_ratingColumnFloat', async () => {
-    await knex.migrate.up({
-      name: `20220121025651_ratingColumnFloat.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220121025651_ratingColumnFloat.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220121025651_ratingColumnFloat.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220121025651_ratingColumnFloat.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
   });
 
   test('20220122003141_bigIntToFloat', async () => {
-    await knex.migrate.up({
-      name: `20220122003141_bigIntToFloat.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220122003141_bigIntToFloat.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220122003141_bigIntToFloat.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220122003141_bigIntToFloat.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
   });
 
   test('20220127224112_configuration', async () => {
-    await knex.migrate.up({
-      name: `20220127224112_configuration.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220127224112_configuration.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex<Configuration>('configuration').update({
+    await Database.knex<Configuration>('configuration').update({
       audibleLang: 'us',
       serverLang: 'en',
       tmdbLang: 'en',
     });
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220127224112_configuration.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220127224112_configuration.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
   });
 
   test('20220202231058_image', async () => {
-    await knex.migrate.up({
-      name: `20220202231058_image.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220202231058_image.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex<Image>('image').insert({
+    await Database.knex<Image>('image').insert({
       id: '1',
       mediaItemId: InitialData.mediaItem.id,
       type: 'poster',
     });
 
-    await knex<Image>('image').insert({
+    await Database.knex<Image>('image').insert({
       id: '2',
       mediaItemId: InitialData.season.tvShowId,
       seasonId: InitialData.season.id,
       type: 'backdrop',
     });
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220202231058_image.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220202231058_image.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
   });
 
   test('20220208203349_traktId_goodreadsId', async () => {
-    await knex.migrate.up({
-      name: `20220208203349_traktId_goodreadsId.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220208203349_traktId_goodreadsId.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex<MediaItemBase>('mediaItem').insert({
+    await Database.knex<MediaItemBase>('mediaItem').insert({
       id: 999,
       title: 'title',
       source: 'user',
@@ -144,42 +147,42 @@ describe('migrations', () => {
       goodreadsId: 987654,
     });
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220208203349_traktId_goodreadsId.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220208203349_traktId_goodreadsId.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
   });
 
   test('20220208230635_numberOfPages', async () => {
-    await knex.migrate.up({
-      name: `20220208230635_numberOfPages.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220208230635_numberOfPages.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex<MediaItemBase>('mediaItem').insert({
+    await Database.knex<MediaItemBase>('mediaItem').insert({
       id: 777,
       title: 'title',
       source: 'user',
       numberOfPages: 111,
     });
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220208230635_numberOfPages.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220208230635_numberOfPages.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
   });
 
   test('20220208234441_watchlist', async () => {
-    await knex.migrate.up({
-      name: `20220208234441_watchlist.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220208234441_watchlist.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
@@ -190,18 +193,18 @@ describe('migrations', () => {
       addedAt: new Date().getTime(),
     };
 
-    await knex<Watchlist>('watchlist').insert(watchlist);
+    await Database.knex<Watchlist>('watchlist').insert(watchlist);
 
-    expect(await knex('watchlist').where('id', watchlist.id).first()).toEqual(
-      watchlist
-    );
+    expect(
+      await Database.knex('watchlist').where('id', watchlist.id).first()
+    ).toEqual(watchlist);
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220208234441_watchlist.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220208234441_watchlist.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
   });
@@ -273,32 +276,39 @@ describe('migrations', () => {
       episodeId: episodeWithoutRuntime.id,
     };
 
-    await knex('mediaItem').insert(mediaItem);
-    await knex('mediaItem').insert(show);
-    await knex('season').insert(season);
-    await knex('episode').insert(episodeWithRuntime);
-    await knex('episode').insert(episodeWithoutRuntime);
-    await knex('seen').insert(seenMediaItem);
-    await knex('seen').insert(seenEpisodeWithRuntime);
-    await knex('seen').insert(seenEpisodeWithoutRuntime);
+    await Database.knex('mediaItem').insert(mediaItem);
+    await Database.knex('mediaItem').insert(show);
+    await Database.knex('season').insert(season);
+    await Database.knex('episode').insert(episodeWithRuntime);
+    await Database.knex('episode').insert(episodeWithoutRuntime);
+    await Database.knex('seen').insert(seenMediaItem);
+    await Database.knex('seen').insert(seenEpisodeWithRuntime);
+    await Database.knex('seen').insert(seenEpisodeWithoutRuntime);
 
-    await knex.migrate.up({
-      name: `20220209000937_seen.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220209000937_seen.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
     expect(
-      (await knex('seen').where('id', seenEpisodeWithRuntime.id).first())
-        .duration
+      (
+        await Database.knex('seen')
+          .where('id', seenEpisodeWithRuntime.id)
+          .first()
+      ).duration
     ).toEqual(episodeWithRuntime.runtime * 60 * 1000);
 
     expect(
-      (await knex('seen').where('id', seenEpisodeWithoutRuntime.id).first())
-        .duration
+      (
+        await Database.knex('seen')
+          .where('id', seenEpisodeWithoutRuntime.id)
+          .first()
+      ).duration
     ).toEqual(show.runtime * 60 * 1000);
 
     expect(
-      (await knex('seen').where('id', seenMediaItem.id).first()).duration
+      (await Database.knex('seen').where('id', seenMediaItem.id).first())
+        .duration
     ).toEqual(mediaItem.runtime * 60 * 1000);
 
     const seen = {
@@ -316,24 +326,24 @@ describe('migrations', () => {
       progress: 0.2,
     };
 
-    await knex('seen').insert(seen);
+    await Database.knex('seen').insert(seen);
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220209000937_seen.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220209000937_seen.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex('seen').where('id', seen.id).delete();
-    await knex('seen').insert(seen);
+    await Database.knex('seen').where('id', seen.id).delete();
+    await Database.knex('seen').insert(seen);
   });
 
   test('20220209005700_list', async () => {
-    await knex.migrate.up({
-      name: `20220209005700_list.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220209005700_list.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
@@ -353,25 +363,25 @@ describe('migrations', () => {
       mediaItemId: 1,
     };
 
-    await knex('list').insert(list);
-    await knex('listItem').insert(listItem);
+    await Database.knex('list').insert(list);
+    await Database.knex('listItem').insert(listItem);
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220209005700_list.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220209005700_list.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex('list').insert(list);
-    await knex('listItem').insert(listItem);
+    await Database.knex('list').insert(list);
+    await Database.knex('listItem').insert(listItem);
   });
 
   test('20220209014700_userPreferences', async () => {
-    await knex.migrate.up({
-      name: `20220209014700_userPreferences.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220209014700_userPreferences.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
@@ -385,24 +395,24 @@ describe('migrations', () => {
       },
     };
 
-    await knex('user').insert(user);
+    await Database.knex('user').insert(user);
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220209014700_userPreferences.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220209014700_userPreferences.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex('user').where('id', user.id).delete();
-    await knex('user').insert(user);
+    await Database.knex('user').where('id', user.id).delete();
+    await Database.knex('user').insert(user);
   });
 
   test('20220209034100_userPreferences', async () => {
-    await knex.migrate.up({
-      name: `20220209034100_userPreferences.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220209034100_userPreferences.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
@@ -414,19 +424,19 @@ describe('migrations', () => {
       hideOverviewForUnseenSeasons: true,
     };
 
-    await knex('user').insert(user);
+    await Database.knex('user').insert(user);
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220209034100_userPreferences.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220209034100_userPreferences.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex('user').where('id', user.id).delete();
-    await knex('user').insert(user);
+    await Database.knex('user').where('id', user.id).delete();
+    await Database.knex('user').insert(user);
   });
 
   test('20220217012900_progress', async () => {
@@ -447,21 +457,21 @@ describe('migrations', () => {
       action: 'started',
     };
 
-    await knex('seen').insert(seen);
-    await knex('seen').insert(seen2);
+    await Database.knex('seen').insert(seen);
+    await Database.knex('seen').insert(seen2);
 
-    await knex.migrate.up({
-      name: `20220217012900_progress.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220217012900_progress.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    const progress = await knex('seen')
+    const progress = await Database.knex('seen')
       .where('type', 'progress')
       .where('mediaItemId', seen.mediaItemId)
       .whereNull('episodeId')
       .first();
 
-    const progress2 = await knex('seen')
+    const progress2 = await Database.knex('seen')
       .where('type', 'progress')
       .where('mediaItemId', seen2.mediaItemId)
       .where('episodeId', seen2.episodeId)
@@ -479,16 +489,16 @@ describe('migrations', () => {
       date: seen2.date,
     });
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220217012900_progress.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220217012900_progress.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex('seen').insert({
+    await Database.knex('seen').insert({
       userId: InitialData.user.id,
       mediaItemId: InitialData.mediaItem.id,
       progress: 0.1,
@@ -499,22 +509,22 @@ describe('migrations', () => {
   });
 
   test('20220222153600_removeMetadataProviderCredentials', async () => {
-    await knex.migrate.up({
-      name: `20220222153600_removeMetadataProviderCredentials.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220222153600_removeMetadataProviderCredentials.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220222153600_removeMetadataProviderCredentials.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220222153600_removeMetadataProviderCredentials.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
     const { igdbClientId, igdbClientSecret } =
-      (await knex('configuration').first()) || {};
+      (await Database.knex('configuration').first()) || {};
 
     expect(igdbClientId).toEqual(InitialData.metadataProviderCredentials.value);
     expect(igdbClientSecret).toEqual(
@@ -523,21 +533,21 @@ describe('migrations', () => {
   });
 
   test('20220222195700_audibleCountryCode', async () => {
-    await knex.migrate.up({
-      name: `20220222195700_audibleCountryCode.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220222195700_audibleCountryCode.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.down({
+    await Database.knex.migrate.down({
       directory: migrationsDirectory,
     });
 
-    await knex.migrate.up({
-      name: `20220222195700_audibleCountryCode.${MIGRATIONS_EXTENSION}`,
+    await Database.knex.migrate.up({
+      name: `20220222195700_audibleCountryCode.${Config.MIGRATIONS_EXTENSION}`,
       directory: migrationsDirectory,
     });
 
-    await knex('mediaItem').insert({
+    await Database.knex('mediaItem').insert({
       title: 'Title',
       source: 'audible',
       audibleCountryCode: 'uk',

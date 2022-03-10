@@ -1,11 +1,10 @@
 import { customAlphabet } from 'nanoid';
-import { knex } from 'src/dbconfig';
-import { migrationsDirectory } from 'src/knexfile';
+import { Database } from 'src/dbconfig';
 
 export const randomNumericId = () => Number(customAlphabet('123456789', 7)());
 
 export const clearDatabase = async () => {
-  await knex.schema
+  await Database.knex.schema
     .dropTableIfExists('listItem')
     .dropTableIfExists('list')
     .dropTableIfExists('image')
@@ -25,9 +24,10 @@ export const clearDatabase = async () => {
     .dropTableIfExists('mediaItem')
     .dropTableIfExists('knex_migrations');
 
-  await knex.destroy();
+  await Database.knex.destroy();
 };
 
 export const runMigrations = async () => {
-  await knex.migrate.latest({ directory: migrationsDirectory });
+  Database.init();
+  await Database.runMigrations(false);
 };

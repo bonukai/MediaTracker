@@ -4,7 +4,7 @@ import {
   mediaItemColumns,
   MediaItemItemsResponse,
 } from 'src/entity/mediaItem';
-import { knex } from 'src/dbconfig';
+import { Database } from 'src/dbconfig';
 
 import { Seen } from 'src/entity/seen';
 import { UserRating, userRatingColumns } from 'src/entity/userRating';
@@ -21,7 +21,7 @@ export const getItemsKnex = async (args: any): Promise<any> => {
   );
 
   if (page) {
-    const [resCount, res] = await knex.transaction(async (trx) => {
+    const [resCount, res] = await Database.knex.transaction(async (trx) => {
       const resCount = await sqlCountQuery.transacting(trx);
       const res = await sqlPaginationQuery.transacting(trx);
 
@@ -74,7 +74,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
 
   const currentDateString = new Date().toISOString();
 
-  const query = knex
+  const query = Database.knex
     .select(generateColumnNames('firstUnwatchedEpisode', tvEpisodeColumns))
     .select(generateColumnNames('watchlist', watchlistColumns))
     .select(generateColumnNames('upcomingEpisode', tvEpisodeColumns))

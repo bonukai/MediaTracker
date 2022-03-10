@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { userStatisticsSummary } from 'src/controllers/statisticsController';
-import { knex } from 'src/dbconfig';
+import { Database } from 'src/dbconfig';
 import { clearDatabase, runMigrations } from '__tests__/__utils__/utils';
 
 const tvShow = {
@@ -177,20 +177,20 @@ const progress = {
 describe('statistics summary', () => {
   beforeAll(async () => {
     await runMigrations();
-    await knex('user').insert(user);
+    await Database.knex('user').insert(user);
 
-    await knex('mediaItem').insert(tvShow);
-    await knex('season').insert(season);
-    await knex('episode').insert(episode);
-    await knex('episode').insert(episode2);
+    await Database.knex('mediaItem').insert(tvShow);
+    await Database.knex('season').insert(season);
+    await Database.knex('episode').insert(episode);
+    await Database.knex('episode').insert(episode2);
 
-    await knex('mediaItem').insert(movie);
-    await knex('mediaItem').insert(videoGame);
-    await knex('mediaItem').insert(book);
-    await knex('mediaItem').insert(audiobook);
+    await Database.knex('mediaItem').insert(movie);
+    await Database.knex('mediaItem').insert(videoGame);
+    await Database.knex('mediaItem').insert(book);
+    await Database.knex('mediaItem').insert(audiobook);
 
-    await knex('seen').insert(Object.values(seen));
-    await knex('seen').insert(Object.values(progress));
+    await Database.knex('seen').insert(Object.values(seen));
+    await Database.knex('seen').insert(Object.values(progress));
   });
 
   afterAll(clearDatabase);

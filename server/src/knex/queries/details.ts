@@ -5,7 +5,7 @@ import { TvEpisode, TvEpisodeFilters } from 'src/entity/tvepisode';
 import { UserRating, UserRatingFilters } from 'src/entity/userRating';
 import { TvSeason } from 'src/entity/tvseason';
 import { Seen, SeenFilters } from 'src/entity/seen';
-import { knex } from 'src/dbconfig';
+import { Database } from 'src/dbconfig';
 import { Watchlist } from 'src/entity/watchlist';
 import { Image } from 'src/entity/image';
 
@@ -24,7 +24,7 @@ export const getDetailsKnex = async (params: {
     watchlist,
     images,
     progress,
-  } = await knex.transaction(async (trx) => {
+  } = await Database.knex.transaction(async (trx) => {
     const mediaItem = await trx<MediaItemBase>('mediaItem')
       .where({
         id: mediaItemId,

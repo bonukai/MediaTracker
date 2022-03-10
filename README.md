@@ -24,6 +24,15 @@ npm run build
 npm run start
 ```
 
+## From npm
+
+```
+npm install -g mediatracker
+mediatracker
+```
+
+Database file, logs and assets will be saved in `$HOME/.mediatracker`
+
 ## With docker
 
 ## Version Tags
