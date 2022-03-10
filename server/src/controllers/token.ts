@@ -27,6 +27,11 @@ export class TokenController {
     const userId = Number(req.user);
     const { description } = req.query;
 
+    if (description.trim().length === 0) {
+      res.sendStatus(400);
+      return;
+    }
+
     const result = await accessTokenRepository.findOne({
       userId: userId,
       description: description,

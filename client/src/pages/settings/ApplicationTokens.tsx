@@ -24,6 +24,7 @@ export const SettingsApplicationTokensPage: FunctionComponent = () => {
           value={tokenName}
           onChange={(e) => setTokenName(e.currentTarget.value)}
           className="block"
+          required
         />
         <button className="mt-2 btn">
           <Trans>Add token</Trans>
