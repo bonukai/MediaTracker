@@ -5,10 +5,10 @@ import { Config } from 'src/config';
 import { logger } from 'src/logger';
 
 export class Database {
-  static _knex: Knex;
+  static #knex: Knex;
 
   static init() {
-    this._knex = knexLib({
+    this.#knex = knexLib({
       client: Config.DATABASE_CLIENT,
       version: Config.DATABASE_VERSION,
       connection: {
@@ -53,6 +53,6 @@ export class Database {
   }
 
   static get knex() {
-    return this._knex;
+    return this.#knex;
   }
 }
