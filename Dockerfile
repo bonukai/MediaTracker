@@ -11,8 +11,6 @@ COPY ["package.json", "package-lock.json*", "./"]
 RUN apk add --no-cache python3 g++ make
 RUN npm install
 RUN npm run build
-RUN npm run lint
-RUN npm run test
 
 # Build server for production
 FROM node:17-alpine as server-build-production
