@@ -1,8 +1,6 @@
 import knexLib, { Knex } from 'knex';
 import { t, plural } from '@lingui/macro';
 
-// import config, { migrationsDirectory } from './knexfile';
-
 import path from 'path';
 import { Config } from 'src/config';
 
