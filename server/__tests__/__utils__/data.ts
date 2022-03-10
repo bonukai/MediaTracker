@@ -11,7 +11,7 @@ import { UserRating } from 'src/entity/userRating';
 import { Watchlist } from 'src/entity/watchlist';
 
 export class InitialData {
-  static user: User = {
+  static user = {
     id: 1,
     name: 'admin',
     admin: true,

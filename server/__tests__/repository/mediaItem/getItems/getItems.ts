@@ -16,6 +16,7 @@ const mediaItem: MediaItemBase = {
 
 const user: User = {
   id: 1,
+  slug: 'user',
   name: 'user',
   password: 'password',
 };

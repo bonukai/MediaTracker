@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { Database } from 'src/dbconfig';
 import { User, userColumns, userNonSensitiveColumns } from 'src/entity/user';
 import { repository } from 'src/repository/repository';
+import { randomSlugId, toSlug } from 'src/slug';
 
 class UserRepository extends repository<User>({
   tableName: 'user',
@@ -88,10 +89,30 @@ class UserRepository extends repository<User>({
     return await Database.knex<User>(this.tableName).where(where).first();
   }
 
-  public async create(user: Omit<User, 'id'>) {
+  public async create(user: Omit<User, 'id' | 'slug'>) {
     user.password = await argon2.hash(user.password);
+    const slug = toSlug(user.name);
 
-    return super.create(user);
+    const [res] = await Database.knex<User>('user').insert(
+      {
+        ..._.pick(user, this.columnNames),
+
+        slug: Database.knex.raw(
+          `(CASE 
+              WHEN (
+                ${Database.knex<User>('user')
+                  .count()
+                  .where('slug', slug)
+                  .toQuery()}) = 0 
+                THEN '${slug}' 
+              ELSE '${slug}-${randomSlugId()}' 
+            END)`
+        ),
+      },
+      'id'
+    );
+
+    return res.id;
   }
 
   public async update(user: Partial<User>) {

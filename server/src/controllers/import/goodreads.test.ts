@@ -19,6 +19,7 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 const user: User = {
   id: 1,
   name: 'user',
+  slug: 'user',
   password: 'password',
 };
 
