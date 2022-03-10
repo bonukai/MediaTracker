@@ -8,6 +8,8 @@ import { Configuration } from 'src/entity/configuration';
 import { MediaItemBase } from 'src/entity/mediaItem';
 import { Watchlist } from 'src/entity/watchlist';
 import { Database } from 'src/dbconfig';
+import { randomSlugId, toSlug } from 'src/slug';
+import { nanoid } from 'nanoid';
 
 describe('migrations', () => {
   beforeAll(async () => {
@@ -386,7 +388,7 @@ describe('migrations', () => {
 
     const user = {
       id: randomNumericId(),
-      name: 'name',
+      name: 'name2',
       password: 'password',
       clientPreferences: {
         hideEpisodeTitleForUnseenEpisodes: true,
@@ -551,6 +553,62 @@ describe('migrations', () => {
       source: 'audible',
       audibleCountryCode: 'uk',
     });
+  });
+
+  test('20220310180600_userSlug', async () => {
+    const user = {
+      id: 1234,
+      name: 'username',
+      password: 'password',
+      admin: false,
+    };
+
+    const user2 = {
+      id: 12345,
+      name: 'username-',
+      password: 'password',
+      admin: false,
+    };
+
+    await Database.knex('user').insert([user, user2]);
+
+    await Database.knex.migrate.up({
+      name: `20220310180600_userSlug.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20220310180600_userSlug.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    const resUser = await Database.knex('user').where('id', user.id).first();
+    const resUser2 = await Database.knex('user').where('id', user2.id).first();
+
+    expect(toSlug(user.name)).toBe(toSlug(user2.name));
+    expect(resUser.slug).not.toBe(resUser2.slug);
+
+    await expect(async () => {
+      await Database.knex('user').insert({
+        name: user.name,
+        password: 'password',
+        admin: false,
+        slug: `username-${randomSlugId()}`,
+      });
+    }).rejects.toThrowError('UNIQUE');
+
+    await expect(async () => {
+      await Database.knex('user').insert({
+        name: nanoid(),
+        password: 'password',
+        admin: false,
+        slug: resUser.slug,
+      });
+    }).rejects.toThrowError('UNIQUE');
   });
 
   afterAll(clearDatabase);
