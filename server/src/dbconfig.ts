@@ -1,11 +1,7 @@
 import knexLib, { Knex } from 'knex';
 import { t, plural } from '@lingui/macro';
 
-import path from 'path';
 import { Config } from 'src/config';
-
-export const migrationsDirectory = path.resolve(__dirname, 'migrations');
-
 import { logger } from 'src/logger';
 
 export class Database {
@@ -34,7 +30,7 @@ export class Database {
 
   static async runMigrations(verbose = true) {
     const [batchNo, log] = await Database.knex.migrate.latest({
-      directory: migrationsDirectory,
+      directory: Config.MIGRATIONS_DIRECTORY,
     });
 
     if (log.length > 0) {
