@@ -67,21 +67,28 @@ const catchAndLogError = async (fn: () => Promise<void> | void) => {
   try {
     await fn();
   } catch (error) {
-    console.log(error);
     logger.error(error);
     return;
   }
 };
 
+const initialize = async () => {
+  Config.migrate();
+  Config.validate();
+  setupI18n(Config.SERVER_LANG || 'en');
+  logger.init();
+  Database.init();
+  await Database.runMigrations();
+};
+
 (async () => {
-  await catchAndLogError(async () => {
-    Config.migrate();
-    Config.validate();
-    setupI18n(Config.SERVER_LANG || 'en');
-    logger.init();
-    Database.init();
-    await Database.runMigrations();
-  });
+  try {
+    await initialize();
+  } catch (error) {
+    console.log(error);
+    console.log(chalk.bold.red('error: Initialization failed, exiting'));
+    return;
+  }
 
   const app = express();
 
