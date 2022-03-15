@@ -549,6 +549,7 @@ describe('migrations', () => {
     });
 
     await Database.knex('mediaItem').insert({
+      id: 123456,
       title: 'Title',
       source: 'audible',
       audibleCountryCode: 'uk',
@@ -592,23 +593,23 @@ describe('migrations', () => {
     expect(toSlug(user.name)).toBe(toSlug(user2.name));
     expect(resUser.slug).not.toBe(resUser2.slug);
 
-    await expect(async () => {
-      await Database.knex('user').insert({
+    await expect(async () =>
+      Database.knex('user').insert({
         name: user.name,
         password: 'password',
         admin: false,
         slug: `username-${randomSlugId()}`,
-      });
-    }).rejects.toThrowError('UNIQUE');
+      })
+    ).rejects.toThrowError('UNIQUE');
 
-    await expect(async () => {
-      await Database.knex('user').insert({
+    await expect(async () =>
+      Database.knex('user').insert({
         name: nanoid(),
         password: 'password',
         admin: false,
         slug: resUser.slug,
-      });
-    }).rejects.toThrowError('UNIQUE');
+      })
+    ).rejects.toThrowError('UNIQUE');
   });
 
   afterAll(clearDatabase);
