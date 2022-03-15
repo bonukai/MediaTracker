@@ -6,6 +6,7 @@ import sharp from 'sharp';
 
 import { Config } from 'src/config';
 import { getImageId, ImageType } from 'src/entity/image';
+import { logger } from 'src/logger';
 import { imageRepository } from 'src/repository/image';
 
 export const durationToMilliseconds = (duration: Duration) =>
@@ -90,5 +91,13 @@ export const updateAsset = async (args: {
       seasonId: seasonId || null,
       type: type,
     });
+  }
+};
+
+export const catchAndLogError = async (fn: () => Promise<void> | void) => {
+  try {
+    await fn();
+  } catch (error) {
+    logger.error(error);
   }
 };
