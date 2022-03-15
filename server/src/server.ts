@@ -31,16 +31,11 @@ const initialize = async () => {
   logger.init();
   Database.init();
   await Database.runMigrations();
+  throw new Error('some random error');
 };
 
 export const createServer = async (): Promise<Express> => {
-  try {
-    await initialize();
-  } catch (error) {
-    console.log(error);
-    console.log(chalk.bold.red('error: Initialization failed, exiting'));
-    return;
-  }
+  await initialize();
 
   const app = express();
 
