@@ -31,7 +31,6 @@ const initialize = async () => {
   logger.init();
   Database.init();
   await Database.runMigrations();
-  throw new Error('some random error');
 };
 
 export const createServer = async (): Promise<Express> => {
