@@ -24,19 +24,13 @@ import { catchAndLogError, durationToMilliseconds } from 'src/utils';
 import { updateMetadata } from 'src/updateMetadata';
 import { sendNotifications } from 'src/sendNotifications';
 
-const initialize = async () => {
+export const initialize = async () => {
   Config.migrate();
   Config.validate();
   setupI18n(Config.SERVER_LANG || 'en');
   logger.init();
   Database.init();
   await Database.runMigrations();
-};
-
-export const createServer = async (): Promise<Express> => {
-  await initialize();
-
-  const app = express();
 
   const configuration = await configurationRepository.findOne();
 
@@ -78,16 +72,24 @@ export const createServer = async (): Promise<Express> => {
     logger.info(chalk.green.bold(t`DEMO mode enabled`));
   }
 
-  let sessionKey = await sessionKeyRepository.findOne();
+  const sessionKey = await sessionKeyRepository.findOne();
 
   if (!sessionKey) {
-    sessionKey = {
+    await sessionKeyRepository.create({
       key: nanoid(1024),
       createdAt: new Date().getTime(),
-    };
-
-    await sessionKeyRepository.create(sessionKey);
+    });
   }
+};
+
+export const createServer = async (): Promise<Express> => {
+  const sessionKey = await sessionKeyRepository.findOne();
+
+  if (!sessionKey) {
+    throw new Error('Session key not found');
+  }
+
+  const app = express();
 
   app.use(
     session({
@@ -200,4 +202,35 @@ export const startServer = async (server: Express) => {
   process.once('SIGINT', onCloseHandler);
   process.once('SIGTERM', onCloseHandler);
   process.once('SIGKILL ', onCloseHandler);
+};
+
+export const createAndStartErrorServer = (error: unknown) => {
+  const server = express();
+  server.all('*', (req, res) => {
+    res.status(500);
+    res.send(
+      String.raw`
+          <!DOCTYPE html>
+          <html lang="en">
+            <meta charset="UTF-8" />
+            <title>MediaTracker</title>
+            <meta
+              name="viewport"
+              content="width=device-width,initial-scale=1"
+            />
+            <style></style>
+            <body>
+              <div>
+                <h1>500: Server error</h1>
+                <p>${String(error)}</p>
+              </div>
+            </body>
+          </html>
+        `
+    );
+  });
+  server.listen(Config.PORT, Config.HOSTNAME, () => {
+    const address = `http://${Config.HOSTNAME}:${Config.PORT}`;
+    console.log(`starting server at ${address}`);
+  });
 };

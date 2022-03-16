@@ -13,7 +13,12 @@ import { catchAndLogError } from 'src/utils';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { CancellationToken } from 'src/cancellationToken';
 import { logger } from 'src/logger';
-import { createServer, startServer } from 'src/server';
+import {
+  createAndStartErrorServer,
+  createServer,
+  initialize,
+  startServer,
+} from 'src/server';
 import { Config } from 'src/config';
 
 let updateMetadataCancellationToken: CancellationToken;
@@ -48,40 +53,10 @@ GlobalConfiguration.subscribe('tmdbLang', async (value, previousValue) => {
 
 catchAndLogError(async () => {
   try {
+    await initialize();
     const server = await createServer();
     await startServer(server);
   } catch (error) {
-    console.log(error);
-    console.log(typeof error);
-    console.log(chalk.bold.red('error: Initialization failed'));
-
-    const server = express();
-    server.all('*', (req, res) => {
-      res.status(500);
-      res.send(
-        String.raw`
-          <!DOCTYPE html>
-          <html lang="en">
-            <meta charset="UTF-8" />
-            <title>MediaTracker</title>
-            <meta
-              name="viewport"
-              content="width=device-width,initial-scale=1"
-            />
-            <style></style>
-            <body>
-              <div>
-                <h1>500: Server error</h1>
-                <p>${String(error)}</p>
-              </div>
-            </body>
-          </html>
-        `
-      );
-    });
-    server.listen(Config.PORT, Config.HOSTNAME, () => {
-      const address = `http://${Config.HOSTNAME}:${Config.PORT}`;
-      console.log(`starting server at ${address}`);
-    });
+    createAndStartErrorServer(error);
   }
 });
