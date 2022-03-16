@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { add } from 'date-fns';
-import fs, { pathExists, rm } from 'fs-extra';
+import { ensureDir, pathExists, rm } from 'fs-extra';
 import path from 'path';
 import sharp from 'sharp';
 
@@ -31,13 +31,13 @@ export const downloadAsset = async (args: { imageId: string; url: string }) => {
     responseType: 'arraybuffer',
   });
 
-  await fs.ensureDir(path.dirname(imagePath));
+  await ensureDir(path.dirname(imagePath));
   await sharp(response.data)
     .resize({ width: 800 })
     .webp({ quality: 80 })
     .toFile(imagePath);
 
-  await fs.ensureDir(path.dirname(imageSmallPath));
+  await ensureDir(path.dirname(imageSmallPath));
   await sharp(response.data)
     .resize({ width: 400 })
     .webp({ quality: 80 })
