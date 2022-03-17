@@ -1452,6 +1452,10 @@
                     "type": "string",
                     "nullable": true
                   },
+                  "slug": {
+                    "type": "string",
+                    "nullable": true
+                  },
                   "publicReviews": {
                     "type": "boolean",
                     "nullable": true
@@ -3200,6 +3204,9 @@
           "name": {
             "type": "string"
           },
+          "slug": {
+            "type": "string"
+          },
           "admin": {
             "type": "boolean",
             "nullable": true
@@ -3251,7 +3258,8 @@
         },
         "required": [
           "id",
-          "name"
+          "name",
+          "slug"
         ]
       },
       "RequestError": {
