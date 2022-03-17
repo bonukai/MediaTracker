@@ -129,7 +129,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       authors: value.authors?.join(','),
       narrators: value.narrators?.join(','),
       platform: value.platform ? JSON.stringify(value.platform) : null,
-    } as Record<string, unknown>);
+    } as unknown) as Record<string, unknown>;
   }
 
   public async update(
@@ -482,37 +482,39 @@ class MediaItemRepository extends repository<MediaItemBase>({
   }
 
   public async findByExternalId(params: ExternalIds, mediaType: MediaType) {
-    return this.deserialize(
-      await Database.knex<MediaItemBase>(this.tableName)
-        .where({ mediaType: mediaType })
-        .andWhere((qb) => {
-          if (params.tmdbId) {
-            qb.orWhere('tmdbId', params.tmdbId);
-          }
-          if (params.imdbId) {
-            qb.orWhere('imdbId', params.imdbId);
-          }
-          if (params.tvmazeId) {
-            qb.orWhere('tvmazeId', params.tvmazeId);
-          }
-          if (params.igdbId) {
-            qb.orWhere('igdbId', params.igdbId);
-          }
-          if (params.openlibraryId) {
-            qb.orWhere('openlibraryId', params.openlibraryId);
-          }
-          if (params.audibleId) {
-            qb.orWhere('audibleId', params.audibleId);
-          }
-          if (params.goodreadsId) {
-            qb.orWhere('goodreadsId', params.goodreadsId);
-          }
-          if (params.traktId) {
-            qb.orWhere('traktId', params.traktId);
-          }
-        })
-        .first()
-    );
+    const res = await Database.knex<MediaItemBase>(this.tableName)
+      .where({ mediaType: mediaType })
+      .andWhere((qb) => {
+        if (params.tmdbId) {
+          qb.orWhere('tmdbId', params.tmdbId);
+        }
+        if (params.imdbId) {
+          qb.orWhere('imdbId', params.imdbId);
+        }
+        if (params.tvmazeId) {
+          qb.orWhere('tvmazeId', params.tvmazeId);
+        }
+        if (params.igdbId) {
+          qb.orWhere('igdbId', params.igdbId);
+        }
+        if (params.openlibraryId) {
+          qb.orWhere('openlibraryId', params.openlibraryId);
+        }
+        if (params.audibleId) {
+          qb.orWhere('audibleId', params.audibleId);
+        }
+        if (params.goodreadsId) {
+          qb.orWhere('goodreadsId', params.goodreadsId);
+        }
+        if (params.traktId) {
+          qb.orWhere('traktId', params.traktId);
+        }
+      })
+      .first();
+
+    if (res) {
+      return this.deserialize(res);
+    }
   }
 
   public async findByTitle(params: {
