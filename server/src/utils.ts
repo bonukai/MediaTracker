@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { add } from 'date-fns';
-import fs, { pathExists, rm } from 'fs-extra';
+import { ensureDir, pathExists, rm } from 'fs-extra';
 import path from 'path';
 import sharp from 'sharp';
 
 import { Config } from 'src/config';
 import { getImageId, ImageType } from 'src/entity/image';
+import { logger } from 'src/logger';
 import { imageRepository } from 'src/repository/image';
 
 export const durationToMilliseconds = (duration: Duration) =>
@@ -30,13 +31,13 @@ export const downloadAsset = async (args: { imageId: string; url: string }) => {
     responseType: 'arraybuffer',
   });
 
-  await fs.ensureDir(path.dirname(imagePath));
+  await ensureDir(path.dirname(imagePath));
   await sharp(response.data)
     .resize({ width: 800 })
     .webp({ quality: 80 })
     .toFile(imagePath);
 
-  await fs.ensureDir(path.dirname(imageSmallPath));
+  await ensureDir(path.dirname(imageSmallPath));
   await sharp(response.data)
     .resize({ width: 400 })
     .webp({ quality: 80 })
@@ -90,5 +91,13 @@ export const updateAsset = async (args: {
       seasonId: seasonId || null,
       type: type,
     });
+  }
+};
+
+export const catchAndLogError = async (fn: () => Promise<void> | void) => {
+  try {
+    await fn();
+  } catch (error) {
+    logger.error(error);
   }
 };
