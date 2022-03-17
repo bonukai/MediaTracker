@@ -772,8 +772,8 @@ router.put(
       $schema: 'http://json-schema.org/draft-07/schema#',
       type: 'object',
       properties: {
-        name: { type: ['string', 'null'] },
         slug: { type: ['string', 'null'] },
+        name: { type: ['string', 'null'] },
         publicReviews: { type: ['boolean', 'null'] },
         sendNotificationWhenStatusChanges: { type: ['boolean', 'null'] },
         sendNotificationWhenReleaseDateChanges: { type: ['boolean', 'null'] },

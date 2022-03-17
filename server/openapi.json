@@ -1448,11 +1448,11 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
+                  "slug": {
                     "type": "string",
                     "nullable": true
                   },
-                  "slug": {
+                  "name": {
                     "type": "string",
                     "nullable": true
                   },
@@ -2027,6 +2027,10 @@
               "title": {
                 "type": "string"
               },
+              "slug": {
+                "type": "string",
+                "nullable": true
+              },
               "originalTitle": {
                 "type": "string",
                 "nullable": true
@@ -2466,6 +2470,10 @@
               },
               "title": {
                 "type": "string"
+              },
+              "slug": {
+                "type": "string",
+                "nullable": true
               },
               "originalTitle": {
                 "type": "string",
@@ -3201,10 +3209,10 @@
           "id": {
             "type": "number"
           },
-          "name": {
+          "slug": {
             "type": "string"
           },
-          "slug": {
+          "name": {
             "type": "string"
           },
           "admin": {
