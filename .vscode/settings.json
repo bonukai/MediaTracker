@@ -17,7 +17,8 @@
     "scrobble",
     "semibold",
     "Trakt",
-    "trakttv"
+    "trakttv",
+    "tvdb"
   ],
   "search.exclude": {
     "**/.git": true,

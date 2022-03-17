@@ -663,5 +663,129 @@ describe('migrations', () => {
     ).rejects.toThrowError('UNIQUE');
   });
 
+  test('20220317214800_tvdbIdTraktId', async () => {
+    await Database.knex.migrate.up({
+      name: `20220317214800_tvdbIdTraktId.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20220317214800_tvdbIdTraktId.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    const tvdbId = 12345;
+    const traktId = 12345;
+
+    await Database.knex('mediaItem').insert({
+      id: 8888,
+      title: 'title1234',
+      slug: 'title1234',
+      source: 'user',
+      mediaType: 'movie',
+      tvdbId: tvdbId,
+    });
+
+    await expect(
+      async () =>
+        await Database.knex('mediaItem').insert({
+          id: 88881,
+          title: 'title12345',
+          slug: 'title12345',
+          source: 'user',
+          mediaType: 'movie',
+          tvdbId: tvdbId,
+        })
+    ).rejects.toThrowError('UNIQUE');
+
+    await Database.knex('season').insert({
+      id: 8888,
+      title: 'title1234',
+      seasonNumber: 1,
+      numberOfEpisodes: 1,
+      tvShowId: 1,
+      isSpecialSeason: false,
+      tvdbId: tvdbId,
+      traktId: traktId,
+    });
+
+    await expect(
+      async () =>
+        await Database.knex('season').insert({
+          id: 88881,
+          title: 'title12345',
+          seasonNumber: 2,
+          numberOfEpisodes: 1,
+          tvShowId: 1,
+          isSpecialSeason: false,
+          tvdbId: tvdbId,
+          traktId: 999,
+        })
+    ).rejects.toThrowError('UNIQUE');
+
+    await expect(
+      async () =>
+        await Database.knex('season').insert({
+          id: 88882,
+          title: 'title12345',
+          seasonNumber: 2,
+          numberOfEpisodes: 1,
+          tvShowId: 1,
+          isSpecialSeason: false,
+          tvdbId: 999,
+          traktId: traktId,
+        })
+    ).rejects.toThrowError('UNIQUE');
+
+    await Database.knex('episode').insert({
+      id: 8888,
+      title: 'title1234',
+      seasonNumber: 1,
+      episodeNumber: 1,
+      seasonAndEpisodeNumber: 1001,
+      seasonId: 1,
+      tvShowId: 1,
+      isSpecialEpisode: false,
+      tvdbId: tvdbId,
+      traktId: traktId,
+    });
+
+    await expect(
+      async () =>
+        await Database.knex('episode').insert({
+          id: 88881,
+          title: 'title1234',
+          seasonNumber: 1,
+          episodeNumber: 2,
+          seasonAndEpisodeNumber: 1002,
+          seasonId: 1,
+          tvShowId: 1,
+          isSpecialEpisode: false,
+          tvdbId: tvdbId,
+          traktId: 999,
+        })
+    ).rejects.toThrowError('UNIQUE');
+
+    await expect(
+      async () =>
+        await Database.knex('episode').insert({
+          id: 88881,
+          title: 'title1234',
+          seasonNumber: 1,
+          episodeNumber: 2,
+          seasonAndEpisodeNumber: 1002,
+          seasonId: 1,
+          tvShowId: 1,
+          isSpecialEpisode: false,
+          tvdbId: 999,
+          traktId: traktId,
+        })
+    ).rejects.toThrowError('UNIQUE');
+  });
+
   afterAll(clearDatabase);
 });

@@ -17,6 +17,8 @@ export type TvSeason = {
   seen?: boolean;
   posterSmall?: string;
   isSpecialSeason: boolean;
+  tvdbId?: number;
+  traktId?: number;
 };
 
 export const tvSeasonColumns = <const>[
@@ -30,6 +32,8 @@ export const tvSeasonColumns = <const>[
   'title',
   'tmdbId',
   'tvShowId',
+  'tvdbId',
+  'traktId',
 ];
 
 export class TvSeasonFilters {
