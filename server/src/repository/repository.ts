@@ -28,7 +28,7 @@ export const repository = <T extends object>(args: {
     public readonly booleanColumnNames = booleanColumnNames;
     public readonly uniqueBy = uniqueBy;
 
-    public serialize(value: Partial<T>): Record<string, unknown> {
+    public serialize(value: Partial<T>): unknown {
       if (!this.booleanColumnNames) {
         return value;
       }

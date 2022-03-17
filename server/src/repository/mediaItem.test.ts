@@ -547,7 +547,7 @@ const updatedMediaItem = {
   overview: 'new overview',
   lastTimeUpdated: new Date().getTime(),
   title: 'new title',
-  slug: 'new-title',
+  slug: 'new-title-2000',
   audibleId: 'audibleId',
   authors: ['author', 'author 2'],
   backdrop: 'backdrop',
