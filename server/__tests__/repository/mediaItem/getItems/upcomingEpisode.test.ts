@@ -21,6 +21,8 @@ const upcomingEpisode: TvEpisode = {
   releaseDate: '9999-02-20',
   tvShowId: 1,
   isSpecialEpisode: false,
+  traktId: 678,
+  tvdbId: 9213,
 };
 
 const mediaItems: MediaItemBaseWithSeasons[] = [

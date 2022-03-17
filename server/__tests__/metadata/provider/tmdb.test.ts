@@ -233,6 +233,7 @@ const tvSearchResult = [
     status: null,
     url: null,
     genres: undefined,
+    tvdbId: undefined,
     imdbId: undefined,
     originalTitle: 'Lost',
     releaseDate: '2004-09-22',
@@ -257,6 +258,7 @@ const tvSearchResult = [
     status: null,
     url: null,
     genres: undefined,
+    tvdbId: undefined,
     imdbId: undefined,
     originalTitle: "Dan Brown's The Lost Symbol",
     releaseDate: '2021-09-16',
@@ -281,6 +283,7 @@ const tvSearchResult = [
     status: null,
     url: null,
     genres: undefined,
+    tvdbId: undefined,
     imdbId: undefined,
     originalTitle: 'Lost Girl',
     releaseDate: '2010-09-12',
@@ -305,6 +308,7 @@ const tvSearchResult = [
     status: null,
     url: null,
     genres: undefined,
+    tvdbId: undefined,
     imdbId: undefined,
     originalTitle: 'Lost in Space',
     releaseDate: '2018-04-13',
@@ -329,6 +333,7 @@ const tvSearchResult = [
     status: null,
     url: null,
     genres: undefined,
+    tvdbId: undefined,
     imdbId: undefined,
     originalTitle: 'Lost in Space',
     releaseDate: '1965-09-15',
@@ -359,6 +364,7 @@ const tvDetailsResult = {
   releaseDate: '2004-09-22',
   numberOfSeasons: 6,
   tmdbRating: 7.9,
+  tvdbId: 73739,
   network: 'ABC',
   runtime: 45,
   seasons: [
@@ -372,6 +378,7 @@ const tvDetailsResult = {
       numberOfEpisodes: 33,
       releaseDate: '2005-04-27',
       isSpecialSeason: true,
+      tvdbId: 495851,
       episodes: [
         {
           title: 'The Journey',
@@ -711,6 +718,7 @@ const tvDetailsResult = {
       numberOfEpisodes: 24,
       releaseDate: '2004-09-22',
       isSpecialSeason: false,
+      tvdbId: 498968,
       episodes: [
         {
           title: 'Pilot (1)',
@@ -965,6 +973,7 @@ const tvDetailsResult = {
       numberOfEpisodes: 24,
       releaseDate: '2005-09-21',
       isSpecialSeason: false,
+      tvdbId: 524506,
       episodes: [
         {
           title: 'Man of Science, Man of Faith',
@@ -1219,6 +1228,7 @@ const tvDetailsResult = {
       numberOfEpisodes: 23,
       releaseDate: '2006-10-04',
       isSpecialSeason: false,
+      tvdbId: 605819,
       episodes: [
         {
           title: 'A Tale of Two Cities',
@@ -1463,6 +1473,7 @@ const tvDetailsResult = {
       numberOfEpisodes: 14,
       releaseDate: '2008-01-31',
       isSpecialSeason: false,
+      tvdbId: 648486,
       episodes: [
         {
           title: 'The Beginning of the End',
@@ -1617,6 +1628,7 @@ const tvDetailsResult = {
       numberOfEpisodes: 17,
       releaseDate: '2009-01-21',
       isSpecialSeason: false,
+      tvdbId: null,
       episodes: [
         {
           title: 'Because You Left',
@@ -1800,6 +1812,7 @@ const tvDetailsResult = {
       numberOfEpisodes: 18,
       releaseDate: '2010-02-02',
       isSpecialSeason: false,
+      tvdbId: null,
       episodes: [
         {
           title: 'LA X (1)',

@@ -452,6 +452,7 @@ const mediaItem: MediaItemBaseWithSeasons = {
   numberOfPages: null,
   traktId: null,
   audibleCountryCode: null,
+  tvdbId: null,
   seasons: [
     {
       id: 1,
@@ -463,6 +464,8 @@ const mediaItem: MediaItemBaseWithSeasons = {
       poster: 'poster',
       releaseDate: null,
       tmdbId: null,
+      traktId: null,
+      tvdbId: null,
       tvShowId: 1,
       episodes: [
         {
@@ -479,6 +482,8 @@ const mediaItem: MediaItemBaseWithSeasons = {
           imdbId: null,
           tmdbId: null,
           runtime: null,
+          traktId: null,
+          tvdbId: null,
         },
         {
           id: 2,
@@ -494,6 +499,8 @@ const mediaItem: MediaItemBaseWithSeasons = {
           imdbId: null,
           tmdbId: null,
           runtime: null,
+          traktId: null,
+          tvdbId: null,
         },
       ],
     },
@@ -508,6 +515,8 @@ const mediaItem: MediaItemBaseWithSeasons = {
       poster: null,
       releaseDate: null,
       tmdbId: null,
+      traktId: null,
+      tvdbId: null,
       episodes: [
         {
           id: 3,
@@ -523,6 +532,8 @@ const mediaItem: MediaItemBaseWithSeasons = {
           imdbId: null,
           tmdbId: null,
           runtime: null,
+          traktId: null,
+          tvdbId: null,
         },
       ],
     },
@@ -538,6 +549,8 @@ const mediaItem: MediaItemBaseWithSeasons = {
       poster: null,
       releaseDate: null,
       tmdbId: null,
+      traktId: null,
+      tvdbId: null,
     },
   ],
 };
@@ -573,6 +586,7 @@ const updatedMediaItem = {
   goodreadsId: 123,
   numberOfPages: 761,
   traktId: 3123,
+  tvdbId: 5442,
   url: 'url',
   seasons: [
     mediaItem.seasons[0],
@@ -594,6 +608,8 @@ const updatedMediaItem = {
           imdbId: null,
           tmdbId: null,
           runtime: null,
+          traktId: 53243124,
+          tvdbId: 65412,
         },
       ],
     },
@@ -606,6 +622,8 @@ const updatedMediaItem = {
       tvShowId: 1,
       isSpecialSeason: false,
       description: null,
+      traktId: 3215415,
+      tvdbId: 5232134,
       episodes: [
         {
           id: 6,
@@ -621,6 +639,8 @@ const updatedMediaItem = {
           imdbId: null,
           tmdbId: null,
           runtime: null,
+          traktId: 76412,
+          tvdbId: 5324,
         },
       ],
       poster: 'poster',

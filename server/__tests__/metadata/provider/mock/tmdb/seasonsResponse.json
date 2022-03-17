@@ -2,6 +2,12 @@
     "0": {
         "_id": "52577572760ee36aaa513b8e",
         "air_date": "2005-04-27",
+        "external_ids": {
+            "freebase_mid": "/m/0rqfspd",
+            "freebase_id": null,
+            "tvdb_id": 495851,
+            "tvrage_id": null
+        },
         "episodes": [
             {
                 "air_date": "2005-04-27",
@@ -894,6 +900,12 @@
     "1": {
         "_id": "52577571760ee36aaa513a11",
         "air_date": "2004-09-22",
+        "external_ids": {
+            "freebase_mid": "/m/0rfpqy3",
+            "freebase_id": null,
+            "tvdb_id": 498968,
+            "tvrage_id": null
+        },
         "episodes": [
             {
                 "air_date": "2004-09-22",
@@ -5007,6 +5019,12 @@
     "2": {
         "_id": "52577571760ee36aaa513a4b",
         "air_date": "2005-09-21",
+        "external_ids": {
+            "freebase_mid": "/m/0w58v4x",
+            "freebase_id": null,
+            "tvdb_id": 524506,
+            "tvrage_id": null
+        },
         "episodes": [
             {
                 "air_date": "2005-09-21",
@@ -8794,6 +8812,12 @@
     "3": {
         "_id": "52577571760ee36aaa513a82",
         "air_date": "2006-10-04",
+        "external_ids": {
+            "freebase_mid": null,
+            "freebase_id": null,
+            "tvdb_id": 605819,
+            "tvrage_id": null
+        },
         "episodes": [
             {
                 "air_date": "2006-10-04",
@@ -12137,6 +12161,12 @@
     "4": {
         "_id": "52577572760ee36aaa513ac8",
         "air_date": "2008-01-31",
+        "external_ids": {
+            "freebase_mid": null,
+            "freebase_id": null,
+            "tvdb_id": 648486,
+            "tvrage_id": null
+        },
         "episodes": [
             {
                 "air_date": "2008-01-31",
@@ -14452,6 +14482,12 @@
     "5": {
         "_id": "52577572760ee36aaa513b1c",
         "air_date": "2009-01-21",
+        "external_ids": {
+            "freebase_mid": null,
+            "freebase_id": null,
+            "tvdb_id": null,
+            "tvrage_id": null
+        },
         "episodes": [
             {
                 "air_date": "2009-01-21",
@@ -17244,6 +17280,12 @@
     "6": {
         "_id": "52577572760ee36aaa513b57",
         "air_date": "2010-02-02",
+        "external_ids": {
+            "freebase_mid": null,
+            "freebase_id": null,
+            "tvdb_id": null,
+            "tvrage_id": null
+        },
         "episodes": [
             {
                 "air_date": "2010-02-02",

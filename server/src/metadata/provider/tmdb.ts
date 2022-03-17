@@ -165,11 +165,13 @@ export class TMDbTv extends TMDb {
           {
             params: {
               api_key: TMDB_API_KEY,
+              append_to_response: 'external_ids',
               language: GlobalConfiguration.configuration.tmdbLang,
             },
           }
         );
 
+        season.tvdbId = res.data.external_ids?.tvdb_id;
         season.episodes = res.data.episodes.map((item) =>
           this.mapEpisode(item)
         );
@@ -209,6 +211,7 @@ export class TMDbTv extends TMDb {
   private mapTvShow(item: Partial<TMDbApi.TvDetailsResponse>) {
     const tvShow = this.mapItem(item);
     tvShow.imdbId = item.external_ids?.imdb_id;
+    tvShow.tvdbId = item.external_ids?.tvdb_id;
     tvShow.title = item.name;
     tvShow.originalTitle = item.original_name;
     tvShow.releaseDate = item.first_air_date || null;
@@ -258,6 +261,12 @@ namespace TMDbApi {
     id: number;
     poster_path: string;
     season_number: number;
+    external_ids?: {
+      freebase_mid?: string;
+      freebase_id?: string;
+      tvdb_id?: number;
+      tvrage_id?: number;
+    };
   }
 
   export interface Episode {

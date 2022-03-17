@@ -1868,6 +1868,14 @@
           },
           "isSpecialEpisode": {
             "type": "boolean"
+          },
+          "tvdbId": {
+            "type": "number",
+            "nullable": true
+          },
+          "traktId": {
+            "type": "number",
+            "nullable": true
           }
         },
         "required": [
@@ -2124,6 +2132,10 @@
               },
               "needsDetails": {
                 "type": "boolean",
+                "nullable": true
+              },
+              "tvdbId": {
+                "type": "number",
                 "nullable": true
               }
             },
@@ -2570,6 +2582,10 @@
                 "type": "boolean",
                 "nullable": true
               },
+              "tvdbId": {
+                "type": "number",
+                "nullable": true
+              },
               "seasons": {
                 "type": "array",
                 "items": {
@@ -2744,6 +2760,14 @@
           },
           "isSpecialSeason": {
             "type": "boolean"
+          },
+          "tvdbId": {
+            "type": "number",
+            "nullable": true
+          },
+          "traktId": {
+            "type": "number",
+            "nullable": true
           }
         },
         "required": [
