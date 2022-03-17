@@ -47,6 +47,7 @@ export type MediaItemBase = ExternalIds & {
   audibleCountryCode?: AudibleLang;
   needsDetails?: boolean;
   lockedAt?: number;
+  tvdbId?: number;
 };
 
 export type MediaItemBaseWithSeasons = MediaItemBase & {
@@ -153,6 +154,7 @@ export const mediaItemColumns = <const>[
   'traktId',
   'audibleCountryCode',
   'slug',
+  'tvdbId',
 ];
 
 export const mediaItemPosterPath = (

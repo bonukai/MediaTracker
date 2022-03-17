@@ -73,6 +73,8 @@ const firstUnwatchedEpisode: TvEpisode = {
   runtime: 30,
   tmdbId: 123456,
   imdbId: 'imdbid',
+  traktId: 678,
+  tvdbId: 9213,
 };
 
 const mediaItem: MediaItemBaseWithSeasons = {

@@ -21,6 +21,8 @@ export type TvEpisode = {
   seen?: boolean;
   tvShow?: MediaItemItemsResponse;
   isSpecialEpisode: boolean;
+  tvdbId?: number;
+  traktId?: number;
 };
 
 export const tvEpisodeColumns = <const>[
@@ -37,6 +39,8 @@ export const tvEpisodeColumns = <const>[
   'tvShowId',
   'isSpecialEpisode',
   'seasonAndEpisodeNumber',
+  'tvdbId',
+  'traktId',
 ];
 
 export class TvEpisodeFilters {
