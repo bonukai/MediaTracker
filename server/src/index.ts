@@ -3,23 +3,15 @@
 
 import 'source-map-support/register';
 
-import express from 'express';
 import chalk from 'chalk';
 import { t } from '@lingui/macro';
 
 import { GlobalConfiguration } from 'src/repository/globalSettings';
 import { updateMediaItems } from 'src/updateMetadata';
-import { catchAndLogError } from 'src/utils';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { CancellationToken } from 'src/cancellationToken';
 import { logger } from 'src/logger';
-import {
-  createAndStartErrorServer,
-  createServer,
-  initialize,
-  startServer,
-} from 'src/server';
-import { Config } from 'src/config';
+import { createAndStartServer } from 'src/server';
 
 let updateMetadataCancellationToken: CancellationToken;
 
@@ -51,12 +43,4 @@ GlobalConfiguration.subscribe('tmdbLang', async (value, previousValue) => {
   });
 });
 
-catchAndLogError(async () => {
-  try {
-    await initialize();
-    const server = await createServer();
-    await startServer(server);
-  } catch (error) {
-    createAndStartErrorServer(error);
-  }
-});
+createAndStartServer();
