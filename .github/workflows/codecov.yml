@@ -12,7 +12,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 17
-      - run: npm install
+      - run: npm ci
       - run: npm run test:coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
