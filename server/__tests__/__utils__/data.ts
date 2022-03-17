@@ -1,12 +1,9 @@
 import { AccessToken } from 'src/entity/accessToken';
 import { Configuration } from 'src/entity/configuration';
-import { MediaItemBase } from 'src/entity/mediaItem';
 import { NotificationPlatformsCredentials } from 'src/entity/notificationPlatformsCredentials';
 import { NotificationsHistory } from 'src/entity/notificationsHistory';
-import { Seen } from 'src/entity/seen';
 import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason } from 'src/entity/tvseason';
-import { User } from 'src/entity/user';
 import { UserRating } from 'src/entity/userRating';
 import { Watchlist } from 'src/entity/watchlist';
 
@@ -26,7 +23,7 @@ export class InitialData {
     token: 'token',
   };
 
-  static mediaItem: MediaItemBase = {
+  static mediaItem = {
     id: 1,
     lastTimeUpdated: new Date().getTime(),
     mediaType: 'tv',

@@ -612,5 +612,56 @@ describe('migrations', () => {
     ).rejects.toThrowError('UNIQUE');
   });
 
+  test('20220312002700_mediaItemSlug', async () => {
+    const mediaItem = {
+      id: 1234,
+      title: 'title',
+      source: 'user',
+      mediaType: 'movie',
+    };
+
+    const mediaItem2 = {
+      id: 12345,
+      title: 'title',
+      source: 'user',
+      mediaType: 'movie',
+    };
+
+    await Database.knex('mediaItem').insert([mediaItem, mediaItem2]);
+
+    await Database.knex.migrate.up({
+      name: `20220312002700_mediaItemSlug.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20220312002700_mediaItemSlug.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    const resMediaItem = await Database.knex('mediaItem')
+      .where('id', mediaItem.id)
+      .first();
+    const resMediaItem2 = await Database.knex('mediaItem')
+      .where('id', mediaItem2.id)
+      .first();
+
+    expect(toSlug(mediaItem.title)).toBe(toSlug(mediaItem2.title));
+    expect(resMediaItem.slug).not.toBe(resMediaItem2.slug);
+
+    await expect(async () =>
+      Database.knex('mediaItem').insert({
+        title: 'title',
+        source: 'user',
+        mediaType: resMediaItem.mediaType,
+        slug: resMediaItem.slug,
+      })
+    ).rejects.toThrowError('UNIQUE');
+  });
+
   afterAll(clearDatabase);
 });

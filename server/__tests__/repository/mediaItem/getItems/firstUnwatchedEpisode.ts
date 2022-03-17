@@ -81,6 +81,7 @@ const mediaItem: MediaItemBaseWithSeasons = {
   mediaType: 'tv',
   source: 'user',
   title: 'title',
+  slug: 'title',
   seasons: [
     {
       id: 1,

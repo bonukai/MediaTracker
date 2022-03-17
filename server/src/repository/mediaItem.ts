@@ -23,6 +23,7 @@ import {
 import { imageRepository } from 'src/repository/image';
 import { getImageId, Image } from 'src/entity/image';
 import { subDays } from 'date-fns';
+import { randomSlugId, toSlug } from 'src/slug';
 
 export type MediaItemOrderBy =
   | 'title'
@@ -120,14 +121,14 @@ class MediaItemRepository extends repository<MediaItemBase>({
     });
   }
 
-  public serialize(value: Partial<MediaItemBase>): unknown {
+  public serialize(value: Partial<MediaItemBase>) {
     return super.serialize({
       ...value,
       genres: value.genres?.join(','),
       authors: value.authors?.join(','),
       narrators: value.narrators?.join(','),
       platform: value.platform ? JSON.stringify(value.platform) : null,
-    } as unknown);
+    } as Record<string, unknown>);
   }
 
   public async update(
@@ -136,6 +137,8 @@ class MediaItemRepository extends repository<MediaItemBase>({
     if (!mediaItem.id) {
       throw new Error('mediaItem.id filed is required');
     }
+
+    const slug = toSlug(mediaItem.title);
 
     return await Database.knex.transaction(async (trx) => {
       const result = {
@@ -146,7 +149,21 @@ class MediaItemRepository extends repository<MediaItemBase>({
       };
 
       await trx(this.tableName)
-        .update(this.serialize(this.stripValue(mediaItem)))
+        .update({
+          ...this.serialize(this.stripValue(mediaItem)),
+          slug: Database.knex.raw(
+            `(CASE 
+              WHEN (
+                ${Database.knex<MediaItemBase>('mediaItem')
+                  .count()
+                  .where('slug', slug)
+                  .whereNot('id', mediaItem.id)
+                  .toQuery()}) = 0 
+                THEN '${slug}' 
+              ELSE '${slug}-${randomSlugId()}' 
+            END)`
+          ),
+        })
         .where({
           id: mediaItem.id,
         });
@@ -287,6 +304,8 @@ class MediaItemRepository extends repository<MediaItemBase>({
   }
 
   public async create(mediaItem: MediaItemBaseWithSeasons) {
+    const slug = toSlug(mediaItem.title);
+
     return await Database.knex.transaction(async (trx) => {
       const result = {
         ..._.cloneDeep(mediaItem),
@@ -296,7 +315,20 @@ class MediaItemRepository extends repository<MediaItemBase>({
       };
 
       const res = await trx(this.tableName)
-        .insert(this.serialize(omitUndefinedValues(this.stripValue(mediaItem))))
+        .insert({
+          ...this.serialize(omitUndefinedValues(this.stripValue(mediaItem))),
+          slug: Database.knex.raw(
+            `(CASE 
+              WHEN (
+                ${Database.knex<MediaItemBase>('mediaItem')
+                  .count()
+                  .where('slug', slug)
+                  .toQuery()}) = 0 
+                THEN '${slug}' 
+              ELSE '${slug}-${randomSlugId()}' 
+            END)`
+          ),
+        })
         .returning(this.primaryColumnName);
 
       result.id = res.at(0)[this.primaryColumnName];
@@ -741,8 +773,24 @@ class MediaItemRepository extends repository<MediaItemBase>({
         .value();
 
       for (const item of existingSearchResults) {
+        const slug = toSlug(item.title);
+
         await trx(this.tableName)
-          .update(this.serialize(this.stripValue(item)))
+          .update({
+            ...this.serialize(this.stripValue(item)),
+            slug: Database.knex.raw(
+              `(CASE 
+              WHEN (
+                ${Database.knex<MediaItemBase>('mediaItem')
+                  .count()
+                  .where('slug', slug)
+                  .whereNot('id', item.id)
+                  .toQuery()}) = 0 
+                THEN '${slug}' 
+              ELSE '${slug}-${randomSlugId()}' 
+            END)`
+            ),
+          })
           .where({ id: item.id });
       }
 
@@ -768,7 +816,22 @@ class MediaItemRepository extends repository<MediaItemBase>({
       const newItemsId = await Database.knex
         .batchInsert(
           this.tableName,
-          newItems.map((item) => this.serialize(this.stripValue(item))),
+          newItems.map(
+            (item): Record<string, unknown> => ({
+              ...this.serialize(this.stripValue(item)),
+              slug: Database.knex.raw(
+                `(CASE 
+                  WHEN (
+                    ${Database.knex('mediaItem')
+                      .count()
+                      .where('slug', toSlug(item.title))
+                      .toQuery()}) = 0 
+                    THEN '${toSlug(item.title)}' 
+                  ELSE '${toSlug(item.title)}-${randomSlugId()}' 
+                END)`
+              ),
+            })
+          ),
           30
         )
         .transacting(trx)

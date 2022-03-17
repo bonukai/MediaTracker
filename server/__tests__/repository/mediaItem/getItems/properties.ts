@@ -24,6 +24,7 @@ const mediaItem: MediaItemBase = {
   source: 'user',
   status: 'status',
   title: 'title',
+  slug: 'title',
   tmdbId: 4351,
   tmdbRating: 9.1,
   tvmazeId: 123845,
