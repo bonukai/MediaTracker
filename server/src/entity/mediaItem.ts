@@ -3,6 +3,7 @@ import { Seen } from 'src/entity/seen';
 import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason } from 'src/entity/tvseason';
 import { AudibleLang } from 'src/entity/configuration';
+import { toSlug } from 'src/slug';
 
 export type MediaType = 'tv' | 'movie' | 'book' | 'video_game' | 'audiobook';
 
@@ -178,4 +179,14 @@ export const seasonPosterPath = (
     seasonId: seasonId.toString(),
     size: size,
   })}`;
+};
+
+export const mediaItemSlug = (mediaItem: MediaItemBase) => {
+  if (mediaItem.releaseDate) {
+    return toSlug(
+      `${mediaItem.title}-${new Date(mediaItem.releaseDate).getFullYear()}`
+    );
+  } else {
+    return toSlug(mediaItem.title);
+  }
 };

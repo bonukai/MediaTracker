@@ -18,12 +18,13 @@ import {
   mediaItemColumns,
   MediaItemForProvider,
   MediaItemItemsResponse,
+  mediaItemSlug,
   MediaType,
 } from 'src/entity/mediaItem';
 import { imageRepository } from 'src/repository/image';
 import { getImageId, Image } from 'src/entity/image';
 import { subDays } from 'date-fns';
-import { randomSlugId, toSlug } from 'src/slug';
+import { randomSlugId } from 'src/slug';
 
 export type MediaItemOrderBy =
   | 'title'
@@ -138,7 +139,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       throw new Error('mediaItem.id filed is required');
     }
 
-    const slug = toSlug(mediaItem.title);
+    const slug = mediaItemSlug(mediaItem);
 
     return await Database.knex.transaction(async (trx) => {
       const result = {
@@ -304,7 +305,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
   }
 
   public async create(mediaItem: MediaItemBaseWithSeasons) {
-    const slug = toSlug(mediaItem.title);
+    const slug = mediaItemSlug(mediaItem);
 
     return await Database.knex.transaction(async (trx) => {
       const result = {
@@ -773,7 +774,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
         .value();
 
       for (const item of existingSearchResults) {
-        const slug = toSlug(item.title);
+        const slug = mediaItemSlug(item);
 
         await trx(this.tableName)
           .update({
@@ -824,10 +825,10 @@ class MediaItemRepository extends repository<MediaItemBase>({
                   WHEN (
                     ${Database.knex('mediaItem')
                       .count()
-                      .where('slug', toSlug(item.title))
+                      .where('slug', mediaItemSlug(item))
                       .toQuery()}) = 0 
-                    THEN '${toSlug(item.title)}' 
-                  ELSE '${toSlug(item.title)}-${randomSlugId()}' 
+                    THEN '${mediaItemSlug(item)}' 
+                  ELSE '${mediaItemSlug(item)}-${randomSlugId()}' 
                 END)`
               ),
             })
