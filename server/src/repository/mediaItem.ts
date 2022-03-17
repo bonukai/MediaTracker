@@ -840,9 +840,12 @@ class MediaItemRepository extends repository<MediaItemBase>({
         .transacting(trx)
         .returning('id');
 
-      const newItemsWithId: (MediaItemItemsResponse & {
+      const newItemsWithId = _.merge(
+        newItems,
+        newItemsId
+      ) as (MediaItemItemsResponse & {
         searchResultId: number;
-      })[] = _.merge(newItems, newItemsId);
+      })[];
 
       await Database.knex
         .batchInsert(
