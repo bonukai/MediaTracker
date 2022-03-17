@@ -23,6 +23,7 @@ export type MediaItemBase = ExternalIds & {
   status?: string;
   platform?: string[];
   title: string;
+  slug?: string;
   originalTitle?: string;
   poster?: string;
   backdrop?: string;
@@ -150,6 +151,7 @@ export const mediaItemColumns = <const>[
   'numberOfPages',
   'traktId',
   'audibleCountryCode',
+  'slug',
 ];
 
 export const mediaItemPosterPath = (

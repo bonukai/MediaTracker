@@ -9,6 +9,7 @@ const mediaItems: MediaItemBase[] = [
   {
     id: 0,
     title: 'title 0',
+    slug: 'title-0',
     mediaType: 'movie',
     source: 'user',
     lockedAt: new Date(2000, 10, 2).getTime(),
@@ -16,6 +17,7 @@ const mediaItems: MediaItemBase[] = [
   {
     id: 1,
     title: 'title 1',
+    slug: 'title-1',
     mediaType: 'movie',
     source: 'user',
     lockedAt: null,
@@ -23,6 +25,7 @@ const mediaItems: MediaItemBase[] = [
   {
     id: 2,
     title: 'title 2',
+    slug: 'title-2',
     mediaType: 'movie',
     source: 'user',
     lockedAt: new Date().getTime() - 23 * 60 * 60 * 1000,
@@ -30,6 +33,7 @@ const mediaItems: MediaItemBase[] = [
   {
     id: 3,
     title: 'title 3',
+    slug: 'title-3',
     mediaType: 'movie',
     source: 'user',
     lockedAt: new Date().getTime(),

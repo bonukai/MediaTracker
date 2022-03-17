@@ -11,6 +11,7 @@ import { mediaItemRepository } from 'src/repository/mediaItem';
 import { watchlistRepository } from 'src/repository/watchlist';
 import { seenRepository } from 'src/repository/seen';
 import { userRatingRepository } from 'src/repository/userRating';
+import { toSlug } from 'src/slug';
 
 /**
  * @openapi_tags GoodreadsImport
@@ -57,6 +58,7 @@ export const importFromGoodreadsRss = async (
   const mediaItems = items?.map(
     (item): MediaItemBase => ({
       title: item.title,
+      // slug: toSlug(item.title),
       mediaType: 'book',
       source: 'goodreads',
       goodreadsId: item.book_id,

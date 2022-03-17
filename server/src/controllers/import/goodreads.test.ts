@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Config } from 'src/config';
 
 import { importFromGoodreadsRss } from 'src/controllers/import/goodreads';
 import { Database } from 'src/dbconfig';
@@ -8,7 +7,6 @@ import { Seen } from 'src/entity/seen';
 import { User } from 'src/entity/user';
 import { UserRating } from 'src/entity/userRating';
 import { Watchlist } from 'src/entity/watchlist';
-import { logger } from 'src/logger';
 import { clearDatabase, runMigrations } from '__tests__/__utils__/utils';
 import GoodReadsXML from './goodreads.xml';
 

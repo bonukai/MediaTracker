@@ -4,6 +4,7 @@ import { clearDatabase, runMigrations } from '__tests__/__utils__/utils';
 const mediaItem = {
   id: 1,
   title: 'title',
+  slug: 'title',
   source: 'user',
 };
 

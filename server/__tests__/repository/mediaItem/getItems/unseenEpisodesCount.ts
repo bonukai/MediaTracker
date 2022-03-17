@@ -85,6 +85,7 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
     mediaType: 'tv',
     source: 'user',
     title: 'title',
+    slug: 'title',
     seasons: [
       {
         id: 1,
@@ -139,21 +140,24 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
     lastTimeUpdated: new Date().getTime(),
     mediaType: 'tv',
     source: 'user',
-    title: 'title',
+    title: 'title2',
+    slug: 'title2',
   },
   {
     id: 3,
     lastTimeUpdated: new Date().getTime(),
     mediaType: 'movie',
     source: 'user',
-    title: 'title',
+    title: 'title3',
+    slug: 'title3',
   },
   {
     id: 4,
     lastTimeUpdated: new Date().getTime(),
     mediaType: 'tv',
     source: 'user',
-    title: 'title',
+    title: 'title4',
+    slug: 'title4',
     seasons: [
       {
         id: 3,
@@ -189,7 +193,8 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
     lastTimeUpdated: new Date().getTime(),
     mediaType: 'tv',
     source: 'user',
-    title: 'title',
+    title: 'title5',
+    slug: 'title5',
     seasons: [
       {
         id: 4,
