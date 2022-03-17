@@ -8,7 +8,8 @@
     "recommendations": [
       "bradlc.vscode-tailwindcss",
       "esbenp.prettier-vscode",
-      "dbaeumer.vscode-eslint"
+      "dbaeumer.vscode-eslint",
+      "bierner.lit-html"
     ]
   },
   "settings": {
