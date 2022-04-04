@@ -83,7 +83,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
     .select(generateColumnNames('mediaItem', mediaItemColumns))
     .select({
       lastSeenAt: 'lastSeen.date',
-      lastSeenAt2: 'lastSeen2.date',
+      'lastSeen2.mediaItemId': 'lastSeen2.mediaItemId',
       numberOfEpisodes: 'numberOfEpisodes',
       unseenEpisodesCount: 'unseenEpisodesCount',
       seenEpisodesCount: 'seenEpisodesCount',
@@ -575,7 +575,7 @@ const mapRawResult = (row: any): MediaItemItemsResponse => {
     seen:
       row['mediaItem.mediaType'] === 'tv'
         ? row.numberOfEpisodes > 0 && !row.unseenEpisodesCount
-        : row['lastSeenAt2'] != undefined,
+        : Boolean(row['lastSeen2.mediaItemId']),
 
     onWatchlist: Boolean(row['watchlist.id']),
     unseenEpisodesCount: row.unseenEpisodesCount || 0,

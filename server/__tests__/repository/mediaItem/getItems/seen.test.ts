@@ -75,6 +75,11 @@ const seenEpisodes: Seen[] = [
     userId: 2,
     type: 'seen',
   },
+  {
+    mediaItemId: 6,
+    userId: 1,
+    type: 'seen',
+  },
 ];
 
 const mediaItem: MediaItemBaseWithSeasons[] = [
@@ -222,6 +227,14 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
       },
     ],
   },
+  {
+    id: 6,
+    lastTimeUpdated: new Date().getTime(),
+    mediaType: 'movie',
+    source: 'user',
+    title: 'title6',
+    slug: 'title6',
+  },
 ];
 
 const seenUser1 = {
@@ -230,6 +243,7 @@ const seenUser1 = {
   3: true,
   4: true,
   5: false,
+  6: true,
 };
 
 const seenUser2 = {
@@ -238,6 +252,7 @@ const seenUser2 = {
   3: false,
   4: false,
   5: true,
+  6: false,
 };
 
 describe('seen', () => {

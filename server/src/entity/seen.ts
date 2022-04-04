@@ -1,6 +1,6 @@
 export type Seen = {
   id?: number;
-  date: number;
+  date?: number;
   mediaItemId: number;
   episodeId?: number;
   userId: number;
