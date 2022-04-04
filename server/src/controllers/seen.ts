@@ -48,7 +48,7 @@ export class SeenController {
       if (lastSeenAt === 'now') {
         date = new Date();
       } else if (lastSeenAt === 'unknown') {
-        date = new Date(0);
+        date = null;
       } else if (lastSeenAt === 'release_date') {
         if (episodeId) {
           const episode = await tvEpisodeRepository.findOne({
@@ -108,7 +108,7 @@ export class SeenController {
           date:
             lastSeenAt === 'release_date'
               ? new Date(episode.releaseDate).getTime()
-              : date?.getTime() || 0,
+              : date?.getTime() || null,
           duration:
             episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
           type: 'seen',
@@ -138,7 +138,7 @@ export class SeenController {
           userId: userId,
           mediaItemId: mediaItemId,
           episodeId: episodeId,
-          date: date?.getTime() || 0,
+          date: date?.getTime() || null,
           type: 'seen',
         });
       } else if (seasonId) {
@@ -159,7 +159,7 @@ export class SeenController {
                 date:
                   lastSeenAt === 'release_date'
                     ? new Date(episode.releaseDate).getTime()
-                    : date?.getTime() || 0,
+                    : date?.getTime() || null,
                 duration:
                   episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
                 type: 'seen',
@@ -184,7 +184,7 @@ export class SeenController {
                   date:
                     lastSeenAt === 'release_date'
                       ? new Date(episode.releaseDate).getTime()
-                      : date?.getTime() || 0,
+                      : date?.getTime() || null,
                   duration:
                     episode.runtime * 60 * 1000 ||
                     mediaItem.runtime * 60 * 1000,
@@ -197,7 +197,7 @@ export class SeenController {
             userId: userId,
             mediaItemId: mediaItemId,
             episodeId: null,
-            date: date?.getTime() || 0,
+            date: date?.getTime() || null,
             type: 'seen',
           });
 
@@ -205,7 +205,7 @@ export class SeenController {
             userId: userId,
             mediaItemId: mediaItemId,
             episodeId: null,
-            date: date?.getTime() || 0,
+            date: date?.getTime() || null,
           });
         }
       }

@@ -787,5 +787,46 @@ describe('migrations', () => {
     ).rejects.toThrowError('UNIQUE');
   });
 
+
+  test('20220404141200_seenDateToNull', async () => {
+    const seen = {
+      id: 9999,
+      userId: InitialData.user.id,
+      mediaItemId: InitialData.mediaItem.id,
+      date: 0,
+      type: 'seen',
+    };
+
+    const seen2 = {
+      id: 99999,
+      userId: InitialData.user.id,
+      mediaItemId: InitialData.mediaItem.id,
+      date: 0.0,
+      type: 'seen',
+    };
+
+    await Database.knex('seen').insert(seen);
+    await Database.knex('seen').insert(seen2);
+
+    await Database.knex.migrate.up({
+      name: `20220404141200_seenDateToNull.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20220404141200_seenDateToNull.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    const resSeen = await Database.knex('seen').where('id', seen.id).first();
+    const resSeen2 = await Database.knex('seen').where('id', seen2.id).first();
+
+    expect(resSeen.date).toBeNull();
+    expect(resSeen2.date).toBeNull();
+  });
   afterAll(clearDatabase);
 });
