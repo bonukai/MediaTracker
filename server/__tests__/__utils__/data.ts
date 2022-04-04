@@ -7,6 +7,86 @@ import { TvSeason } from 'src/entity/tvseason';
 import { UserRating } from 'src/entity/userRating';
 import { Watchlist } from 'src/entity/watchlist';
 
+export class Data {
+  static tvShow = {
+    id: 1,
+    lastTimeUpdated: new Date().getTime(),
+    mediaType: 'tv',
+    source: 'user',
+    title: 'title',
+    slug: 'title',
+    poster: 'posterUrl',
+    backdrop: 'backdropUrl',
+    runtime: 51,
+  };
+
+  static season = {
+    id: 1,
+    seasonNumber: 1,
+    title: 'Season 1',
+    isSpecialSeason: false,
+    tvShowId: this.tvShow.id,
+    numberOfEpisodes: 3,
+  };
+
+  static episode = {
+    episodeNumber: 1,
+    id: 1,
+    isSpecialEpisode: false,
+    releaseDate: '2000-04-01',
+    seasonAndEpisodeNumber: 1001,
+    seasonId: this.season.id,
+    seasonNumber: 1,
+    title: 'Episode 1',
+    tvShowId: this.tvShow.id,
+  };
+
+  static episode2 = {
+    episodeNumber: 2,
+    id: 2,
+    isSpecialEpisode: false,
+    releaseDate: '2000-04-02',
+    seasonAndEpisodeNumber: 1002,
+    seasonId: this.season.id,
+    seasonNumber: 1,
+    title: 'Episode 2',
+    tvShowId: this.tvShow.id,
+  };
+
+  static episode3 = {
+    episodeNumber: 3,
+    id: 3,
+    isSpecialEpisode: false,
+    releaseDate: '2000-04-03',
+    seasonAndEpisodeNumber: 1003,
+    seasonId: this.season.id,
+    seasonNumber: 1,
+    title: 'Episode 3',
+    tvShowId: this.tvShow.id,
+  };
+
+  static movie = {
+    id: 2,
+    lastTimeUpdated: new Date().getTime(),
+    mediaType: 'movie',
+    source: 'user',
+    title: 'movie',
+    slug: 'movie',
+    poster: 'posterUrl',
+    backdrop: 'backdropUrl',
+    runtime: 124,
+  };
+
+  static user = {
+    id: 1,
+    name: 'admin',
+    slug: 'admin',
+    admin: true,
+    password: 'password',
+    publicReviews: false,
+  };
+}
+
 export class InitialData {
   static user = {
     id: 1,
