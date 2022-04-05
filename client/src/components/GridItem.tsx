@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import { t, Trans } from '@lingui/macro';
+import { parseISO } from 'date-fns';
 
 import { addToWatchlist, removeFromWatchlist } from 'src/api/details';
 import { BadgeRating } from 'src/components/StarRating';
@@ -146,7 +147,7 @@ export const GridItem: FunctionComponent<{
           <div className="flex justify-between text-gray-500 dark:text-gray-400">
             <span>
               {mediaItem.releaseDate &&
-                new Date(mediaItem.releaseDate).getFullYear()}
+                parseISO(mediaItem.releaseDate).getFullYear()}
             </span>
 
             <span>{mediaTypeString[mediaItem.mediaType]}</span>
@@ -174,13 +175,13 @@ export const GridItem: FunctionComponent<{
                 <>
                   {formatEpisodeNumber(mediaItem.upcomingEpisode)}{' '}
                   <RelativeTime
-                    to={new Date(mediaItem.upcomingEpisode.releaseDate)}
+                    to={parseISO(mediaItem.upcomingEpisode.releaseDate)}
                   />
                 </>
               )}
               {mediaItem.mediaType !== 'tv' && mediaItem.releaseDate && (
                 <Trans>
-                  Release <RelativeTime to={new Date(mediaItem.releaseDate)} />
+                  Release <RelativeTime to={parseISO(mediaItem.releaseDate)} />
                 </Trans>
               )}
             </div>
@@ -192,13 +193,13 @@ export const GridItem: FunctionComponent<{
                 <>
                   {formatEpisodeNumber(mediaItem.lastAiredEpisode)}{' '}
                   <RelativeTime
-                    to={new Date(mediaItem.lastAiredEpisode.releaseDate)}
+                    to={parseISO(mediaItem.lastAiredEpisode.releaseDate)}
                   />
                 </>
               )}
               {mediaItem.mediaType !== 'tv' && mediaItem.releaseDate && (
                 <Trans>
-                  Released <RelativeTime to={new Date(mediaItem.releaseDate)} />
+                  Released <RelativeTime to={parseISO(mediaItem.releaseDate)} />
                 </Trans>
               )}
             </div>

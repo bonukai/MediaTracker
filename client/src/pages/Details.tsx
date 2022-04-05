@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import clsx from 'clsx';
-import { formatDuration, intervalToDuration } from 'date-fns';
+import { formatDuration, intervalToDuration, parseISO } from 'date-fns';
 import { Plural, plural, t, Trans } from '@lingui/macro';
 
 import {
@@ -268,7 +268,7 @@ export const DetailsPage: FunctionComponent = () => {
                 <Trans>Release date</Trans>:{' '}
               </span>
               <span>
-                {new Date(mediaItem.releaseDate).toLocaleDateString()}
+                {parseISO(mediaItem.releaseDate).toLocaleDateString()}
               </span>
             </div>
           )}
@@ -542,7 +542,7 @@ export const DetailsPage: FunctionComponent = () => {
             <Trans>Next episode</Trans>{' '}
             {mediaItem.upcomingEpisode.releaseDate && (
               <RelativeTime
-                to={new Date(mediaItem.upcomingEpisode.releaseDate)}
+                to={parseISO(mediaItem.upcomingEpisode.releaseDate)}
               />
             )}
             : {formatEpisodeNumber(mediaItem.upcomingEpisode)}{' '}

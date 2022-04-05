@@ -1,3 +1,4 @@
+import { parseISO } from 'date-fns';
 import { Knex } from 'knex';
 import { randomSlugId, toSlug } from 'src/slug';
 
@@ -59,7 +60,7 @@ export async function up(knex: Knex): Promise<void> {
 
   for (const mediaItem of mediaItems) {
     const releaseYear = mediaItem.releaseDate
-      ? new Date(mediaItem.releaseDate).getFullYear()
+      ? parseISO(mediaItem.releaseDate).getFullYear()
       : undefined;
 
     const slug = toSlug(

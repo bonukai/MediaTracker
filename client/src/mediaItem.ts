@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { parseISO } from 'date-fns';
 
 import {
   MediaItemDetailsResponse,
@@ -37,7 +38,7 @@ export const hasBeenReleased = (
   mediaItem: TvEpisode | MediaItemDetailsResponse | MediaItemItemsResponse
 ) => {
   const releaseDate = mediaItem.releaseDate;
-  return releaseDate && new Date(releaseDate) <= new Date();
+  return releaseDate && parseISO(releaseDate) <= new Date();
 };
 
 export const useSelectedSeason = (mediaItem?: MediaItemDetailsResponse) => {

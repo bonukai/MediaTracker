@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import chalk from 'chalk';
-import { addHours, subHours } from 'date-fns';
+import { addHours, parseISO, subHours } from 'date-fns';
 import { plural, t } from '@lingui/macro';
 
 import { MediaItemBase } from 'src/entity/mediaItem';
@@ -36,7 +36,7 @@ const notificationForFutureItems = async () => {
       async () =>
         (await checkIfNotificationHasBeenSent(mediaItem)) &&
         (await sendNotificationForMediaItem(mediaItem)),
-      new Date(mediaItem.releaseDate)
+      parseISO(mediaItem.releaseDate)
     );
   }
 };
@@ -82,7 +82,7 @@ const notificationForFutureEpisodes = async () => {
               groupedByTvShow.filter(checkIfNotificationHasBeenSent)
             )
           ),
-        new Date(groupedByTvShow[0].releaseDate)
+        parseISO(groupedByTvShow[0].releaseDate)
       );
     }
   }

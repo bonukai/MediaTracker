@@ -6,6 +6,7 @@ import listPlugin from '@fullcalendar/list';
 import allLocales from '@fullcalendar/core/locales-all';
 import { Link } from 'react-router-dom';
 import { useLingui } from '@lingui/react';
+import { parseISO } from 'date-fns';
 
 import { MediaItemItemsResponse, MediaType, TvEpisode } from 'mediatracker-api';
 import { mediaTrackerApi } from 'src/api/api';
@@ -29,7 +30,7 @@ export const CalendarPage: FunctionComponent = () => {
       data?.episodes.map(
         (episode: TvEpisode & { tvShow: MediaItemItemsResponse }) => ({
           title: episode.tvShow.title,
-          date: new Date(episode.releaseDate),
+          date: parseISO(episode.releaseDate),
           allDay: true,
           backgroundColor: episodeColor(episode),
           borderColor: episodeColor(episode),
@@ -50,7 +51,7 @@ export const CalendarPage: FunctionComponent = () => {
     () =>
       data?.items.map((mediaItem) => ({
         title: mediaItem.title,
-        date: new Date(mediaItem.releaseDate),
+        date: parseISO(mediaItem.releaseDate),
         allDay: true,
         backgroundColor: eventColor(mediaItem.mediaType),
         borderColor: eventColor(mediaItem.mediaType),

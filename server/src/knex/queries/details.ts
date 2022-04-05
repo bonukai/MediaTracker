@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { parseISO } from 'date-fns';
 
 import { MediaItemBase, MediaItemDetailsResponse } from 'src/entity/mediaItem';
 import { TvEpisode, TvEpisodeFilters } from 'src/entity/tvepisode';
@@ -155,13 +156,13 @@ export const getDetailsKnex = async (params: {
     .filter(TvEpisodeFilters.withReleaseDateEpisodes)
     .filter(TvEpisodeFilters.nonSpecialEpisodes)
     .filter(TvEpisodeFilters.unreleasedEpisodes)
-    .minBy((episode) => new Date(episode.releaseDate).getTime());
+    .minBy((episode) => parseISO(episode.releaseDate).getTime());
 
   const lastAiredEpisode = _(episodes)
     .filter(TvEpisodeFilters.withReleaseDateEpisodes)
     .filter(TvEpisodeFilters.nonSpecialEpisodes)
     .filter(TvEpisodeFilters.releasedEpisodes)
-    .maxBy((episode) => new Date(episode.releaseDate).getTime());
+    .maxBy((episode) => parseISO(episode.releaseDate).getTime());
 
   const unseenEpisodesCount = _(episodes)
     .filter(TvEpisodeFilters.nonSpecialEpisodes)

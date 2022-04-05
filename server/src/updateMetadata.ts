@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import chalk from 'chalk';
 import { plural, t } from '@lingui/macro';
+import { parseISO } from 'date-fns';
 
 import {
   MediaItemBase,
@@ -186,7 +187,7 @@ const sendNotifications = async (
 
   if (
     newMediaItem.releaseDate !== oldMediaItem.releaseDate &&
-    new Date(newMediaItem.releaseDate) > new Date()
+    parseISO(newMediaItem.releaseDate) > new Date()
   ) {
     await send({
       message: t`Release date changed for ${newMediaItem.title}: "${newMediaItem.releaseDate}"`,
@@ -231,11 +232,11 @@ const sendNotifications = async (
         ];
 
       if (newSeason.releaseDate) {
-        if (new Date(newSeason.releaseDate) > new Date())
+        if (parseISO(newSeason.releaseDate) > new Date())
           await send({
             message: t`New season of ${
               newMediaItem.title
-            } will be released at ${new Date(
+            } will be released at ${parseISO(
               newSeason.releaseDate
             ).toLocaleDateString()}`,
             filter: (user) => user.sendNotificationWhenNumberOfSeasonsChanges,
@@ -255,12 +256,12 @@ const sendNotifications = async (
       if (
         oldMediaItemLastSeason.releaseDate !==
           newMediaItemLastSeason.releaseDate &&
-        new Date(newMediaItemLastSeason.releaseDate) > new Date()
+        parseISO(newMediaItemLastSeason.releaseDate) > new Date()
       ) {
         await send({
           message: t`Season ${newMediaItemLastSeason.seasonNumber} of ${
             newMediaItem.title
-          } will be released at ${new Date(
+          } will be released at ${parseISO(
             newMediaItemLastSeason.releaseDate
           ).toLocaleDateString()}`,
           filter: (user) => user.sendNotificationWhenNumberOfSeasonsChanges,
@@ -360,8 +361,8 @@ const shouldUpdate = (mediaItem: MediaItemBase) => {
   if (
     mediaItem.mediaType !== 'tv' &&
     mediaItem.releaseDate &&
-    new Date(mediaItem.releaseDate) < new Date() &&
-    new Date(mediaItem.releaseDate) < new Date(mediaItem.lastTimeUpdated)
+    parseISO(mediaItem.releaseDate) < new Date() &&
+    parseISO(mediaItem.releaseDate) < new Date(mediaItem.lastTimeUpdated)
   ) {
     return (
       timePassed >=

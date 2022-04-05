@@ -1,3 +1,5 @@
+import { parseISO } from 'date-fns';
+
 import { UserRating } from 'src/entity/userRating';
 import { Seen } from 'src/entity/seen';
 import { TvEpisode } from 'src/entity/tvepisode';
@@ -186,7 +188,7 @@ export const seasonPosterPath = (
 export const mediaItemSlug = (mediaItem: MediaItemBase) => {
   if (mediaItem.releaseDate) {
     return toSlug(
-      `${mediaItem.title}-${new Date(mediaItem.releaseDate).getFullYear()}`
+      `${mediaItem.title}-${parseISO(mediaItem.releaseDate).getFullYear()}`
     );
   } else {
     return toSlug(mediaItem.title);

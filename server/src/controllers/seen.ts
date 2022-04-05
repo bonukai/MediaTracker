@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { parseISO } from 'date-fns';
 
 import { createExpressRoute } from 'typescript-routes-to-openapi-server';
 import { TvEpisodeFilters } from 'src/entity/tvepisode';
@@ -55,12 +56,12 @@ export class SeenController {
             id: episodeId,
           });
 
-          date = new Date(episode.releaseDate);
+          date = parseISO(episode.releaseDate);
         } else if (seasonId) {
           const season = await tvSeasonRepository.findOne({
             id: seasonId,
           });
-          date = new Date(season.releaseDate);
+          date = parseISO(season.releaseDate);
         } else {
           const mediaItem = await mediaItemRepository.findOne({
             id: mediaItemId,
@@ -69,7 +70,7 @@ export class SeenController {
             res.sendStatus(400);
             return;
           }
-          date = new Date(mediaItem.releaseDate);
+          date = parseISO(mediaItem.releaseDate);
         }
       }
     }
@@ -107,7 +108,7 @@ export class SeenController {
           episodeId: episode.id,
           date:
             lastSeenAt === 'release_date'
-              ? new Date(episode.releaseDate).getTime()
+              ? parseISO(episode.releaseDate).getTime()
               : date?.getTime() || null,
           duration:
             episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
@@ -158,7 +159,7 @@ export class SeenController {
                 episodeId: episode.id,
                 date:
                   lastSeenAt === 'release_date'
-                    ? new Date(episode.releaseDate).getTime()
+                    ? parseISO(episode.releaseDate).getTime()
                     : date?.getTime() || null,
                 duration:
                   episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
@@ -183,7 +184,7 @@ export class SeenController {
                   episodeId: episode.id,
                   date:
                     lastSeenAt === 'release_date'
-                      ? new Date(episode.releaseDate).getTime()
+                      ? parseISO(episode.releaseDate).getTime()
                       : date?.getTime() || null,
                   duration:
                     episode.runtime * 60 * 1000 ||
