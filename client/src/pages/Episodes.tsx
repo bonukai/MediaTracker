@@ -3,6 +3,7 @@ import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { Plural, t, Trans } from '@lingui/macro';
+import { parseISO } from 'date-fns';
 
 import { markAsUnseen, useDetails } from 'src/api/details';
 import { Modal } from 'src/components/Modal';
@@ -54,7 +55,7 @@ const EpisodeComponent: FunctionComponent<{
           {episode.releaseDate && (
             <>
               <div className="text-sm italic">
-                {new Date(episode.releaseDate).toLocaleDateString()}
+                {parseISO(episode.releaseDate).toLocaleDateString()}
               </div>
             </>
           )}
@@ -194,7 +195,7 @@ const SeasonComponent: FunctionComponent<{
       <div className="flex w-full">
         {season.episodes?.filter(
           (episode) =>
-            episode.releaseDate && new Date(episode.releaseDate) <= new Date()
+            episode.releaseDate && parseISO(episode.releaseDate) <= new Date()
         ).length > 0 && <BadgeRating mediaItem={mediaItem} season={season} />}
 
         <Modal
@@ -206,7 +207,7 @@ const SeasonComponent: FunctionComponent<{
                 season.episodes?.filter(
                   (episode) =>
                     episode.releaseDate &&
-                    new Date(episode.releaseDate) <= new Date()
+                    parseISO(episode.releaseDate) <= new Date()
                 ).length === 0 && 'opacity-0 pointer-events-none'
               )}
             >
