@@ -539,7 +539,7 @@ export const DetailsPage: FunctionComponent = () => {
       {mediaItem.upcomingEpisode && (
         <>
           <div className="mt-3 font-bold">
-            <Trans>Next episode</Trans>
+            <Trans>Next episode</Trans>{' '}
             {mediaItem.upcomingEpisode.releaseDate && (
               <RelativeTime
                 to={new Date(mediaItem.upcomingEpisode.releaseDate)}
