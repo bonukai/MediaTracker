@@ -116,11 +116,18 @@ export const SelectSeenDateComponent: FunctionComponent<{
         >
           <Trans>I do not remember</Trans>
         </div>
-        <div className="m-2">
+        <form
+          className="m-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSelected({ date: selectedDate });
+          }}
+        >
           <input
             className="mx-1 w-min"
             type="date"
             value={format(selectedDate, 'yyyy-MM-dd')}
+            max={format(new Date(), 'yyyy-MM-dd')}
             onChange={(e) => {
               if (!e.target.value) {
                 return;
@@ -144,6 +151,12 @@ export const SelectSeenDateComponent: FunctionComponent<{
             className="mx-1 w-min"
             type="time"
             value={format(selectedDate, 'HH:mm')}
+            max={
+              format(selectedDate, 'yyyy-MM-dd') ===
+              format(new Date(), 'yyyy-MM-dd')
+                ? format(new Date(), 'HH:mm')
+                : undefined
+            }
             onChange={(e) => {
               if (!e.target.value) {
                 return;
@@ -163,13 +176,10 @@ export const SelectSeenDateComponent: FunctionComponent<{
               );
             }}
           />
-          <div
-            className="btn"
-            onClick={() => onSelected({ date: selectedDate })}
-          >
+          <button className="btn">
             <Trans>Custom date</Trans>
-          </div>
-        </div>
+          </button>
+        </form>
         <div className="m-2 btn-red" onClick={() => closeModal()}>
           <Trans>Cancel</Trans>
         </div>

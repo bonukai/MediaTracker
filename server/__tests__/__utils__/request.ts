@@ -11,7 +11,10 @@ export const request = (
     pathParams: Record<string, unknown>;
   }
 ) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<{
+    statusCode: number;
+    data?: unknown;
+  }>((resolve, reject) => {
     handler(
       {
         user: args.userId,
@@ -20,12 +23,12 @@ export const request = (
       {
         send: (data: unknown) =>
           resolve({
-            status: 200,
+            statusCode: 200,
             data: data,
           }),
         sendStatus: (status: number) =>
           resolve({
-            status: status,
+            statusCode: status,
           }),
       },
       reject

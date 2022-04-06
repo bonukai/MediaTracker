@@ -9,6 +9,7 @@ import { tvSeasonRepository } from 'src/repository/season';
 import { seenRepository } from 'src/repository/seen';
 import { watchlistRepository } from 'src/repository/watchlist';
 import { Seen } from 'src/entity/seen';
+import { logger } from 'src/logger';
 
 /**
  * @openapi_tags Seen
@@ -41,7 +42,17 @@ export class SeenController {
     });
 
     if (!mediaItem) {
-      res.send(400);
+      res.sendStatus(400);
+      return;
+    }
+
+    if (date && new Date(date) > new Date()) {
+      res.sendStatus(400);
+      logger.debug(
+        `seen date (${new Date(
+          date
+        )}) is older then current date (${new Date()})`
+      );
       return;
     }
 
