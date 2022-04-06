@@ -681,90 +681,84 @@ describe('migrations', () => {
     const tvdbId = 12345;
     const traktId = 12345;
 
-    await Database.knex('mediaItem').insert({
+    const mediaItem = {
       id: 8888,
       title: 'title1234',
       slug: 'title1234',
       source: 'user',
       mediaType: 'movie',
       tvdbId: tvdbId,
-    });
+    };
 
-    await expect(
-      async () =>
-        await Database.knex('mediaItem').insert({
-          id: 88881,
-          title: 'title12345',
-          slug: 'title12345',
-          source: 'user',
-          mediaType: 'movie',
-          tvdbId: tvdbId,
-        })
-    ).rejects.toThrowError('UNIQUE');
-
-    await Database.knex('season').insert({
+    const season = {
       id: 8888,
       title: 'title1234',
       seasonNumber: 1,
       numberOfEpisodes: 1,
-      tvShowId: 1,
+      tvShowId: mediaItem.id,
       isSpecialSeason: false,
       tvdbId: tvdbId,
       traktId: traktId,
-    });
+    };
 
-    await expect(
-      async () =>
-        await Database.knex('season').insert({
-          id: 88881,
-          title: 'title12345',
-          seasonNumber: 2,
-          numberOfEpisodes: 1,
-          tvShowId: 1,
-          isSpecialSeason: false,
-          tvdbId: tvdbId,
-          traktId: 999,
-        })
-    ).rejects.toThrowError('UNIQUE');
-
-    await expect(
-      async () =>
-        await Database.knex('season').insert({
-          id: 88882,
-          title: 'title12345',
-          seasonNumber: 2,
-          numberOfEpisodes: 1,
-          tvShowId: 1,
-          isSpecialSeason: false,
-          tvdbId: 999,
-          traktId: traktId,
-        })
-    ).rejects.toThrowError('UNIQUE');
-
-    await Database.knex('episode').insert({
+    const episode = {
       id: 8888,
       title: 'title1234',
       seasonNumber: 1,
       episodeNumber: 1,
       seasonAndEpisodeNumber: 1001,
-      seasonId: 1,
-      tvShowId: 1,
+      seasonId: season.id,
+      tvShowId: mediaItem.id,
       isSpecialEpisode: false,
       tvdbId: tvdbId,
       traktId: traktId,
-    });
+    };
+
+    await Database.knex('mediaItem').insert(mediaItem);
+
+    await expect(
+      async () =>
+        await Database.knex('mediaItem').insert({
+          ...mediaItem,
+          id: 88881,
+        })
+    ).rejects.toThrowError('UNIQUE');
+
+    await Database.knex('season').insert(season);
+
+    await expect(
+      async () =>
+        await Database.knex('season').insert({
+          ...season,
+          id: 88881,
+          title: 'title12345',
+          tvdbId: tvdbId,
+          traktId: 999,
+        })
+    ).rejects.toThrowError('UNIQUE');
+
+    await expect(
+      async () =>
+        await Database.knex('season').insert({
+          ...season,
+          id: 88881,
+          title: 'title12345',
+          tvdbId: 999,
+          traktId: traktId,
+        })
+    ).rejects.toThrowError('UNIQUE');
+
+    await Database.knex('episode').insert(episode);
 
     await expect(
       async () =>
         await Database.knex('episode').insert({
+          ...episode,
           id: 88881,
-          title: 'title1234',
+          title: 'title12345',
           seasonNumber: 1,
           episodeNumber: 2,
           seasonAndEpisodeNumber: 1002,
-          seasonId: 1,
-          tvShowId: 1,
-          isSpecialEpisode: false,
           tvdbId: tvdbId,
           traktId: 999,
         })
@@ -773,14 +767,12 @@ describe('migrations', () => {
     await expect(
       async () =>
         await Database.knex('episode').insert({
+          ...episode,
           id: 88881,
-          title: 'title1234',
+          title: 'title12345',
           seasonNumber: 1,
           episodeNumber: 2,
           seasonAndEpisodeNumber: 1002,
-          seasonId: 1,
-          tvShowId: 1,
-          isSpecialEpisode: false,
           tvdbId: 999,
           traktId: traktId,
         })
@@ -828,5 +820,70 @@ describe('migrations', () => {
     expect(resSeen.date).toBeNull();
     expect(resSeen2.date).toBeNull();
   });
+
+  test('20220406165800_uniqueSeasonAndEpisodeNumbers', async () => {
+    await Database.knex.migrate.up({
+      name: `20220406165800_uniqueSeasonAndEpisodeNumbers.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20220406165800_uniqueSeasonAndEpisodeNumbers.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    const mediaItem = {
+      id: 1234567,
+      title: 'title1234567',
+      slug: 'title1234567',
+      source: 'user',
+      mediaType: 'movie',
+    };
+
+    const season = {
+      id: 12345,
+      title: 'title12345',
+      seasonNumber: 1,
+      numberOfEpisodes: 1,
+      tvShowId: mediaItem.id,
+      isSpecialSeason: false,
+    };
+
+    const episode = {
+      id: 12345,
+      title: 'title12345',
+      seasonNumber: 1,
+      episodeNumber: 1,
+      seasonAndEpisodeNumber: 1001,
+      seasonId: season.id,
+      tvShowId: mediaItem.id,
+      isSpecialEpisode: false,
+    };
+
+    await Database.knex('mediaItem').insert(mediaItem);
+    await Database.knex('season').insert(season);
+    await Database.knex('episode').insert(episode);
+
+    await expect(
+      async () =>
+        await Database.knex('episode').insert({
+          ...episode,
+          id: 123456,
+        })
+    ).rejects.toThrowError('UNIQUE');
+
+    await expect(
+      async () =>
+        await Database.knex('season').insert({
+          ...season,
+          id: 123456,
+        })
+    ).rejects.toThrowError('UNIQUE');
+  });
+
   afterAll(clearDatabase);
 });
