@@ -111,4 +111,32 @@ describe('Seen controller', () => {
     );
     await Database.knex('seen').delete();
   });
+
+  test('date older then current date should not be allowed', async () => {
+    const seenController = new SeenController();
+
+    const res = await request(seenController.add, {
+      userId: Data.user.id,
+      pathParams: {
+        mediaItemId: Data.movie.id,
+        date: new Date().getTime() + 3600000,
+      },
+    });
+
+    expect(res.statusCode).toEqual(400);
+  });
+
+  test('date earlier then current date should be allowed', async () => {
+    const seenController = new SeenController();
+
+    const res = await request(seenController.add, {
+      userId: Data.user.id,
+      pathParams: {
+        mediaItemId: Data.movie.id,
+        date: new Date().getTime() - 3600000,
+      },
+    });
+
+    expect(res.statusCode).toEqual(200);
+  });
 });
