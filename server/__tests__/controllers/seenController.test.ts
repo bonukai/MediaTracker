@@ -24,7 +24,7 @@ describe('Seen controller', () => {
 
     await request(seenController.add, {
       userId: Data.user.id,
-      pathParams: {
+      requestQuery: {
         mediaItemId: Data.movie.id,
       },
     });
@@ -46,7 +46,7 @@ describe('Seen controller', () => {
 
     await request(seenController.add, {
       userId: Data.user.id,
-      pathParams: {
+      requestQuery: {
         mediaItemId: Data.tvShow.id,
       },
     });
@@ -70,7 +70,7 @@ describe('Seen controller', () => {
 
     await request(seenController.add, {
       userId: Data.user.id,
-      pathParams: {
+      requestQuery: {
         mediaItemId: Data.tvShow.id,
         episodeId: Data.episode.id,
       },
@@ -93,7 +93,7 @@ describe('Seen controller', () => {
 
     await request(seenController.add, {
       userId: Data.user.id,
-      pathParams: {
+      requestQuery: {
         mediaItemId: Data.tvShow.id,
         lastSeenEpisodeId: Data.episode2.id,
       },
@@ -117,7 +117,7 @@ describe('Seen controller', () => {
 
     const res = await request(seenController.add, {
       userId: Data.user.id,
-      pathParams: {
+      requestQuery: {
         mediaItemId: Data.movie.id,
         date: new Date().getTime() + 3600000,
       },
@@ -131,7 +131,7 @@ describe('Seen controller', () => {
 
     const res = await request(seenController.add, {
       userId: Data.user.id,
-      pathParams: {
+      requestQuery: {
         mediaItemId: Data.movie.id,
         date: new Date().getTime() - 3600000,
       },

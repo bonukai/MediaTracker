@@ -8,7 +8,8 @@ export const request = (
   ) => void,
   args: {
     userId: number;
-    pathParams: Record<string, unknown>;
+    pathParams?: Record<string, unknown>;
+    requestQuery?: Record<string, unknown>;
   }
 ) => {
   return new Promise<{
@@ -18,7 +19,8 @@ export const request = (
     handler(
       {
         user: args.userId,
-        query: args.pathParams,
+        params: args.pathParams,
+        query: args.requestQuery,
       } as unknown as Express.Request,
       {
         send: (data: unknown) =>
