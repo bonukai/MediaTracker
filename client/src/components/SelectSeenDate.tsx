@@ -117,14 +117,14 @@ export const SelectSeenDateComponent: FunctionComponent<{
           <Trans>I do not remember</Trans>
         </div>
         <form
-          className="m-2"
+          className="flex flex-wrap mx-2 my-1 mb-2"
           onSubmit={(e) => {
             e.preventDefault();
             onSelected({ date: selectedDate });
           }}
         >
           <input
-            className="mx-1 w-min"
+            className="mx-1 mt-1 w-min"
             type="date"
             value={format(selectedDate, 'yyyy-MM-dd')}
             max={format(new Date(), 'yyyy-MM-dd')}
@@ -148,7 +148,7 @@ export const SelectSeenDateComponent: FunctionComponent<{
             }}
           />
           <input
-            className="mx-1 w-min"
+            className="mx-1 mt-1 w-min"
             type="time"
             value={format(selectedDate, 'HH:mm')}
             max={
@@ -176,8 +176,7 @@ export const SelectSeenDateComponent: FunctionComponent<{
               );
             }}
           />
-          <button className="btn">
-            <Trans>Custom date</Trans>
+          <button className="flex-grow mt-1 btn">
           </button>
         </form>
         <div className="m-2 btn-red" onClick={() => closeModal()}>
