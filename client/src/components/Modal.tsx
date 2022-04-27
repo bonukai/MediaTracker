@@ -127,11 +127,10 @@ export const Modal = <ReturnType,>(props: {
                         ref={mainContainerRef}
                         onPointerDown={onClick}
                       >
-                        <animated.div
-                          style={transitionStyles}
-                          className="rounded bg-zinc-100 dark:bg-gray-900"
-                        >
-                          {props.children(closeModal)}
+                        <animated.div style={transitionStyles}>
+                          <div className="m-2 rounded bg-zinc-100 dark:bg-gray-900">
+                            {props.children(closeModal)}
+                          </div>
                         </animated.div>
                       </animated.div>
                     )}
