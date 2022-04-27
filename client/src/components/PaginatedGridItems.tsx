@@ -48,7 +48,7 @@ const Search: FunctionComponent<{
   );
 };
 
-const Pagination: FunctionComponent<{
+export const Pagination: FunctionComponent<{
   numberOfPages: number;
   page: number;
   setPage: (value: number) => void;
