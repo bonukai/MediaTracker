@@ -4,10 +4,11 @@ import { Trans } from '@lingui/macro';
 import { setLastSeenEpisode, useDetails } from 'src/api/details';
 import { Modal } from 'src/components/Modal';
 import { SelectSeenDateComponent } from 'src/components/SelectSeenDate';
-import { MediaItemDetailsResponse, TvSeason } from 'mediatracker-api';
+import { MediaItemItemsResponse, TvSeason } from 'mediatracker-api';
+import { formatSeasonNumber } from 'src/utils';
 
 export const SelectLastSeenEpisode: FunctionComponent<{
-  tvShow: MediaItemDetailsResponse;
+  tvShow: MediaItemItemsResponse;
   season?: TvSeason;
   closeModal: (selected?: boolean) => void;
 }> = (props) => {
@@ -60,7 +61,11 @@ export const SelectLastSeenEpisode: FunctionComponent<{
         <>
           <div className="max-w-sm py-2 mx-5 text-2xl font-bold text-center">
             <Trans>
-              What is the last episode of &quot;{tvShow.title}&quot; you see?
+              What is the last episode of &quot;
+              {season
+                ? `${tvShow.title} ${formatSeasonNumber(season)}`
+                : tvShow.title}
+              &quot; you see?
             </Trans>
           </div>
           <div className="text-lg">
