@@ -56,7 +56,7 @@ export const Pagination: FunctionComponent<{
   const { numberOfPages, page, setPage } = props;
 
   return (
-    <div className="flex justify-center w-full my-3">
+    <div className="flex flex-wrap justify-center w-full my-3">
       {Array.from(new Array(numberOfPages).keys())
         .map((value) => value + 1)
         .map((_page) => (
