@@ -2,36 +2,12 @@ import { SpringConfig } from '@react-spring/core';
 import { animated, Spring, Transition } from '@react-spring/web';
 import { Portal } from 'src/components/Portal';
 import React, {
-  FunctionComponent,
   MouseEventHandler,
   useCallback,
   useEffect,
   useRef,
   useState,
 } from 'react';
-import clsx from 'clsx';
-
-export const ModalBody: FunctionComponent<{
-  title: string;
-  closeModal: () => void;
-}> = (props) => {
-  const { title, children, closeModal } = props;
-
-  return (
-    <div className="p-2 bg-yellow-100 rounded w-min">
-      <div className="flex w-full text-2xl">
-        {title}
-        <span
-          className="ml-auto cursor-pointer material-icons"
-          onClick={() => closeModal()}
-        >
-          close
-        </span>
-      </div>
-      {children}
-    </div>
-  );
-};
 
 export type ModalArgs<T> = {
   onClosed?: (arg?: T) => void;
