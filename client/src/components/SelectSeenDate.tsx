@@ -177,6 +177,7 @@ export const SelectSeenDateComponent: FunctionComponent<{
             }}
           />
           <button className="flex-grow mt-1 btn">
+            <Trans>Select date</Trans>
           </button>
         </form>
         <div className="m-2 btn-red" onClick={() => closeModal()}>
