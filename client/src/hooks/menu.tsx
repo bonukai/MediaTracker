@@ -8,6 +8,12 @@ export const useMenuComponent = <T extends string>(args: {
   const { values, initialSelection } = args;
   const [selectedValue, setSelectedValue] = useState(initialSelection);
 
+  useEffect(() => {
+    if (selectedValue === undefined && initialSelection !== undefined) {
+      setSelectedValue(initialSelection);
+    }
+  }, [selectedValue, initialSelection]);
+
   const Menu: FunctionComponent = (params) => {
     const { children } = params;
     const [showMenu, setShowMenu] = useState(false);
