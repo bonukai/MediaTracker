@@ -356,23 +356,22 @@ export const DetailsPage: FunctionComponent = () => {
                 </span>
                 {mediaItem.numberOfSeasons}
               </div>
-              <a className="underline" href={`#/seasons/${mediaItem.id}`}>
+
+              <div>
+                <span className="font-bold">
+                  <Trans>Episodes</Trans>:{' '}
+                </span>
+                {mediaItem.numberOfEpisodes}
+              </div>
+
+              {mediaItem.unseenEpisodesCount > 0 && (
                 <div>
                   <span className="font-bold">
-                    <Trans>Episodes</Trans>:{' '}
+                    <Trans>Unseen episodes</Trans>:{' '}
                   </span>
-                  {mediaItem.numberOfEpisodes}
-                  {mediaItem.unseenEpisodesCount > 0 && (
-                    <>
-                      {' '}
-                      <Plural
-                        value={mediaItem.unseenEpisodesCount}
-                        other="unseen"
-                      />
-                    </>
-                  )}
+                  {mediaItem.unseenEpisodesCount}
                 </div>
-              </a>
+              )}
             </>
           )}
 
