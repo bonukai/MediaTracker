@@ -1,6 +1,9 @@
 import { join, resolve } from 'path';
 import { homedir } from 'os';
 import { ensureDirSync, existsSync, moveSync, statSync } from 'fs-extra';
+import PackageJsonString from '../package.json';
+
+const PackageJson = JSON.parse(PackageJsonString as unknown as string);
 
 import {
   audibleLang,
@@ -18,6 +21,8 @@ const logs: string[] = [];
 export const configMigrationLogs = () => logs;
 
 export class Config {
+  static readonly version = PackageJson.version;
+
   static readonly configDirectory = join(homedir(), '.mediatracker');
 
   static readonly MIGRATIONS_DIRECTORY = resolve(__dirname, 'migrations');

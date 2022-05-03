@@ -141,7 +141,9 @@ export class Server {
               this.#config.port
             }`;
 
-            logger.info(t`MediaTracker listening at ${address}`);
+            logger.info(
+              t`MediaTracker ${Config.version} listening at ${address}`
+            );
 
             this.#server.on('close', async () => {
               logger.info(t`Server closed`);

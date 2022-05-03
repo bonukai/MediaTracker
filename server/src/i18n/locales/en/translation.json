@@ -7,6 +7,7 @@
   "Everything up to date": "Everything up to date",
   "Failed to delete unused assets files": "Failed to delete unused assets files",
   "MediaTracker listening at {address}": "MediaTracker listening at {address}",
+  "MediaTracker {0} listening at {address}": "MediaTracker {0} listening at {address}",
   "New season of {0} will be released at {1}": "New season of {0} will be released at {1}",
   "Password cannot be empty": "Password cannot be empty",
   "Passwords do not match": "Passwords do not match",

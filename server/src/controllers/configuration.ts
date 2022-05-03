@@ -33,6 +33,7 @@ export class ConfigurationController {
     responseBody: Omit<Configuration, 'id'> & {
       noUsers: boolean;
       demo: boolean;
+      version: string;
     };
   }>(async (req, res) => {
     const configuration = await configurationRepository.findOne();
@@ -42,6 +43,7 @@ export class ConfigurationController {
       ..._.omit(configuration, 'id'),
       noUsers: numberOfUsers === 0,
       demo: Config.DEMO,
+      version: Config.version,
     });
   });
 }
