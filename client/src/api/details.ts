@@ -157,6 +157,10 @@ export const removeFromWatchlist = async (args: {
   });
   await updateMediaItem(mediaItem);
   queryClient.invalidateQueries(['items']);
+  queryClient.invalidateQueries({
+    predicate: (query) =>
+      query.queryKey[0] === 'lists' && query.queryKey[2] === mediaItem.id,
+  });
 };
 
 export const addToWatchlist = async (args: {
@@ -173,6 +177,10 @@ export const addToWatchlist = async (args: {
   });
   await updateMediaItem(mediaItem);
   queryClient.invalidateQueries(['items']);
+  queryClient.invalidateQueries({
+    predicate: (query) =>
+      query.queryKey[0] === 'lists' && query.queryKey[2] === mediaItem.id,
+  });
 };
 
 export const addToProgress = async (args: {
