@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { parseISO } from 'date-fns';
+import { addHours, parseISO } from 'date-fns';
 
 import { createExpressRoute } from 'typescript-routes-to-openapi-server';
 import { TvEpisodeFilters } from 'src/entity/tvepisode';
@@ -46,7 +46,7 @@ export class SeenController {
       return;
     }
 
-    if (date && new Date(date) > new Date()) {
+    if (date && new Date(date) > addHours(new Date(), 1)) {
       res.sendStatus(400);
       logger.debug(
         `seen date (${new Date(
