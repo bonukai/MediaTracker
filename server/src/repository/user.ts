@@ -54,19 +54,21 @@ class UserRepository extends repository<User>({
       sendNotificationForEpisodesReleases,
     } = args;
     const qb = Database.knex(this.tableName)
-      .leftJoin('watchlist', 'watchlist.userId', 'user.id')
-      .where('watchlist.mediaItemId', mediaItemId)
-      .whereNotNull('watchlist.id')
+      .innerJoin('list', (qb) =>
+        qb.on('list.userId', 'user.id').onVal('list.isWatchlist', true)
+      )
+      .leftJoin('listItem', 'listItem.listId', 'list.id')
+      .where('listItem.mediaItemId', mediaItemId)
       .select(
         userNonSensitiveColumns.map((column) => this.tableName + '.' + column)
       );
 
     if (sendNotificationForReleases) {
-      qb.where('sendNotificationForReleases', 1);
+      qb.where('sendNotificationForReleases', true);
     }
 
     if (sendNotificationForEpisodesReleases) {
-      qb.where('sendNotificationForEpisodesReleases', 1);
+      qb.where('sendNotificationForEpisodesReleases', true);
     }
 
     return await qb;
