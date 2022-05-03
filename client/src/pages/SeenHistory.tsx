@@ -12,6 +12,7 @@ import {
   isTvShow,
   isVideoGame,
 } from 'src/utils';
+import { RemoveFromSeenHistoryButton } from 'src/components/AddAndRemoveFromSeenHistoryButton';
 
 export const SeenHistoryPage: FunctionComponent = () => {
   const { mediaItemId } = useParams();
@@ -119,6 +120,17 @@ export const SeenHistoryPage: FunctionComponent = () => {
                         {episodesMap[seenEntry.episodeId].title}
                       </Trans>
                     )}
+                  </div>
+
+                  <div className="mt-1 mb-3">
+                    <RemoveFromSeenHistoryButton
+                      mediaItem={mediaItem}
+                      episode={
+                        (seenEntry.episodeId &&
+                          episodesMap[seenEntry.episodeId]) ||
+                        undefined
+                      }
+                    />
                   </div>
                 </li>
               ))}

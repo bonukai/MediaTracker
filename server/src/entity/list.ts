@@ -1,13 +1,31 @@
+export type ListPrivacy = 'public' | 'private' | 'friends';
+export type ListSortOrder = 'asc' | 'desc';
+export type ListSortBy =
+  | 'my-rating'
+  | 'rank'
+  | 'recently-added'
+  | 'recently-watched'
+  | 'recently-aired'
+  | 'next-airing'
+  | 'release-date'
+  | 'runtime'
+  | 'title';
+
 export type List = {
   id: number;
   name: string;
+  slug: string;
   description?: string;
-  privacy: 'public' | 'private';
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  privacy: ListPrivacy;
+  sortBy?: ListSortBy;
+  sortOrder?: ListSortOrder;
   createdAt: number;
   updatedAt: number;
   userId: number;
+  rank?: number;
+  allowComments?: boolean;
+  displayNumbers?: boolean;
+  isWatchlist: boolean;
 };
 
 export type ListItem = {
@@ -17,6 +35,7 @@ export type ListItem = {
   seasonId?: number;
   episodeId?: number;
   addedAt: number;
+  rank: number;
 };
 
 export const listColumns = <const>[

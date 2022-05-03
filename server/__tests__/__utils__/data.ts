@@ -1,11 +1,11 @@
 import { AccessToken } from 'src/entity/accessToken';
 import { Configuration } from 'src/entity/configuration';
+import { List } from 'src/entity/list';
 import { NotificationPlatformsCredentials } from 'src/entity/notificationPlatformsCredentials';
 import { NotificationsHistory } from 'src/entity/notificationsHistory';
 import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason } from 'src/entity/tvseason';
 import { UserRating } from 'src/entity/userRating';
-import { Watchlist } from 'src/entity/watchlist';
 
 export class Data {
   static tvShow = {
@@ -17,7 +17,9 @@ export class Data {
     slug: 'title',
     poster: 'posterUrl',
     backdrop: 'backdropUrl',
+    releaseDate: '2002-05-07',
     runtime: 51,
+    tmdbId: 754234,
   };
 
   static season = {
@@ -27,6 +29,7 @@ export class Data {
     isSpecialSeason: false,
     tvShowId: this.tvShow.id,
     numberOfEpisodes: 3,
+    tmdbId: 82146,
   };
 
   static episode = {
@@ -39,6 +42,7 @@ export class Data {
     seasonNumber: 1,
     title: 'Episode 1',
     tvShowId: this.tvShow.id,
+    tmdbId: 74431,
   };
 
   static episode2 = {
@@ -74,16 +78,87 @@ export class Data {
     slug: 'movie',
     poster: 'posterUrl',
     backdrop: 'backdropUrl',
+    releaseDate: '2001-04-12',
+    tmdbId: 123456,
     runtime: 124,
   };
 
+  static videoGame = {
+    id: 3,
+    lastTimeUpdated: new Date().getTime(),
+    mediaType: 'video_game',
+    source: 'user',
+    title: 'video_game',
+    slug: 'video_game',
+    poster: 'posterUrl',
+    backdrop: 'backdropUrl',
+  };
+
+  static book = {
+    id: 4,
+    lastTimeUpdated: new Date().getTime(),
+    mediaType: 'book',
+    source: 'user',
+    title: 'book',
+    slug: 'book',
+    poster: 'posterUrl',
+    backdrop: 'backdropUrl',
+  };
+
   static user = {
-    id: 1,
+    id: 0,
     name: 'admin',
     slug: 'admin',
     admin: true,
     password: 'password',
     publicReviews: false,
+  };
+
+  static user2 = {
+    id: 1,
+    name: 'user',
+    slug: 'user',
+    admin: false,
+    password: 'password',
+    publicReviews: false,
+  };
+
+  static watchlist: List = {
+    id: 0,
+    createdAt: new Date().getTime(),
+    updatedAt: new Date().getTime(),
+    isWatchlist: true,
+    name: 'Watchlist',
+    slug: 'Watchlist',
+    privacy: 'private',
+    userId: this.user.id,
+    allowComments: false,
+    displayNumbers: false,
+    sortBy: 'rank',
+    sortOrder: 'asc',
+    rank: 0,
+  };
+
+  static list: List = {
+    id: 1,
+    createdAt: new Date().getTime(),
+    updatedAt: new Date().getTime(),
+    isWatchlist: false,
+    name: 'list',
+    slug: 'list',
+    privacy: 'private',
+    userId: this.user.id,
+    allowComments: false,
+    displayNumbers: false,
+    sortBy: 'rank',
+    sortOrder: 'asc',
+    rank: 1,
+  };
+
+  static listUser2: List = {
+    ...this.list,
+    userId: this.user2.id,
+    id: 2,
   };
 }
 
@@ -139,7 +214,7 @@ export class InitialData {
     runtime: 41,
   };
 
-  static watchlist: Watchlist = {
+  static watchlist = {
     id: 1,
     userId: this.user.id,
     mediaItemId: this.mediaItem.id,

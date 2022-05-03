@@ -1,5 +1,5 @@
+import { listItemRepository } from 'src/repository/listItemRepository';
 import { createExpressRoute } from 'typescript-routes-to-openapi-server';
-import { watchlistRepository } from 'src/repository/watchlist';
 
 /**
  * @openapi_tags Watchlist
@@ -13,28 +13,26 @@ export class WatchlistController {
     path: '/api/watchlist';
     requestQuery: {
       mediaItemId: number;
+      seasonId?: number;
+      episodeId?: number;
     };
   }>(async (req, res) => {
     const userId = Number(req.user);
-    const { mediaItemId } = req.query;
+    const { mediaItemId, seasonId, episodeId } = req.query;
 
-    const result = await watchlistRepository.findOne({
-      userId: userId,
-      mediaItemId: mediaItemId,
-    });
-
-    if (result) {
+    if (
+      !(await listItemRepository.addItem({
+        userId,
+        mediaItemId,
+        seasonId,
+        episodeId,
+        watchlist: true,
+      }))
+    ) {
+      res.sendStatus(400);
+    } else {
       res.send();
-      return;
     }
-
-    await watchlistRepository.create({
-      userId: userId,
-      mediaItemId: mediaItemId,
-      addedAt: new Date().getTime(),
-    });
-
-    res.send();
   });
 
   /**
@@ -45,16 +43,25 @@ export class WatchlistController {
     path: '/api/watchlist';
     requestQuery: {
       mediaItemId: number;
+      seasonId?: number;
+      episodeId?: number;
     };
   }>(async (req, res) => {
     const userId = Number(req.user);
-    const { mediaItemId } = req.query;
+    const { mediaItemId, seasonId, episodeId } = req.query;
 
-    await watchlistRepository.delete({
-      userId: userId,
-      mediaItemId: mediaItemId,
-    });
-
-    res.send();
+    if (
+      !(await listItemRepository.removeItem({
+        userId,
+        mediaItemId,
+        seasonId,
+        episodeId,
+        watchlist: true,
+      }))
+    ) {
+      res.sendStatus(400);
+    } else {
+      res.send();
+    }
   });
 }

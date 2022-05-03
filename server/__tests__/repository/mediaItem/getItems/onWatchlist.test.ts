@@ -4,9 +4,8 @@ import { mediaItemRepository } from 'src/repository/mediaItem';
 import { MediaItemBaseWithSeasons } from 'src/entity/mediaItem';
 import { User } from 'src/entity/user';
 import { userRepository } from 'src/repository/user';
-import { Watchlist } from 'src/entity/watchlist';
-import { watchlistRepository } from 'src/repository/watchlist';
 import { clearDatabase, runMigrations } from '../../../__utils__/utils';
+import { listItemRepository } from 'src/repository/listItemRepository';
 
 const user: User = {
   id: 1,
@@ -26,7 +25,7 @@ const user2: User = {
   publicReviews: false,
 };
 
-const watchlist: Watchlist[] = [
+const watchlist = [
   {
     mediaItemId: 1,
     userId: user.id,
@@ -218,7 +217,14 @@ describe('onWatchlist', () => {
     await userRepository.create(user);
     await userRepository.create(user2);
     await mediaItemRepository.createMany(mediaItem);
-    await watchlistRepository.createMany(watchlist);
+
+    for (const watchlistItem of watchlist) {
+      listItemRepository.addItem({
+        watchlist: true,
+        userId: watchlistItem.userId,
+        mediaItemId: watchlistItem.mediaItemId,
+      });
+    }
   });
 
   afterAll(clearDatabase);

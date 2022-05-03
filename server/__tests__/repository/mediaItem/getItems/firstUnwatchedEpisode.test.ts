@@ -189,7 +189,7 @@ describe('firstUnwatchedEpisode', () => {
       mediaItemId: 1,
     });
 
-    expect(fetchedMediaItem.firstUnwatchedEpisode).toEqual({
+    expect(fetchedMediaItem.firstUnwatchedEpisode).toMatchObject({
       ...firstUnwatchedEpisode,
       userRating: undefined,
       seenHistory: undefined,

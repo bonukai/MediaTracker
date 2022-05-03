@@ -4,14 +4,13 @@ import axios from 'axios';
 import _ from 'lodash';
 
 import { MediaItemBase } from 'src/entity/mediaItem';
-import { Watchlist } from 'src/entity/watchlist';
 import { Seen } from 'src/entity/seen';
 import { UserRating } from 'src/entity/userRating';
 import { mediaItemRepository } from 'src/repository/mediaItem';
-import { watchlistRepository } from 'src/repository/watchlist';
 import { seenRepository } from 'src/repository/seen';
 import { userRatingRepository } from 'src/repository/userRating';
-import { toSlug } from 'src/slug';
+import { listItemRepository } from 'src/repository/listItemRepository';
+import { listRepository } from 'src/repository/list';
 
 /**
  * @openapi_tags GoodreadsImport
@@ -83,13 +82,10 @@ export const importFromGoodreadsRss = async (
 
   const toRead = items
     ?.filter((item) => item.user_shelves === 'to-read')
-    .map(
-      (item): Watchlist => ({
-        mediaItemId: mediaItemByGoodreadsIdMap[item.book_id].id,
-        userId: userId,
-        addedAt: new Date(item.user_date_added).getTime(),
-      })
-    );
+    .map((item) => ({
+      mediaItemId: mediaItemByGoodreadsIdMap[item.book_id].id,
+      addedAt: new Date(item.user_date_added).getTime(),
+    }));
 
   const currentlyReading = items
     ?.filter((item) => item.user_shelves === 'currently-reading')
@@ -126,13 +122,52 @@ export const importFromGoodreadsRss = async (
       })
     );
 
+  const lists = _.groupBy(
+    items.filter(
+      (item) =>
+        item.user_shelves !== 'to-read' &&
+        item.user_shelves !== 'currently-reading' &&
+        item.user_shelves !== '' &&
+        item.user_shelves
+    ),
+    'user_shelves'
+  );
+
   const seenUniqueBy = (value: Seen) => ({
     mediaItemId: value.mediaItemId,
     date: value.date,
     type: value.type,
   });
 
-  await watchlistRepository.createMany(toRead);
+  for (const [listName, listItems] of Object.entries(lists)) {
+    const newListName = `Goodreads-${listName}`;
+
+    const list =
+      (await listRepository.findOne({
+        name: newListName,
+      })) ||
+      (await listRepository.create({
+        name: newListName,
+        userId: userId,
+      }));
+
+    for (const listItem of listItems) {
+      await listItemRepository.addItem({
+        listId: list.id,
+        userId: userId,
+        mediaItemId: mediaItemByGoodreadsIdMap[listItem.book_id].id,
+      });
+    }
+  }
+
+  for (const listItem of toRead) {
+    await listItemRepository.addItem({
+      watchlist: true,
+      userId: userId,
+      mediaItemId: listItem.mediaItemId,
+    });
+  }
+
   await seenRepository.createManyUnique(read, seenUniqueBy);
   await seenRepository.createManyUnique(currentlyReading, seenUniqueBy);
   await userRatingRepository.createMany(rating);

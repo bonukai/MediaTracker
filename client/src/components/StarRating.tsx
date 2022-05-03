@@ -104,6 +104,7 @@ const StarRatingModal: FunctionComponent<
   const _closeModal = () => {
     closeModal();
     queryClient.invalidateQueries(['items']);
+    queryClient.invalidateQueries(['list']);
   };
 
   return (

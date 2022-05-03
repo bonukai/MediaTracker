@@ -7,8 +7,8 @@ import { UserRating, UserRatingFilters } from 'src/entity/userRating';
 import { TvSeason } from 'src/entity/tvseason';
 import { Seen, SeenFilters } from 'src/entity/seen';
 import { Database } from 'src/dbconfig';
-import { Watchlist } from 'src/entity/watchlist';
 import { Image } from 'src/entity/image';
+import { List } from 'src/entity/list';
 
 export const getDetailsKnex = async (params: {
   mediaItemId: number;
@@ -22,7 +22,7 @@ export const getDetailsKnex = async (params: {
     episodes,
     seenHistory,
     userRating,
-    watchlist,
+    lists,
     images,
     progress,
   } = await Database.knex.transaction(async (trx) => {
@@ -60,12 +60,15 @@ export const getDetailsKnex = async (params: {
       })
       .orderBy('date', 'desc');
 
-    const watchlist = await trx<Watchlist>('watchlist')
-      .where({
-        mediaItemId: mediaItemId,
-        userId: userId,
-      })
-      .first();
+    const lists: (List & {
+      seasonId: number;
+      episodeId: number;
+    })[] = await trx<List>('list')
+      .select('list.*', 'seasonId', 'episodeId')
+      .innerJoin('listItem', (qb) =>
+        qb.onVal('mediaItemId', mediaItemId).on('list.id', 'listItem.listId')
+      )
+      .where('userId', userId);
 
     const images = await trx<Image>('image').where({
       mediaItemId: mediaItemId,
@@ -84,7 +87,7 @@ export const getDetailsKnex = async (params: {
       episodes,
       seenHistory,
       userRating,
-      watchlist,
+      lists,
       images,
       progress,
     };
@@ -110,6 +113,8 @@ export const getDetailsKnex = async (params: {
     .filter(SeenFilters.episodeSeenValue)
     .groupBy((seen) => seen.episodeId)
     .value();
+
+  const mediaItemLists = lists.filter((row) => !row.seasonId && !row.episodeId);
 
   episodes.forEach((episode) => {
     episode.userRating = groupedEpisodesRating[episode.id];
@@ -205,6 +210,11 @@ export const getDetailsKnex = async (params: {
     'progress'
   )?.progress;
 
+  const totalRuntime = episodes?.reduce(
+    (sum, episode) => sum + (episode.runtime || mediaItem.runtime),
+    0
+  );
+
   return {
     ...mediaItem,
     platform: mediaItem.platform
@@ -222,7 +232,9 @@ export const getDetailsKnex = async (params: {
     lastAiredEpisode: lastAiredEpisode,
     firstUnwatchedEpisode: firstUnwatchedEpisode,
     userRating: userRating.find(UserRatingFilters.mediaItemUserRating) || null,
-    onWatchlist: Boolean(watchlist),
+    onWatchlist: Boolean(
+      mediaItemLists.find((list) => Boolean(list.isWatchlist))
+    ),
     unseenEpisodesCount: unseenEpisodesCount,
     nextAiring: nextAiring,
     lastAiring: lastAiring,
@@ -231,5 +243,25 @@ export const getDetailsKnex = async (params: {
     poster: poster?.id ? `/img/${poster?.id}` : null,
     posterSmall: poster?.id ? `/img/${poster?.id}?size=small` : null,
     backdrop: backdrop?.id ? `/img/${backdrop?.id}` : null,
+    lists: mediaItemLists.map(mapList),
+    totalRuntime: totalRuntime || undefined,
   };
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const mapList = (row: Record<string, any>): List => ({
+  id: row.id,
+  name: row.name,
+  slug: row.slug,
+  createdAt: row.createdAt,
+  isWatchlist: Boolean(row.isWatchlist),
+  allowComments: Boolean(row.allowComments),
+  displayNumbers: Boolean(row.displayNumbers),
+  privacy: row.privacy,
+  updatedAt: row.updatedAt,
+  userId: row.userId,
+  description: row.description,
+  rank: Number(row.rank),
+  sortBy: row.sortBy,
+  sortOrder: row.sortOrder,
+});

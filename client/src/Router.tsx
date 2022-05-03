@@ -10,7 +10,7 @@ import { NavComponent } from 'src/components/Nav';
 import { UpcomingPage } from 'src/pages/Upcoming';
 import { InProgressPage } from 'src/pages/InProgress';
 import { SettingsPage } from 'src/pages/Settings';
-import { EpisodesPage } from 'src/pages/Episodes';
+import { SeasonsPage } from 'src/pages/SeasonsPage';
 import { CalendarPage } from 'src/pages/Calendar';
 import { RegisterPage } from 'src/pages/Register';
 import { useConfiguration } from 'src/api/configuration';
@@ -20,6 +20,9 @@ import { ImportPage } from 'src/pages/Import';
 import { TraktTvImportPage } from 'src/pages/import/TraktTv';
 import { WatchlistPage } from 'src/pages/WatchlistPage';
 import { GoodreadsImportPage } from 'src/pages/import/Goodreads';
+import { ListPage } from 'src/pages/ListPage';
+import { EpisodePage } from 'src/pages/EpisodePage';
+import { ListsPage } from 'src/pages/ListsPage';
 
 export const MyRouter: FunctionComponent = () => {
   const { isLoading, user } = useUser();
@@ -95,13 +98,25 @@ export const MyRouter: FunctionComponent = () => {
                 element={<DetailsPage key="/details" />}
               />
               <Route
-                path="/episodes/:mediaItemId"
-                element={<EpisodesPage key="/episodes" />}
+                path="/seasons/:mediaItemId/"
+                element={<SeasonsPage key="/seasons" />}
+              />
+              <Route
+                path="/seasons/:mediaItemId/:seasonNumber"
+                element={<SeasonsPage key="/seasons" />}
+              />
+              <Route
+                path="/episode/:mediaItemId/:seasonNumber/:episodeNumber"
+                element={<EpisodePage key="/episode" />}
               />
               <Route
                 path="/seen-history/:mediaItemId"
                 element={<SeenHistoryPage key="/seen-history" />}
               />
+
+              <Route path="/lists" element={<ListsPage key="/lists" />} />
+
+              <Route path="/list/:listId" element={<ListPage key="/list" />} />
 
               <Route path="/import" element={<ImportPage key="/import" />} />
               <Route

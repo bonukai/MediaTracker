@@ -4,71 +4,63 @@ import FullCalendar, { DatesSetArg } from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
 import allLocales from '@fullcalendar/core/locales-all';
-import { Link } from 'react-router-dom';
 import { useLingui } from '@lingui/react';
 import { parseISO } from 'date-fns';
 
-import { MediaItemItemsResponse, MediaType, TvEpisode } from 'mediatracker-api';
+import { MediaType, TvEpisode } from 'mediatracker-api';
 import { mediaTrackerApi } from 'src/api/api';
 import { formatEpisodeNumber } from 'src/utils';
+import { Trans } from '@lingui/macro';
 
 export const CalendarPage: FunctionComponent = () => {
   const [datesSet, setDatesSet] = useState<DatesSetArg>();
 
-  const { data } = useQuery(
+  const { data, isLoading } = useQuery(
     ['calendar', datesSet?.startStr, datesSet?.endStr],
     () =>
       mediaTrackerApi.calendar.get({
         start: datesSet.startStr,
         end: datesSet.endStr,
       }),
-    { enabled: datesSet !== undefined }
+    {
+      keepPreviousData: true,
+      enabled: datesSet !== undefined,
+    }
   );
 
-  const episodeEvents = useMemo(
+  const events = useMemo(
     () =>
-      data?.episodes.map(
-        (episode: TvEpisode & { tvShow: MediaItemItemsResponse }) => ({
-          title: episode.tvShow.title,
-          date: parseISO(episode.releaseDate),
-          allDay: true,
-          backgroundColor: episodeColor(episode),
-          borderColor: episodeColor(episode),
-          id: episode.tvShowId.toString() + episode.id.toString(),
-          extendedProps: {
-            tvShowTitle: episode.tvShow.title,
-            episodeNumber: formatEpisodeNumber(episode),
-            episodeTitle: episode.title,
-            seen: episode.seen,
-            url: `/details/${episode.tvShowId}`,
-          },
-        })
-      ),
-    [data]
-  );
-
-  const mediaItemsEvents = useMemo(
-    () =>
-      data?.items.map((mediaItem) => ({
-        title: mediaItem.title,
-        date: parseISO(mediaItem.releaseDate),
+      data?.map((item) => ({
+        title: item.mediaItem.title,
+        date: parseISO(item.releaseDate),
         allDay: true,
-        backgroundColor: eventColor(mediaItem.mediaType),
-        borderColor: eventColor(mediaItem.mediaType),
-        extendedProps: {
-          seen: mediaItem.seen,
-          url: `/details/${mediaItem.id}`,
-        },
+        ...(item.episode
+          ? {
+              backgroundColor: episodeColor(item.episode),
+              borderColor: episodeColor(item.episode),
+              url: `#/episode/${item.mediaItem.id}/${item.episode.seasonNumber}/${item.episode.episodeNumber}`,
+              extendedProps: {
+                seen: item.episode.seen,
+                episodeNumber: formatEpisodeNumber(item.episode),
+              },
+            }
+          : {
+              backgroundColor: eventColor(item.mediaItem.mediaType),
+              borderColor: eventColor(item.mediaItem.mediaType),
+              url: `#/details/${item.mediaItem.id}`,
+              extendedProps: {
+                seen: item.mediaItem.seen,
+              },
+            }),
       })),
     [data]
   );
 
-  const events = useMemo(
-    () => [...(episodeEvents || []), ...(mediaItemsEvents || [])],
-    [episodeEvents, mediaItemsEvents]
-  );
-
   const lingui = useLingui();
+
+  if (isLoading) {
+    return <Trans>Loading</Trans>;
+  }
 
   return (
     <div className="p-2">
@@ -93,21 +85,19 @@ export const CalendarPage: FunctionComponent = () => {
         datesSet={setDatesSet}
         events={events}
         eventContent={(arg) => (
-          <Link to={arg.event.extendedProps.url}>
-            <div className="flex">
-              <span className="overflow-hidden text-ellipsis">
-                {arg.event.title}
-              </span>
-              {arg.event.extendedProps.episodeNumber && (
-                <span>&nbsp;{arg.event.extendedProps.episodeNumber}</span>
-              )}
-              {arg.event.extendedProps.seen && (
-                <i className="pl-0.5 ml-auto flex material-icons">
-                  check_circle_outline
-                </i>
-              )}
-            </div>
-          </Link>
+          <div className="flex">
+            <span className="overflow-hidden text-ellipsis">
+              {arg.event.title}
+            </span>
+            {arg.event.extendedProps.episodeNumber && (
+              <span>&nbsp;{arg.event.extendedProps.episodeNumber}</span>
+            )}
+            {arg.event.extendedProps.seen && (
+              <i className="pl-0.5 ml-auto flex material-icons">
+                check_circle_outline
+              </i>
+            )}
+          </div>
         )}
       />
     </div>

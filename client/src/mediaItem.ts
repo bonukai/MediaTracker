@@ -1,69 +1,73 @@
 import { useState, useEffect } from 'react';
-import { parseISO } from 'date-fns';
 
 import {
   MediaItemDetailsResponse,
-  MediaItemItemsResponse,
   TvEpisode,
+  TvSeason,
 } from 'mediatracker-api';
+import { isSeason } from 'src/utils';
 
-export const firstUnwatchedSeasonId = (mediaItem: MediaItemDetailsResponse) => {
-  if (mediaItem.seasons?.length === 0) {
-    return;
-  }
-
-  // If seen, return last season
-  if (mediaItem.seen) {
-    return mediaItem.seasons[mediaItem.seasons.length - 1].id;
-  }
-
-  // If has unwatched episode, return season with first unwatched episode
-  if (mediaItem.firstUnwatchedEpisode) {
-    return mediaItem.firstUnwatchedEpisode.seasonId;
-  }
-
-  // Return first season, skip specials
-  if (mediaItem.seasons.length > 1) {
-    if (mediaItem.seasons[0].isSpecialSeason) {
-      return mediaItem.seasons[1].id;
-    }
-
-    return mediaItem.seasons[0].id;
-  } else {
-    return mediaItem.seasons[0].id;
-  }
+export const firstUnwatchedSeason = (
+  mediaItem: MediaItemDetailsResponse
+): TvSeason => {
+  return mediaItem.seasons
+    ?.filter((season) => !season.isSpecialSeason)
+    ?.find((season) => season.seen === false);
 };
 
-export const hasBeenReleased = (
-  mediaItem: TvEpisode | MediaItemDetailsResponse | MediaItemItemsResponse
-) => {
-  const releaseDate = mediaItem.releaseDate;
-  return releaseDate && parseISO(releaseDate) <= new Date();
+export const lastSeason = (mediaItem: MediaItemDetailsResponse): TvSeason => {
+  return mediaItem?.seasons?.at(mediaItem.seasons?.length - 1);
+};
+
+export const findSeasonBySeasonNumber = (
+  mediaItem: MediaItemDetailsResponse,
+  seasonNumber: number
+): TvSeason => {
+  return mediaItem?.seasons?.find(
+    (season) => season.seasonNumber === seasonNumber
+  );
+};
+
+export const findEpisodeBySeasonAndEpisodeNumber = (
+  mediaItem: MediaItemDetailsResponse,
+  seasonNumber: number,
+  episodeNumber: number
+): TvEpisode => {
+  return findSeasonBySeasonNumber(mediaItem, seasonNumber)?.episodes?.find(
+    (episode) => episode.episodeNumber === episodeNumber
+  );
 };
 
 export const useSelectedSeason = (mediaItem?: MediaItemDetailsResponse) => {
-  const [selectedSeasonId, setSelectedSeasonId] = useState(null);
+  const [selectedSeasonNumber, setSelectedSeasonNumber] = useState(undefined);
 
   useEffect(() => {
-    if (selectedSeasonId === null && mediaItem) {
-      const id = firstUnwatchedSeasonId(mediaItem);
+    if (selectedSeasonNumber === undefined && mediaItem) {
+      const seasonNumber = (
+        firstUnwatchedSeason(mediaItem) || lastSeason(mediaItem)
+      )?.seasonNumber;
 
-      if (id) {
-        setSelectedSeasonId(id);
+      if (seasonNumber) {
+        setSelectedSeasonNumber(seasonNumber);
       }
     }
-  }, [mediaItem, selectedSeasonId]);
+  }, [mediaItem, selectedSeasonNumber]);
 
   return {
     selectedSeason:
-      selectedSeasonId !== null && mediaItem
-        ? mediaItem.seasons?.find((season) => season.id === selectedSeasonId)
-        : null,
-    selectedSeasonId: selectedSeasonId,
-    setSelectedSeasonId: setSelectedSeasonId,
+      mediaItem && selectedSeasonNumber !== null
+        ? findSeasonBySeasonNumber(mediaItem, selectedSeasonNumber)
+        : undefined,
+    selectedSeasonNumber: selectedSeasonNumber,
+    setSelectedSeasonNumber: setSelectedSeasonNumber,
   };
 };
 
-export const hasBeenSeenAtLeastOnce = (mediaItem: MediaItemDetailsResponse) => {
-  return mediaItem.seenHistory?.length > 0;
+export const hasBeenSeenAtLeastOnce = (
+  value: MediaItemDetailsResponse | TvSeason | TvEpisode
+) => {
+  return isSeason(value)
+    ? value.episodes?.filter((episode) => episode.seenHistory?.length > 0)
+        ?.length > 0
+    : value.seenHistory?.length > 0;
 };

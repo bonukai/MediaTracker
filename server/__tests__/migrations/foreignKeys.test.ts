@@ -38,10 +38,15 @@ const user = {
 const list = {
   id: 1,
   name: 'list',
+  slug: 'list',
   privacy: 'private',
   createdAt: new Date().getTime(),
   updatedAt: new Date().getTime(),
   userId: user.id,
+  isWatchlist: false,
+  sortBy: 'recently-watched',
+  sortOrder: 'desc',
+  rank: 0,
 };
 
 describe('foreign keys', () => {
@@ -119,11 +124,16 @@ describe('foreign keys', () => {
     await expect(async () =>
       Database.knex('list').insert({
         id: 999,
-        name: 'list',
+        name: 'list2',
+        slug: 'list2',
         privacy: 'private',
+        sortBy: 'recently-watched',
+        sortOrder: 'desc',
         createdAt: new Date().getTime(),
         updatedAt: new Date().getTime(),
         userId: 999,
+        rank: 1,
+        isWatchlist: false,
       })
     ).rejects.toThrowError('FOREIGN KEY');
   });
@@ -137,6 +147,7 @@ describe('foreign keys', () => {
         seasonId: season.id,
         episodeId: episode.id,
         addedAt: new Date().getTime(),
+        rank: 1,
       })
     ).rejects.toThrowError('FOREIGN KEY');
 
@@ -148,6 +159,7 @@ describe('foreign keys', () => {
         seasonId: season.id,
         episodeId: episode.id,
         addedAt: new Date().getTime(),
+        rank: 1,
       })
     ).rejects.toThrowError('FOREIGN KEY');
 
@@ -159,6 +171,7 @@ describe('foreign keys', () => {
         seasonId: 999,
         episodeId: episode.id,
         addedAt: new Date().getTime(),
+        rank: 1,
       })
     ).rejects.toThrowError('FOREIGN KEY');
 
@@ -170,6 +183,7 @@ describe('foreign keys', () => {
         seasonId: season.id,
         episodeId: 999,
         addedAt: new Date().getTime(),
+        rank: 1,
       })
     ).rejects.toThrowError('FOREIGN KEY');
   });
@@ -278,24 +292,6 @@ describe('foreign keys', () => {
         id: 999,
         mediaItemId: mediaItem.id,
         episodeId: episode.id,
-        userId: 999,
-      })
-    ).rejects.toThrowError('FOREIGN KEY');
-  });
-
-  test('watchlist', async () => {
-    await expect(async () =>
-      Database.knex('watchlist').insert({
-        id: 999,
-        mediaItemId: 999,
-        userId: user.id,
-      })
-    ).rejects.toThrowError('FOREIGN KEY');
-
-    await expect(async () =>
-      Database.knex('watchlist').insert({
-        id: 999,
-        mediaItemId: mediaItem.id,
         userId: 999,
       })
     ).rejects.toThrowError('FOREIGN KEY');

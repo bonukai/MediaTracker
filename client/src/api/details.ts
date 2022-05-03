@@ -5,6 +5,7 @@ import {
   TvEpisode,
   LastSeenAt,
   Items,
+  ListItemsResponse,
 } from 'mediatracker-api';
 
 import { TvSeason } from 'mediatracker-api';
@@ -65,6 +66,13 @@ const updateMediaItem = async (mediaItem: MediaItemItemsResponse) => {
     }
   );
 
+  queryClient.setQueriesData(['listItems'], (items: ListItemsResponse) => {
+    return items?.map((item) => ({
+      ...item,
+      mediaItem: updater(item.mediaItem),
+    }));
+  });
+
   queryClient.setQueriesData(['search'], (data: MediaItemItemsResponse[]) => {
     return data?.map(updater);
   });
@@ -95,18 +103,74 @@ export const setRating = async (
   });
 
   await updateMediaItem(mediaItem);
+  queryClient.setQueriesData(['listItems'], (items: ListItemsResponse) => {
+    return items.map((item) => {
+      if (item.mediaItem.id === mediaItem.id) {
+        const userRating = {
+          rating: options.rating,
+          review: options.review,
+        };
+
+        if (episode) {
+          return {
+            ...item,
+            episode: {
+              ...item.episode,
+              userRating: userRating,
+            },
+          };
+        } else if (season) {
+          return {
+            ...item,
+            season: {
+              ...item.season,
+              userRating: userRating,
+            },
+          };
+        } else {
+          return {
+            ...item,
+            mediaItem: {
+              ...item.mediaItem,
+              userRating: userRating,
+            },
+          };
+        }
+      }
+
+      return item;
+    });
+  });
 };
 
-export const removeFromWatchlist = async (
-  mediaItem: MediaItemItemsResponse
-) => {
-  await mediaTrackerApi.watchlist.delete({ mediaItemId: mediaItem.id });
+export const removeFromWatchlist = async (args: {
+  mediaItem: MediaItemItemsResponse;
+  season?: TvSeason;
+  episode?: TvEpisode;
+}) => {
+  const { mediaItem, season, episode } = args;
+
+  await mediaTrackerApi.watchlist.delete({
+    mediaItemId: mediaItem.id,
+    seasonId: season?.id,
+    episodeId: episode?.id,
+  });
   await updateMediaItem(mediaItem);
   queryClient.invalidateQueries(['items']);
 };
 
-export const addToWatchlist = async (mediaItem: MediaItemItemsResponse) => {
-  await mediaTrackerApi.watchlist.add({ mediaItemId: mediaItem.id });
+export const addToWatchlist = async (args: {
+  mediaItem: MediaItemItemsResponse;
+  season?: TvSeason;
+  episode?: TvEpisode;
+}) => {
+  const { mediaItem, season, episode } = args;
+
+  await mediaTrackerApi.watchlist.add({
+    mediaItemId: mediaItem.id,
+    seasonId: season?.id,
+    episodeId: episode?.id,
+  });
   await updateMediaItem(mediaItem);
   queryClient.invalidateQueries(['items']);
 };

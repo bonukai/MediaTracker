@@ -76,10 +76,11 @@ class UserRepository extends repository<User>({
     mediaItemId: number
   ): Promise<User[]> {
     return await Database.knex(this.tableName)
-      .leftJoin('watchlist', 'watchlist.userId', 'user.id')
-      .where('watchlist.mediaItemId', mediaItemId)
-
-      .whereNotNull('watchlist.id')
+      .innerJoin('list', (qb) =>
+        qb.on('list.userId', 'user.id').onVal('list.isWatchlist', true)
+      )
+      .leftJoin('listItem', 'listItem.listId', 'list.id')
+      .where('listItem.mediaItemId', mediaItemId)
       .select(
         userNonSensitiveColumns.map((column) => this.tableName + '.' + column)
       );
@@ -93,24 +94,44 @@ class UserRepository extends repository<User>({
     user.password = await argon2.hash(user.password);
     const slug = toSlug(user.name);
 
-    const [res] = await Database.knex<User>('user').insert(
-      {
-        ..._.pick(user, this.columnNames),
+    const res = await Database.knex.transaction(async (trx) => {
+      const [res] = await trx<User>('user').insert(
+        {
+          ..._.pick(user, this.columnNames),
+          slug: trx.raw(
+            `(CASE 
+                WHEN (
+                  ${trx<User>('user')
+                    .count()
+                    .where('slug', slug)
+                    .toQuery()}) = 0 
+                  THEN '${slug}' 
+                ELSE '${slug}-${randomSlugId()}' 
+              END)`
+          ),
+        },
+        'id'
+      );
 
-        slug: Database.knex.raw(
-          `(CASE 
-              WHEN (
-                ${Database.knex<User>('user')
-                  .count()
-                  .where('slug', slug)
-                  .toQuery()}) = 0 
-                THEN '${slug}' 
-              ELSE '${slug}-${randomSlugId()}' 
-            END)`
-        ),
-      },
-      'id'
-    );
+      const currentDate = new Date().getTime();
+
+      await trx('list').insert({
+        name: 'Watchlist',
+        slug: 'watchlist',
+        userId: res.id,
+        privacy: 'private',
+        allowComments: false,
+        displayNumbers: false,
+        createdAt: currentDate,
+        updatedAt: currentDate,
+        isWatchlist: true,
+        sortBy: 'recently-watched',
+        sortOrder: 'desc',
+        rank: 0,
+      });
+
+      return res;
+    });
 
     return res.id;
   }

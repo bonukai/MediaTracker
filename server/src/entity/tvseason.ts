@@ -19,6 +19,9 @@ export type TvSeason = {
   isSpecialSeason: boolean;
   tvdbId?: number;
   traktId?: number;
+  onWatchlist?: boolean;
+  totalRuntime?: number;
+  lastSeenAt?: number;
 };
 
 export const tvSeasonColumns = <const>[
