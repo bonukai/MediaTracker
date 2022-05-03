@@ -305,7 +305,11 @@ export class TraktTvImportController {
           ...watchlistTvShows,
           ...watchlistSeasons,
           ...watchlistEpisodes,
-        ]) {
+        ] as {
+          mediaItemId: number;
+          seasonId?: number;
+          episodeId?: number;
+        }[]) {
           await listItemRepository.addItem({
             userId: userId,
             watchlist: true,
