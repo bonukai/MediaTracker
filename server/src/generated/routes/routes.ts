@@ -66,6 +66,9 @@ import { ConfigurationController } from '../../controllers/configuration';
 import { ImgController } from '../../controllers/img';
 import { MediaItemController } from '../../controllers/item';
 import { ItemsController } from '../../controllers/items';
+import { ListController } from '../../controllers/listController';
+import { ListItemController } from '../../controllers/listItemController';
+import { ListsController } from '../../controllers/listsController';
 import { LogsController } from '../../controllers/logs';
 import { ProgressController } from '../../controllers/progress';
 import { RatingController } from '../../controllers/rating';
@@ -83,6 +86,9 @@ const _ConfigurationController = new ConfigurationController();
 const _ImgController = new ImgController();
 const _MediaItemController = new MediaItemController();
 const _ItemsController = new ItemsController();
+const _ListController = new ListController();
+const _ListItemController = new ListItemController();
+const _ListsController = new ListsController();
 const _LogsController = new LogsController();
 const _ProgressController = new ProgressController();
 const _RatingController = new RatingController();
@@ -457,6 +463,177 @@ router.get(
   }),
   _ItemsController.get
 );
+router.put(
+  '/api/list',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        ListPrivacy: { enum: ['friends', 'private', 'public'], type: 'string' },
+        ListSortBy: {
+          enum: [
+            'my-rating',
+            'next-airing',
+            'rank',
+            'recently-added',
+            'recently-aired',
+            'recently-watched',
+            'release-date',
+            'runtime',
+            'title',
+          ],
+          type: 'string',
+        },
+        ListSortOrder: { enum: ['asc', 'desc'], type: 'string' },
+      },
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        description: { type: ['string', 'null'] },
+        privacy: {
+          oneOf: [{ $ref: '#/definitions/ListPrivacy' }, { type: 'null' }],
+        },
+        sortBy: {
+          oneOf: [{ $ref: '#/definitions/ListSortBy' }, { type: 'null' }],
+        },
+        sortOrder: {
+          oneOf: [{ $ref: '#/definitions/ListSortOrder' }, { type: 'null' }],
+        },
+      },
+      required: ['name'],
+    },
+  }),
+  _ListController.add
+);
+router.patch(
+  '/api/list',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        ListPrivacy: { enum: ['friends', 'private', 'public'], type: 'string' },
+        ListSortBy: {
+          enum: [
+            'my-rating',
+            'next-airing',
+            'rank',
+            'recently-added',
+            'recently-aired',
+            'recently-watched',
+            'release-date',
+            'runtime',
+            'title',
+          ],
+          type: 'string',
+        },
+        ListSortOrder: { enum: ['asc', 'desc'], type: 'string' },
+      },
+      type: 'object',
+      properties: {
+        id: { type: 'number' },
+        name: { type: 'string' },
+        description: { type: ['string', 'null'] },
+        privacy: {
+          oneOf: [{ $ref: '#/definitions/ListPrivacy' }, { type: 'null' }],
+        },
+        sortBy: {
+          oneOf: [{ $ref: '#/definitions/ListSortBy' }, { type: 'null' }],
+        },
+        sortOrder: {
+          oneOf: [{ $ref: '#/definitions/ListSortOrder' }, { type: 'null' }],
+        },
+      },
+      required: ['id', 'name'],
+    },
+  }),
+  _ListController.update
+);
+router.get(
+  '/api/list',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: { listId: { type: 'number' } },
+      required: ['listId'],
+    },
+  }),
+  _ListController.get
+);
+router.delete(
+  '/api/list',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: { listId: { type: 'number' } },
+      required: ['listId'],
+    },
+  }),
+  _ListController.delete
+);
+router.get(
+  '/api/list/items',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: { listId: { type: 'number' } },
+      required: ['listId'],
+    },
+  }),
+  _ListController.getListItems
+);
+router.put(
+  '/api/list-item',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        listId: { type: 'number' },
+        mediaItemId: { type: 'number' },
+        seasonId: { type: ['number', 'null'] },
+        episodeId: { type: ['number', 'null'] },
+      },
+      required: ['listId', 'mediaItemId'],
+    },
+  }),
+  _ListItemController.addItem
+);
+router.delete(
+  '/api/list-item',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        listId: { type: 'number' },
+        mediaItemId: { type: 'number' },
+        seasonId: { type: ['number', 'null'] },
+        episodeId: { type: ['number', 'null'] },
+      },
+      required: ['listId', 'mediaItemId'],
+    },
+  }),
+  _ListItemController.removeItem
+);
+router.get(
+  '/api/lists',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        userId: { type: ['number', 'null'] },
+        mediaItemId: { type: ['number', 'null'] },
+        seasonId: { type: ['number', 'null'] },
+        episodeId: { type: ['number', 'null'] },
+      },
+    },
+  }),
+  _ListsController.getLists
+);
 router.get(
   '/api/logs',
   validatorHandler({
@@ -495,14 +672,14 @@ router.put(
       $schema: 'http://json-schema.org/draft-07/schema#',
       type: 'object',
       properties: {
-        progress: { type: ['number', 'null'] },
         mediaItemId: { type: 'number' },
         episodeId: { type: ['number', 'null'] },
-        date: { type: 'number' },
+        progress: { type: ['number', 'null'] },
+        date: { type: ['number', 'null'] },
         duration: { type: ['number', 'null'] },
         action: { enum: ['paused', 'playing', null], type: 'string' },
       },
-      required: ['date', 'mediaItemId'],
+      required: ['mediaItemId'],
     },
   }),
   _ProgressController.add
@@ -772,8 +949,8 @@ router.put(
       $schema: 'http://json-schema.org/draft-07/schema#',
       type: 'object',
       properties: {
-        slug: { type: ['string', 'null'] },
         name: { type: ['string', 'null'] },
+        slug: { type: ['string', 'null'] },
         publicReviews: { type: ['boolean', 'null'] },
         sendNotificationWhenStatusChanges: { type: ['boolean', 'null'] },
         sendNotificationWhenReleaseDateChanges: { type: ['boolean', 'null'] },
@@ -826,7 +1003,11 @@ router.put(
     requestQuerySchema: {
       $schema: 'http://json-schema.org/draft-07/schema#',
       type: 'object',
-      properties: { mediaItemId: { type: 'number' } },
+      properties: {
+        mediaItemId: { type: 'number' },
+        seasonId: { type: ['number', 'null'] },
+        episodeId: { type: ['number', 'null'] },
+      },
       required: ['mediaItemId'],
     },
   }),
@@ -838,7 +1019,11 @@ router.delete(
     requestQuerySchema: {
       $schema: 'http://json-schema.org/draft-07/schema#',
       type: 'object',
-      properties: { mediaItemId: { type: 'number' } },
+      properties: {
+        mediaItemId: { type: 'number' },
+        seasonId: { type: ['number', 'null'] },
+        episodeId: { type: ['number', 'null'] },
+      },
       required: ['mediaItemId'],
     },
   }),
@@ -859,12 +1044,12 @@ router.post(
 router.get(
   '/api/import-trakttv/device-token',
   validatorHandler({}),
-  _TraktTvImportController.traktTvGetUserCode
+  _TraktTvImportController.getUserCode
 );
 router.get(
   '/api/import-trakttv/state',
   validatorHandler({}),
-  _TraktTvImportController.traktTvAuthenticated
+  _TraktTvImportController.state
 );
 
 export { router as generatedRoutes };
