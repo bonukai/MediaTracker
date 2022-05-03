@@ -245,6 +245,12 @@ export class Application {
           password: 'demo',
           admin: false,
         });
+      } else {
+        await userRepository.update({
+          id: demoUser.id,
+          password: 'demo',
+          admin: false,
+        });
       }
 
       await configurationRepository.update({
@@ -394,6 +400,7 @@ export const createAndStartServer = async () => {
       audibleLang: Config.AUDIBLE_LANG || 'us',
       igdbClientId: Config.IGDB_CLIENT_ID,
       igdbClientSecret: Config.IGDB_CLIENT_SECRET,
+      demo: Config.DEMO,
     });
     server = new Server({
       hostname: Config.HOSTNAME,
