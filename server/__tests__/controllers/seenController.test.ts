@@ -119,7 +119,7 @@ describe('Seen controller', () => {
       userId: Data.user.id,
       requestQuery: {
         mediaItemId: Data.movie.id,
-        date: new Date().getTime() + 3600000,
+        date: new Date().getTime() + 3600000 * 2,
       },
     });
 
