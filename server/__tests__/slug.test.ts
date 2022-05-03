@@ -40,4 +40,10 @@ describe('slug', () => {
   test('should replace special characters in the middle', () => {
     expect(toSlug('-t.e!*s(*)(t-')).toBe('test');
   });
+
+  test('should convert upper case to lower case', () => {
+    expect(toSlug('ABCDEFGHIJKLMNOPQRSTUVWXYZ')).toBe(
+      'abcdefghijklmnopqrstuvwxyz'
+    );
+  });
 });

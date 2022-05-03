@@ -6,8 +6,11 @@ import { User } from 'src/entity/user';
 import { userRepository } from 'src/repository/user';
 import { Seen } from 'src/entity/seen';
 import { seenRepository } from 'src/repository/seen';
-import { watchlistRepository } from 'src/repository/watchlist';
 import { clearDatabase, runMigrations } from '../../../__utils__/utils';
+import { Database } from 'src/dbconfig';
+import { Data } from '__tests__/__utils__/data';
+import { listRepository } from 'src/repository/list';
+import { listItemRepository } from 'src/repository/listItemRepository';
 
 const user: User = {
   id: 1,
@@ -248,18 +251,20 @@ describe('unseenEpisodesCount', () => {
     await userRepository.create(user2);
     await mediaItemRepository.createMany(mediaItem);
     await seenRepository.createMany(seenEpisodes);
-    await watchlistRepository.createMany(
-      mediaItem.flatMap((item) => [
-        {
-          userId: user.id,
-          mediaItemId: item.id,
-        },
-        {
-          userId: user2.id,
-          mediaItemId: item.id,
-        },
-      ])
-    );
+
+    for (const item of mediaItem) {
+      listItemRepository.addItem({
+        userId: user.id,
+        watchlist: true,
+        mediaItemId: item.id,
+      });
+
+      listItemRepository.addItem({
+        userId: user2.id,
+        watchlist: true,
+        mediaItemId: item.id,
+      });
+    }
   });
 
   afterAll(clearDatabase);

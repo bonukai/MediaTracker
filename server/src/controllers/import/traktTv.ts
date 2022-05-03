@@ -1,14 +1,16 @@
 import _ from 'lodash';
+import { ListItem } from 'src/entity/list';
 
 import { MediaItemBaseWithSeasons, MediaType } from 'src/entity/mediaItem';
 import { Seen } from 'src/entity/seen';
+import { UserRating } from 'src/entity/userRating';
 import { TraktApi, TraktTvExport } from 'src/export/trakttv';
 import { MetadataProvider } from 'src/metadata/metadataProvider';
 import { metadataProviders } from 'src/metadata/metadataProviders';
+import { listItemRepository } from 'src/repository/listItemRepository';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { seenRepository } from 'src/repository/seen';
 import { userRatingRepository } from 'src/repository/userRating';
-import { watchlistRepository } from 'src/repository/watchlist';
 import { updateMediaItem } from 'src/updateMetadata';
 import { createExpressRoute } from 'typescript-routes-to-openapi-server';
 
@@ -24,6 +26,8 @@ type TraktTvImportSummary = {
   watchlist: {
     movies: number;
     shows: number;
+    seasons: number;
+    episodes: number;
   };
   seen: {
     movies: number;
@@ -57,7 +61,7 @@ export class TraktTvImportController {
   /**
    * @openapi_operationId deviceToken
    */
-  traktTvGetUserCode = createExpressRoute<{
+  getUserCode = createExpressRoute<{
     method: 'get';
     path: '/api/import-trakttv/device-token';
     responseBody: {
@@ -95,10 +99,15 @@ export class TraktTvImportController {
             watchlist: {
               movies: exportedData.watchlist.filter(traktTvMovieFilter).length,
               shows: exportedData.watchlist.filter(traktTvShowFilter).length,
+              seasons:
+                exportedData.watchlist.filter(traktTvSeasonFilter).length,
+              episodes:
+                exportedData.watchlist.filter(traktTvEpisodeFilter).length,
             },
             seen: {
               movies: exportedData.history.filter(traktTvMovieFilter).length,
-              episodes: exportedData.history.filter(traktTvShowFilter).length,
+              episodes:
+                exportedData.history.filter(traktTvEpisodeFilter).length,
             },
             ratings: {
               movies: exportedData.rating.filter(traktTvMovieFilter).length,
@@ -168,7 +177,6 @@ export class TraktTvImportController {
           .map(movieMetadata)
           .filter(Boolean)
           .map(({ mediaItem }) => ({
-            userId: userId,
             mediaItemId: mediaItem.id,
           }));
 
@@ -177,55 +185,86 @@ export class TraktTvImportController {
           .map(tvShowMetadata)
           .filter(Boolean)
           .map(({ mediaItem }) => ({
-            userId: userId,
             mediaItemId: mediaItem.id,
+          }));
+
+        const watchlistSeasons = exportedData.watchlist
+          .filter(traktTvSeasonFilter)
+          .map(tvShowMetadata)
+          .filter(Boolean)
+          .map(withSeason)
+          .filter(Boolean)
+          .map(({ mediaItem, season }) => ({
+            mediaItemId: mediaItem.id,
+            seasonId: season.id,
+          }));
+
+        const watchlistEpisodes = exportedData.watchlist
+          .filter(traktTvEpisodeFilter)
+          .map(tvShowMetadata)
+          .filter(Boolean)
+          .map(withEpisode)
+          .filter(Boolean)
+          .map(({ mediaItem, episode }) => ({
+            mediaItemId: mediaItem.id,
+            episodeId: episode.id,
           }));
 
         const seenMovies = exportedData.history
           .filter(traktTvMovieFilter)
           .map(movieMetadata)
           .filter(Boolean)
-          .map(({ mediaItem, item }) => ({
-            userId: userId,
-            mediaItemId: mediaItem.id,
-            date: new Date(item.watched_at).getTime(),
-          }));
+          .map(
+            ({ mediaItem, item }): Seen => ({
+              userId: userId,
+              mediaItemId: mediaItem.id,
+              date: new Date(item.watched_at).getTime(),
+              type: 'seen',
+            })
+          );
 
         const seenEpisodes = exportedData.history
-          .filter(traktTvShowFilter)
+          .filter(traktTvEpisodeFilter)
           .map(tvShowMetadata)
           .filter(Boolean)
           .map(withEpisode)
           .filter(Boolean)
-          .map(({ mediaItem, item, episode }) => ({
-            userId: userId,
-            mediaItemId: mediaItem.id,
-            date: new Date(item.watched_at).getTime(),
-            episodeId: episode.id,
-          }))
+          .map(
+            ({ mediaItem, item, episode }): Seen => ({
+              userId: userId,
+              mediaItemId: mediaItem.id,
+              date: new Date(item.watched_at).getTime(),
+              episodeId: episode.id,
+              type: 'seen',
+            })
+          )
           .filter(Boolean);
 
         const ratedMovies = exportedData.rating
           .filter(traktTvMovieFilter)
           .map(movieMetadata)
           .filter(Boolean)
-          .map(({ mediaItem, item }) => ({
-            userId: userId,
-            mediaItemId: mediaItem.id,
-            rating: item.rating / 2,
-            date: new Date(item.rated_at).getTime(),
-          }));
+          .map(
+            ({ mediaItem, item }): UserRating => ({
+              userId: userId,
+              mediaItemId: mediaItem.id,
+              rating: item.rating / 2,
+              date: new Date(item.rated_at).getTime(),
+            })
+          );
 
         const ratedTvShows = exportedData.rating
           .filter((item) => item.show && !item.season && !item.episode)
           .map(tvShowMetadata)
           .filter(Boolean)
-          .map(({ mediaItem, item }) => ({
-            userId: userId,
-            mediaItemId: mediaItem.id,
-            rating: item.rating / 2,
-            date: new Date(item.rated_at).getTime(),
-          }));
+          .map(
+            ({ mediaItem, item }): UserRating => ({
+              userId: userId,
+              mediaItemId: mediaItem.id,
+              rating: item.rating / 2,
+              date: new Date(item.rated_at).getTime(),
+            })
+          );
 
         const ratedSeasons = exportedData.rating
           .filter(traktTvSeasonFilter)
@@ -233,13 +272,15 @@ export class TraktTvImportController {
           .filter(Boolean)
           .map(withSeason)
           .filter(Boolean)
-          .map(({ mediaItem, item, season }) => ({
-            userId: userId,
-            mediaItemId: mediaItem.id,
-            rating: item.rating / 2,
-            date: new Date(item.rated_at).getTime(),
-            seasonId: season.id,
-          }))
+          .map(
+            ({ mediaItem, item, season }): UserRating => ({
+              userId: userId,
+              mediaItemId: mediaItem.id,
+              rating: item.rating / 2,
+              date: new Date(item.rated_at).getTime(),
+              seasonId: season.id,
+            })
+          )
           .filter(Boolean);
 
         const ratedEpisodes = exportedData.rating
@@ -248,27 +289,46 @@ export class TraktTvImportController {
           .filter(Boolean)
           .map(withEpisode)
           .filter(Boolean)
-          .map(({ mediaItem, item, episode }) => ({
-            userId: userId,
-            mediaItemId: mediaItem.id,
-            rating: item.rating / 2,
-            date: new Date(item.rated_at).getTime(),
-            episodeId: episode.id,
-          }))
+          .map(
+            ({ mediaItem, item, episode }): UserRating => ({
+              userId: userId,
+              mediaItemId: mediaItem.id,
+              rating: item.rating / 2,
+              date: new Date(item.rated_at).getTime(),
+              episodeId: episode.id,
+            })
+          )
           .filter(Boolean);
 
-        await watchlistRepository.createMany(watchlistMovies);
-
-        await watchlistRepository.createMany(watchlistTvShows);
+        for (const item of [
+          ...watchlistMovies,
+          ...watchlistTvShows,
+          ...watchlistSeasons,
+          ...watchlistEpisodes,
+        ] as {
+          mediaItemId: number;
+          seasonId?: number;
+          episodeId?: number;
+        }[]) {
+          await listItemRepository.addItem({
+            userId: userId,
+            watchlist: true,
+            mediaItemId: item.mediaItemId,
+            seasonId: item.seasonId || undefined,
+            episodeId: item.episodeId || undefined,
+          });
+        }
 
         const seenUniqueBy = (seen: Seen) => ({
           userId: seen.userId,
           mediaItemId: seen.mediaItemId,
           date: seen.date,
+          type: seen.type,
+          action: seen.action,
+          process: seen.progress,
         });
 
         await seenRepository.createManyUnique(seenMovies, seenUniqueBy);
-
         await seenRepository.createManyUnique(seenEpisodes, seenUniqueBy);
 
         await userRatingRepository.createMany(ratedMovies);
@@ -283,6 +343,8 @@ export class TraktTvImportController {
             watchlist: {
               movies: watchlistMovies.length,
               shows: watchlistTvShows.length,
+              seasons: watchlistSeasons.length,
+              episodes: watchlistEpisodes.length,
             },
             seen: {
               movies: seenMovies.length,
@@ -319,7 +381,7 @@ export class TraktTvImportController {
    * @openapi_operationId state
    */
 
-  traktTvAuthenticated = createExpressRoute<{
+  state = createExpressRoute<{
     method: 'get';
     path: '/api/import-trakttv/state';
     responseBody: {
@@ -421,7 +483,7 @@ const updateMetadataForTraktTvImport = async (
         ...exportedData.history,
         ...exportedData.rating,
       ]
-        .filter(traktTvMovieFilter)
+        .filter((item) => item.type === 'movie')
         .map((item) => item.movie.ids.tmdb)
     ),
     'movie'
@@ -434,7 +496,12 @@ const updateMetadataForTraktTvImport = async (
         ...exportedData.history,
         ...exportedData.rating,
       ]
-        .filter(traktTvShowFilter)
+        .filter(
+          (item) =>
+            item.type === 'show' ||
+            item.type === 'season' ||
+            item.type === 'episode'
+        )
         .map((item) => item.show.ids.tmdb)
     ),
     'tv'
@@ -576,7 +643,7 @@ const traktTvShowFilter = (item: {
   show?: TraktApi.ShowResponse;
   movie?: TraktApi.MovieResponse;
   season?: TraktApi.SeasonResponse;
-}) => item.show;
+}) => item.show && !item.season && !item.episode;
 
 const traktTvSeasonFilter = (item: {
   episode?: TraktApi.EpisodeResponse;

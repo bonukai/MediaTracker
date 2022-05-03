@@ -6,7 +6,6 @@ import { InitialData } from '__tests__/__utils__/data';
 import { Image } from 'src/entity/image';
 import { Configuration } from 'src/entity/configuration';
 import { MediaItemBase } from 'src/entity/mediaItem';
-import { Watchlist } from 'src/entity/watchlist';
 import { Database } from 'src/dbconfig';
 import { randomSlugId, toSlug } from 'src/slug';
 import { nanoid } from 'nanoid';
@@ -187,14 +186,14 @@ describe('migrations', () => {
       directory: Config.MIGRATIONS_DIRECTORY,
     });
 
-    const watchlist: Watchlist = {
+    const watchlist = {
       id: 777,
       userId: 1,
       mediaItemId: 1,
       addedAt: new Date().getTime(),
     };
 
-    await Database.knex<Watchlist>('watchlist').insert(watchlist);
+    await Database.knex('watchlist').insert(watchlist);
 
     expect(
       await Database.knex('watchlist').where('id', watchlist.id).first()
@@ -779,7 +778,6 @@ describe('migrations', () => {
     ).rejects.toThrowError('UNIQUE');
   });
 
-
   test('20220404141200_seenDateToNull', async () => {
     const seen = {
       id: 9999,
@@ -883,6 +881,81 @@ describe('migrations', () => {
           id: 123456,
         })
     ).rejects.toThrowError('UNIQUE');
+  });
+
+  test('20220427211100_list', async () => {
+    await Database.knex.migrate.up({
+      name: `20220427211100_list.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20220427211100_list.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+  });
+
+  test('20220427212000_watchlistToList', async () => {
+    const watchlistItem = {
+      userId: InitialData.user.id,
+      mediaItemId: InitialData.mediaItem.id,
+      addedAt: new Date().getTime(),
+    };
+
+    await Database.knex('watchlist').insert(watchlistItem);
+
+    const { watchlistSize: watchlistSize } = await Database.knex('watchlist')
+      .count({
+        watchlistSize: '*',
+      })
+      .first();
+
+    const { listItemSizeBefore } = await Database.knex('listItem')
+      .count({
+        listItemSizeBefore: '*',
+      })
+      .first();
+
+    await Database.knex.migrate.up({
+      name: `20220427212000_watchlistToList.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20220427212000_watchlistToList.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    const { listItemSizeAfter } = await Database.knex('listItem')
+      .count({
+        listItemSizeAfter: '*',
+      })
+      .first();
+
+    expect(watchlistSize + listItemSizeBefore).toBe(listItemSizeAfter);
+
+    const watchlist = await Database.knex('list')
+      .where('isWatchlist', true)
+      .where('userId', watchlistItem.userId)
+      .first();
+
+    expect(watchlist).toBeDefined();
+
+    expect(
+      await Database.knex('listItem')
+        .where('listId', watchlist.id)
+        .where('mediaItemId', watchlistItem.mediaItemId)
+        .where('addedAt', watchlistItem.addedAt)
+        .first()
+    ).toBeDefined();
   });
 
   afterAll(clearDatabase);

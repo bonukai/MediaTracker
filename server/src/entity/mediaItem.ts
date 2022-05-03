@@ -6,12 +6,14 @@ import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason } from 'src/entity/tvseason';
 import { AudibleLang } from 'src/entity/configuration';
 import { toSlug } from 'src/slug';
+import { List } from 'src/entity/list';
 
 export type MediaType = 'tv' | 'movie' | 'book' | 'video_game' | 'audiobook';
 
 export type ExternalIds = {
   tmdbId?: number;
   imdbId?: string;
+  tvdbId?: number;
   tvmazeId?: number;
   igdbId?: number;
   openlibraryId?: string;
@@ -49,7 +51,6 @@ export type MediaItemBase = ExternalIds & {
   audibleCountryCode?: AudibleLang;
   needsDetails?: boolean;
   lockedAt?: number;
-  tvdbId?: number;
 };
 
 export type MediaItemBaseWithSeasons = MediaItemBase & {
@@ -97,6 +98,8 @@ export type MediaItemDetailsResponse = Omit<
   seen?: boolean;
   firstUnwatchedEpisode?: TvEpisode;
   progress?: number;
+  totalRuntime?: number;
+  lists: List[];
 };
 
 export type MediaItemItemsResponse = Omit<MediaItemBase, 'lockedAt'> & {
@@ -119,6 +122,7 @@ export type MediaItemItemsResponse = Omit<MediaItemBase, 'lockedAt'> & {
   seen?: boolean;
   firstUnwatchedEpisode?: TvEpisode;
   progress?: number;
+  totalRuntime?: number;
 };
 
 export const mediaItemColumns = <const>[

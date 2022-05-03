@@ -1,10 +1,9 @@
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { MediaItemBase } from 'src/entity/mediaItem';
-import { Watchlist } from 'src/entity/watchlist';
 import { User } from 'src/entity/user';
 import { userRepository } from 'src/repository/user';
-import { watchlistRepository } from 'src/repository/watchlist';
 import { clearDatabase, runMigrations } from '../../../__utils__/utils';
+import { listItemRepository } from 'src/repository/listItemRepository';
 
 const mediaItem: MediaItemBase = {
   id: 1,
@@ -22,18 +21,17 @@ const user: User = {
   password: 'password',
 };
 
-const watchlist: Watchlist = {
-  id: 1,
-  mediaItemId: mediaItem.id,
-  userId: user.id,
-};
-
 describe('getItems', () => {
   beforeAll(async () => {
     await runMigrations();
     await userRepository.create(user);
     await mediaItemRepository.create(mediaItem);
-    await watchlistRepository.create(watchlist);
+
+    listItemRepository.addItem({
+      watchlist: true,
+      userId: user.id,
+      mediaItemId: mediaItem.id,
+    });
   });
 
   afterAll(clearDatabase);

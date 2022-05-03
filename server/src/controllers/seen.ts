@@ -7,9 +7,9 @@ import { tvEpisodeRepository } from 'src/repository/episode';
 import { LastSeenAt, mediaItemRepository } from 'src/repository/mediaItem';
 import { tvSeasonRepository } from 'src/repository/season';
 import { seenRepository } from 'src/repository/seen';
-import { watchlistRepository } from 'src/repository/watchlist';
 import { Seen } from 'src/entity/seen';
 import { logger } from 'src/logger';
+import { listItemRepository } from 'src/repository/listItemRepository';
 
 /**
  * @openapi_tags Seen
@@ -223,9 +223,10 @@ export class SeenController {
       }
 
       if (mediaItem.mediaType !== 'tv') {
-        await watchlistRepository.delete({
+        await listItemRepository.removeItem({
           userId: userId,
           mediaItemId: mediaItemId,
+          watchlist: true,
         });
       }
     }

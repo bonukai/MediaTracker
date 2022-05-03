@@ -10,8 +10,9 @@ import { Seen } from 'src/entity/seen';
 import { UserRating, userRatingColumns } from 'src/entity/userRating';
 import { GetItemsArgs } from 'src/repository/mediaItem';
 import { TvEpisode, tvEpisodeColumns } from 'src/entity/tvepisode';
-import { Watchlist, watchlistColumns } from 'src/entity/watchlist';
 import { Image } from 'src/entity/image';
+import { Knex } from 'knex';
+import { List, listItemColumns } from 'src/entity/list';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getItemsKnex = async (args: any): Promise<any> => {
@@ -74,9 +75,21 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
 
   const currentDateString = new Date().toISOString();
 
+  const watchlist = await Database.knex('list')
+    .select('id')
+    .where('userId', userId)
+    .where('isWatchlist', true)
+    .first();
+
+  if (watchlist === undefined) {
+    throw new Error(`user ${userId} has no watchlist`);
+  }
+
+  const watchlistId = watchlist.id;
+
   const query = Database.knex
     .select(generateColumnNames('firstUnwatchedEpisode', tvEpisodeColumns))
-    .select(generateColumnNames('watchlist', watchlistColumns))
+    .select(generateColumnNames('listItem', listItemColumns))
     .select(generateColumnNames('upcomingEpisode', tvEpisodeColumns))
     .select(generateColumnNames('lastAiredEpisode', tvEpisodeColumns))
     .select(generateColumnNames('userRating', userRatingColumns))
@@ -134,11 +147,11 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
       'mediaItem.id'
     )
     // On watchlist
-    .leftJoin<Watchlist>('watchlist', (qb) => {
-      qb.on('watchlist.mediaItemId', 'mediaItem.id').andOnVal(
-        'watchlist.userId',
-        userId
-      );
+    .leftJoin<List>('listItem', (qb) => {
+      qb.on('listItem.mediaItemId', 'mediaItem.id')
+        .andOnNull('listItem.seasonId')
+        .andOnNull('listItem.episodeId')
+        .andOnVal('listItem.listId', watchlistId);
     })
     // Upcoming episode
     .leftJoin<TvEpisode>(
@@ -157,7 +170,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
       'mediaItem.id'
     )
     .leftJoin<TvEpisode>(
-      (qb) => qb.from<TvEpisode>('episode').as('upcomingEpisode'),
+      Database.knex.ref('episode').as('upcomingEpisode'),
       (qb) =>
         qb
           .on('upcomingEpisode.tvShowId', 'mediaItem.id')
@@ -183,7 +196,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
       'mediaItem.id'
     )
     .leftJoin<TvEpisode>(
-      (qb) => qb.from<TvEpisode>('episode').as('lastAiredEpisode'),
+      Database.knex.ref('episode').as('lastAiredEpisode'),
       (qb) =>
         qb
           .on('lastAiredEpisode.tvShowId', 'mediaItem.id')
@@ -193,26 +206,26 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           )
     )
     // Seen episodes count
-    .leftJoin<TvEpisode>(
+    .leftJoin<Seen>(
       (qb) =>
         qb
-          .from<TvEpisode>('episode')
-          .select('tvShowId')
+          .select('mediaItemId')
           .count('*', { as: 'seenEpisodesCount' })
-          .leftJoin(
-            (qb) =>
-              qb
-                .distinct('userId', 'episodeId')
-                .from<Seen>('seen')
-                .where('type', 'seen')
-                .as('seen'),
-            'episodeId',
-            'episode.id'
+          .from((qb: Knex.QueryBuilder) =>
+            qb
+              .select('mediaItemId')
+              .from<Seen>('seen')
+              .where('type', 'seen')
+              .where('userId', userId)
+              .whereNotNull('episodeId')
+              .groupBy('mediaItemId', 'episodeId')
+              .leftJoin('episode', 'episode.id', 'seen.episodeId')
+              .whereNot('episode.isSpecialEpisode', true)
+              .as('seen')
           )
-          .where('userId', userId)
-          .groupBy('tvShowId')
+          .groupBy('mediaItemId')
           .as('seenEpisodes'),
-      'seenEpisodes.tvShowId',
+      'seenEpisodes.mediaItemId',
       'mediaItem.id'
     )
     // First unwatched episode and unseen episodes count
@@ -225,10 +238,8 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
             as: 'seasonAndEpisodeNumber',
           })
           .count('*', { as: 'unseenEpisodesCount' })
-          .leftJoin<Seen>(
-            (qb) => qb.from<Seen>('seen').as('seen').where('type', 'seen'),
-            'seen.episodeId',
-            'episode.id'
+          .leftJoin<Seen>('seen', (qb) =>
+            qb.on('seen.episodeId', 'episode.id').andOnVal('seen.type', 'seen')
           )
           .whereNot('episode.isSpecialEpisode', true)
           .andWhereNot('episode.releaseDate', '')
@@ -243,7 +254,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
       'mediaItem.id'
     )
     .leftJoin<TvEpisode>(
-      (qb) => qb.from<TvEpisode>('episode').as('firstUnwatchedEpisode'),
+      Database.knex.ref('episode').as('firstUnwatchedEpisode'),
       (qb) =>
         qb
           .on('firstUnwatchedEpisode.tvShowId', 'mediaItem.id')
@@ -326,12 +337,12 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
   } else {
     query.where((qb) =>
       qb
-        .whereNotNull('watchlist.mediaItemId')
+        .whereNotNull('listItem.mediaItemId')
         .orWhereNotNull('lastSeen.mediaItemId')
     );
 
     if (onlyOnWatchlist) {
-      query.whereNotNull('watchlist.mediaItemId');
+      query.whereNotNull('listItem.mediaItemId');
     }
 
     if (onlySeenItems === true) {
@@ -386,7 +397,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
         );
       }
 
-      query.whereNotNull('watchlist.mediaItemId');
+      query.whereNotNull('listItem.mediaItemId');
     }
 
     // nextEpisodesToWatchSubQuery
@@ -577,8 +588,9 @@ const mapRawResult = (row: any): MediaItemItemsResponse => {
         ? row.numberOfEpisodes > 0 && !row.unseenEpisodesCount
         : Boolean(row['lastSeen2.mediaItemId']),
 
-    onWatchlist: Boolean(row['watchlist.id']),
+    onWatchlist: Boolean(row['listItem.id']),
     unseenEpisodesCount: row.unseenEpisodesCount || 0,
+    seenEpisodesCount: row['seenEpisodesCount'],
     numberOfEpisodes: row.numberOfEpisodes,
     nextAiring:
       row['mediaItem.mediaType'] === 'tv'
@@ -667,5 +679,94 @@ const mapRawResult = (row: any): MediaItemItemsResponse => {
           seen: false,
         }
       : undefined,
-  };
+  } as unknown as MediaItemItemsResponse;
 };
+
+export class QueryBuilderHelper {
+  static mapFirstUnwatchedEpisode(row: Record<string, unknown>) {
+    return {
+      description: row['mediaItem.firstUnwatchedEpisode.description'],
+      episodeNumber: row['mediaItem.firstUnwatchedEpisode.episodeNumber'],
+      id: row['mediaItem.firstUnwatchedEpisode.id'],
+      imdbId: row['mediaItem.firstUnwatchedEpisode.imdbId'],
+      isSpecialEpisode: Boolean(
+        row['mediaItem.firstUnwatchedEpisode.isSpecialEpisode']
+      ),
+      releaseDate: row['mediaItem.firstUnwatchedEpisode.releaseDate'],
+      runtime: row['mediaItem.firstUnwatchedEpisode.runtime'],
+      seasonId: row['mediaItem.firstUnwatchedEpisode.seasonId'],
+      seasonNumber: row['mediaItem.firstUnwatchedEpisode.seasonNumber'],
+      title: row['mediaItem.firstUnwatchedEpisode.title'],
+      tmdbId: row['mediaItem.firstUnwatchedEpisode.tmdbId'],
+      traktId: row['mediaItem.firstUnwatchedEpisode.traktId'],
+      tvdbId: row['mediaItem.firstUnwatchedEpisode.tvdbId'],
+      tvShowId: row['mediaItem.firstUnwatchedEpisode.tvShowId'],
+    };
+  }
+  static firstUnwatchedEpisode<
+    TRecord = unknown,
+    TResult = Record<string, unknown>[]
+  >(
+    query: Knex.QueryBuilder<TRecord, TResult>,
+    userId: number,
+    mediaItemId: string
+  ) {
+    return query
+      .select({
+        'firstUnwatchedEpisode.episodeNumber':
+          'firstUnwatchedEpisode.episodeNumber',
+        'firstUnwatchedEpisode.seasonNumber':
+          'firstUnwatchedEpisode.seasonNumber',
+        'firstUnwatchedEpisode.title': 'firstUnwatchedEpisode.title',
+        'firstUnwatchedEpisode.releaseDate':
+          'firstUnwatchedEpisode.releaseDate',
+        'firstUnwatchedEpisode.description':
+          'firstUnwatchedEpisode.description',
+        'firstUnwatchedEpisode.id': 'firstUnwatchedEpisode.id',
+        'firstUnwatchedEpisode.imdbId': 'firstUnwatchedEpisode.imdbId',
+        'firstUnwatchedEpisode.runtime': 'firstUnwatchedEpisode.runtime',
+        'firstUnwatchedEpisode.seasonId': 'firstUnwatchedEpisode.seasonId',
+        'firstUnwatchedEpisode.tmdbId': 'firstUnwatchedEpisode.tmdbId',
+        'firstUnwatchedEpisode.tvShowId': 'firstUnwatchedEpisode.tvShowId',
+        'firstUnwatchedEpisode.isSpecialEpisode':
+          'firstUnwatchedEpisode.isSpecialEpisode',
+        'firstUnwatchedEpisode.traktId': 'firstUnwatchedEpisode.traktId',
+        'firstUnwatchedEpisode.tvdbId': 'firstUnwatchedEpisode.tvdbId',
+      })
+      .leftJoin<TvEpisode>(
+        (qb) =>
+          qb
+            .from<TvEpisode>('episode')
+            .select('tvShowId')
+            .min('seasonAndEpisodeNumber', {
+              as: 'seasonAndEpisodeNumber',
+            })
+            .leftJoin<Seen>('seen', (qb) =>
+              qb
+                .on('seen.episodeId', 'episode.id')
+                .andOnVal('seen.type', 'seen')
+            )
+            .whereNot('episode.isSpecialEpisode', true)
+            .andWhereNot('episode.releaseDate', '')
+            .andWhereNot('episode.releaseDate', null)
+            .andWhere('episode.releaseDate', '<=', new Date().toISOString())
+            .andWhere((qb) => {
+              qb.where('seen.userId', '<>', userId).orWhereNull('seen.userId');
+            })
+            .groupBy('tvShowId')
+            .as('firstUnwatchedEpisodeHelper'),
+        'firstUnwatchedEpisodeHelper.tvShowId',
+        mediaItemId
+      )
+      .leftJoin<TvEpisode>(
+        Database.knex.ref('episode').as('firstUnwatchedEpisode'),
+        (qb) =>
+          qb
+            .on('firstUnwatchedEpisode.tvShowId', mediaItemId)
+            .andOn(
+              'firstUnwatchedEpisode.seasonAndEpisodeNumber',
+              'firstUnwatchedEpisodeHelper.seasonAndEpisodeNumber'
+            )
+      );
+  }
+}

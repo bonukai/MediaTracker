@@ -20,6 +20,7 @@ export const useRouteNames = () => {
     { path: '/watchlist', name: t`Watchlist` },
     { path: '/calendar', name: t`Calendar` },
     { path: '/import', name: t`Import` },
+    { path: '/lists', name: t`Lists` },
   ];
 };
 

@@ -2,11 +2,11 @@ import axios from 'axios';
 
 import { importFromGoodreadsRss } from 'src/controllers/import/goodreads';
 import { Database } from 'src/dbconfig';
+import { List, ListItem } from 'src/entity/list';
 
 import { Seen } from 'src/entity/seen';
-import { User } from 'src/entity/user';
 import { UserRating } from 'src/entity/userRating';
-import { Watchlist } from 'src/entity/watchlist';
+import { Data } from '__tests__/__utils__/data';
 import { clearDatabase, runMigrations } from '__tests__/__utils__/utils';
 import GoodReadsXML from './goodreads.xml';
 
@@ -14,19 +14,13 @@ jest.mock('axios');
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-const user: User = {
-  id: 1,
-  name: 'user',
-  slug: 'user',
-  password: 'password',
-};
-
 describe('Goodreads import', () => {
   beforeAll(runMigrations);
   afterAll(clearDatabase);
 
   beforeAll(async () => {
-    await Database.knex('user').insert(user);
+    await Database.knex('user').insert(Data.user);
+    await Database.knex('list').insert(Data.watchlist);
   });
 
   test('import', async () => {
@@ -34,7 +28,7 @@ describe('Goodreads import', () => {
 
     const url =
       'https://www.goodreads.com/review/list_rss/123456789?key=KEY&shelf=%23ALL%23';
-    const userId = user.id;
+    const userId = Data.user.id;
 
     const res = await importFromGoodreadsRss(url, userId);
 
@@ -50,22 +44,38 @@ describe('Goodreads import', () => {
   });
 
   test('watchlist', async () => {
-    const watchlist = await Database.knex<Watchlist>('watchlist').where({
-      userId: user.id,
+    const watchlist = await Database.knex<ListItem>('listItem').where({
+      listId: Data.watchlist.id,
     });
     expect(watchlist.length).toEqual(7);
   });
 
+  test('custom list', async () => {
+    const list = await Database.knex<List>('list')
+      .where({
+        userId: Data.user.id,
+        name: 'Goodreads-test',
+      })
+      .first();
+
+    expect(list).toBeDefined();
+
+    const listItems = await Database.knex<ListItem>('listItem').where({
+      listId: list.id,
+    });
+    expect(listItems.length).toEqual(1);
+  });
+
   test('ratings', async () => {
     const ratings = await Database.knex<UserRating>('userRating').where({
-      userId: user.id,
+      userId: Data.user.id,
     });
     expect(ratings.length).toEqual(38);
   });
 
   test('read', async () => {
     const read = await Database.knex<Seen>('seen').where({
-      userId: user.id,
+      userId: Data.user.id,
       type: 'seen',
     });
     expect(read.length).toEqual(38);
@@ -75,7 +85,7 @@ describe('Goodreads import', () => {
     const toRead = await Database.knex<Seen>('seen').where({
       progress: 0,
       type: 'progress',
-      userId: user.id,
+      userId: Data.user.id,
     });
     expect(toRead.length).toEqual(1);
   });

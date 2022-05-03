@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import clsx from 'clsx';
-import { formatDuration, intervalToDuration, parseISO } from 'date-fns';
-import { Plural, plural, t, Trans } from '@lingui/macro';
+import { Plural, Trans } from '@lingui/macro';
+import { parseISO } from 'date-fns';
 
 import {
   AudibleLang,
@@ -14,33 +14,37 @@ import {
 } from 'mediatracker-api';
 import { SelectSeenDate } from 'src/components/SelectSeenDate';
 import { BadgeRating } from 'src/components/StarRating';
-import { hasBeenReleased, hasBeenSeenAtLeastOnce } from 'src/mediaItem';
 import {
-  canBeOnWatchlist,
-  canBeRated,
   canMetadataBeUpdated,
   formatEpisodeNumber,
+  hasBeenReleased,
   hasProgress,
   isAudiobook,
   isBook,
   isMovie,
+  isOnWatchlist,
   isTvShow,
   isVideoGame,
 } from 'src/utils';
 import {
   addToProgress,
   addToWatchlist,
-  removeFromSeenHistory,
   removeFromWatchlist,
   useDetails,
   useUpdateMetadata,
 } from 'src/api/details';
-import { RelativeTime } from 'src/components/date';
+import { FormatDuration, RelativeTime } from 'src/components/date';
 import { Poster } from 'src/components/Poster';
 import { Modal } from 'src/components/Modal';
 import { useOtherUser } from 'src/api/user';
 import { SetProgressComponent } from 'src/components/SetProgress';
 import { useConfiguration } from 'src/api/configuration';
+import { AddToListButtonWithModal } from 'src/components/AddToListModal';
+import {
+  AddToSeenHistoryButton,
+  RemoveFromSeenHistoryButton,
+} from 'src/components/AddAndRemoveFromSeenHistoryButton';
+import { hasBeenSeenAtLeastOnce } from 'src/mediaItem';
 
 const Review: FunctionComponent<{ userRating: UserRating }> = (props) => {
   const { userRating } = props;
@@ -84,67 +88,6 @@ const RatingAndReview: FunctionComponent<{
       </div>
 
       {userRating?.review && <Review userRating={userRating} />}
-    </>
-  );
-};
-
-const RemoveFromSeenHistoryButton: FunctionComponent<{
-  mediaItem: MediaItemDetailsResponse;
-}> = (props) => {
-  const { mediaItem } = props;
-  const count = mediaItem.seenHistory.length;
-
-  return (
-    <div
-      className="text-sm btn-red"
-      onClick={() =>
-        confirm(
-          plural(count, {
-            one: 'Do you want to remove # seen history entry?',
-            other: 'Do you want to remove all # seen history entries?',
-          })
-        ) && removeFromSeenHistory(mediaItem)
-      }
-    >
-      {isAudiobook(mediaItem) && <Trans>Remove from listened history</Trans>}
-
-      {isBook(mediaItem) && <Trans>Remove from read history</Trans>}
-
-      {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
-        <Trans>Remove from seen history</Trans>
-      )}
-
-      {isVideoGame(mediaItem) && <Trans>Remove from played history</Trans>}
-    </div>
-  );
-};
-
-const MarkAsSeenButtonWithModal: FunctionComponent<{
-  mediaItem: MediaItemDetailsResponse;
-}> = (props) => {
-  const { mediaItem } = props;
-
-  return (
-    <>
-      <Modal
-        openModal={(openModal) => (
-          <div className="text-sm btn-blue" onClick={openModal}>
-            {isAudiobook(mediaItem) && <Trans>Add to listened history</Trans>}
-
-            {isBook(mediaItem) && <Trans>Add to read history</Trans>}
-
-            {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
-              <Trans>Add to seen history</Trans>
-            )}
-
-            {isVideoGame(mediaItem) && <Trans>Add to played history</Trans>}
-          </div>
-        )}
-      >
-        {(closeModal) => (
-          <SelectSeenDate mediaItem={mediaItem} closeModal={closeModal} />
-        )}
-      </Modal>
     </>
   );
 };
@@ -279,12 +222,20 @@ export const DetailsPage: FunctionComponent = () => {
                 <Trans>Runtime</Trans>:{' '}
               </span>
               <span>
-                {formatDuration(
-                  intervalToDuration({
-                    start: 0,
-                    end: mediaItem.runtime * 60 * 1000,
-                  })
-                )}
+                <FormatDuration milliseconds={mediaItem.runtime * 60 * 1000} />
+              </span>
+            </div>
+          )}
+
+          {mediaItem.totalRuntime > 0 && (
+            <div>
+              <span className="font-bold">
+                <Trans>Total runtime</Trans>:{' '}
+              </span>
+              <span>
+                <FormatDuration
+                  milliseconds={mediaItem.totalRuntime * 60 * 1000}
+                />
               </span>
             </div>
           )}
@@ -405,7 +356,7 @@ export const DetailsPage: FunctionComponent = () => {
                 </span>
                 {mediaItem.numberOfSeasons}
               </div>
-              <a className="underline" href={`#/episodes/${mediaItem.id}`}>
+              <a className="underline" href={`#/seasons/${mediaItem.id}`}>
                 <div>
                   <span className="font-bold">
                     <Trans>Episodes</Trans>:{' '}
@@ -444,31 +395,23 @@ export const DetailsPage: FunctionComponent = () => {
         </div>
       )}
 
-      {canBeOnWatchlist(mediaItem) && (
-        <div className="mt-3">
-          {mediaItem.onWatchlist ? (
-            <div
-              className="text-sm btn-red"
-              onClick={() => removeFromWatchlist(mediaItem)}
-            >
-              <Trans>Remove from watchlist</Trans>
-            </div>
-          ) : (
-            <div
-              className="text-sm btn-blue"
-              onClick={() => addToWatchlist(mediaItem)}
-            >
-              <Trans>Add to watchlist</Trans>
-            </div>
-          )}
-        </div>
-      )}
-      <div>
+      <div className="mt-3">
+        {isOnWatchlist(mediaItem) ? (
+          <RemoveFromWatchlistButton mediaItem={mediaItem} />
+        ) : (
+          <AddToWatchlistButton mediaItem={mediaItem} />
+        )}
+      </div>
+
+      <div className="mt-3">
+        <AddToListButtonWithModal mediaItemId={mediaItem.id} />
+      </div>
+
+      <div className="mt-3">
         {hasBeenReleased(mediaItem) && (
           <>
-            <div className="mt-3">
-              <MarkAsSeenButtonWithModal mediaItem={mediaItem} />
-            </div>
+            <AddToSeenHistoryButton mediaItem={mediaItem} />
+
             {hasBeenSeenAtLeastOnce(mediaItem) && (
               <div className="mt-3">
                 <RemoveFromSeenHistoryButton mediaItem={mediaItem} />
@@ -477,9 +420,12 @@ export const DetailsPage: FunctionComponent = () => {
           </>
         )}
       </div>
+
+      <div className="mt-3"></div>
+
       {mediaItem.mediaType === 'tv' && (
         <Link
-          to={`/episodes/${mediaItem.id}`}
+          to={`/seasons/${mediaItem.id}`}
           className="mt-3 text-green-600 dark:text-green-400 btn"
         >
           <Trans>Episodes page</Trans>
@@ -635,12 +581,58 @@ export const DetailsPage: FunctionComponent = () => {
       )}
 
       {/* Rating */}
-      {canBeRated(mediaItem) && (
+      {hasBeenReleased(mediaItem) && (
         <RatingAndReview
           userRating={mediaItem.userRating}
           mediaItem={mediaItem}
         />
       )}
+    </div>
+  );
+};
+
+export const AddToWatchlistButton: FunctionComponent<{
+  mediaItem: MediaItemItemsResponse;
+  season?: TvSeason;
+  episode?: TvEpisode;
+}> = (props) => {
+  const { mediaItem, season, episode } = props;
+
+  return (
+    <div
+      className="text-sm btn-blue "
+      onClick={() =>
+        addToWatchlist({
+          mediaItem,
+          season,
+          episode,
+        })
+      }
+    >
+      <Trans>Add to watchlist</Trans>
+    </div>
+  );
+};
+
+export const RemoveFromWatchlistButton: FunctionComponent<{
+  mediaItem: MediaItemItemsResponse;
+  season?: TvSeason;
+  episode?: TvEpisode;
+}> = (props) => {
+  const { mediaItem, season, episode } = props;
+
+  return (
+    <div
+      className="text-sm btn-red"
+      onClick={() =>
+        removeFromWatchlist({
+          mediaItem,
+          season,
+          episode,
+        })
+      }
+    >
+      <Trans>Remove from watchlist</Trans>
     </div>
   );
 };

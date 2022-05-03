@@ -49,25 +49,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "episodes": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/TvEpisode"
-                      }
-                    },
-                    "items": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/MediaItemItemsResponse"
-                      }
-                    }
-                  },
-                  "required": [
-                    "episodes",
-                    "items"
-                  ]
+                  "$ref": "#/components/schemas/GetCalendarItemsResponse"
                 }
               }
             }
@@ -630,6 +612,390 @@
         }
       }
     },
+    "/api/list": {
+      "put": {
+        "tags": [
+          "List"
+        ],
+        "operationId": "Add list",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "privacy": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ListPrivacy"
+                      }
+                    ],
+                    "nullable": true
+                  },
+                  "sortBy": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ListSortBy"
+                      }
+                    ],
+                    "nullable": true
+                  },
+                  "sortOrder": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ListSortOrder"
+                      }
+                    ],
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/List"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "List"
+        ],
+        "operationId": "Update list",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "privacy": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ListPrivacy"
+                      }
+                    ],
+                    "nullable": true
+                  },
+                  "sortBy": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ListSortBy"
+                      }
+                    ],
+                    "nullable": true
+                  },
+                  "sortOrder": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ListSortOrder"
+                      }
+                    ],
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/List"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "List"
+        ],
+        "operationId": "Get list",
+        "parameters": [
+          {
+            "name": "listId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDetailsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "List"
+        ],
+        "operationId": "Delete list",
+        "parameters": [
+          {
+            "name": "listId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDetailsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/list/items": {
+      "get": {
+        "tags": [
+          "List"
+        ],
+        "operationId": "Get List Items",
+        "parameters": [
+          {
+            "name": "listId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListItemsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/list-item": {
+      "put": {
+        "tags": [
+          "List Item"
+        ],
+        "operationId": "Add",
+        "parameters": [
+          {
+            "name": "listId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "mediaItemId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "seasonId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "episodeId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "List Item"
+        ],
+        "operationId": "Remove item from list",
+        "parameters": [
+          {
+            "name": "listId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "mediaItemId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "seasonId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "episodeId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/lists": {
+      "get": {
+        "tags": [
+          "Lists"
+        ],
+        "operationId": "Get user's lists",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "mediaItemId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "seasonId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "episodeId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/logs": {
       "get": {
         "tags": [
@@ -726,15 +1092,6 @@
         "operationId": "add",
         "parameters": [
           {
-            "name": "progress",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "number",
-              "nullable": true
-            }
-          },
-          {
             "name": "mediaItemId",
             "in": "query",
             "required": true,
@@ -752,11 +1109,21 @@
             }
           },
           {
+            "name": "progress",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
             "name": "date",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "number"
+              "type": "number",
+              "nullable": true
             }
           },
           {
@@ -1448,11 +1815,11 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "slug": {
+                  "name": {
                     "type": "string",
                     "nullable": true
                   },
-                  "name": {
+                  "slug": {
                     "type": "string",
                     "nullable": true
                   },
@@ -1614,6 +1981,24 @@
             "schema": {
               "type": "number"
             }
+          },
+          {
+            "name": "seasonId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "episodeId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
           }
         ],
         "responses": {
@@ -1639,6 +2024,24 @@
             "required": true,
             "schema": {
               "type": "number"
+            }
+          },
+          {
+            "name": "seasonId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "episodeId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
             }
           }
         ],
@@ -1787,457 +2190,87 @@
       }
     },
     "schemas": {
-      "TvEpisode": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "nullable": true
-          },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "episodeNumber": {
-            "type": "number"
-          },
-          "seasonNumber": {
-            "type": "number"
-          },
-          "releaseDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "tvShowId": {
-            "type": "number",
-            "nullable": true
-          },
-          "seasonId": {
-            "type": "number",
-            "nullable": true
-          },
-          "tmdbId": {
-            "type": "number",
-            "nullable": true
-          },
-          "imdbId": {
-            "type": "string",
-            "nullable": true
-          },
-          "runtime": {
-            "type": "number",
-            "nullable": true
-          },
-          "seenHistory": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Seen"
+      "GetCalendarItemsResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "releaseDate": {
+              "type": "string"
             },
-            "nullable": true
-          },
-          "userRating": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UserRating"
-              }
-            ],
-            "nullable": true
-          },
-          "lastSeenAt": {
-            "type": "number",
-            "nullable": true
-          },
-          "seasonAndEpisodeNumber": {
-            "type": "number",
-            "nullable": true
-          },
-          "seen": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "tvShow": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MediaItemItemsResponse"
-              }
-            ],
-            "nullable": true
-          },
-          "isSpecialEpisode": {
-            "type": "boolean"
-          },
-          "tvdbId": {
-            "type": "number",
-            "nullable": true
-          },
-          "traktId": {
-            "type": "number",
-            "nullable": true
-          }
-        },
-        "required": [
-          "episodeNumber",
-          "isSpecialEpisode",
-          "seasonNumber",
-          "title"
-        ]
-      },
-      "Seen": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "nullable": true
-          },
-          "date": {
-            "type": "number"
-          },
-          "mediaItemId": {
-            "type": "number"
-          },
-          "episodeId": {
-            "type": "number",
-            "nullable": true
-          },
-          "userId": {
-            "type": "number"
-          },
-          "type": {
-            "enum": [
-              "progress",
-              "seen"
-            ],
-            "type": "string"
-          },
-          "progress": {
-            "type": "number",
-            "nullable": true
-          },
-          "duration": {
-            "type": "number",
-            "nullable": true
-          },
-          "action": {
-            "enum": [
-              "paused",
-              "playing",
-              null
-            ],
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "required": [
-          "date",
-          "mediaItemId",
-          "type",
-          "userId"
-        ]
-      },
-      "UserRating": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "nullable": true
-          },
-          "mediaItemId": {
-            "type": "number"
-          },
-          "date": {
-            "type": "number"
-          },
-          "userId": {
-            "type": "number"
-          },
-          "rating": {
-            "type": "number",
-            "nullable": true
-          },
-          "review": {
-            "type": "string",
-            "nullable": true
-          },
-          "episodeId": {
-            "type": "number",
-            "nullable": true
-          },
-          "seasonId": {
-            "type": "number",
-            "nullable": true
-          }
-        },
-        "required": [
-          "date",
-          "mediaItemId",
-          "userId"
-        ]
-      },
-      "MediaItemItemsResponse": {
-        "allOf": [
-          {
-            "type": "object",
-            "properties": {
-              "tmdbId": {
-                "type": "number",
-                "nullable": true
-              },
-              "imdbId": {
-                "type": "string",
-                "nullable": true
-              },
-              "tvmazeId": {
-                "type": "number",
-                "nullable": true
-              },
-              "igdbId": {
-                "type": "number",
-                "nullable": true
-              },
-              "openlibraryId": {
-                "type": "string",
-                "nullable": true
-              },
-              "audibleId": {
-                "type": "string",
-                "nullable": true
-              },
-              "traktId": {
-                "type": "number",
-                "nullable": true
-              },
-              "goodreadsId": {
-                "type": "number",
-                "nullable": true
-              },
-              "id": {
-                "type": "number",
-                "nullable": true
-              },
-              "numberOfSeasons": {
-                "type": "number",
-                "nullable": true
-              },
-              "status": {
-                "type": "string",
-                "nullable": true
-              },
-              "platform": {
-                "type": "array",
-                "items": {
+            "mediaItem": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "title": {
                   "type": "string"
                 },
-                "nullable": true
-              },
-              "title": {
-                "type": "string"
-              },
-              "slug": {
-                "type": "string",
-                "nullable": true
-              },
-              "originalTitle": {
-                "type": "string",
-                "nullable": true
-              },
-              "poster": {
-                "type": "string",
-                "nullable": true
-              },
-              "backdrop": {
-                "type": "string",
-                "nullable": true
-              },
-              "tmdbRating": {
-                "type": "number",
-                "nullable": true
-              },
-              "releaseDate": {
-                "type": "string",
-                "nullable": true
-              },
-              "overview": {
-                "type": "string",
-                "nullable": true
-              },
-              "lastTimeUpdated": {
-                "type": "number",
-                "nullable": true
-              },
-              "source": {
-                "type": "string"
-              },
-              "network": {
-                "type": "string",
-                "nullable": true
-              },
-              "url": {
-                "type": "string",
-                "nullable": true
-              },
-              "runtime": {
-                "type": "number",
-                "nullable": true
-              },
-              "mediaType": {
-                "$ref": "#/components/schemas/MediaType"
-              },
-              "genres": {
-                "type": "array",
-                "items": {
+                "releaseDate": {
                   "type": "string"
                 },
-                "nullable": true
-              },
-              "numberOfEpisodes": {
-                "type": "number",
-                "nullable": true
-              },
-              "developer": {
-                "type": "string",
-                "nullable": true
-              },
-              "authors": {
-                "type": "array",
-                "items": {
+                "slug": {
                   "type": "string"
                 },
-                "nullable": true
-              },
-              "narrators": {
-                "type": "array",
-                "items": {
-                  "type": "string"
+                "mediaType": {
+                  "$ref": "#/components/schemas/MediaType"
                 },
-                "nullable": true
+                "seen": {
+                  "type": "boolean",
+                  "nullable": true
+                }
               },
-              "language": {
-                "type": "string",
-                "nullable": true
-              },
-              "numberOfPages": {
-                "type": "number",
-                "nullable": true
-              },
-              "audibleCountryCode": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/AudibleLang"
-                  }
-                ],
-                "nullable": true
-              },
-              "needsDetails": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "tvdbId": {
-                "type": "number",
-                "nullable": true
-              }
+              "required": [
+                "id",
+                "mediaType",
+                "releaseDate",
+                "slug",
+                "title"
+              ]
             },
-            "required": [
-              "mediaType",
-              "source",
-              "title"
-            ]
-          },
-          {
-            "type": "object",
-            "properties": {
-              "isSearchResult": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "hasDetails": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "poster": {
-                "type": "string",
-                "nullable": true
-              },
-              "posterSmall": {
-                "type": "string",
-                "nullable": true
-              },
-              "backdrop": {
-                "type": "string",
-                "nullable": true
-              },
-              "seenHistory": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Seen"
+            "episode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
                 },
-                "nullable": true
+                "title": {
+                  "type": "string"
+                },
+                "episodeNumber": {
+                  "type": "number"
+                },
+                "seasonNumber": {
+                  "type": "number"
+                },
+                "releaseDate": {
+                  "type": "string"
+                },
+                "isSpecialEpisode": {
+                  "type": "boolean"
+                },
+                "seen": {
+                  "type": "boolean"
+                }
               },
-              "unseenEpisodesCount": {
-                "type": "number",
-                "nullable": true
-              },
-              "userRating": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/UserRating"
-                  }
-                ],
-                "nullable": true
-              },
-              "upcomingEpisode": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/TvEpisode"
-                  }
-                ],
-                "nullable": true
-              },
-              "lastAiredEpisode": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/TvEpisode"
-                  }
-                ],
-                "nullable": true
-              },
-              "nextAiring": {
-                "type": "string",
-                "nullable": true
-              },
-              "lastAiring": {
-                "type": "string",
-                "nullable": true
-              },
-              "onWatchlist": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "lastSeenAt": {
-                "type": "number",
-                "nullable": true
-              },
-              "seen": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "firstUnwatchedEpisode": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/TvEpisode"
-                  }
-                ],
-                "nullable": true
-              },
-              "progress": {
-                "type": "number",
-                "nullable": true
-              }
+              "required": [
+                "episodeNumber",
+                "id",
+                "isSpecialEpisode",
+                "releaseDate",
+                "seasonNumber",
+                "seen",
+                "title"
+              ]
             }
-          }
-        ]
+          },
+          "required": [
+            "episode",
+            "mediaItem",
+            "releaseDate"
+          ]
+        }
       },
       "MediaType": {
         "enum": [
@@ -2246,21 +2279,6 @@
           "movie",
           "tv",
           "video_game"
-        ],
-        "type": "string"
-      },
-      "AudibleLang": {
-        "enum": [
-          "au",
-          "ca",
-          "de",
-          "es",
-          "fr",
-          "in",
-          "it",
-          "jp",
-          "uk",
-          "us"
         ],
         "type": "string"
       },
@@ -2408,6 +2426,21 @@
         ],
         "type": "string"
       },
+      "AudibleLang": {
+        "enum": [
+          "au",
+          "ca",
+          "de",
+          "es",
+          "fr",
+          "in",
+          "it",
+          "jp",
+          "uk",
+          "us"
+        ],
+        "type": "string"
+      },
       "ServerLang": {
         "enum": [
           "da",
@@ -2429,7 +2462,61 @@
           {
             "type": "object",
             "properties": {
+              "id": {
+                "type": "number",
+                "nullable": true
+              },
+              "releaseDate": {
+                "type": "string",
+                "nullable": true
+              },
+              "slug": {
+                "type": "string",
+                "nullable": true
+              },
+              "numberOfEpisodes": {
+                "type": "number",
+                "nullable": true
+              },
+              "poster": {
+                "type": "string",
+                "nullable": true
+              },
+              "title": {
+                "type": "string"
+              },
               "tmdbId": {
+                "type": "number",
+                "nullable": true
+              },
+              "tvdbId": {
+                "type": "number",
+                "nullable": true
+              },
+              "traktId": {
+                "type": "number",
+                "nullable": true
+              },
+              "tvmazeId": {
+                "type": "number",
+                "nullable": true
+              },
+              "backdrop": {
+                "type": "string",
+                "nullable": true
+              },
+              "developer": {
+                "type": "string",
+                "nullable": true
+              },
+              "genres": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              "igdbId": {
                 "type": "number",
                 "nullable": true
               },
@@ -2437,11 +2524,22 @@
                 "type": "string",
                 "nullable": true
               },
-              "tvmazeId": {
+              "audibleId": {
+                "type": "string",
+                "nullable": true
+              },
+              "lastTimeUpdated": {
                 "type": "number",
                 "nullable": true
               },
-              "igdbId": {
+              "mediaType": {
+                "$ref": "#/components/schemas/MediaType"
+              },
+              "network": {
+                "type": "string",
+                "nullable": true
+              },
+              "numberOfSeasons": {
                 "type": "number",
                 "nullable": true
               },
@@ -2449,27 +2547,11 @@
                 "type": "string",
                 "nullable": true
               },
-              "audibleId": {
+              "originalTitle": {
                 "type": "string",
                 "nullable": true
               },
-              "traktId": {
-                "type": "number",
-                "nullable": true
-              },
-              "goodreadsId": {
-                "type": "number",
-                "nullable": true
-              },
-              "id": {
-                "type": "number",
-                "nullable": true
-              },
-              "numberOfSeasons": {
-                "type": "number",
-                "nullable": true
-              },
-              "status": {
+              "overview": {
                 "type": "string",
                 "nullable": true
               },
@@ -2480,45 +2562,18 @@
                 },
                 "nullable": true
               },
-              "title": {
-                "type": "string"
-              },
-              "slug": {
-                "type": "string",
-                "nullable": true
-              },
-              "originalTitle": {
-                "type": "string",
-                "nullable": true
-              },
-              "poster": {
-                "type": "string",
-                "nullable": true
-              },
-              "backdrop": {
-                "type": "string",
-                "nullable": true
-              },
               "tmdbRating": {
                 "type": "number",
                 "nullable": true
               },
-              "releaseDate": {
-                "type": "string",
-                "nullable": true
-              },
-              "overview": {
-                "type": "string",
-                "nullable": true
-              },
-              "lastTimeUpdated": {
+              "runtime": {
                 "type": "number",
                 "nullable": true
               },
               "source": {
                 "type": "string"
               },
-              "network": {
+              "status": {
                 "type": "string",
                 "nullable": true
               },
@@ -2526,26 +2581,8 @@
                 "type": "string",
                 "nullable": true
               },
-              "runtime": {
-                "type": "number",
-                "nullable": true
-              },
-              "mediaType": {
-                "$ref": "#/components/schemas/MediaType"
-              },
-              "genres": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "nullable": true
-              },
-              "numberOfEpisodes": {
-                "type": "number",
-                "nullable": true
-              },
-              "developer": {
-                "type": "string",
+              "needsDetails": {
+                "type": "boolean",
                 "nullable": true
               },
               "authors": {
@@ -2566,6 +2603,10 @@
                 "type": "string",
                 "nullable": true
               },
+              "goodreadsId": {
+                "type": "number",
+                "nullable": true
+              },
               "numberOfPages": {
                 "type": "number",
                 "nullable": true
@@ -2576,14 +2617,6 @@
                     "$ref": "#/components/schemas/AudibleLang"
                   }
                 ],
-                "nullable": true
-              },
-              "needsDetails": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "tvdbId": {
-                "type": "number",
                 "nullable": true
               },
               "seasons": {
@@ -2689,8 +2722,21 @@
               "progress": {
                 "type": "number",
                 "nullable": true
+              },
+              "totalRuntime": {
+                "type": "number",
+                "nullable": true
+              },
+              "lists": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/List"
+                }
               }
-            }
+            },
+            "required": [
+              "lists"
+            ]
           }
         ]
       },
@@ -2768,6 +2814,18 @@
           "traktId": {
             "type": "number",
             "nullable": true
+          },
+          "onWatchlist": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "totalRuntime": {
+            "type": "number",
+            "nullable": true
+          },
+          "lastSeenAt": {
+            "type": "number",
+            "nullable": true
           }
         },
         "required": [
@@ -2775,6 +2833,566 @@
           "seasonNumber",
           "title"
         ]
+      },
+      "TvEpisode": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "nullable": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "episodeNumber": {
+            "type": "number"
+          },
+          "seasonNumber": {
+            "type": "number"
+          },
+          "releaseDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "tvShowId": {
+            "type": "number",
+            "nullable": true
+          },
+          "seasonId": {
+            "type": "number",
+            "nullable": true
+          },
+          "tmdbId": {
+            "type": "number",
+            "nullable": true
+          },
+          "imdbId": {
+            "type": "string",
+            "nullable": true
+          },
+          "runtime": {
+            "type": "number",
+            "nullable": true
+          },
+          "seenHistory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Seen"
+            },
+            "nullable": true
+          },
+          "userRating": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserRating"
+              }
+            ],
+            "nullable": true
+          },
+          "lastSeenAt": {
+            "type": "number",
+            "nullable": true
+          },
+          "seasonAndEpisodeNumber": {
+            "type": "number",
+            "nullable": true
+          },
+          "seen": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "tvShow": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MediaItemItemsResponse"
+              }
+            ],
+            "nullable": true
+          },
+          "isSpecialEpisode": {
+            "type": "boolean"
+          },
+          "tvdbId": {
+            "type": "number",
+            "nullable": true
+          },
+          "traktId": {
+            "type": "number",
+            "nullable": true
+          },
+          "onWatchlist": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "required": [
+          "episodeNumber",
+          "isSpecialEpisode",
+          "seasonNumber",
+          "title"
+        ]
+      },
+      "Seen": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "nullable": true
+          },
+          "date": {
+            "type": "number",
+            "nullable": true
+          },
+          "mediaItemId": {
+            "type": "number"
+          },
+          "episodeId": {
+            "type": "number",
+            "nullable": true
+          },
+          "userId": {
+            "type": "number"
+          },
+          "type": {
+            "enum": [
+              "progress",
+              "seen"
+            ],
+            "type": "string"
+          },
+          "progress": {
+            "type": "number",
+            "nullable": true
+          },
+          "duration": {
+            "type": "number",
+            "nullable": true
+          },
+          "action": {
+            "enum": [
+              "paused",
+              "playing",
+              null
+            ],
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "mediaItemId",
+          "type",
+          "userId"
+        ]
+      },
+      "UserRating": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "nullable": true
+          },
+          "mediaItemId": {
+            "type": "number"
+          },
+          "date": {
+            "type": "number"
+          },
+          "userId": {
+            "type": "number"
+          },
+          "rating": {
+            "type": "number",
+            "nullable": true
+          },
+          "review": {
+            "type": "string",
+            "nullable": true
+          },
+          "episodeId": {
+            "type": "number",
+            "nullable": true
+          },
+          "seasonId": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "date",
+          "mediaItemId",
+          "userId"
+        ]
+      },
+      "MediaItemItemsResponse": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "nullable": true
+              },
+              "releaseDate": {
+                "type": "string",
+                "nullable": true
+              },
+              "slug": {
+                "type": "string",
+                "nullable": true
+              },
+              "numberOfEpisodes": {
+                "type": "number",
+                "nullable": true
+              },
+              "poster": {
+                "type": "string",
+                "nullable": true
+              },
+              "title": {
+                "type": "string"
+              },
+              "tmdbId": {
+                "type": "number",
+                "nullable": true
+              },
+              "tvdbId": {
+                "type": "number",
+                "nullable": true
+              },
+              "traktId": {
+                "type": "number",
+                "nullable": true
+              },
+              "tvmazeId": {
+                "type": "number",
+                "nullable": true
+              },
+              "backdrop": {
+                "type": "string",
+                "nullable": true
+              },
+              "developer": {
+                "type": "string",
+                "nullable": true
+              },
+              "genres": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              "igdbId": {
+                "type": "number",
+                "nullable": true
+              },
+              "imdbId": {
+                "type": "string",
+                "nullable": true
+              },
+              "audibleId": {
+                "type": "string",
+                "nullable": true
+              },
+              "lastTimeUpdated": {
+                "type": "number",
+                "nullable": true
+              },
+              "mediaType": {
+                "$ref": "#/components/schemas/MediaType"
+              },
+              "network": {
+                "type": "string",
+                "nullable": true
+              },
+              "numberOfSeasons": {
+                "type": "number",
+                "nullable": true
+              },
+              "openlibraryId": {
+                "type": "string",
+                "nullable": true
+              },
+              "originalTitle": {
+                "type": "string",
+                "nullable": true
+              },
+              "overview": {
+                "type": "string",
+                "nullable": true
+              },
+              "platform": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              "tmdbRating": {
+                "type": "number",
+                "nullable": true
+              },
+              "runtime": {
+                "type": "number",
+                "nullable": true
+              },
+              "source": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "nullable": true
+              },
+              "url": {
+                "type": "string",
+                "nullable": true
+              },
+              "needsDetails": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              "narrators": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              "language": {
+                "type": "string",
+                "nullable": true
+              },
+              "goodreadsId": {
+                "type": "number",
+                "nullable": true
+              },
+              "numberOfPages": {
+                "type": "number",
+                "nullable": true
+              },
+              "audibleCountryCode": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/AudibleLang"
+                  }
+                ],
+                "nullable": true
+              }
+            },
+            "required": [
+              "mediaType",
+              "source",
+              "title"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "isSearchResult": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "hasDetails": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "poster": {
+                "type": "string",
+                "nullable": true
+              },
+              "posterSmall": {
+                "type": "string",
+                "nullable": true
+              },
+              "backdrop": {
+                "type": "string",
+                "nullable": true
+              },
+              "seenHistory": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Seen"
+                },
+                "nullable": true
+              },
+              "unseenEpisodesCount": {
+                "type": "number",
+                "nullable": true
+              },
+              "userRating": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UserRating"
+                  }
+                ],
+                "nullable": true
+              },
+              "upcomingEpisode": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TvEpisode"
+                  }
+                ],
+                "nullable": true
+              },
+              "lastAiredEpisode": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TvEpisode"
+                  }
+                ],
+                "nullable": true
+              },
+              "nextAiring": {
+                "type": "string",
+                "nullable": true
+              },
+              "lastAiring": {
+                "type": "string",
+                "nullable": true
+              },
+              "onWatchlist": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "lastSeenAt": {
+                "type": "number",
+                "nullable": true
+              },
+              "seen": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "firstUnwatchedEpisode": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TvEpisode"
+                  }
+                ],
+                "nullable": true
+              },
+              "progress": {
+                "type": "number",
+                "nullable": true
+              },
+              "totalRuntime": {
+                "type": "number",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "List": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "privacy": {
+            "$ref": "#/components/schemas/ListPrivacy"
+          },
+          "sortBy": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ListSortBy"
+              }
+            ],
+            "nullable": true
+          },
+          "sortOrder": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ListSortOrder"
+              }
+            ],
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "number"
+          },
+          "updatedAt": {
+            "type": "number"
+          },
+          "userId": {
+            "type": "number"
+          },
+          "rank": {
+            "type": "number",
+            "nullable": true
+          },
+          "allowComments": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "displayNumbers": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "isWatchlist": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "createdAt",
+          "id",
+          "isWatchlist",
+          "name",
+          "privacy",
+          "slug",
+          "updatedAt",
+          "userId"
+        ]
+      },
+      "ListPrivacy": {
+        "enum": [
+          "friends",
+          "private",
+          "public"
+        ],
+        "type": "string"
+      },
+      "ListSortBy": {
+        "enum": [
+          "my-rating",
+          "next-airing",
+          "rank",
+          "recently-added",
+          "recently-aired",
+          "recently-watched",
+          "release-date",
+          "runtime",
+          "title"
+        ],
+        "type": "string"
+      },
+      "ListSortOrder": {
+        "enum": [
+          "asc",
+          "desc"
+        ],
+        "type": "string"
       },
       "GetItemsRequest": {
         "allOf": [
@@ -2870,6 +3488,276 @@
           "desc"
         ],
         "type": "string"
+      },
+      "ListDetailsResponse": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "isWatchlist": {
+                "type": "boolean"
+              },
+              "name": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string",
+                "nullable": true
+              },
+              "rank": {
+                "type": "number",
+                "nullable": true
+              },
+              "sortOrder": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ListSortOrder"
+                  }
+                ],
+                "nullable": true
+              },
+              "privacy": {
+                "$ref": "#/components/schemas/ListPrivacy"
+              },
+              "sortBy": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ListSortBy"
+                  }
+                ],
+                "nullable": true
+              },
+              "createdAt": {
+                "type": "number"
+              },
+              "updatedAt": {
+                "type": "number"
+              },
+              "allowComments": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "displayNumbers": {
+                "type": "boolean",
+                "nullable": true
+              }
+            },
+            "required": [
+              "createdAt",
+              "id",
+              "isWatchlist",
+              "name",
+              "privacy",
+              "slug",
+              "updatedAt"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "totalRuntime": {
+                "type": "number"
+              },
+              "user": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "slug": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "slug",
+                  "username"
+                ]
+              }
+            },
+            "required": [
+              "totalRuntime",
+              "user"
+            ]
+          }
+        ]
+      },
+      "ListItemsResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "rank": {
+              "type": "number"
+            },
+            "id": {
+              "type": "number"
+            },
+            "listedAt": {
+              "type": "string"
+            },
+            "type": {
+              "enum": [
+                "audiobook",
+                "book",
+                "episode",
+                "movie",
+                "season",
+                "tv",
+                "video_game"
+              ],
+              "type": "string"
+            },
+            "mediaItem": {
+              "$ref": "#/components/schemas/MediaItemItemsResponse"
+            },
+            "season": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/TvSeason"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "lastSeenAt": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              ],
+              "nullable": true
+            },
+            "episode": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/TvEpisode"
+                }
+              ],
+              "nullable": true
+            }
+          },
+          "required": [
+            "id",
+            "listedAt",
+            "mediaItem",
+            "rank",
+            "type"
+          ]
+        }
+      },
+      "ListsResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ListsItemResponse"
+        }
+      },
+      "ListsItemResponse": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "isWatchlist": {
+                "type": "boolean"
+              },
+              "name": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string",
+                "nullable": true
+              },
+              "rank": {
+                "type": "number",
+                "nullable": true
+              },
+              "sortOrder": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ListSortOrder"
+                  }
+                ],
+                "nullable": true
+              },
+              "privacy": {
+                "$ref": "#/components/schemas/ListPrivacy"
+              },
+              "sortBy": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ListSortBy"
+                  }
+                ],
+                "nullable": true
+              },
+              "createdAt": {
+                "type": "number"
+              },
+              "updatedAt": {
+                "type": "number"
+              },
+              "allowComments": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "displayNumbers": {
+                "type": "boolean",
+                "nullable": true
+              }
+            },
+            "required": [
+              "createdAt",
+              "id",
+              "isWatchlist",
+              "name",
+              "privacy",
+              "slug",
+              "updatedAt"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "itemsCount": {
+                "type": "number"
+              },
+              "user": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name"
+                ]
+              }
+            },
+            "required": [
+              "itemsCount",
+              "user"
+            ]
+          }
+        ]
       },
       "LogLevels": {
         "type": "object",
@@ -3233,10 +4121,10 @@
           "id": {
             "type": "number"
           },
-          "slug": {
+          "name": {
             "type": "string"
           },
-          "name": {
+          "slug": {
             "type": "string"
           },
           "admin": {
@@ -3507,10 +4395,18 @@
               },
               "shows": {
                 "type": "number"
+              },
+              "seasons": {
+                "type": "number"
+              },
+              "episodes": {
+                "type": "number"
               }
             },
             "required": [
+              "episodes",
               "movies",
+              "seasons",
               "shows"
             ]
           },

@@ -1,3 +1,5 @@
+import { parseISO } from 'date-fns';
+
 import { UserRating } from 'src/entity/userRating';
 import { Seen } from 'src/entity/seen';
 import { MediaItemItemsResponse } from 'src/entity/mediaItem';
@@ -23,6 +25,7 @@ export type TvEpisode = {
   isSpecialEpisode: boolean;
   tvdbId?: number;
   traktId?: number;
+  onWatchlist?: boolean;
 };
 
 export const tvEpisodeColumns = <const>[
@@ -56,7 +59,7 @@ export class TvEpisodeFilters {
     return (
       episode.releaseDate &&
       episode.releaseDate.trim() != '' &&
-      new Date(episode.releaseDate) <= new Date()
+      parseISO(episode.releaseDate) <= new Date()
     );
   };
 
@@ -64,7 +67,7 @@ export class TvEpisodeFilters {
     return (
       !episode.releaseDate ||
       episode.releaseDate.trim() == '' ||
-      new Date(episode.releaseDate) > new Date()
+      parseISO(episode.releaseDate) > new Date()
     );
   };
 

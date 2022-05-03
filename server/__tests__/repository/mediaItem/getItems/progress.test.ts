@@ -7,8 +7,6 @@ import { userRepository } from 'src/repository/user';
 import { Seen } from 'src/entity/seen';
 import { seenRepository } from 'src/repository/seen';
 import { clearDatabase, runMigrations } from '../../../__utils__/utils';
-import { Watchlist } from 'src/entity/watchlist';
-import { watchlistRepository } from 'src/repository/watchlist';
 
 const user: User = {
   id: 1,
@@ -35,16 +33,6 @@ const mediaItem: MediaItemBase = {
   source: 'user',
   title: 'title',
   slug: 'title',
-};
-
-const watchlist: Watchlist = {
-  userId: user.id,
-  mediaItemId: mediaItem.id,
-};
-
-const watchlist2: Watchlist = {
-  userId: user2.id,
-  mediaItemId: mediaItem.id,
 };
 
 const date = new Date().getTime();
@@ -96,8 +84,6 @@ describe('progress', () => {
     await mediaItemRepository.create(mediaItem);
     await userRepository.create(user);
     await userRepository.create(user2);
-    await watchlistRepository.create(watchlist);
-    await watchlistRepository.create(watchlist2);
     await seenRepository.create(progress);
     await seenRepository.create(progress2);
     await seenRepository.createMany(progress3);

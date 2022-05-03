@@ -1,5 +1,5 @@
-import React, { FunctionComponent } from 'react';
-import { useParams } from 'react-router';
+import React, { FunctionComponent, useEffect } from 'react';
+import { useLocation, useMatch, useNavigate, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { Plural, t, Trans } from '@lingui/macro';
@@ -10,18 +10,26 @@ import { Modal } from 'src/components/Modal';
 import { Poster } from 'src/components/Poster';
 import { SelectSeenDate } from 'src/components/SelectSeenDate';
 import { BadgeRating } from 'src/components/StarRating';
-import { hasBeenReleased, useSelectedSeason } from 'src/mediaItem';
-import { canBeRated, hideEpisodeTitle, hideSeasonOverview } from 'src/utils';
+import { hasBeenSeenAtLeastOnce, useSelectedSeason } from 'src/mediaItem';
+import {
+  hasBeenReleased,
+  hideEpisodeTitle,
+  hideSeasonOverview,
+} from 'src/utils';
 import {
   MediaItemDetailsResponse,
-  MediaItemItemsResponse,
   TvEpisode,
   TvSeason,
 } from 'mediatracker-api';
 import { useUser } from 'src/api/user';
+import { AddToListButtonWithModal } from 'src/components/AddToListModal';
+import {
+  AddToSeenHistoryButton,
+  RemoveFromSeenHistoryButton,
+} from 'src/components/AddAndRemoveFromSeenHistoryButton';
 
 const EpisodeComponent: FunctionComponent<{
-  mediaItem: MediaItemItemsResponse;
+  mediaItem: MediaItemDetailsResponse;
   episode: TvEpisode;
 }> = (props) => {
   const { mediaItem, episode } = props;
@@ -46,7 +54,11 @@ const EpisodeComponent: FunctionComponent<{
                 (!episode.seenHistory || episode.seenHistory?.length === 0),
             })}
           >
-            {episode.title}
+            <Link
+              to={`/episode/${episode.tvShowId}/${episode.seasonNumber}/${episode.episodeNumber}`}
+            >
+              {episode.title}
+            </Link>
           </span>
         </div>
 
@@ -66,7 +78,7 @@ const EpisodeComponent: FunctionComponent<{
       <div className="flex py-2 md:ml-auto md:py-0">
         {/* Rating */}
         <div className="flex w-10 md:justify-center">
-          {canBeRated(episode) && (
+          {hasBeenReleased(episode) && (
             <BadgeRating mediaItem={mediaItem} episode={episode} />
           )}
         </div>
@@ -83,57 +95,51 @@ const EpisodeComponent: FunctionComponent<{
       </div>
 
       {/* Third row */}
-      <div className="py-1 md:flex md:ml-auto md:py-0">
-        <Modal
-          openModal={(openModal) => (
-            <div
-              onClick={() => openModal()}
-              className={clsx(
-                'btn-blue text-sm',
-                !hasBeenReleased(episode) && 'opacity-0 pointer-events-none'
-              )}
-            >
-              <Trans>Add to seen history</Trans>
-            </div>
-          )}
-        >
-          {(closeModal) => (
-            <SelectSeenDate
-              closeModal={closeModal}
-              mediaItem={mediaItem}
-              episode={episode}
-            />
-          )}
-        </Modal>
+      <div className="flex flex-wrap py-1 -mt-2 sm:flex-nowrap md:ml-auto md:py-0">
+        <div className="mt-2">
+          <AddToSeenHistoryButton mediaItem={mediaItem} episode={episode} />
+        </div>
+
+        <div className="ml-2" />
 
         <div
-          className={clsx(
-            'btn-red ml-2 text-sm',
-            !episode.seen && 'opacity-0 pointer-events-none'
-          )}
-          onClick={() => {
-            if (
-              confirm(
-                t`Do you want to remove episode ${episode.title} from seen history?`
-              )
-            ) {
-              markAsUnseen({ mediaItem, episode });
-            }
-          }}
+          className={
+            hasBeenSeenAtLeastOnce(episode) ? 'mt-2' : 'invisible h-0 '
+          }
         >
-          <Trans>Remove from seen history</Trans>
+          <RemoveFromSeenHistoryButton
+            mediaItem={mediaItem}
+            episode={episode}
+          />
         </div>
       </div>
     </div>
   );
 };
 
-export const EpisodesPage: FunctionComponent = () => {
-  const { mediaItemId } = useParams();
+export const SeasonsPage: FunctionComponent = () => {
+  const { mediaItemId, seasonNumber } = useParams();
   const { mediaItem, isLoading, error } = useDetails(Number(mediaItemId));
 
-  const { selectedSeason, selectedSeasonId, setSelectedSeasonId } =
+  const { selectedSeason, selectedSeasonNumber, setSelectedSeasonNumber } =
     useSelectedSeason(mediaItem);
+
+  const navigate = useNavigate();
+
+  useEffect(
+    () => seasonNumber && setSelectedSeasonNumber(Number(seasonNumber)),
+    [seasonNumber, setSelectedSeasonNumber]
+  );
+
+  useEffect(
+    () =>
+      selectedSeasonNumber !== undefined &&
+      navigate(`/seasons/${mediaItemId}/${selectedSeasonNumber}`, {
+        replace: true,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedSeasonNumber]
+  );
 
   if (isLoading || !selectedSeason) {
     return <Trans>Loading</Trans>;
@@ -162,11 +168,12 @@ export const EpisodesPage: FunctionComponent = () => {
                 className={clsx(
                   'mr-1 my-1 px-2 py-0.5 hover:bg-blue-300 rounded cursor-pointer select-none',
                   {
-                    'bg-indigo-600': selectedSeasonId !== season.id,
-                    'bg-red-500': selectedSeasonId === season.id,
+                    'bg-indigo-600':
+                      selectedSeasonNumber !== season.seasonNumber,
+                    'bg-red-500': selectedSeasonNumber === season.seasonNumber,
                   }
                 )}
-                onClick={() => setSelectedSeasonId(season.id)}
+                onClick={() => setSelectedSeasonNumber(season.seasonNumber)}
               >
                 <Trans>Season {season.seasonNumber}</Trans>
               </div>
@@ -174,7 +181,7 @@ export const EpisodesPage: FunctionComponent = () => {
           ))}
         </div>
         <SeasonComponent
-          key={selectedSeasonId}
+          key={selectedSeasonNumber}
           mediaItem={mediaItem}
           season={selectedSeason}
         />
@@ -192,59 +199,63 @@ const SeasonComponent: FunctionComponent<{
 
   return (
     <>
-      <div className="flex w-full">
-        {season.episodes?.filter(
-          (episode) =>
-            episode.releaseDate && parseISO(episode.releaseDate) <= new Date()
-        ).length > 0 && <BadgeRating mediaItem={mediaItem} season={season} />}
-
-        <Modal
-          openModal={(openModal) => (
-            <div
-              onClick={() => openModal()}
-              className={clsx(
-                'ml-auto btn-blue text-sm',
-                season.episodes?.filter(
-                  (episode) =>
-                    episode.releaseDate &&
-                    parseISO(episode.releaseDate) <= new Date()
-                ).length === 0 && 'opacity-0 pointer-events-none'
-              )}
-            >
-              <Trans>Add season to seen history</Trans>
-            </div>
-          )}
-        >
-          {(closeModal) => (
-            <SelectSeenDate
-              closeModal={closeModal}
-              mediaItem={mediaItem}
-              season={season}
-            />
-          )}
-        </Modal>
-      </div>
       <div className="flex flex-col my-2 md:flex-row">
         <div className="self-center w-60 shrink-0 md:mr-2 md:self-start">
           <Poster src={season.posterSmall} itemMediaType="tv" />
         </div>
-        {season.description && (
-          <div className="py-2">
-            <b className="">
-              <Trans>Description</Trans>:
-            </b>
-            <div
-              className={clsx(
-                'inline py-1',
-                hideSeasonOverview(user) &&
-                  !season.seen &&
-                  'bg-current hover:bg-transparent transition-all cursor-pointer'
-              )}
-            >
-              {season.description}
+        <div>
+          {season.description && (
+            <div className="pt-2">
+              <b className="">
+                <Trans>Description</Trans>:{' '}
+              </b>
+              <div
+                className={clsx(
+                  'inline py-1',
+                  hideSeasonOverview(user) &&
+                    !season.seen &&
+                    'bg-current hover:bg-transparent transition-all cursor-pointer'
+                )}
+              >
+                {season.description}
+              </div>
             </div>
+          )}
+          {season.episodes?.length > 0 && (
+            <>
+              <b>
+                <Trans>Number of episodes</Trans>:{' '}
+              </b>
+              {season.episodes.length}
+            </>
+          )}
+
+          <div className="mt-2">
+            {hasBeenReleased(season) && (
+              <BadgeRating mediaItem={mediaItem} season={season} />
+            )}
           </div>
-        )}
+
+          <div className="mt-2">
+            <AddToSeenHistoryButton mediaItem={mediaItem} season={season} />
+          </div>
+
+          {hasBeenSeenAtLeastOnce(season) && (
+            <div className="mt-2">
+              <RemoveFromSeenHistoryButton
+                mediaItem={mediaItem}
+                season={season}
+              />
+            </div>
+          )}
+
+          <div className="mt-2">
+            <AddToListButtonWithModal
+              mediaItemId={mediaItem.id}
+              seasonId={season.id}
+            />
+          </div>
+        </div>
       </div>
       <div className="w-full whitespace-nowrap">
         {season.episodes.map((episode, index) => (

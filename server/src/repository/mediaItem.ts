@@ -5,7 +5,6 @@ import { getItemsKnex, generateColumnNames } from 'src/knex/queries/items';
 import { Database } from 'src/dbconfig';
 import { getDetailsKnex } from 'src/knex/queries/details';
 import { Seen } from 'src/entity/seen';
-import { Watchlist } from 'src/entity/watchlist';
 import { UserRating } from 'src/entity/userRating';
 import { NotificationsHistory } from 'src/entity/notificationsHistory';
 import { TvEpisode, tvEpisodeColumns } from 'src/entity/tvepisode';
@@ -25,6 +24,8 @@ import { imageRepository } from 'src/repository/image';
 import { getImageId, Image } from 'src/entity/image';
 import { subDays } from 'date-fns';
 import { randomSlugId } from 'src/slug';
+import { TvSeason } from 'src/entity/tvseason';
+import { ListItem } from 'src/entity/list';
 
 export type MediaItemOrderBy =
   | 'title'
@@ -130,6 +131,22 @@ class MediaItemRepository extends repository<MediaItemBase>({
       narrators: value.narrators?.join(','),
       platform: value.platform ? JSON.stringify(value.platform) : null,
     } as unknown) as Record<string, unknown>;
+  }
+
+  public async delete(where?: { id: number }) {
+    const mediaItemId = where.id;
+
+    return await Database.knex.transaction(async (trx) => {
+      await trx<Image>('image').delete().where('mediaItemId', mediaItemId);
+      await trx<NotificationsHistory>('notificationsHistory')
+        .delete()
+        .where('mediaItemId', mediaItemId);
+      await trx<TvEpisode>('episode').delete().where('tvShowId', mediaItemId);
+      await trx<TvSeason>('season').delete().where('tvShowId', mediaItemId);
+      return await trx<MediaItemBase>(this.tableName)
+        .delete()
+        .where('id', mediaItemId);
+    });
   }
 
   public async update(
@@ -358,22 +375,24 @@ class MediaItemRepository extends repository<MediaItemBase>({
         result.backdrop = `/img/${imageId}`;
       }
 
-      const seasons = result.seasons?.map((season) => ({
+      result.seasons = result.seasons?.map((season) => ({
         ...season,
         numberOfEpisodes:
           season.numberOfEpisodes || season.episodes?.length || 0,
         tvShowId: result.id,
       }));
 
-      seasons?.forEach((season) => delete season.episodes);
-
-      if (seasons?.length > 0) {
+      if (result.seasons?.length > 0) {
         const seasonsId = await Database.knex
-          .batchInsert('season', seasons, 30)
+          .batchInsert(
+            'season',
+            result.seasons.map((season) => _.omit(season, 'episodes')),
+            30
+          )
           .transacting(trx)
           .returning('id');
 
-        const seasonsWithId = _.merge(result.seasons, seasonsId);
+        result.seasons = _.merge(result.seasons, seasonsId);
 
         const seasonsWithPosters = result.seasons.filter(
           (season) => season.poster
@@ -394,21 +413,23 @@ class MediaItemRepository extends repository<MediaItemBase>({
             .transacting(trx);
         }
 
-        const episodes = seasonsWithId.flatMap((season) =>
-          season.episodes?.map((episode) => ({
-            ...episode,
-            tvShowId: result.id,
-            seasonId: season.id,
-            seasonAndEpisodeNumber:
-              episode.seasonNumber * 1000 + episode.episodeNumber,
-          }))
-        );
+        for (const season of result.seasons) {
+          if (season.episodes?.length > 0) {
+            season.episodes = season.episodes?.map((episode) => ({
+              ...episode,
+              tvShowId: result.id,
+              seasonId: season.id,
+              seasonAndEpisodeNumber:
+                episode.seasonNumber * 1000 + episode.episodeNumber,
+            }));
 
-        if (episodes?.length > 0) {
-          await Database.knex
-            .batchInsert('episode', episodes, 30)
-            .transacting(trx)
-            .returning('id');
+            const episodesId = await Database.knex
+              .batchInsert('episode', season.episodes, 30)
+              .transacting(trx)
+              .returning('id');
+
+            season.episodes = _.merge(season.episodes, episodesId);
+          }
         }
       }
 
@@ -447,6 +468,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
     audibleId?: string[];
     goodreadsId?: number[];
     traktId?: number[];
+    tvdbId?: number[];
     mediaType: MediaType;
   }) {
     return (
@@ -476,6 +498,10 @@ class MediaItemRepository extends repository<MediaItemBase>({
           }
           if (params.traktId) {
             qb.orWhereIn('traktId', params.traktId);
+          }
+
+          if (params.tvdbId) {
+            qb.orWhereIn('tvdbId', params.tvdbId);
           }
         })
     ).map((item) => this.deserialize(item));
@@ -508,6 +534,10 @@ class MediaItemRepository extends repository<MediaItemBase>({
         }
         if (params.traktId) {
           qb.orWhere('traktId', params.traktId);
+        }
+
+        if (params.tvdbId) {
+          qb.orWhere('tvdbId', params.tvdbId);
         }
       })
       .first();
@@ -580,7 +610,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
     return await Database.knex<MediaItemBase>('mediaItem')
       .select('mediaItem.*')
       .leftJoin<Seen>('seen', 'seen.mediaItemId', 'mediaItem.id')
-      .leftJoin<Watchlist>('watchlist', 'watchlist.mediaItemId', 'mediaItem.id')
+      .leftJoin<ListItem>('listItem', 'listItem.mediaItemId', 'mediaItem.id')
       .leftJoin<UserRating>(
         'userRating',
         'userRating.mediaItemId',
@@ -738,6 +768,9 @@ class MediaItemRepository extends repository<MediaItemBase>({
             }
             if (externalIds.traktId) {
               qb.orWhereIn('traktId', externalIds.traktId);
+            }
+            if (externalIds.tvdbId) {
+              qb.orWhereIn('tvdbId', externalIds.tvdbId);
             }
           })
       ).map((item) => this.deserialize(item));
@@ -924,4 +957,5 @@ const externalIdColumnNames = <const>[
   'audibleId',
   'traktId',
   'goodreadsId',
+  'tvdbId',
 ];

@@ -3,26 +3,27 @@ import styled from 'styled-components';
 import { t, Trans } from '@lingui/macro';
 import { parseISO } from 'date-fns';
 
-import { addToWatchlist, removeFromWatchlist } from 'src/api/details';
+import { removeFromWatchlist } from 'src/api/details';
 import { BadgeRating } from 'src/components/StarRating';
 
 import {
-  canBeMarkedAsSeen,
-  canBeOnWatchlist,
-  canBeRated,
   formatEpisodeNumber,
+  formatSeasonNumber,
+  hasBeenReleased,
   hasProgress,
-  isAudiobook,
-  isBook,
-  isMovie,
+  isOnWatchlist,
   isTvShow,
-  isVideoGame,
 } from 'src/utils';
-import { RelativeTime } from 'src/components/date';
-import { MediaItemItemsResponse, MediaType, TvEpisode } from 'mediatracker-api';
+import { FormatDuration, RelativeTime } from 'src/components/date';
+import {
+  MediaItemItemsResponse,
+  MediaType,
+  TvEpisode,
+  TvSeason,
+} from 'mediatracker-api';
 import { Poster } from 'src/components/Poster';
-import { SelectSeenDate } from 'src/components/SelectSeenDate';
-import { Modal } from 'src/components/Modal';
+import { AddToSeenHistoryButton } from 'src/components/AddAndRemoveFromSeenHistoryButton';
+import { AddToWatchlistButton } from 'src/pages/Details';
 
 export type GridItemAppearanceArgs = {
   showNextAiring?: boolean;
@@ -32,6 +33,9 @@ export type GridItemAppearanceArgs = {
   showAddToWatchlistAndMarkAsSeenButtons?: boolean;
   showMarksAsSeenFirstUnwatchedEpisode?: boolean;
   showMarksAsSeenLastAiredEpisode?: boolean;
+  showTotalRuntime?: boolean;
+  showReleaseDate?: boolean;
+  showLastSeenAt?: boolean;
   topBar?: {
     showOnWatchlistIcon?: boolean;
     showUnwatchedEpisodesCount?: boolean;
@@ -41,10 +45,16 @@ export type GridItemAppearanceArgs = {
 
 export const GridItem: FunctionComponent<{
   mediaItem: MediaItemItemsResponse;
+  season?: TvSeason;
+  episode?: TvEpisode;
   mediaType?: MediaType;
+  removeFromListButton?: {
+    listId: number;
+    listTitle: string;
+  };
   appearance?: GridItemAppearanceArgs;
 }> = (props) => {
-  const { mediaItem, mediaType } = props;
+  const { mediaItem, season, episode, mediaType } = props;
   const {
     topBar,
     showNextAiring,
@@ -53,7 +63,12 @@ export const GridItem: FunctionComponent<{
     showMarksAsSeenLastAiredEpisode,
     showRating,
     showAddToWatchlistAndMarkAsSeenButtons,
+    showTotalRuntime,
+    showReleaseDate,
+    showLastSeenAt,
   } = props.appearance || {};
+
+  const item = episode || season || mediaItem;
 
   const mediaTypeString: Record<MediaType, string> = {
     audiobook: t`Audiobook`,
@@ -63,20 +78,40 @@ export const GridItem: FunctionComponent<{
     video_game: t`Video game`,
   };
 
+  if (season && episode) {
+    throw new Error('Booth season and episode cannot be provided');
+  }
+
+  if (season && season.tvShowId !== mediaItem.id) {
+    throw new Error('Season needs to be from the same tv show as mediaItem');
+  }
+
+  if (episode && episode.tvShowId !== mediaItem.id) {
+    throw new Error('Episode needs to be from the same tv show as mediaItem');
+  }
+
   return (
-    <div key={mediaItem.id} className="item">
+    <div className="item">
       <div className="pb-4">
         <Poster
           src={mediaItem.posterSmall}
           mediaType={mediaType}
           itemMediaType={mediaItem.mediaType}
-          href={`#/details/${mediaItem.id}`}
+          href={
+            season
+              ? `#/seasons/${mediaItem.id}/${season.seasonNumber}`
+              : episode
+              ? `#/episode/${mediaItem.id}/${episode.seasonNumber}/${episode.episodeNumber}`
+              : `#/details/${mediaItem.id}`
+          }
         >
           {topBar && (
             <>
               {topBar.showOnWatchlistIcon && (
                 <div className="absolute top-0 left-0 inline-flex mt-1 pointer-events-auto hover:cursor-pointer">
-                  {mediaItem.onWatchlist && (
+                  {((season && season.onWatchlist) ||
+                    (episode && episode.onWatchlist) ||
+                    (!episode && !season && mediaItem.onWatchlist)) && (
                     <Item
                       onClick={(e) => {
                         e.preventDefault();
@@ -86,7 +121,7 @@ export const GridItem: FunctionComponent<{
                             t`Remove "${mediaItem.title}" from watchlist?`
                           )
                         ) {
-                          removeFromWatchlist(mediaItem);
+                          removeFromWatchlist({ mediaItem });
                         }
                       }}
                     >
@@ -99,7 +134,7 @@ export const GridItem: FunctionComponent<{
               {isTvShow(mediaItem) ? (
                 <a
                   className="absolute inline-flex pointer-events-auto foo right-1 top-1 hover:no-underline"
-                  href={`#/episodes/${mediaItem.id}`}
+                  href={`#/seasons/${mediaItem.id}`}
                 >
                   {topBar.showFirstUnwatchedEpisodeBadge &&
                     mediaItem.firstUnwatchedEpisode && (
@@ -135,9 +170,13 @@ export const GridItem: FunctionComponent<{
             </>
           )}
 
-          {showRating && canBeRated(mediaItem) && (
+          {showRating && hasBeenReleased(mediaItem) && (
             <div className="absolute pointer-events-auto bottom-1 left-1">
-              <BadgeRating mediaItem={mediaItem} />
+              <BadgeRating
+                mediaItem={mediaItem}
+                season={season}
+                episode={episode}
+              />
             </div>
           )}
         </Poster>
@@ -155,6 +194,8 @@ export const GridItem: FunctionComponent<{
 
           {/* Title */}
           <div className="overflow-hidden text-lg overflow-ellipsis whitespace-nowrap">
+            {season && formatSeasonNumber(season) + ' '}
+            {episode && formatEpisodeNumber(episode) + ' '}
             {mediaItem.title}
           </div>
 
@@ -204,15 +245,40 @@ export const GridItem: FunctionComponent<{
               )}
             </div>
           )}
+
+          {showTotalRuntime && (
+            <>
+              <FormatDuration
+                milliseconds={
+                  (episode
+                    ? episode.runtime || mediaItem.runtime
+                    : season
+                    ? season.totalRuntime
+                    : mediaItem.totalRuntime) *
+                  60 *
+                  1000
+                }
+              />
+            </>
+          )}
+
+          {showReleaseDate && item.releaseDate && (
+            <>{new Date(item.releaseDate).toLocaleDateString()}</>
+          )}
+
+          {showLastSeenAt && item.lastSeenAt && (
+            <>{new Date(item.lastSeenAt).toLocaleString()}</>
+          )}
         </div>
 
         {showMarksAsSeenFirstUnwatchedEpisode &&
           (!isTvShow(mediaItem) ||
             (isTvShow(mediaItem) && mediaItem.firstUnwatchedEpisode)) && (
-            <div className="flex flex-col">
-              <MarkAsSeenButton
+            <div className="flex flex-col items-center mt-2">
+              <AddToSeenHistoryButton
                 mediaItem={mediaItem}
                 episode={mediaItem.firstUnwatchedEpisode}
+                useSeasonAndEpisodeNumber={true}
               />
             </div>
           )}
@@ -220,10 +286,11 @@ export const GridItem: FunctionComponent<{
         {showMarksAsSeenLastAiredEpisode &&
           (!isTvShow(mediaItem) ||
             (isTvShow(mediaItem) && mediaItem.lastAiredEpisode)) && (
-            <div className="flex flex-col">
-              <MarkAsSeenButton
+            <div className="flex flex-col items-center mt-2">
+              <AddToSeenHistoryButton
                 mediaItem={mediaItem}
                 episode={mediaItem.lastAiredEpisode}
+                useSeasonAndEpisodeNumber={true}
               />
             </div>
           )}
@@ -231,20 +298,27 @@ export const GridItem: FunctionComponent<{
         {showAddToWatchlistAndMarkAsSeenButtons && (
           <>
             {!mediaItem.onWatchlist && (
-              <div className="flex flex-col">
-                {canBeOnWatchlist(mediaItem) && (
-                  <div
-                    className="my-1 text-sm text-center pointer-events-auto btn dark:bg-gray-900 bg-zinc-100"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      addToWatchlist(mediaItem);
-                    }}
-                  >
-                    <Trans>Add to watchlist</Trans>
-                  </div>
+              <div className="flex flex-col items-center ">
+                {!isOnWatchlist(mediaItem) && (
+                  <>
+                    <div className="mt-2" />
+                    <AddToWatchlistButton
+                      mediaItem={mediaItem}
+                      season={season}
+                      episode={episode}
+                    />
+                  </>
                 )}
-                {canBeMarkedAsSeen(mediaItem) && (
-                  <MarkAsSeenButton mediaItem={mediaItem} />
+
+                {hasBeenReleased(mediaItem) && (
+                  <>
+                    <div className="mt-2" />
+                    <AddToSeenHistoryButton
+                      mediaItem={mediaItem}
+                      season={season}
+                      episode={episode}
+                    />
+                  </>
                 )}
               </div>
             )}
@@ -259,42 +333,3 @@ const Item = styled.div.attrs({
   className:
     'rounded bg-red-900 px-1 text-lg ml-1 text-white hover:text-yellow-600 shadow-sm shadow-black',
 })``;
-
-const MarkAsSeenButton: FunctionComponent<{
-  mediaItem: MediaItemItemsResponse;
-  episode?: TvEpisode;
-}> = (props) => {
-  const { mediaItem, episode } = props;
-
-  return (
-    <Modal
-      openModal={(openModal) => (
-        <>
-          <div
-            className="my-1 text-sm dark:bg-gray-900 bg-zinc-100 btn"
-            onClick={() => openModal()}
-          >
-            {isAudiobook(mediaItem) && <Trans>Mark as listened</Trans>}
-            {isBook(mediaItem) && <Trans>Mark as read</Trans>}
-            {isMovie(mediaItem) && <Trans>Mark as seen</Trans>}
-            {isTvShow(mediaItem) &&
-              (episode ? (
-                <Trans>Mark {formatEpisodeNumber(episode)} as seen</Trans>
-              ) : (
-                <Trans>Mark as seen</Trans>
-              ))}
-            {isVideoGame(mediaItem) && <Trans>Mark as played</Trans>}
-          </div>
-        </>
-      )}
-    >
-      {(closeModal) => (
-        <SelectSeenDate
-          mediaItem={mediaItem}
-          episode={episode}
-          closeModal={closeModal}
-        />
-      )}
-    </Modal>
-  );
-};

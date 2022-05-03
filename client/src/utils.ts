@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { parseISO } from 'date-fns';
 import {
   MediaItemDetailsResponse,
   MediaItemItemsResponse,
@@ -7,7 +8,6 @@ import {
   TvSeason,
   UserResponse,
 } from 'mediatracker-api';
-import { hasBeenReleased } from 'src/mediaItem';
 
 export const formatEpisodeNumber = (tvEpisode: TvEpisode): string => {
   return t`S${tvEpisode.seasonNumber
@@ -61,16 +61,21 @@ export const getPosterHeight = (args: {
   }
 };
 
-export const canBeMarkedAsSeen = (mediaItem: MediaItemItemsResponse) => {
-  return hasBeenReleased(mediaItem) && typeof mediaItem.lastSeenAt !== 'number';
+export const hasBeenReleased = (
+  value: MediaItemItemsResponse | TvEpisode | TvSeason
+) => {
+  const releaseDate = value.releaseDate;
+  return releaseDate && parseISO(releaseDate) <= new Date();
 };
 
-export const canBeOnWatchlist = (mediaItem: MediaItemItemsResponse) => {
-  return !mediaItem.seen || isTvShow(mediaItem);
+export const isOnWatchlist = (mediaItem: MediaItemItemsResponse) => {
+  return mediaItem.onWatchlist === true;
 };
 
-export const canBeRated = (mediaItem: MediaItemItemsResponse | TvEpisode) => {
-  return hasBeenReleased(mediaItem);
+export const isSeason = (
+  value: MediaItemItemsResponse | TvEpisode | TvSeason
+): value is TvSeason => {
+  return !('episodeNumber' in value) && 'seasonNumber' in value;
 };
 
 export const isAudiobook = (mediaItem?: MediaItemItemsResponse | MediaType) => {
@@ -131,4 +136,17 @@ export const canMetadataBeUpdated = (mediaItem: MediaItemItemsResponse) => {
   return ['igdb', 'tmdb', 'openlibrary', 'audible'].includes(
     mediaItem.source?.toLowerCase()
   );
+};
+
+export const listDescription = (list?: {
+  description?: string;
+  isWatchlist: boolean;
+}) => {
+  return list?.isWatchlist
+    ? t`Movies, shows, seasons, episodes, books, audiobooks and video games I plan to watch/read/listen/play`
+    : list?.description;
+};
+
+export const listName = (list?: { name: string; isWatchlist: boolean }) => {
+  return list?.isWatchlist ? t`Watchlist` : list?.name;
 };

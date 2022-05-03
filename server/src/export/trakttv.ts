@@ -97,16 +97,29 @@ export class TraktTvExport {
       'https://api.trakt.tv/sync/ratings'
     );
 
+    const listsResponse = await this.get<TraktApi.ListsResponse>(
+      'https://api.trakt.tv/users/me/lists'
+    );
+
+    const listsItems = new Map<string, TraktApi.ListsResponse>();
+
+    for (const list of listsResponse.data) {
+      const listItemsResponse = await this.get<TraktApi.ListsResponse>(
+        `https://api.trakt.tv/users/me/lists/${list.ids.slug}/items`
+      );
+
+      listsItems.set(list.ids.slug, listItemsResponse.data);
+    }
+
     return {
       watchlist: watchlistResponse.data,
       history: historyResponse.data,
       rating: ratingResponse.data,
+      lists: listsResponse.data,
+      listsItems,
     };
   }
 }
-
-
-
 
 export namespace TraktApi {
   export type DeviceCodeResponse = {
@@ -170,9 +183,11 @@ export namespace TraktApi {
     id: number;
     listed_at: string;
     notes?: string;
-    type: 'movie' | 'show';
+    type: 'movie' | 'show' | 'season' | 'episode';
     movie: MovieResponse;
     show: ShowResponse;
+    episode: EpisodeResponse;
+    season: SeasonResponse;
   }>;
 
   export type HistoryResponse = Array<{
@@ -188,10 +203,39 @@ export namespace TraktApi {
   export type RatingResponse = Array<{
     rated_at: string;
     rating: number;
-    type: 'episode' | 'season' | 'episode';
+    type: 'movie' | 'show' | 'season' | 'episode';
     episode: EpisodeResponse;
     show: ShowResponse;
     season: SeasonResponse;
     movie: MovieResponse;
+  }>;
+
+  export type ListsResponse = Array<{
+    name: string;
+    description: string;
+    privacy: 'public' | 'private' | 'friends';
+    display_numbers: boolean;
+    allow_comments: boolean;
+    sort_by: 'runtime';
+    sort_how: 'asc' | 'desc';
+    created_at: string;
+    updated_at: string;
+    item_count: number;
+    comment_count: number;
+    likes: number;
+    ids: {
+      trakt: number;
+      slug: string;
+    };
+    user: {
+      username: string;
+      private: boolean;
+      name?: string;
+      vip: boolean;
+      vip_ep: boolean;
+      ids: {
+        slug: string;
+      };
+    };
   }>;
 }
