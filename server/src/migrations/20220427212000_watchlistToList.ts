@@ -1,5 +1,4 @@
 import { Knex } from 'knex';
-import { watchlistDescription } from 'src/entity/list';
 import { randomSlugId } from 'src/slug';
 
 export async function up(knex: Knex): Promise<void> {
@@ -76,7 +75,6 @@ export async function up(knex: Knex): Promise<void> {
       .insert({
         name: 'Watchlist',
         slug: 'watchlist',
-        description: watchlistDescription,
         userId: user.id,
         privacy: 'private',
         allowComments: false,
