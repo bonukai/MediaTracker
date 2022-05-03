@@ -185,11 +185,15 @@
                         },
                         "demo": {
                           "type": "boolean"
+                        },
+                        "version": {
+                          "type": "string"
                         }
                       },
                       "required": [
                         "demo",
-                        "noUsers"
+                        "noUsers",
+                        "version"
                       ]
                     }
                   ]

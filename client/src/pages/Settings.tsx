@@ -13,6 +13,7 @@ import { SettingsConfigurationPage } from 'src/pages/settings/Configuration';
 import { SettingsSegment } from 'src/components/SettingsSegment';
 import { useConfiguration } from 'src/api/configuration';
 import { LogsPage } from 'src/pages/LogsPage';
+import { SettingsAboutPage } from 'src/pages/settings/About';
 
 export const SettingsPage: FunctionComponent = () => {
   const { user } = useUser();
@@ -25,6 +26,8 @@ export const SettingsPage: FunctionComponent = () => {
           {!configuration.demo && (
             <Route path="password" element={<SettingsPasswordPage />} />
           )}
+          <Route path="about" element={<SettingsAboutPage />} />
+
           <Route
             path="application-tokens"
             element={<SettingsApplicationTokensPage />}
@@ -105,6 +108,10 @@ const useRoutesTitle = () => {
   const { configuration } = useConfiguration();
 
   return [
+    {
+      path: 'about',
+      name: t`About`,
+    },
     ...(!configuration.demo
       ? [
           {

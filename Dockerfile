@@ -34,6 +34,7 @@ WORKDIR /app
 COPY --from=build /app/server/public public
 COPY --from=build /app/server/build build
 COPY --from=server-build-production /server/node_modules node_modules
+COPY "server/package.json" ./
 
 ENV PORT=7481
 EXPOSE $PORT
