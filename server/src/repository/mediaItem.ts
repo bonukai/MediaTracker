@@ -619,7 +619,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       .where((q) =>
         q
           .whereNotNull('seen.id')
-          .orWhereNotNull('watchlist.id')
+          .orWhereNotNull('listItem.id')
           .orWhereNotNull('userRating.id')
       )
       .whereNot('source', 'user')
