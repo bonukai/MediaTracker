@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { Trans } from '@lingui/macro';
+import { Plural, Trans } from '@lingui/macro';
 
 import { useSearchParams } from 'react-router-dom';
 import { useLists } from 'src/api/lists';
@@ -19,7 +19,7 @@ export const ListsPage: FunctionComponent = () => {
     ? Number(searchParams.get('userId'))
     : user.id;
 
-  const canEditAddOrEditList = userId === user.id;
+  const canEditOrAddList = userId === user.id;
 
   const { lists } = useLists({
     userId: userId,
@@ -31,7 +31,7 @@ export const ListsPage: FunctionComponent = () => {
 
   return (
     <>
-      {canEditAddOrEditList && (
+      {canEditOrAddList && (
         <div className="mb-3">
           <AddListButton />
         </div>
@@ -45,7 +45,7 @@ export const ListsPage: FunctionComponent = () => {
 
           <div>{listDescription(list)}</div>
 
-          {canEditAddOrEditList && (
+          {canEditOrAddList && (
             <div className="text-xs">
               <EditListButton list={list} />
             </div>
