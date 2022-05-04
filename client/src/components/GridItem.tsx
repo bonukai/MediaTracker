@@ -11,7 +11,6 @@ import {
   formatSeasonNumber,
   hasBeenReleased,
   hasProgress,
-  isOnWatchlist,
   isTvShow,
 } from 'src/utils';
 import { FormatDuration, RelativeTime } from 'src/components/date';
@@ -71,6 +70,11 @@ export const GridItem: FunctionComponent<{
 
   const item = episode || season || mediaItem;
 
+  const isOnWatchlist =
+    (season && season.onWatchlist) ||
+    (episode && episode.onWatchlist) ||
+    (!episode && !season && mediaItem.onWatchlist);
+
   const mediaTypeString: Record<MediaType, string> = {
     audiobook: t`Audiobook`,
     book: t`Book`,
@@ -110,9 +114,7 @@ export const GridItem: FunctionComponent<{
             <>
               {topBar.showOnWatchlistIcon && (
                 <div className="absolute top-0 left-0 inline-flex mt-1 pointer-events-auto hover:cursor-pointer">
-                  {((season && season.onWatchlist) ||
-                    (episode && episode.onWatchlist) ||
-                    (!episode && !season && mediaItem.onWatchlist)) && (
+                  {isOnWatchlist && (
                     <Item
                       onClick={async (e) => {
                         e.preventDefault();
@@ -122,7 +124,7 @@ export const GridItem: FunctionComponent<{
                             t`Remove "${mediaItem.title}" from watchlist?`
                           )
                         ) {
-                          removeFromWatchlist({ mediaItem });
+                          removeFromWatchlist({ mediaItem, season, episode });
                         }
                       }}
                     >
@@ -298,18 +300,16 @@ export const GridItem: FunctionComponent<{
 
         {showAddToWatchlistAndMarkAsSeenButtons && (
           <>
-            {!mediaItem.onWatchlist && (
+            {!isOnWatchlist && (
               <div className="flex flex-col items-center ">
-                {!isOnWatchlist(mediaItem) && (
-                  <>
-                    <div className="mt-2" />
-                    <AddToWatchlistButton
-                      mediaItem={mediaItem}
-                      season={season}
-                      episode={episode}
-                    />
-                  </>
-                )}
+                <>
+                  <div className="mt-2" />
+                  <AddToWatchlistButton
+                    mediaItem={mediaItem}
+                    season={season}
+                    episode={episode}
+                  />
+                </>
 
                 {hasBeenReleased(mediaItem) && (
                   <>

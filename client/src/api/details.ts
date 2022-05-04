@@ -155,12 +155,18 @@ export const removeFromWatchlist = async (args: {
     seasonId: season?.id,
     episodeId: episode?.id,
   });
-  await updateMediaItem(mediaItem);
-  queryClient.invalidateQueries(['items']);
-  queryClient.invalidateQueries({
-    predicate: (query) =>
-      query.queryKey[0] === 'lists' && query.queryKey[2] === mediaItem.id,
-  });
+
+  if (!season && !episode) {
+    await updateMediaItem(mediaItem);
+  } else {
+    queryClient.invalidateQueries(['details']);
+    queryClient.invalidateQueries(['items']);
+    queryClient.invalidateQueries(['listItems']);
+  }
+
+  queryClient.invalidateQueries(['list']);
+  queryClient.invalidateQueries(['lists']);
+  queryClient.invalidateQueries(['listItems']);
 };
 
 export const addToWatchlist = async (args: {
@@ -175,12 +181,17 @@ export const addToWatchlist = async (args: {
     seasonId: season?.id,
     episodeId: episode?.id,
   });
-  await updateMediaItem(mediaItem);
-  queryClient.invalidateQueries(['items']);
-  queryClient.invalidateQueries({
-    predicate: (query) =>
-      query.queryKey[0] === 'lists' && query.queryKey[2] === mediaItem.id,
-  });
+
+  if (!season && !episode) {
+    await updateMediaItem(mediaItem);
+  } else {
+    queryClient.invalidateQueries(['details']);
+    queryClient.invalidateQueries(['items']);
+    queryClient.invalidateQueries(['listItems']);
+  }
+
+  queryClient.invalidateQueries(['list']);
+  queryClient.invalidateQueries(['lists']);
 };
 
 export const addToProgress = async (args: {
