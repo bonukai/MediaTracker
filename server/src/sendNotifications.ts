@@ -130,8 +130,8 @@ const sendNotificationForEpisodes = async (episodes: TvEpisode[]) => {
   const count = episodes.length;
 
   const notificationMessage = plural(count, {
-    one: `# episode for **${title}** has been released`,
-    other: `# episodes for **${title}** has been released`,
+    one: `# episode of **${title}** has been released`,
+    other: `# episodes of **${title}** has been released`,
   });
 
   await sendNotificationForItem({

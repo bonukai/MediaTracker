@@ -31,6 +31,7 @@
   "{0, plural, one {Updating metadata for # item} other {Updating metadata for # items}}": "{0, plural, one {Updating metadata for # item} other {Updating metadata for # items}}",
   "{0} got a new season": "{0} got a new season",
   "{count, plural, one {# episode for **{title}** has been released} other {# episodes for **{title}** has been released}}": "{count, plural, one {# episode for **{title}** has been released} other {# episodes for **{title}** has been released}}",
+  "{count, plural, one {# episode of **{title}** has been released} other {# episodes of **{title}** has been released}}": "{count, plural, one {# episode of **{title}** has been released} other {# episodes of **{title}** has been released}}",
   "{count, plural, one {Failed to update 1 item} other {Failed to update # items}}": "{count, plural, one {Failed to update 1 item} other {Failed to update # items}}",
   "{count, plural, one {Sending notification for new episodes of {title} to # user} other {Sending notification for new episodes of {title} to # users}}": "{count, plural, one {Sending notification for new episodes of {title} to # user} other {Sending notification for new episodes of {title} to # users}}",
   "{count, plural, one {Sending notification for {title} to # user} other {Sending notification for {title} to # users}}": "{count, plural, one {Sending notification for {title} to # user} other {Sending notification for {title} to # users}}",
