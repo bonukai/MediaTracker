@@ -199,61 +199,55 @@ class ListRepository extends repository<List>({
     const { listId, userId } = args;
 
     const res = await Database.knex('list')
-      .select(
-        'list.*',
-        'totalRuntime',
-        'user.name AS user.name',
-        'user.slug AS user.slug'
-      )
+      .select('list.*', 'user.name AS user.name', 'user.slug AS user.slug')
       .where('list.id', listId)
       .where((qb) =>
         qb.where('list.userId', userId).orWhere('list.privacy', 'public')
       )
-      .leftJoin(
-        (qb) =>
-          qb
-            .leftJoin('listItem', 'listItem.listId', 'list.id')
-            .leftJoin('mediaItem', 'mediaItem.id', 'listItem.mediaItemId')
-            .leftJoin('episode', 'episode.id', 'listItem.episodeId')
-            .leftJoin(
-              (qb) =>
-                qb
-                  .select('seasonId')
-                  .sum({
-                    runtime: Database.knex.raw(`
+      .select({
+        totalRuntime: Database.knex('list')
+          .leftJoin('listItem', 'listItem.listId', 'list.id')
+          .leftJoin('mediaItem', 'mediaItem.id', 'listItem.mediaItemId')
+          .leftJoin('episode', 'episode.id', 'listItem.episodeId')
+          .leftJoin(
+            (qb) =>
+              qb
+                .select('seasonId')
+                .sum({
+                  runtime: Database.knex.raw(`
                 CASE
                   WHEN "episode"."runtime" IS NOT NULL THEN "episode"."runtime"
                   ELSE "mediaItem"."runtime"
                 END`),
-                  })
-                  .from('season')
-                  .leftJoin('mediaItem', 'mediaItem.id', 'season.tvShowId')
-                  .leftJoin('episode', 'episode.seasonId', 'season.id')
-                  .groupBy('seasonId')
-                  .as('seasonRuntime'),
-              'seasonRuntime.seasonId',
-              'listItem.seasonId'
-            )
-            .leftJoin(
-              (qb) =>
-                qb
-                  .select('tvShowId')
-                  .sum({
-                    runtime: Database.knex.raw(`
+                })
+                .from('season')
+                .leftJoin('mediaItem', 'mediaItem.id', 'season.tvShowId')
+                .leftJoin('episode', 'episode.seasonId', 'season.id')
+                .groupBy('seasonId')
+                .as('seasonRuntime'),
+            'seasonRuntime.seasonId',
+            'listItem.seasonId'
+          )
+          .leftJoin(
+            (qb) =>
+              qb
+                .select('tvShowId')
+                .sum({
+                  runtime: Database.knex.raw(`
                 CASE
                   WHEN "episode"."runtime" IS NOT NULL THEN "episode"."runtime"
                   ELSE "mediaItem"."runtime"
                 END`),
-                  })
-                  .from('episode')
-                  .leftJoin('mediaItem', 'mediaItem.id', 'episode.tvShowId')
-                  .groupBy('tvShowId')
-                  .as('showRuntime'),
-              'showRuntime.tvShowId',
-              'listItem.mediaItemId'
-            )
-            .sum({
-              totalRuntime: Database.knex.raw(`
+                })
+                .from('episode')
+                .leftJoin('mediaItem', 'mediaItem.id', 'episode.tvShowId')
+                .groupBy('tvShowId')
+                .as('showRuntime'),
+            'showRuntime.tvShowId',
+            'listItem.mediaItemId'
+          )
+          .sum({
+            totalRuntime: Database.knex.raw(`
                 CASE
                     WHEN "listItem"."episodeId" IS NOT NULL THEN CASE
                         WHEN "episode"."runtime" IS NOT NULL THEN "episode"."runtime"
@@ -265,12 +259,9 @@ class ListRepository extends repository<List>({
                         ELSE "mediaItem"."runtime"
                     END
                 END`),
-            })
-            .where('list.id', listId)
-            .from('list'),
-        '',
-        ''
-      )
+          })
+          .where('list.id', listId),
+      })
       .leftJoin('user', 'user.id', 'list.userId')
       .first();
 
