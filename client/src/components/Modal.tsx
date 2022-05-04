@@ -56,9 +56,10 @@ export const Modal = <ReturnType,>(props: {
     ...props,
   };
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [wasOpened, setWasOpened] = useState(false);
+  const showOpen = props.openModal === undefined && openModalRef === undefined;
 
+  const [isOpen, setIsOpen] = useState(showOpen || false);
+  const [wasOpened, setWasOpened] = useState(showOpen || false);
   const [returnedValue, setReturnValue] = useState<ReturnType>();
 
   const closeModal: (arg?: ReturnType) => void = useCallback(
