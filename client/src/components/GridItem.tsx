@@ -121,7 +121,13 @@ export const GridItem: FunctionComponent<{
 
                         if (
                           await Confirm(
-                            t`Remove "${mediaItem.title}" from watchlist?`
+                            t`Remove "${mediaItem.title}${
+                              season
+                                ? ' ' + formatSeasonNumber(season)
+                                : episode
+                                ? ' ' + formatEpisodeNumber(episode)
+                                : ''
+                            }" from watchlist?`
                           )
                         ) {
                           removeFromWatchlist({ mediaItem, season, episode });
