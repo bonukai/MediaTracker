@@ -32,6 +32,7 @@ jobs:
           git add package.json
           git commit -m "${{ steps.version.outputs.version }}"
           git tag --force ${{ github.event.release.tag_name }}
+          git push
           git push --force --tags
       - if: ${{ github.event.action == 'prereleased' }}
         name: Publish on npmjs.com [prerelease]
