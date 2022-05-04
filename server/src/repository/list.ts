@@ -31,9 +31,7 @@ export type ListItemsResponse = {
   listedAt: string;
   type: MediaType | 'season' | 'episode';
   mediaItem: MediaItemItemsResponse;
-  season?: TvSeason & {
-    lastSeenAt?: string;
-  };
+  season?: TvSeason;
   episode?: TvEpisode;
 }[];
 
@@ -634,6 +632,7 @@ class ListRepository extends repository<List>({
             .count({ count: '*' })
             .from('episode')
             .groupBy('seasonId')
+            .where('episode.isSpecialEpisode', false)
             .where('releaseDate', '<', currentDateString)
             .as('seasonAiredEpisodes'),
         'seasonAiredEpisodes.seasonId',
@@ -1028,6 +1027,12 @@ class ListRepository extends repository<List>({
               0
             : Boolean(listItem['mediaItem.lastSeen.mediaItemId']),
         seenEpisodesCount: listItem['mediaItem.seenEpisodesCount'],
+        unseenEpisodesCount:
+          listItem['mediaItem.mediaType'] === 'tv' &&
+          listItem['mediaItem.airedEpisodesCount']
+            ? listItem['mediaItem.airedEpisodesCount'] -
+              listItem['mediaItem.seenEpisodesCount']
+            : undefined,
         onWatchlist: Boolean(listItem['mediaItem.watchlist.id']),
         firstUnwatchedEpisode:
           listItem['mediaItem.firstUnwatchedEpisode.id'] !== null
@@ -1109,6 +1114,10 @@ class ListRepository extends repository<List>({
               isSpecialSeason: Boolean(listItem['season.isSpecialSeason']),
               airedEpisodesCount: listItem['season.airedEpisodesCount'],
               seenEpisodesCount: listItem['season.seenEpisodesCount'],
+              unseenEpisodesCount: listItem['season.airedEpisodesCount']
+                ? listItem['season.airedEpisodesCount'] -
+                  listItem['season.seenEpisodesCount']
+                : undefined,
               seen:
                 listItem['season.airedEpisodesCount'] -
                   listItem['season.seenEpisodesCount'] ===

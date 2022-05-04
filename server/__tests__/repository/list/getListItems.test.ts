@@ -65,6 +65,25 @@ describe('get list items', () => {
 
     await Database.knex('listItem').delete();
   });
+
+  test('unseen episodes count should not add special episodes', async () => {
+    await listItemRepository.addItem({
+      listId: Data.list.id,
+      userId: Data.user.id,
+      mediaItemId: Data.tvShow.id,
+      seasonId: Data.season.id,
+    });
+
+    const [res] = await listRepository.items({
+      listId: Data.list.id,
+      userId: Data.user.id,
+    });
+
+    expect(res.mediaItem.unseenEpisodesCount).toBe(2);
+    expect(res.season.unseenEpisodesCount).toBe(2);
+
+    await Database.knex('listItem').delete();
+  });
 });
 
 const episodeWithoutRuntime = {

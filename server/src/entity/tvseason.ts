@@ -22,6 +22,7 @@ export type TvSeason = {
   onWatchlist?: boolean;
   totalRuntime?: number;
   lastSeenAt?: number;
+  unseenEpisodesCount?: number;
 };
 
 export const tvSeasonColumns = <const>[
