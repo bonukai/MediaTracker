@@ -161,7 +161,6 @@ export const removeFromWatchlist = async (args: {
   } else {
     queryClient.invalidateQueries(['details']);
     queryClient.invalidateQueries(['items']);
-    queryClient.invalidateQueries(['listItems']);
   }
 
   queryClient.invalidateQueries(['list']);
@@ -187,11 +186,11 @@ export const addToWatchlist = async (args: {
   } else {
     queryClient.invalidateQueries(['details']);
     queryClient.invalidateQueries(['items']);
-    queryClient.invalidateQueries(['listItems']);
   }
 
   queryClient.invalidateQueries(['list']);
   queryClient.invalidateQueries(['lists']);
+  queryClient.invalidateQueries(['listItems']);
 };
 
 export const addToProgress = async (args: {
