@@ -331,6 +331,7 @@ class ListRepository extends repository<List>({
         'episode.tvdbId': 'episode.tvdbId',
         'episode.userRating.date': 'episodeRating.date',
         'episode.userRating.rating': 'episodeRating.rating',
+        'episode.watchlist.id': 'episodeWatchlist.id',
         'listItem.addedAt': 'listItem.addedAt',
         'listItem.episodeId': 'listItem.episodeId',
         'listItem.id': 'listItem.id',
@@ -435,6 +436,7 @@ class ListRepository extends repository<List>({
         'mediaItem.url': 'mediaItem.url',
         'mediaItem.userRating.date': 'mediaItemRating.date',
         'mediaItem.userRating.rating': 'mediaItemRating.rating',
+        'mediaItem.watchlist.id': 'mediaItemWatchlist.id',
         'season.airedEpisodesCount': 'seasonAiredEpisodes.count',
         'season.firstUnwatchedEpisode.description':
           'seasonFirstUnwatchedEpisode.description',
@@ -493,29 +495,46 @@ class ListRepository extends repository<List>({
         'season.userRating.date': 'seasonRating.date',
         'season.userRating.rating': 'seasonRating.rating',
         'season.totalRuntime': 'seasonTotalRuntime.totalRuntime',
-        'watchlist.id': 'watchlist.id',
+        'season.watchlist.id': 'seasonWatchlist.id',
       })
       .where('listItem.listId', listId)
       .leftJoin('mediaItem', 'mediaItem.id', 'listItem.mediaItemId')
       .leftJoin('season', 'season.id', 'listItem.seasonId')
       .leftJoin('episode', 'episode.id', 'listItem.episodeId')
-      // watchlist
+      // MediaItem: watchlist
       .leftJoin<ListItem>(
-        Database.knex.ref('listItem').as('watchlist'),
-        (qb) => {
-          qb.on('watchlist.mediaItemId', 'listItem.mediaItemId')
-            .on(
-              Database.knex.raw(
-                `'watchlist'.'seasonId' IS 'listItem'.'seasonId'`
-              )
-            )
-            .on(
-              Database.knex.raw(
-                `'watchlist'.'episodeId' IS 'listItem'.'episodeId'`
-              )
-            )
-            .andOnVal('watchlist.listId', watchlistId);
-        }
+        (qb) =>
+          qb
+            .from('listItem')
+            .whereNull('listItem.seasonId')
+            .whereNull('listItem.episodeId')
+            .where('listItem.listId', watchlistId)
+            .as('mediaItemWatchlist'),
+        'mediaItemWatchlist.mediaItemId',
+        'listItem.mediaItemId'
+      )
+      // Season: watchlist
+      .leftJoin<ListItem>(
+        (qb) =>
+          qb
+            .from('listItem')
+            .whereNotNull('listItem.seasonId')
+            .whereNull('listItem.episodeId')
+            .where('listItem.listId', watchlistId)
+            .as('seasonWatchlist'),
+        'seasonWatchlist.seasonId',
+        'listItem.seasonId'
+      )
+      // Episode: watchlist
+      .leftJoin<ListItem>(
+        (qb) =>
+          qb
+            .from('listItem')
+            .whereNotNull('listItem.episodeId')
+            .where('listItem.listId', watchlistId)
+            .as('episodeWatchlist'),
+        'episodeWatchlist.episodeId',
+        'listItem.episodeId'
       )
       // Episode: last seen at
       .leftJoin(
@@ -960,10 +979,6 @@ class ListRepository extends repository<List>({
       )
       .orderBy('listItem.rank', 'asc');
 
-    // const showIds = res
-    // .filter((listItem) => listItem.mediaType === 'tv')
-    // .map((listItem) => listItem.id);
-
     return res.map((listItem) => ({
       rank: Number(listItem['listItem.rank']),
       id: Number(listItem['listItem.id']),
@@ -1022,7 +1037,7 @@ class ListRepository extends repository<List>({
               0
             : Boolean(listItem['mediaItem.lastSeen.mediaItemId']),
         seenEpisodesCount: listItem['mediaItem.seenEpisodesCount'],
-        onWatchlist: Boolean(listItem['watchlist.id']),
+        onWatchlist: Boolean(listItem['mediaItem.watchlist.id']),
         firstUnwatchedEpisode:
           listItem['mediaItem.firstUnwatchedEpisode.id'] !== null
             ? {
@@ -1124,7 +1139,7 @@ class ListRepository extends repository<List>({
                     userId: userId,
                   }
                 : undefined,
-              onWatchlist: Boolean(listItem['watchlist.id']),
+              onWatchlist: Boolean(listItem['season.watchlist.id']),
               lastSeenAt: listItem['season.lastSeenAt'],
               firstUnwatchedEpisode: listItem[
                 'season.firstUnwatchedEpisode.episodeNumber'
@@ -1209,7 +1224,7 @@ class ListRepository extends repository<List>({
                     userId: userId,
                   }
                 : undefined,
-              onWatchlist: Boolean(listItem['watchlist.id']),
+              onWatchlist: Boolean(listItem['episode.watchlist.id']),
               lastSeenAt: listItem['episode.lastSeenAt'],
               seen: Boolean(listItem['episode.lastSeenAt']),
             },
