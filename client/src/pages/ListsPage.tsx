@@ -39,17 +39,23 @@ export const ListsPage: FunctionComponent = () => {
 
       {lists.map((list) => (
         <div key={list.id} className="mb-5">
-          <div className="text-xl">
-            <Link to={`/list/${list.id}`}>{listName(list)}</Link>
+          <div className="flex items-center my-1">
+            <div className="text-xl">
+              <Link to={`/list/${list.id}`}>{listName(list)}</Link>
+            </div>
+
+            {canEditOrAddList && (
+              <div className="pl-2 text-xs">
+                <EditListButton list={list} />
+              </div>
+            )}
+          </div>
+
+          <div>
+            <Plural value={list.itemsCount} one="# item" other="# items" />
           </div>
 
           <div>{listDescription(list)}</div>
-
-          {canEditOrAddList && (
-            <div className="text-xs">
-              <EditListButton list={list} />
-            </div>
-          )}
         </div>
       ))}
     </>
