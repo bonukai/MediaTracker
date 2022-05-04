@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - if: startsWith(${{ github.event.release.tag_name }}, "v")
-        id: version  
+        id: version
         run: echo "::set-output name=version::$(echo ${{ github.event.release.tag_name }} | cut -c2-)"
       - uses: actions/checkout@v3
         with:
@@ -31,7 +31,8 @@ jobs:
           npm version ${{ steps.version.outputs.version }} --no-git-tag-version
           git add package.json
           git commit -m "${{ steps.version.outputs.version }}"
-          git push
+          git tag --force ${{ github.event.release.tag_name }} HEAD
+          git push --force --tags
       - if: ${{ github.event.action == 'prereleased' }}
         name: Publish on npmjs.com [prerelease]
         run: |
