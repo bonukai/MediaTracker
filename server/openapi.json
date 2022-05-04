@@ -2830,6 +2830,10 @@
           "lastSeenAt": {
             "type": "number",
             "nullable": true
+          },
+          "unseenEpisodesCount": {
+            "type": "number",
+            "nullable": true
           }
         },
         "required": [
@@ -3628,15 +3632,6 @@
               "allOf": [
                 {
                   "$ref": "#/components/schemas/TvSeason"
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "lastSeenAt": {
-                      "type": "string",
-                      "nullable": true
-                    }
-                  }
                 }
               ],
               "nullable": true
