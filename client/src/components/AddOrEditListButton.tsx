@@ -12,6 +12,8 @@ import {
   useSortOrderKeys,
 } from 'src/hooks/translations';
 import { listDescription, listName } from 'src/utils';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Confirm } from 'src/components/Confirm';
 
 const AddOrEditListButton: FunctionComponent<{
   list?: {
@@ -73,6 +75,8 @@ const AddOrEditListModal: FunctionComponent<{
   const listSortByKeys = useListSortByKeys();
   const listPrivacyKeys = useListPrivacyKeys();
   const sortOrderKeys = useSortOrderKeys();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const nameRef = useRef<HTMLInputElement>();
 
@@ -194,22 +198,34 @@ const AddOrEditListModal: FunctionComponent<{
 
         {edit && !list?.isWatchlist && (
           <div
-            className="ml-auto btn-red"
+            className="ml-2 btn-red"
             onClick={async () => {
               if (
-                confirm(t`Do you really want to remove list "${list.name}"`)
+                await Confirm(
+                  t`Do you really want to remove list "${list.name}"`
+                )
               ) {
-                if (
-                  await mediaTrackerApi.list.deleteList({ listId: list.id })
-                ) {
-                  closeModal();
+                await mediaTrackerApi.list.deleteList({ listId: list.id });
+
+                closeModal();
+
+                if (location.pathname.startsWith('/list/')) {
+                  navigate('/lists', {
+                    replace: true,
+                  });
                 }
+
+                invalidateListsQuery();
               }
             }}
           >
             <Trans>Delete list</Trans>
           </div>
         )}
+
+        <div className="ml-auto btn" onClick={() => closeModal()}>
+          Close
+        </div>
       </div>
     </form>
   );
