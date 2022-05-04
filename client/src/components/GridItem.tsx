@@ -24,6 +24,7 @@ import {
 import { Poster } from 'src/components/Poster';
 import { AddToSeenHistoryButton } from 'src/components/AddAndRemoveFromSeenHistoryButton';
 import { AddToWatchlistButton } from 'src/pages/Details';
+import { Confirm } from 'src/components/Confirm';
 
 export type GridItemAppearanceArgs = {
   showNextAiring?: boolean;
@@ -113,11 +114,11 @@ export const GridItem: FunctionComponent<{
                     (episode && episode.onWatchlist) ||
                     (!episode && !season && mediaItem.onWatchlist)) && (
                     <Item
-                      onClick={(e) => {
+                      onClick={async (e) => {
                         e.preventDefault();
 
                         if (
-                          confirm(
+                          await Confirm(
                             t`Remove "${mediaItem.title}" from watchlist?`
                           )
                         ) {

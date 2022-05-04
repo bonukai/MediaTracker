@@ -19,6 +19,7 @@ import {
 import { Modal } from 'src/components/Modal';
 import { SelectSeenDate } from 'src/components/SelectSeenDate';
 import { markAsUnseen } from 'src/api/details';
+import { Confirm } from 'src/components/Confirm';
 
 export const AddToSeenHistoryButton: FunctionComponent<{
   mediaItem: MediaItemItemsResponse;
@@ -99,13 +100,13 @@ export const RemoveFromSeenHistoryButton: FunctionComponent<{
   return (
     <div
       className="text-sm btn-red"
-      onClick={() =>
-        confirm(
+      onClick={async () =>
+        (await Confirm(
           plural(count, {
             one: 'Do you want to remove # seen history entry?',
             other: 'Do you want to remove all # seen history entries?',
           })
-        ) &&
+        )) &&
         markAsUnseen({
           mediaItem: mediaItem,
           season: season,
