@@ -332,10 +332,23 @@ describe('mediaItemRepository', () => {
         slug: 'new-title-4',
         overview: 'new overview',
       },
+      {
+        tmdbId: 998,
+        source: 'tmdb',
+        mediaType: 'tv',
+        title: 'title123',
+        slug: 'title123',
+      },
+      {
+        tmdbId: 999,
+        source: 'tmdb',
+        mediaType: 'tv',
+        title: 'title123',
+        slug: 'title123-2',
+      },
     ];
 
     await mediaItemRepository.createMany(existingItems);
-
     const res = await mediaItemRepository.mergeSearchResultWithExistingItems(
       searchResult,
       'tv'
@@ -376,7 +389,7 @@ describe('mediaItemRepository', () => {
     expect(insertedPoster).toBeDefined();
     expect(insertedBackdrop).toBeDefined();
 
-    expect(res.mergeWithSearchResult()).toMatchObject([
+    const expected = [
       {
         ...searchResult[0],
         id: 77771,
@@ -394,7 +407,12 @@ describe('mediaItemRepository', () => {
         ...searchResult[3],
         id: 77772,
       },
-    ]);
+      searchResult[4],
+      searchResult[5],
+    ];
+
+    expect(res.mergeWithSearchResult()).toMatchObject(expected);
+    expect(res.mergeWithSearchResult()).toMatchObject(expected);
 
     expect(res.existingItems).toMatchObject([
       {

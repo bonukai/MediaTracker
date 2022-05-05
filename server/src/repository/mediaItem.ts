@@ -849,29 +849,28 @@ class MediaItemRepository extends repository<MediaItemBase>({
 
       newItems.forEach((item) => (item.lastTimeUpdated = new Date().getTime()));
 
-      const newItemsId = await Database.knex
-        .batchInsert(
-          this.tableName,
-          newItems.map(
-            (item): Record<string, unknown> => ({
-              ...this.serialize(this.stripValue(item)),
-              slug: Database.knex.raw(
-                `(CASE 
-                  WHEN (
-                    ${Database.knex('mediaItem')
-                      .count()
-                      .where('slug', mediaItemSlug(item))
-                      .toQuery()}) = 0 
-                    THEN '${mediaItemSlug(item)}' 
-                  ELSE '${mediaItemSlug(item)}-${randomSlugId()}' 
-                END)`
-              ),
-            })
-          ),
-          30
-        )
-        .transacting(trx)
-        .returning('id');
+      const newItemsId: { id: number }[] = [];
+
+      for (const newItem of newItems) {
+        const [res] = await trx<MediaItemBase>(this.tableName)
+          .insert({
+            ...this.serialize(this.stripValue(newItem)),
+            slug: Database.knex.raw(
+              `(CASE
+              WHEN (
+                ${Database.knex('mediaItem')
+                  .count()
+                  .where('slug', mediaItemSlug(newItem))
+                  .toQuery()}) = 0
+                THEN '${mediaItemSlug(newItem)}'
+              ELSE '${mediaItemSlug(newItem)}-${randomSlugId()}'
+            END)`
+            ),
+          })
+          .returning<{ id: number }[]>('id');
+
+        newItemsId.push(res);
+      }
 
       const newItemsWithId = _.merge(
         newItems,
@@ -931,7 +930,11 @@ class MediaItemRepository extends repository<MediaItemBase>({
             searchResultId: number;
           })[]
         ) =>
-          _(_.concat(newItemsWithId, existingItems || existingSearchResults))
+          _(
+            _.cloneDeep(
+              _.concat(newItemsWithId, existingItems || existingSearchResults)
+            )
+          )
             .sortBy('searchResultId')
             .forEach((item) => delete item.searchResultId)
             .valueOf(),
