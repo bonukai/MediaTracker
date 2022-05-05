@@ -277,7 +277,6 @@ describe('mediaItemRepository', () => {
         source: 'user',
         mediaType: 'tv',
         title: 'Item 1',
-        slug: 'item-1',
         poster: 'poster',
         backdrop: 'backdrop',
       },
@@ -287,7 +286,6 @@ describe('mediaItemRepository', () => {
         source: 'user',
         mediaType: 'tv',
         title: 'Item 4',
-        slug: 'item-5',
       },
       {
         id: 77773,
@@ -295,7 +293,6 @@ describe('mediaItemRepository', () => {
         source: 'user',
         mediaType: 'tv',
         title: 'Item 2',
-        slug: 'item-2',
       },
     ];
 
@@ -305,14 +302,12 @@ describe('mediaItemRepository', () => {
         source: 'user',
         mediaType: 'tv',
         title: 'Item 1',
-        slug: 'item-1',
       },
       {
         tmdbId: 9875321,
         source: 'user',
         mediaType: 'tv',
         title: 'Item 2',
-        slug: 'item-2',
       },
       {
         imdbId: 'tt1234567',
@@ -321,7 +316,6 @@ describe('mediaItemRepository', () => {
         poster: 'poster',
         backdrop: 'backdrop',
         title: 'Item 3',
-        slug: 'item-3',
       },
       {
         imdbId: 'tt876123',
@@ -329,7 +323,6 @@ describe('mediaItemRepository', () => {
         source: 'user',
         mediaType: 'tv',
         title: 'new Title 4',
-        slug: 'new-title-4',
         overview: 'new overview',
       },
       {
@@ -337,14 +330,12 @@ describe('mediaItemRepository', () => {
         source: 'tmdb',
         mediaType: 'tv',
         title: 'title123',
-        slug: 'title123',
       },
       {
         tmdbId: 999,
         source: 'tmdb',
         mediaType: 'tv',
         title: 'title123',
-        slug: 'title123-2',
       },
     ];
 
