@@ -277,7 +277,6 @@ describe('mediaItemRepository', () => {
         source: 'user',
         mediaType: 'tv',
         title: 'Item 1',
-        slug: 'item-1',
         poster: 'poster',
         backdrop: 'backdrop',
       },
@@ -287,7 +286,6 @@ describe('mediaItemRepository', () => {
         source: 'user',
         mediaType: 'tv',
         title: 'Item 4',
-        slug: 'item-5',
       },
       {
         id: 77773,
@@ -295,7 +293,6 @@ describe('mediaItemRepository', () => {
         source: 'user',
         mediaType: 'tv',
         title: 'Item 2',
-        slug: 'item-2',
       },
     ];
 
@@ -305,14 +302,12 @@ describe('mediaItemRepository', () => {
         source: 'user',
         mediaType: 'tv',
         title: 'Item 1',
-        slug: 'item-1',
       },
       {
         tmdbId: 9875321,
         source: 'user',
         mediaType: 'tv',
         title: 'Item 2',
-        slug: 'item-2',
       },
       {
         imdbId: 'tt1234567',
@@ -321,7 +316,6 @@ describe('mediaItemRepository', () => {
         poster: 'poster',
         backdrop: 'backdrop',
         title: 'Item 3',
-        slug: 'item-3',
       },
       {
         imdbId: 'tt876123',
@@ -329,13 +323,23 @@ describe('mediaItemRepository', () => {
         source: 'user',
         mediaType: 'tv',
         title: 'new Title 4',
-        slug: 'new-title-4',
         overview: 'new overview',
+      },
+      {
+        tmdbId: 998,
+        source: 'tmdb',
+        mediaType: 'tv',
+        title: 'title123',
+      },
+      {
+        tmdbId: 999,
+        source: 'tmdb',
+        mediaType: 'tv',
+        title: 'title123',
       },
     ];
 
     await mediaItemRepository.createMany(existingItems);
-
     const res = await mediaItemRepository.mergeSearchResultWithExistingItems(
       searchResult,
       'tv'
@@ -376,7 +380,7 @@ describe('mediaItemRepository', () => {
     expect(insertedPoster).toBeDefined();
     expect(insertedBackdrop).toBeDefined();
 
-    expect(res.mergeWithSearchResult()).toMatchObject([
+    const expected = [
       {
         ...searchResult[0],
         id: 77771,
@@ -394,7 +398,12 @@ describe('mediaItemRepository', () => {
         ...searchResult[3],
         id: 77772,
       },
-    ]);
+      searchResult[4],
+      searchResult[5],
+    ];
+
+    expect(res.mergeWithSearchResult()).toMatchObject(expected);
+    expect(res.mergeWithSearchResult()).toMatchObject(expected);
 
     expect(res.existingItems).toMatchObject([
       {
