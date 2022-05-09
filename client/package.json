@@ -56,7 +56,7 @@
     "postcss-import": "^14.1.0",
     "postcss-loader": "^6.2.1",
     "react-reconciler": "^0.26.2",
-    "react-refresh": "^0.12.0",
+    "react-refresh": "^0.13.0",
     "react-refresh-typescript": "^2.0.4",
     "sass": "^1.51.0",
     "sass-loader": "^12.6.0",
