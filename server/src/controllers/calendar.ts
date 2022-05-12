@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { parseISO } from 'date-fns';
 
 import { createExpressRoute } from 'typescript-routes-to-openapi-server';
 import { Database } from 'src/dbconfig';
@@ -16,15 +15,7 @@ export class CalendarController {
     method: 'get';
     path: '/api/calendar';
     requestQuery: {
-      /**
-       * @description Date string in ISO 8601 format
-       * @example 2022-05-21
-       */
       start?: string;
-      /**
-       * @description Date string in ISO 8601 format
-       * @example 2022-05-21T23:37:36+00:00
-       */
       end?: string;
     };
     responseBody: GetCalendarItemsResponse;
@@ -36,8 +27,8 @@ export class CalendarController {
     res.send(
       await getCalendarItems({
         userId,
-        start: parseISO(start).toISOString(),
-        end: parseISO(end).toISOString(),
+        start,
+        end,
       })
     );
   });
