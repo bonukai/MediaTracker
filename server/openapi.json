@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "MediaTracker",
-    "version": "0.0.1",
+    "version": "0.1.0-beta.12",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
@@ -27,8 +27,11 @@
           {
             "name": "start",
             "in": "query",
+            "description": "Date string in ISO 8601 format",
             "required": false,
             "schema": {
+              "description": "Date string in ISO 8601 format",
+              "example": "2022-05-21",
               "type": "string",
               "nullable": true
             }
@@ -36,8 +39,11 @@
           {
             "name": "end",
             "in": "query",
+            "description": "Date string in ISO 8601 format",
             "required": false,
             "schema": {
+              "description": "Date string in ISO 8601 format",
+              "example": "2022-05-21T23:37:36+00:00",
               "type": "string",
               "nullable": true
             }
