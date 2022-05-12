@@ -130,6 +130,7 @@ export const SeenHistoryPage: FunctionComponent = () => {
                           episodesMap[seenEntry.episodeId]) ||
                         undefined
                       }
+                      seenId={seenEntry.id}
                     />
                   </div>
                 </li>

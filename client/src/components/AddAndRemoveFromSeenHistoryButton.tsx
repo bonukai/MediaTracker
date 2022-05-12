@@ -81,21 +81,26 @@ export const RemoveFromSeenHistoryButton: FunctionComponent<{
   mediaItem: MediaItemDetailsResponse;
   season?: TvSeason;
   episode?: TvEpisode;
+  seenId?: number;
 }> = (props) => {
-  const { mediaItem, season, episode } = props;
+  const { mediaItem, season, episode, seenId } = props;
 
   const seasonEpisodesIdSet = new Set(
     season?.episodes?.map((episode) => episode.id)
   );
 
-  const count = episode
-    ? mediaItem.seenHistory?.filter((entry) => entry.episodeId === episode?.id)
-        .length
-    : season
-    ? mediaItem.seenHistory?.filter((entry) =>
-        seasonEpisodesIdSet.has(entry.episodeId)
-      ).length
-    : mediaItem.seenHistory?.length;
+  const count =
+    seenId !== undefined
+      ? 1
+      : episode
+      ? mediaItem.seenHistory?.filter(
+          (entry) => entry.episodeId === episode?.id
+        ).length
+      : season
+      ? mediaItem.seenHistory?.filter((entry) =>
+          seasonEpisodesIdSet.has(entry.episodeId)
+        ).length
+      : mediaItem.seenHistory?.length;
 
   return (
     <div
@@ -111,6 +116,7 @@ export const RemoveFromSeenHistoryButton: FunctionComponent<{
           mediaItem: mediaItem,
           season: season,
           episode: episode,
+          seenId: seenId,
         })
       }
     >

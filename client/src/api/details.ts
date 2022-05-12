@@ -253,12 +253,17 @@ export const markAsUnseen = async (args: {
   mediaItem: MediaItemItemsResponse;
   season?: TvSeason;
   episode?: TvEpisode;
+  seenId?: number;
 }) => {
-  await mediaTrackerApi.seen.delete({
-    mediaItemId: args.mediaItem.id,
-    seasonId: args.season?.id,
-    episodeId: args.episode?.id,
-  });
+  if (args.seenId) {
+    await mediaTrackerApi.seen.deleteById(args.seenId);
+  } else {
+    await mediaTrackerApi.seen.delete({
+      mediaItemId: args.mediaItem.id,
+      seasonId: args.season?.id,
+      episodeId: args.episode?.id,
+    });
+  }
 
   await updateMediaItem(args.mediaItem);
   queryClient.invalidateQueries(['items']);
