@@ -1,10 +1,11 @@
 import { typescriptRoutesToOpenApi } from 'typescript-routes-to-openapi';
+import { version } from '../package.json';
 
 typescriptRoutesToOpenApi({
   openapi: {
     info: {
       title: 'MediaTracker',
-      version: '0.0.1',
+      version: version,
       license: {
         name: 'MIT',
         url: 'https://opensource.org/licenses/MIT',
