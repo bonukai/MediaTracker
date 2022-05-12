@@ -1,18 +1,17 @@
 import React, { FunctionComponent, useEffect } from 'react';
-import { useLocation, useMatch, useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { Plural, t, Trans } from '@lingui/macro';
 import { parseISO } from 'date-fns';
 
-import { markAsUnseen, useDetails } from 'src/api/details';
-import { Modal } from 'src/components/Modal';
+import { useDetails } from 'src/api/details';
 import { Poster } from 'src/components/Poster';
-import { SelectSeenDate } from 'src/components/SelectSeenDate';
 import { BadgeRating } from 'src/components/StarRating';
 import { hasBeenSeenAtLeastOnce, useSelectedSeason } from 'src/mediaItem';
 import {
   hasBeenReleased,
+  hasReleaseDate,
   hideEpisodeTitle,
   hideSeasonOverview,
 } from 'src/utils';
@@ -78,7 +77,7 @@ const EpisodeComponent: FunctionComponent<{
       <div className="flex py-2 md:ml-auto md:py-0">
         {/* Rating */}
         <div className="flex w-10 md:justify-center">
-          {hasBeenReleased(episode) && (
+          {(hasBeenReleased(episode) || !hasReleaseDate(mediaItem)) && (
             <BadgeRating mediaItem={mediaItem} episode={episode} />
           )}
         </div>
@@ -231,7 +230,7 @@ const SeasonComponent: FunctionComponent<{
           )}
 
           <div className="mt-2">
-            {hasBeenReleased(season) && (
+            {(hasBeenReleased(season) || !hasReleaseDate(mediaItem)) && (
               <BadgeRating mediaItem={mediaItem} season={season} />
             )}
           </div>
