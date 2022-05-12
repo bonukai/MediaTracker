@@ -19,6 +19,7 @@ import {
   formatEpisodeNumber,
   hasBeenReleased,
   hasProgress,
+  hasReleaseDate,
   isAudiobook,
   isBook,
   isMovie,
@@ -407,7 +408,7 @@ export const DetailsPage: FunctionComponent = () => {
       </div>
 
       <div className="mt-3">
-        {hasBeenReleased(mediaItem) && (
+        {(hasBeenReleased(mediaItem) || !hasReleaseDate(mediaItem)) && (
           <>
             <AddToSeenHistoryButton mediaItem={mediaItem} />
 
@@ -431,55 +432,59 @@ export const DetailsPage: FunctionComponent = () => {
         </Link>
       )}
 
-      {hasBeenReleased(mediaItem) && !isTvShow(mediaItem) && (
-        <>
-          {!hasProgress(mediaItem) && (
-            <div
-              className="mt-3 text-sm btn"
-              onClick={async () => {
-                addToProgress({
-                  mediaItemId: mediaItem.id,
-                  progress: 0,
-                });
-              }}
-            >
-              {isMovie(mediaItem) && <Trans>I am watching it</Trans>}
-              {isBook(mediaItem) && <Trans>I am reading it</Trans>}
-              {isAudiobook(mediaItem) && <Trans>I am listening it</Trans>}
-              {isVideoGame(mediaItem) && <Trans>I am playing it</Trans>}
-            </div>
-          )}
-
-          {hasProgress(mediaItem) && (
-            <>
+      {(hasBeenReleased(mediaItem) || !hasReleaseDate(mediaItem)) &&
+        !isTvShow(mediaItem) && (
+          <>
+            {!hasProgress(mediaItem) && (
               <div
                 className="mt-3 text-sm btn"
                 onClick={async () => {
                   addToProgress({
                     mediaItemId: mediaItem.id,
-                    progress: 1,
+                    progress: 0,
                   });
                 }}
               >
-                {isMovie(mediaItem) && <Trans>I finished watching it</Trans>}
-                {isBook(mediaItem) && <Trans>I finished reading it</Trans>}
-                {isAudiobook(mediaItem) && (
-                  <Trans>I finished listening it</Trans>
-                )}
-                {isVideoGame(mediaItem) && <Trans>I finished playing it</Trans>}
+                {isMovie(mediaItem) && <Trans>I am watching it</Trans>}
+                {isBook(mediaItem) && <Trans>I am reading it</Trans>}
+                {isAudiobook(mediaItem) && <Trans>I am listening it</Trans>}
+                {isVideoGame(mediaItem) && <Trans>I am playing it</Trans>}
               </div>
+            )}
 
-              <div className="mt-3">
-                <Trans>Progress</Trans>: {Math.round(mediaItem.progress * 100)}%
-              </div>
-            </>
-          )}
+            {hasProgress(mediaItem) && (
+              <>
+                <div
+                  className="mt-3 text-sm btn"
+                  onClick={async () => {
+                    addToProgress({
+                      mediaItemId: mediaItem.id,
+                      progress: 1,
+                    });
+                  }}
+                >
+                  {isMovie(mediaItem) && <Trans>I finished watching it</Trans>}
+                  {isBook(mediaItem) && <Trans>I finished reading it</Trans>}
+                  {isAudiobook(mediaItem) && (
+                    <Trans>I finished listening it</Trans>
+                  )}
+                  {isVideoGame(mediaItem) && (
+                    <Trans>I finished playing it</Trans>
+                  )}
+                </div>
 
-          <div className="mt-3">
-            <SetProgressButton mediaItem={mediaItem} />
-          </div>
-        </>
-      )}
+                <div className="mt-3">
+                  <Trans>Progress</Trans>:{' '}
+                  {Math.round(mediaItem.progress * 100)}%
+                </div>
+              </>
+            )}
+
+            <div className="mt-3">
+              <SetProgressButton mediaItem={mediaItem} />
+            </div>
+          </>
+        )}
 
       {mediaItem.upcomingEpisode && (
         <>
@@ -580,7 +585,7 @@ export const DetailsPage: FunctionComponent = () => {
       )}
 
       {/* Rating */}
-      {hasBeenReleased(mediaItem) && (
+      {(hasBeenReleased(mediaItem) || !hasReleaseDate(mediaItem)) && (
         <RatingAndReview
           userRating={mediaItem.userRating}
           mediaItem={mediaItem}

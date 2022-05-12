@@ -68,6 +68,12 @@ export const hasBeenReleased = (
   return releaseDate && parseISO(releaseDate) <= new Date();
 };
 
+export const hasReleaseDate = (
+  value: MediaItemItemsResponse | TvEpisode | TvSeason
+) => {
+  return Boolean(value.releaseDate);
+};
+
 export const isOnWatchlist = (mediaItem: MediaItemItemsResponse) => {
   return mediaItem.onWatchlist === true;
 };

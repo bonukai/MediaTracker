@@ -9,8 +9,8 @@ import {
 import {
   formatEpisodeNumber,
   hasBeenReleased,
+  hasReleaseDate,
   hideEpisodeTitle,
-  hideSeasonOverview,
 } from 'src/utils';
 import { useUser } from 'src/api/user';
 import clsx from 'clsx';
@@ -90,7 +90,7 @@ export const EpisodePage: FunctionComponent = () => {
         />
       </div>
 
-      {hasBeenReleased(episode) && (
+      {(hasBeenReleased(episode) || !hasReleaseDate(mediaItem)) && (
         <>
           <div className="mt-3">
             <AddToSeenHistoryButton mediaItem={mediaItem} episode={episode} />
