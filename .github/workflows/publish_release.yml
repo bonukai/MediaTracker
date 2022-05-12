@@ -34,6 +34,10 @@ jobs:
           git tag --force ${{ github.event.release.tag_name }}
           git push
           git push --force --tags
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: main
       - if: ${{ github.event.action == 'prereleased' }}
         name: Publish on npmjs.com [prerelease]
         run: |
