@@ -27,5 +27,14 @@
   "Updating: {title} (last updated at: {date}": "A atualizar: {title} (atualizado pela última vez em: {date}",
   "Updating: {title} (last updated at: {date})": "A atualizar: {title} (atualizado pela última vez em: {date})",
   "User already exists": "O utilizador já existe",
-  "Username cannot be empty": "O nome de utilizador não pode estar vazio"
+  "Username cannot be empty": "O nome de utilizador não pode estar vazio",
+  "{0, plural, one {Updating metadata for # item} other {Updating metadata for # items}}": "{0, plural, one {A atualizar metadados para # item} other {Atualizando metadados para # itens}}",
+  "{0} got a new season": "{0} tem uma nova temporada",
+  "{count, plural, one {# episode for **{title}** has been released} other {# episodes for **{title}** has been released}}": "{count, plural, one {Estreou # episódio de **{title}** } other {Estrearam # episódios de **{title}**}}",
+  "{count, plural, one {# episode of **{title}** has been released} other {# episodes of **{title}** has been released}}": "{count, plural, one {Estreou # episódio de **{title}** } other {Estrearam # episódios de **{title}**}}",
+  "{count, plural, one {Failed to update 1 item} other {Failed to update # items}}": "{count, plural, one {Falha ao atualizar 1 item} other {Falha ao atualizar # itens}}",
+  "{count, plural, one {Sending notification for new episodes of {title} to # user} other {Sending notification for new episodes of {title} to # users}}": "{count, plural, one {A enviar notificação de novos episódios de {title} para # utilizador} other {A enviar notificação de novos episódios de {title} para # utilizadores}}",
+  "{count, plural, one {Sending notification for {title} to # user} other {Sending notification for {title} to # users}}": "{count, plural, one {A enviar notificação sobre {title} para # utilizador} other {A enviar notificação sobre {title} para # utilizadores}}",
+  "{count, plural, one {Updated 1 item} other {Updated # items}}": "{count, plural, one {1 item atualizado} other {# itens atualizados}}",
+  "{title} has been released": "{title} estreou"
 }
