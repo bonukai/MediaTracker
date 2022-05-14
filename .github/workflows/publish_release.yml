@@ -71,13 +71,13 @@ jobs:
         name: Publish to Docker Hub [prerelease]
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/amd64
+          platforms: linux/amd64, linux/arm64
           push: true
           tags: bonukai/mediatracker:${{ steps.version.outputs.version }},bonukai/mediatracker:unstable
       - if: ${{ github.event.action == 'released' }}
         name: Publish to Docker Hub
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/amd64
+          platforms: linux/amd64, linux/arm64
           push: true
           tags: bonukai/mediatracker:${{ steps.version.outputs.version }},bonukai/mediatracker:unstable,bonukai/mediatracker:latest
