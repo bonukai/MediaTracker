@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
+import { parseISO } from 'date-fns';
 import { Trans } from '@lingui/macro';
 
 import { markAsSeen } from 'src/api/details';
@@ -129,11 +130,13 @@ export const SelectSeenDateComponent: FunctionComponent<{
             value={format(selectedDate, 'yyyy-MM-dd')}
             max={format(new Date(), 'yyyy-MM-dd')}
             onChange={(e) => {
-              if (!e.target.value) {
+              if (!e.target.valueAsDate) {
                 return;
               }
 
-              const newDate = new Date(e.target.value);
+              const newDate = parseISO(
+                e.target.valueAsDate.toISOString().split('T').at(0)
+              );
 
               setSelectedDate(
                 new Date(
