@@ -271,7 +271,7 @@ router.patch(
           enum: ['au', 'ca', 'de', 'es', 'fr', 'in', 'it', 'jp', 'uk', 'us'],
           type: 'string',
         },
-        ServerLang: { enum: ['da', 'de', 'en', 'es'], type: 'string' },
+        ServerLang: { enum: ['da', 'de', 'en', 'es', 'pt'], type: 'string' },
       },
       type: 'object',
       properties: {
