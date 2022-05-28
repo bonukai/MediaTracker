@@ -1,1 +1,12 @@
-{}
+{
+  "Already up to date": "Aucune mise à jour disponible",
+  "Everything up to date": "Aucune mise à jour disponible",
+  "Password cannot be empty": "Le mot de passe ne doit pas être vide",
+  "Passwords do not match": "Les mots de passe ne correspondent pas",
+  "Test message": "Message de test",
+  "Updating metadata": "Mise à jour des méta-données",
+  "Updating: {title}": "Mise à jour: {title}",
+  "User already exists": "Le nom d'utilisateur existe déjà",
+  "Username cannot be empty": "Le nom d'utilisateur ne peut pas être vide",
+  "{title} has been released": "{title} a été publié"
+}
