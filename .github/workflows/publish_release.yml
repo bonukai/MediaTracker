@@ -29,7 +29,9 @@ jobs:
         run: |
           cd server
           npm version ${{ steps.version.outputs.version }} --no-git-tag-version
-          git add package.json
+          npm ci
+          npm run build:routes
+          git add package.json openapi.json
           git commit -m "${{ steps.version.outputs.version }}"
           git tag --force ${{ github.event.release.tag_name }}
           git push
