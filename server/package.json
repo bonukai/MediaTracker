@@ -55,7 +55,7 @@
     "lodash": "^4.17.21",
     "make-plural": "^7.1.0",
     "nanoid": "^3.3.4",
-    "passport": "^0.5.2",
+    "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "pg": "^8.7.3",
     "sharp": "^0.30.4",
