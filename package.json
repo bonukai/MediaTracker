@@ -11,7 +11,7 @@
     "test:coverage": "npm run test:coverage --prefix server"
   },
   "devDependencies": {
-    "@types/jest": "^27.5.0",
+    "@types/jest": "^28.1.1",
     "prettier": "^2.6.2"
   },
   "dependencies": {
