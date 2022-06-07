@@ -9,7 +9,7 @@ COPY rest-api/ /app/rest-api
 COPY ["package.json", "package-lock.json*", "./"]
 
 RUN apk add --no-cache python3 g++ make
-RUN [[ $(uname -m) == armv7l ]] && apk add vips-dev
+RUN [[ $(uname -m) == armv7l ]] && apk add --no-cache vips-dev
 RUN npm install
 RUN npm run build
 
@@ -21,7 +21,7 @@ RUN apk add --no-cache python3 g++ make
 RUN npm install --production
 
 FROM node:17-alpine
-RUN [[ $(uname -m) == armv7l ]] && apk add vips 
+RUN [[ $(uname -m) == armv7l ]] && apk add --no-cache vips 
 RUN apk add --no-cache curl
 
 WORKDIR /storage
