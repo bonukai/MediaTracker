@@ -1,5 +1,5 @@
 # Build server and client
-FROM node:17-alpine as build
+FROM node:16-alpine3.16 as build
 
 WORKDIR /app
 
@@ -9,19 +9,23 @@ COPY rest-api/ /app/rest-api
 COPY ["package.json", "package-lock.json*", "./"]
 
 RUN apk add --no-cache python3 g++ make
+RUN [[ $(uname -m) == armv7l ]] && apk add --no-cache vips-dev
 RUN npm install
 RUN npm run build
 
 # Build server for production
-FROM node:17-alpine as server-build-production
+FROM node:16-alpine3.16 as server-build-production
+
 WORKDIR /server
 COPY ["server/package.json", "server/package-lock.json*", "./"]
 RUN apk add --no-cache python3 g++ make
+RUN [[ $(uname -m) == armv7l ]] && apk add --no-cache vips-dev
 RUN npm install --production
 
-FROM node:17-alpine
+FROM node:16-alpine3.16
 
 RUN apk add --no-cache curl
+RUN [[ $(uname -m) == armv7l ]] && apk add --no-cache vips 
 
 WORKDIR /storage
 WORKDIR /assets
