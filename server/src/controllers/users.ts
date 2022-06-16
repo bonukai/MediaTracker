@@ -43,9 +43,13 @@ export class UsersController {
   logout = createExpressRoute<{
     path: '/api/user/logout';
     method: 'get';
-  }>(async (req, res) => {
-    req.logout();
-    res.redirect('/');
+  }>(async (req, res, next) => {
+    req.logout((err) => {
+      if (err) {
+        return next(err);
+      }
+      res.redirect('/');
+    });
   });
 
   /**
