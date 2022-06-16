@@ -22,7 +22,8 @@ RUN apk add --no-cache python3 g++ make
 RUN if [[ $(uname -m) == armv7l ]]; then apk add --no-cache vips-dev; fi
 RUN npm install --production
 
-FROM node:16-alpine3.16
+FROM node:16-alpine3.16 as node
+FROM alpine:3.16
 
 RUN apk add --no-cache curl
 RUN if [[ $(uname -m) == armv7l ]]; then apk add --no-cache vips; fi
@@ -35,9 +36,14 @@ VOLUME /assets
 
 WORKDIR /app
 
+COPY --from=node /usr/local/bin/node /usr/local/bin/
+COPY --from=node /usr/lib/ /usr/lib/
+
 COPY --from=build /app/server/public public
 COPY --from=build /app/server/build build
+
 COPY --from=server-build-production /server/node_modules node_modules
+
 COPY "server/package.json" ./
 
 ENV PORT=7481
