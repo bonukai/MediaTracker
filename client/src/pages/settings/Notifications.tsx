@@ -135,7 +135,7 @@ export const SettingsNotificationsPage: FunctionComponent = () => {
 
 const platforms: ReadonlyArray<
   keyof User.GetNotificationCredentials.ResponseBody
-> = ['gotify', 'Pushbullet', 'Pushover', 'Pushsafer'];
+> = ['gotify', 'ntfy', 'Pushbullet', 'Pushover', 'Pushsafer'];
 
 const NotificationPlatform: FunctionComponent = () => {
   const { user, updateUser } = useUser();
