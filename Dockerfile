@@ -28,6 +28,12 @@ FROM alpine:3.16
 RUN apk add --no-cache curl
 RUN if [[ $(uname -m) == armv7l ]]; then apk add --no-cache vips; fi
 
+WORKDIR /storage
+WORKDIR /assets
+
+VOLUME /storage
+VOLUME /assets
+
 WORKDIR /app
 
 COPY --from=node /usr/local/bin/node /usr/local/bin/
@@ -49,23 +55,5 @@ ENV DATABASE_PATH="/storage/data.db"
 ENV ASSETS_PATH="/assets"
 ENV LOGS_PATH="/logs"
 ENV NODE_ENV=production
-ENV PUID=1000
-ENV PGID=1000
-
-RUN addgroup -g $PGID abc
-RUN adduser -D -u $PUID -G abc abc
-
-USER abc
-
-WORKDIR $ASSETS_PATH
-VOLUME $ASSETS_PATH
-
-WORKDIR $LOGS_PATH
-VOLUME $LOGS_PATH
-
-WORKDIR /storage
-VOLUME /storage
-
-WORKDIR /app
 
 CMD [ "node", "build/index.js"]
