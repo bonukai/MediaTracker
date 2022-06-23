@@ -10,6 +10,8 @@ import { I18nProvider } from '@lingui/react';
 import { Trans } from '@lingui/macro';
 import { setupI18n } from 'src/i18n/i18n';
 
+import './styles/materialIcons.css';
+import './styles/fonts/robotoCondensed.css';
 import './styles/fullcalendar.css';
 import './styles/main.scss';
 import './styles/tailwind.css';
