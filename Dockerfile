@@ -48,7 +48,7 @@ COPY --from=build /app/server/build build
 COPY --from=server-build-production /server/node_modules node_modules
 
 COPY server/package.json ./
-COPY docker/entrypoint.sh ./docker/entrypoint.sh
+COPY docker/entrypoint.sh /docker/entrypoint.sh
 
 ENV PORT=7481
 EXPOSE $PORT
@@ -63,4 +63,4 @@ ENV ASSETS_PATH="/assets"
 ENV LOGS_PATH="/logs"
 ENV NODE_ENV=production
 
-CMD [ "./docker/entrypoint.sh"]
+ENTRYPOINT  ["sh", "/docker/entrypoint.sh"]
