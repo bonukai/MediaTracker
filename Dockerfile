@@ -29,10 +29,13 @@ RUN apk add --no-cache curl
 RUN if [[ $(uname -m) == armv7l ]]; then apk add --no-cache vips; fi
 
 WORKDIR /storage
-WORKDIR /assets
-
 VOLUME /storage
+
+WORKDIR /assets
 VOLUME /assets
+
+WORKDIR /logs
+VOLUME /logs
 
 WORKDIR /app
 
@@ -44,10 +47,14 @@ COPY --from=build /app/server/build build
 
 COPY --from=server-build-production /server/node_modules node_modules
 
-COPY "server/package.json" ./
+COPY server/package.json ./
+COPY docker/entrypoint.sh ./docker/entrypoint.sh
 
 ENV PORT=7481
 EXPOSE $PORT
+
+ENV PUID=1000
+ENV PGID=1000
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl ${HOSTNAME}:${PORT}
 
@@ -56,4 +63,4 @@ ENV ASSETS_PATH="/assets"
 ENV LOGS_PATH="/logs"
 ENV NODE_ENV=production
 
-CMD [ "node", "build/index.js"]
+CMD [ "./docker/entrypoint.sh"]
