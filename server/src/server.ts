@@ -74,6 +74,11 @@ export class Server {
 
     this.#app.use(AccessTokenMiddleware.authorize);
 
+    this.#app.get(/\.(?:js|css|woff2)$/, (req, res, next) => {
+      res.set('Cache-Control', 'max-age=31536000');
+      next();
+    });
+
     this.#app.get(/\.(?:js|css)$/, (req, res, next) => {
       const extension = parse(req.path).ext;
 
@@ -83,8 +88,6 @@ export class Server {
         } else {
           res.set('Content-Type', 'application/javascript; charset=UTF-8');
         }
-
-        res.set('Cache-Control', 'max-age=31536000');
       };
 
       if (req.header('Accept-Encoding').includes('br')) {
