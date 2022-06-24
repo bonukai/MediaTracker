@@ -25,7 +25,7 @@ RUN npm install --production
 FROM node:16-alpine3.16 as node
 FROM alpine:3.16
 
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl shadow
 RUN if [[ $(uname -m) == armv7l ]]; then apk add --no-cache vips; fi
 
 WORKDIR /storage
@@ -55,6 +55,9 @@ EXPOSE $PORT
 
 ENV PUID=1000
 ENV PGID=1000
+
+RUN groupadd --non-unique --gid 1000 abc
+RUN useradd --non-unique --create-home --uid 1000 --gid abc abc
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl ${HOSTNAME}:${PORT}
 
