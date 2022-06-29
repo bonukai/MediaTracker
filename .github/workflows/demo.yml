@@ -11,6 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
+          mkdir .ssh
           echo "${{ secrets.VPS_FINGERPRINT }}" > .ssh/known_hosts
           echo "${{ secrets.VPS_PRIVATE_KEY }}" > key
           ssh ${{ secrets.VPS_LOGIN }} -i key "\
