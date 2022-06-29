@@ -16,7 +16,6 @@ jobs:
           chmod 700 key
           ssh -o "StrictHostKeyChecking no" -i key ${{ secrets.VPS_LOGIN }} "\
             ADDRESS=mediatracker.app \
-            rm -rf MediaTracker \
             git clone https://github.com/bonukai/MediaTracker.git \
             docker-compose --file MediaTracker/docker-reverse-proxy/docker-compose.yaml up --build --detach "
           rm key
