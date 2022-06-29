@@ -1,0 +1,21 @@
+name: Update demo website
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          echo "${{ secrets.VPS_FINGERPRINT }}" > .ssh/known_hosts
+          echo "${{ secrets.VPS_PRIVATE_KEY }}" > key
+          ssh ${{ secrets.VPS_LOGIN }} -i key "\
+            ADDRESS=mediatracker.app \
+            rm -rf MediaTracker
+            git clone https://github.com/bonukai/MediaTracker.git \
+            docker-compose --file MediaTracker/docker-reverse-proxy/docker-compose.yaml up --build --detach "
+          rm key
