@@ -12,9 +12,8 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           mkdir .ssh
-          echo "${{ secrets.VPS_FINGERPRINT }}" > .ssh/known_hosts
           echo "${{ secrets.VPS_PRIVATE_KEY }}" > key
-          ssh ${{ secrets.VPS_LOGIN }} -i key "\
+          ssh -o "StrictHostKeyChecking no" -i key ${{ secrets.VPS_LOGIN }} "\
             ADDRESS=mediatracker.app \
             rm -rf MediaTracker
             git clone https://github.com/bonukai/MediaTracker.git \
