@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  mediatracker:
+    container_name: mediatracker
+    image: bonukai/mediatracker
+    ports:
+      - 7481:7481
+    volumes:
+      - ~/assets:/assets
+      - ~/storage:/storage
+      - ~/logs:/logs
+  proxy:
+    container_name: proxy
+    hostname: proxy
+    build: .
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - mediatracker
+    volumes:
+      - ~/ssl/private/:/etc/ssl/private/:ro
