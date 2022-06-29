@@ -13,6 +13,7 @@ jobs:
       - run: |
           mkdir .ssh
           echo "${{ secrets.VPS_PRIVATE_KEY }}" > key
+          chmod 700 key
           ssh -o "StrictHostKeyChecking no" -i key ${{ secrets.VPS_LOGIN }} "\
             ADDRESS=mediatracker.app \
             rm -rf MediaTracker
