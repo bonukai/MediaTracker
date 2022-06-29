@@ -21,3 +21,5 @@ services:
       - mediatracker
     volumes:
       - ~/ssl/private/:/etc/ssl/private/:ro
+    environment:
+      - ADDRESS=mediatracker.app
