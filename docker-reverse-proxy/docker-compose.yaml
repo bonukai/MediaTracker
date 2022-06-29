@@ -3,7 +3,7 @@ version: '3'
 services:
   mediatracker:
     container_name: mediatracker
-    image: bonukai/mediatracker
+    build: ..
     ports:
       - 7481:7481
     volumes:
