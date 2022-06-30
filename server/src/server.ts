@@ -302,6 +302,11 @@ export const initialize = async (args: {
   Database.init();
   await Database.runMigrations();
 
+  logger.info(
+    `Server timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`
+  );
+  logger.info(`Server time: ${new Date().toLocaleString()}`);
+
   const configuration = await configurationRepository.findOne();
 
   if (!configuration) {
