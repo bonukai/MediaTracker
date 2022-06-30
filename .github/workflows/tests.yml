@@ -4,6 +4,9 @@ on: [push, pull_request]
 
 jobs:
   build:
+    concurrency: 
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     name: Lint
     steps:
@@ -17,6 +20,9 @@ jobs:
       - run: npm run lint
       
   test:
+    concurrency: 
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     strategy:
       matrix:
         node: ['16', '17']
