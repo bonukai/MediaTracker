@@ -108,6 +108,25 @@ const IconWithLink: FunctionComponent<{
   );
 };
 
+const WhereToWatchComponent: FunctionComponent<{
+  mediaItem: MediaItemItemsResponse;
+}> = (props) => {
+  const { mediaItem } = props;
+
+  return (
+    <div>
+      <a
+        className="underline"
+        href={`https://www.themoviedb.org/${
+          isTvShow(mediaItem) ? 'tv' : 'movie'
+        }/${mediaItem.tmdbId}/watch`}
+      >
+        <Trans>Where to watch</Trans>
+      </a>
+    </div>
+  );
+};
+
 const audibleLanguages: Record<AudibleLang, string> = {
   au: 'au',
   ca: 'ca',
@@ -581,6 +600,12 @@ export const DetailsPage: FunctionComponent = () => {
 
             {isVideoGame(mediaItem) && <Trans>Played history</Trans>}
           </Link>
+        </div>
+      )}
+
+      {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
+        <div className="pt-3">
+          <WhereToWatchComponent mediaItem={mediaItem} />
         </div>
       )}
 
