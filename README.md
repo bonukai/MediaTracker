@@ -52,6 +52,7 @@ docker run \
     -v assets:/assets \
     -e TMDB_LANG=en \
     -e AUDIBLE_LANG=us \
+    -e TZ=Europe/London
     bonukai/mediatracker:latest
 ```
 
@@ -71,6 +72,7 @@ services:
       SERVER_LANG: en
       TMDB_LANG: en
       AUDIBLE_LANG: us
+      TZ: Europe/London
     image: bonukai/mediatracker:latest
 
 volumes:
@@ -105,6 +107,7 @@ volumes:
 | IGDB_CLIENT_SECRET | IGDB secret                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | PUID               | UserID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | PGID               | GroupID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| TZ               | Timezone, for example `Europe/London`, see [full list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 
 ## Heroku
 
