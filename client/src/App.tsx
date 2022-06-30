@@ -9,6 +9,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { Trans } from '@lingui/macro';
 import { setupI18n } from 'src/i18n/i18n';
+import { useFonts } from 'src/hooks/fonts';
 
 import './styles/materialIcons.css';
 import './styles/fonts/robotoCondensed.css';
@@ -61,6 +62,7 @@ let globalSetErrorMessage: (message: string) => void;
 
 export const App: FunctionComponent = () => {
   const [errorMessage, setErrorMessage] = React.useState<string>();
+  const { loaded } = useFonts();
 
   React.useEffect(() => {
     globalSetErrorMessage = setErrorMessage;
@@ -69,6 +71,10 @@ export const App: FunctionComponent = () => {
       globalSetErrorMessage = () => {};
     };
   }, []);
+
+  if (!loaded) {
+    return <></>;
+  }
 
   return (
     <I18nProvider i18n={i18n}>
