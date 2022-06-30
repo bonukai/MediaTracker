@@ -20,13 +20,13 @@ jobs:
       - run: npm run lint
       
   test:
-    concurrency: 
-      group: ${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
     strategy:
       matrix:
         node: ['16', '17']
         os: [ubuntu-20.04, ubuntu-18.04, windows-latest]
+    concurrency: 
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.node }}
+      cancel-in-progress: true
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} Node ${{ matrix.node }}
     steps:
