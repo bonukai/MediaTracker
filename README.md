@@ -4,7 +4,7 @@ Self hosted platform for tracking movies, tv shows, video games, books and audio
 
 # Demo
 
-[https://mediatracker.app](https://mediatracker.app/)\
+[mediatracker.app](https://mediatracker.app/)\
 Username: **demo**\
 Password: **demo**
 
