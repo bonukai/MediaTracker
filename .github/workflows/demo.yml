@@ -8,6 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    concurrency: 
+      group: update_demo_website
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v2
       - run: |
