@@ -32,11 +32,19 @@ const notificationForFutureItems = async () => {
   );
 
   for (const mediaItem of releasedItems) {
+    const releaseDate = parseISO(mediaItem.releaseDate);
+
     addFutureNotification(
       async () =>
         (await checkIfNotificationHasBeenSent(mediaItem)) &&
         (await sendNotificationForMediaItem(mediaItem)),
-      parseISO(mediaItem.releaseDate)
+      releaseDate
+    );
+
+    logger.debug(
+      `Scheduled notification for release date of "${
+        mediaItem.title
+      }" at ${releaseDate.toUTCString()}`
     );
   }
 };
@@ -75,6 +83,9 @@ const notificationForFutureEpisodes = async () => {
         continue;
       }
 
+      const episode = groupedByTvShow[0];
+      const releaseDate = parseISO(episode.releaseDate);
+
       addFutureNotification(
         async () =>
           sendNotificationForEpisodes(
@@ -82,7 +93,13 @@ const notificationForFutureEpisodes = async () => {
               groupedByTvShow.filter(checkIfNotificationHasBeenSent)
             )
           ),
-        parseISO(groupedByTvShow[0].releaseDate)
+        releaseDate
+      );
+
+      logger.debug(
+        `Scheduled notification for release date of episode "${
+          episode.tvShow.title
+        }" at ${releaseDate.toUTCString()}`
       );
     }
   }
