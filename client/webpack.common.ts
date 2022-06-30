@@ -18,6 +18,10 @@ const config: Configuration = {
   module: {
     rules: [
       {
+        test: /\.woff2/,
+        type: 'asset/inline',
+      },
+      {
         test: /\.(scss|css)$/i,
         use: [
           MiniCssExtractPlugin.loader,
