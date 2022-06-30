@@ -52,7 +52,7 @@ docker run \
     -v assets:/assets \
     -e TMDB_LANG=en \
     -e AUDIBLE_LANG=us \
-    -e TZ=Europe/London
+    -e TZ=Europe/London \
     bonukai/mediatracker:latest
 ```
 
