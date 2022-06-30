@@ -23,3 +23,4 @@ services:
       - ~/ssl/private/:/etc/ssl/private/:ro
     environment:
       - ADDRESS=mediatracker.app
+      - DEMO=1
