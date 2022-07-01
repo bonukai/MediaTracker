@@ -22,7 +22,7 @@ import {
 } from 'src/entity/mediaItem';
 import { imageRepository } from 'src/repository/image';
 import { getImageId, Image } from 'src/entity/image';
-import { subDays } from 'date-fns';
+import { parseISO, subDays, subMinutes } from 'date-fns';
 import { randomSlugId } from 'src/slug';
 import { TvSeason } from 'src/entity/tvseason';
 import { ListItem } from 'src/entity/list';
@@ -628,7 +628,9 @@ class MediaItemRepository extends repository<MediaItemBase>({
   }
 
   public async itemsToNotify(from: Date, to: Date): Promise<MediaItemBase[]> {
-    return await Database.knex<MediaItemBase>(this.tableName)
+    const res: MediaItemBase[] = await Database.knex<MediaItemBase>(
+      this.tableName
+    )
       .select('mediaItem.*')
       .select('notificationsHistory.mediaItemId')
       .select('notificationsHistory.id AS notificationsHistory.id')
@@ -637,12 +639,27 @@ class MediaItemRepository extends repository<MediaItemBase>({
         'notificationsHistory.mediaItemId',
         'mediaItem.id'
       )
-      .whereBetween('mediaItem.releaseDate', [
-        from.toISOString(),
-        to.toISOString(),
-      ])
+      .where((qb) =>
+        qb
+          .whereBetween('mediaItem.releaseDate', [
+            from.toISOString(),
+            to.toISOString(),
+          ])
+          .orWhereBetween('mediaItem.releaseDate', [
+            subMinutes(from, new Date().getTimezoneOffset()).toISOString(),
+            subMinutes(to, new Date().getTimezoneOffset()).toISOString(),
+          ])
+      )
       .whereNot('mediaType', 'tv')
       .whereNull('notificationsHistory.id');
+
+    return _(res)
+      .uniqBy('id')
+      .filter((item) => {
+        const releaseDate = parseISO(item.releaseDate);
+        return releaseDate > from && releaseDate < to;
+      })
+      .value();
   }
 
   public async episodesToNotify(from: Date, to: Date) {
@@ -657,26 +674,40 @@ class MediaItemRepository extends repository<MediaItemBase>({
         'episode.id'
       )
       .leftJoin<MediaItemBase>('mediaItem', 'mediaItem.id', 'episode.tvShowId')
-      .whereBetween('episode.releaseDate', [
-        from.toISOString(),
-        to.toISOString(),
-      ])
+      .where((qb) =>
+        qb
+          .whereBetween('episode.releaseDate', [
+            from.toISOString(),
+            to.toISOString(),
+          ])
+          .orWhereBetween('episode.releaseDate', [
+            subMinutes(from, new Date().getTimezoneOffset()).toISOString(),
+            subMinutes(to, new Date().getTimezoneOffset()).toISOString(),
+          ])
+      )
       .where('episode.isSpecialEpisode', false)
       .whereNull('notificationsHistory.id');
 
-    return res.map((row) =>
-      _(row)
-        .pickBy((value, column) => column.startsWith('episode.'))
-        .mapKeys((value, key) => key.substring('episode.'.length))
-        .set(
-          'tvShow',
-          _(row)
-            .pickBy((value, column) => column.startsWith('mediaItem.'))
-            .mapKeys((value, key) => key.substring('mediaItem.'.length))
-            .value()
-        )
-        .value()
-    ) as (TvEpisode & { tvShow: MediaItemBase })[];
+    return _(res)
+      .uniqBy('id')
+      .filter((item) => {
+        const releaseDate = parseISO(item['episode.releaseDate']);
+        return releaseDate > from && releaseDate < to;
+      })
+      .map((row) =>
+        _(row)
+          .pickBy((value, column) => column.startsWith('episode.'))
+          .mapKeys((value, key) => key.substring('episode.'.length))
+          .set(
+            'tvShow',
+            _(row)
+              .pickBy((value, column) => column.startsWith('mediaItem.'))
+              .mapKeys((value, key) => key.substring('mediaItem.'.length))
+              .value()
+          )
+          .value()
+      )
+      .value() as (TvEpisode & { tvShow: MediaItemBase })[];
   }
 
   public async lock(mediaItemId: number) {
