@@ -21,7 +21,6 @@ RUN meson install
 FROM alpine:3.16 as alpine-libvips
 COPY --from=node-libvips-dev /usr/local/lib/pkgconfig/vips* /usr/local/lib/pkgconfig/
 COPY --from=node-libvips-dev /usr/local/lib/libvips* /usr/local/lib/
-COPY --from=node-libvips-dev /usr/local/lib/vips* /usr/local/lib/
 COPY --from=node-libvips-dev /usr/local/bin/vips* /usr/local/bin/
 COPY --from=node-libvips-dev /usr/local/include/vips /usr/local/include/vips
 RUN apk add --no-cache expat glib libwebp jpeg fftw orc libpng tiff lcms2
