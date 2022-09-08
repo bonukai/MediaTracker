@@ -1,5 +1,34 @@
+# Build libvips
+FROM node:16-alpine3.16 as node-libvips-dev
+
+ENV VIPS_VERSION=8.13.1
+
+RUN apk add --no-cache meson gobject-introspection-dev wget g++ make expat-dev glib-dev python3 libwebp-dev jpeg-dev fftw-dev orc-dev libpng-dev tiff-dev lcms2-dev
+
+WORKDIR /libvips
+RUN wget --quiet https://github.com/libvips/libvips/releases/download/v${VIPS_VERSION}/vips-${VIPS_VERSION}.tar.gz
+RUN tar xf vips-${VIPS_VERSION}.tar.gz
+
+WORKDIR /libvips/vips-${VIPS_VERSION}
+RUN meson setup build-dir --buildtype=release
+
+WORKDIR /libvips/vips-${VIPS_VERSION}/build-dir 
+RUN meson compile
+RUN meson test
+RUN meson install
+
+# Copy libvips and install dependencies
+FROM alpine:3.16 as alpine-libvips
+COPY --from=node-libvips-dev /usr/local/lib/pkgconfig/vips* /usr/local/lib/pkgconfig/
+COPY --from=node-libvips-dev /usr/local/lib/libvips* /usr/local/lib
+COPY --from=node-libvips-dev /usr/local/lib/vips* /usr/local/lib
+COPY --from=node-libvips-dev /usr/local/bin/vips* /usr/local/bin
+COPY --from=node-libvips-dev /usr/local/include/vips /usr/local/include/vips
+RUN apk add --no-cache expat glib libwebp jpeg fftw orc libpng tiff lcms2
+
+
 # Build server and client
-FROM node:16-alpine3.16 as build
+FROM node-libvips-dev as build
 
 WORKDIR /app
 
@@ -9,24 +38,21 @@ COPY rest-api/ /app/rest-api
 COPY ["package.json", "package-lock.json*", "./"]
 
 RUN apk add --no-cache python3 g++ make
-RUN if [[ $(uname -m) == armv7l ]]; then apk add --no-cache vips-dev; fi
 RUN npm install
 RUN npm run build
 
 # Build server for production
-FROM node:16-alpine3.16 as server-build-production
+FROM node-libvips-dev as server-build-production
 
 WORKDIR /server
 COPY ["server/package.json", "server/package-lock.json*", "./"]
 RUN apk add --no-cache python3 g++ make
-RUN if [[ $(uname -m) == armv7l ]]; then apk add --no-cache vips-dev; fi
 RUN npm install --production
 
 FROM node:16-alpine3.16 as node
-FROM alpine:3.16
+FROM alpine-libvips
 
 RUN apk add --no-cache curl shadow
-RUN if [[ $(uname -m) == armv7l ]]; then apk add --no-cache vips; fi
 
 WORKDIR /storage
 VOLUME /storage
