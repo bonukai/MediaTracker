@@ -6,7 +6,7 @@ ENV VIPS_VERSION=8.13.1
 RUN apk add --no-cache meson gobject-introspection-dev wget g++ make expat-dev glib-dev python3 libwebp-dev jpeg-dev fftw-dev orc-dev libpng-dev tiff-dev lcms2-dev
 
 WORKDIR /libvips
-RUN wget https://github.com/libvips/libvips/releases/download/v${VIPS_VERSION}/vips-${VIPS_VERSION}.tar.gz
+RUN wget --quiet https://github.com/libvips/libvips/releases/download/v${VIPS_VERSION}/vips-${VIPS_VERSION}.tar.gz
 RUN tar xf vips-${VIPS_VERSION}.tar.gz
 
 WORKDIR /libvips/vips-${VIPS_VERSION}
