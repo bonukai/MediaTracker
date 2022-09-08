@@ -20,8 +20,17 @@ RUN meson install
 FROM alpine:3.16 as alpine-libvips
 COPY --from=node-libvips-dev /usr/local/lib/pkgconfig/vips* /usr/local/lib/pkgconfig/
 COPY --from=node-libvips-dev /usr/local/lib/libvips* /usr/local/lib/
+COPY --from=node-libvips-dev /usr/local/lib/girepository-1.0/Vips-8.0.typelib /usr/local/lib/girepository-1.0/Vips-8.0.typelib
+COPY --from=node-libvips-dev /usr/local/share/gir-1.0/Vips-8.0.gir /usr/local/share/gir-1.0/Vips-8.0.gir
 COPY --from=node-libvips-dev /usr/local/bin/vips* /usr/local/bin/
 COPY --from=node-libvips-dev /usr/local/include/vips /usr/local/include/vips
+COPY --from=node-libvips-dev /usr/local/bin/light_correct /usr/local/bin/light_correct
+COPY --from=node-libvips-dev /usr/local/bin/shrink_width /usr/local/bin/shrink_width
+COPY --from=node-libvips-dev /usr/local/bin/batch_image_convert /usr/local/bin/batch_image_convert
+COPY --from=node-libvips-dev /usr/local/bin/batch_rubber_sheet /usr/local/bin/batch_rubber_sheet
+COPY --from=node-libvips-dev /usr/local/bin/batch_crop /usr/local/bin/batch_crop
+COPY --from=node-libvips-dev /usr/local/share/locale/de/LC_MESSAGES/vips* /usr/local/share/locale/de/LC_MESSAGES/
+COPY --from=node-libvips-dev /usr/local/share/locale/en_GB/LC_MESSAGES/vips* /usr/local/share/locale/en_GB/LC_MESSAGES/
 RUN apk add --no-cache expat glib libwebp jpeg fftw orc libpng tiff lcms2
 
 
