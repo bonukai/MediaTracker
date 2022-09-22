@@ -4,8 +4,6 @@ services:
   mediatracker:
     container_name: mediatracker
     build: ..
-    ports:
-      - 7481:7481
     volumes:
       - ~/assets:/assets
       - ~/storage:/storage
@@ -22,6 +20,7 @@ services:
     depends_on:
       - mediatracker
     volumes:
-      - /etc/letsencrypt/live/mediatracker.app:/etc/ssl/private/:ro
+      - /etc/letsencrypt/live/mediatracker.app/fullchain.pem:/etc/ssl/private/fullchain.pem:ro
+      - /etc/letsencrypt/live/mediatracker.app/privkey.pem:/etc/ssl/private/privkey.pem:ro
     environment:
       - ADDRESS=mediatracker.app
