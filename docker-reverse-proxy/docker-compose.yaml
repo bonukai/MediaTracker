@@ -22,6 +22,6 @@ services:
     depends_on:
       - mediatracker
     volumes:
-      - ~/ssl/private/:/etc/ssl/private/:ro
+      - /etc/letsencrypt/live/mediatracker.app:/etc/ssl/private/:ro
     environment:
       - ADDRESS=mediatracker.app
