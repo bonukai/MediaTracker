@@ -689,7 +689,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       .whereNull('notificationsHistory.id');
 
     return _(res)
-      .uniqBy('id')
+      .uniqBy('episode.id')
       .filter((item) => {
         const releaseDate = parseISO(item['episode.releaseDate']);
         return releaseDate > from && releaseDate < to;
