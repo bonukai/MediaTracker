@@ -19,6 +19,8 @@ describe('itemsToNotify in timezone America/New_York', () => {
   afterAll(clearDatabase);
 
   it('timezone offset should match America/New_York timezone', () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date(2022, 6, 31, 19, 1));
     expect(new Date().getTimezoneOffset()).toBe(240);
   });
 
@@ -100,5 +102,27 @@ describe('itemsToNotify in timezone America/New_York', () => {
     expect(await episodesToNotify()).toStrictEqual([]);
 
     jest.useRealTimers();
+  });
+
+  it('multiple episodes', async () => {
+    const episodesToNotify = (
+      await mediaItemRepository.episodesToNotify(
+        subHours(new Date('2022-08-01'), 24),
+        addHours(new Date('2022-08-01'), 24)
+      )
+    ).map((item) => _.pick(item, ['id']));
+
+    expect(episodesToNotify).toStrictEqual([{ id: 2 }, { id: 3 }, { id: 4 }]);
+  });
+
+  it('multiple media items', async () => {
+    const itemsToNotify = (
+      await mediaItemRepository.itemsToNotify(
+        subHours(new Date('2022-08-01'), 24),
+        addHours(new Date('2022-08-01'), 24)
+      )
+    ).map((item) => _.pick(item, ['id']));
+
+    expect(itemsToNotify).toStrictEqual([{ id: 2 }, { id: 3 }, { id: 4 }]);
   });
 });
