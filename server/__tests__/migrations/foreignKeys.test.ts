@@ -69,7 +69,7 @@ describe('foreign keys', () => {
         description: 'token',
         userId: 999,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
   });
 
   test('episode', async () => {
@@ -84,7 +84,7 @@ describe('foreign keys', () => {
         tvShowId: mediaItem.id,
         seasonId: 999,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
     await expect(async () =>
       Database.knex('episode').insert({
@@ -97,7 +97,7 @@ describe('foreign keys', () => {
         tvShowId: 999,
         seasonId: season.id,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
   });
 
   test('image', async () => {
@@ -108,7 +108,7 @@ describe('foreign keys', () => {
         mediaItemId: 999,
         seasonId: season.id,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
     await expect(async () =>
       Database.knex('image').insert({
@@ -117,7 +117,7 @@ describe('foreign keys', () => {
         mediaItemId: mediaItem.id,
         seasonId: 999,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
   });
 
   test('list', async () => {
@@ -135,7 +135,7 @@ describe('foreign keys', () => {
         rank: 1,
         isWatchlist: false,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
   });
 
   test('listItem', async () => {
@@ -149,7 +149,7 @@ describe('foreign keys', () => {
         addedAt: new Date().getTime(),
         rank: 1,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
     await expect(async () =>
       Database.knex('listItem').insert({
@@ -161,7 +161,7 @@ describe('foreign keys', () => {
         addedAt: new Date().getTime(),
         rank: 1,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
     await expect(async () =>
       Database.knex('listItem').insert({
@@ -173,7 +173,7 @@ describe('foreign keys', () => {
         addedAt: new Date().getTime(),
         rank: 1,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
     await expect(async () =>
       Database.knex('listItem').insert({
@@ -185,7 +185,7 @@ describe('foreign keys', () => {
         addedAt: new Date().getTime(),
         rank: 1,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
   });
 
   test('notificationPlatformsCredentials', async () => {
@@ -197,7 +197,7 @@ describe('foreign keys', () => {
         name: 'name',
         value: 'value',
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
   });
 
   test('notificationsHistory', async () => {
@@ -208,7 +208,7 @@ describe('foreign keys', () => {
         episodeId: 999,
         sendDate: new Date().getTime(),
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
     await expect(async () =>
       Database.knex('notificationsHistory').insert({
@@ -217,7 +217,7 @@ describe('foreign keys', () => {
         episodeId: episode.id,
         sendDate: new Date().getTime(),
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
   });
 
   test('season', async () => {
@@ -230,7 +230,7 @@ describe('foreign keys', () => {
         tvShowId: 999,
         numberOfEpisodes: 1,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
   });
 
   test('seen', async () => {
@@ -243,7 +243,7 @@ describe('foreign keys', () => {
         userId: user.id,
         type: 'seen',
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
     await expect(async () =>
       Database.knex('seen').insert({
@@ -254,7 +254,7 @@ describe('foreign keys', () => {
         userId: user.id,
         type: 'seen',
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
     await expect(async () =>
       Database.knex('seen').insert({
@@ -265,7 +265,7 @@ describe('foreign keys', () => {
         userId: 999,
         type: 'seen',
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
   });
 
   test('userRating', async () => {
@@ -276,7 +276,7 @@ describe('foreign keys', () => {
         episodeId: episode.id,
         userId: user.id,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
     await expect(async () =>
       Database.knex('userRating').insert({
@@ -285,7 +285,7 @@ describe('foreign keys', () => {
         episodeId: 999,
         userId: user.id,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
     await expect(async () =>
       Database.knex('userRating').insert({
@@ -294,6 +294,6 @@ describe('foreign keys', () => {
         episodeId: episode.id,
         userId: 999,
       })
-    ).rejects.toThrowError('FOREIGN KEY');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
   });
 });
