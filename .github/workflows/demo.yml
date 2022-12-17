@@ -18,7 +18,7 @@ jobs:
           echo "${{ secrets.VPS_PRIVATE_KEY }}" > key
           chmod 700 key
           ssh -o "StrictHostKeyChecking no" -i key ${{ secrets.VPS_LOGIN }} "
-            sudo docker-compose up up --build --force-recreate --detach
+            sudo docker-compose up --build --force-recreate --detach
             sudo docker system prune --all --force
           "
           rm key
