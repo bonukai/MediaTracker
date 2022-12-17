@@ -599,7 +599,7 @@ describe('migrations', () => {
         admin: false,
         slug: `username-${randomSlugId()}`,
       })
-    ).rejects.toThrowError('UNIQUE');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
 
     await expect(async () =>
       Database.knex('user').insert({
@@ -608,7 +608,7 @@ describe('migrations', () => {
         admin: false,
         slug: resUser.slug,
       })
-    ).rejects.toThrowError('UNIQUE');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
   });
 
   test('20220312002700_mediaItemSlug', async () => {
@@ -659,7 +659,7 @@ describe('migrations', () => {
         mediaType: resMediaItem.mediaType,
         slug: resMediaItem.slug,
       })
-    ).rejects.toThrowError('UNIQUE');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
   });
 
   test('20220317214800_tvdbIdTraktId', async () => {
@@ -721,7 +721,7 @@ describe('migrations', () => {
           ...mediaItem,
           id: 88881,
         })
-    ).rejects.toThrowError('UNIQUE');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
 
     await Database.knex('season').insert(season);
 
@@ -734,7 +734,7 @@ describe('migrations', () => {
           tvdbId: tvdbId,
           traktId: 999,
         })
-    ).rejects.toThrowError('UNIQUE');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
 
     await expect(
       async () =>
@@ -745,7 +745,7 @@ describe('migrations', () => {
           tvdbId: 999,
           traktId: traktId,
         })
-    ).rejects.toThrowError('UNIQUE');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
 
     await Database.knex('episode').insert(episode);
 
@@ -761,7 +761,7 @@ describe('migrations', () => {
           tvdbId: tvdbId,
           traktId: 999,
         })
-    ).rejects.toThrowError('UNIQUE');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
 
     await expect(
       async () =>
@@ -775,7 +775,7 @@ describe('migrations', () => {
           tvdbId: 999,
           traktId: traktId,
         })
-    ).rejects.toThrowError('UNIQUE');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
   });
 
   test('20220404141200_seenDateToNull', async () => {
@@ -872,7 +872,7 @@ describe('migrations', () => {
           ...episode,
           id: 123456,
         })
-    ).rejects.toThrowError('UNIQUE');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
 
     await expect(
       async () =>
@@ -880,7 +880,7 @@ describe('migrations', () => {
           ...season,
           id: 123456,
         })
-    ).rejects.toThrowError('UNIQUE');
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
   });
 
   test('20220427211100_list', async () => {
