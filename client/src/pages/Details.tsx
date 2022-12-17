@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import clsx from 'clsx';
 import { Plural, Trans } from '@lingui/macro';
 import { parseISO } from 'date-fns';
+import { originalAndTranslatedTitle } from 'src/mediaItem';
 
 import {
   AudibleLang,
@@ -222,7 +223,7 @@ export const DetailsPage: FunctionComponent = () => {
         </div>
         <div className="md:ml-4">
           <div className="mt-2 text-4xl font-bold md:mt-0">
-            {mediaItem.title}
+            {originalAndTranslatedTitle(mediaItem)}
           </div>
 
           {mediaItem.releaseDate && (

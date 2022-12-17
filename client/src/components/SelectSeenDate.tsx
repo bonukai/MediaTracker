@@ -6,6 +6,7 @@ import { Trans } from '@lingui/macro';
 
 import { markAsSeen } from 'src/api/details';
 import { SelectLastSeenEpisode } from 'src/components/SelectLastSeenEpisode';
+import { originalAndTranslatedTitle } from 'src/mediaItem';
 
 import {
   LastSeenAt,
@@ -73,15 +74,15 @@ export const SelectSeenDateComponent: FunctionComponent<{
     <>
       <div className="max-w-sm mx-5 my-3 text-3xl font-bold text-center">
         {isAudiobook(mediaItem) && (
-          <Trans>When did you listen to &quot;{mediaItem.title}&quot;?</Trans>
+          <Trans>When did you listen to &quot;{originalAndTranslatedTitle(mediaItem)}&quot;?</Trans>
         )}
 
         {isBook(mediaItem) && (
-          <Trans>When did you read &quot;{mediaItem.title}&quot;?</Trans>
+          <Trans>When did you read &quot;{originalAndTranslatedTitle(mediaItem)}&quot;?</Trans>
         )}
 
         {isMovie(mediaItem) && (
-          <Trans>When did you see &quot;{mediaItem.title}&quot;?</Trans>
+          <Trans>When did you see &quot;{originalAndTranslatedTitle(mediaItem)}&quot;?</Trans>
         )}
 
         {isTvShow(mediaItem) && (
@@ -95,7 +96,7 @@ export const SelectSeenDateComponent: FunctionComponent<{
         )}
 
         {isVideoGame(mediaItem) && (
-          <Trans>When did you play &quot;{mediaItem.title}&quot;?</Trans>
+          <Trans>When did you play &quot;{originalAndTranslatedTitle(mediaItem)}&quot;?</Trans>
         )}
       </div>
       <div className="flex flex-col">

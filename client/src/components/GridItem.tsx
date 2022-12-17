@@ -5,6 +5,7 @@ import { parseISO } from 'date-fns';
 
 import { removeFromWatchlist } from 'src/api/details';
 import { BadgeRating } from 'src/components/StarRating';
+import { originalAndTranslatedTitle } from 'src/mediaItem';
 
 import {
   formatEpisodeNumber,
@@ -121,7 +122,7 @@ export const GridItem: FunctionComponent<{
 
                         if (
                           await Confirm(
-                            t`Remove "${mediaItem.title}${
+                            t`Remove "${originalAndTranslatedTitle(mediaItem)}${
                               season
                                 ? ' ' + formatSeasonNumber(season)
                                 : episode
@@ -205,7 +206,7 @@ export const GridItem: FunctionComponent<{
           <div className="overflow-hidden text-lg overflow-ellipsis whitespace-nowrap">
             {season && formatSeasonNumber(season) + ' '}
             {episode && formatEpisodeNumber(episode) + ' '}
-            {mediaItem.title}
+            {originalAndTranslatedTitle(mediaItem)}
           </div>
 
           {hasProgress(mediaItem) && (

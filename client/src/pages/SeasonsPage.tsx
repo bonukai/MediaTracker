@@ -8,7 +8,7 @@ import { parseISO } from 'date-fns';
 import { useDetails } from 'src/api/details';
 import { Poster } from 'src/components/Poster';
 import { BadgeRating } from 'src/components/StarRating';
-import { hasBeenSeenAtLeastOnce, useSelectedSeason } from 'src/mediaItem';
+import { hasBeenSeenAtLeastOnce, useSelectedSeason, originalAndTranslatedTitle } from 'src/mediaItem';
 import {
   hasBeenReleased,
   hasReleaseDate,
@@ -157,7 +157,7 @@ export const SeasonsPage: FunctionComponent = () => {
       <div className="sm:w-full">
         <div className="flex w-full">
           <Link className="text-2xl font-bold" to={`/details/${mediaItem.id}`}>
-            {mediaItem.title}
+            {originalAndTranslatedTitle(mediaItem)}
           </Link>
         </div>
         <div className="flex flex-row flex-wrap w-full">
