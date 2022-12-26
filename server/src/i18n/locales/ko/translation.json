@@ -6,6 +6,8 @@
   "Everything up to date": "모든 것이 최신 버전입니다",
   "Password cannot be empty": "비밀번호는 비워둘 수 없습니다",
   "Passwords do not match": "비밀번호가 일치하지 않습니다.",
+  "Platform {0} does not exist": "플랫폼 {0}이(가) 존재하지 않습니다.",
+  "Platform {platformName} does not exist": "플랫폼 {platformName}이(가) 존재하지 않습니다.",
   "Running migrations": "마이그레이션 실행 중",
   "Season {0} of {1} has been canceled": "{1}의 {0}시즌이 취소되었습니다.",
   "Season {0} of {1} will be released at {2}": "{1}의 {0}시즌이 {2}에 출시됩니다.",
