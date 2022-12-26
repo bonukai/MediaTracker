@@ -1,4 +1,21 @@
 {
   "Already up to date": "이미 최신 버전입니다.",
-  "Changing server language to {lng}": "서버 언어를 {lng} 로 변경"
+  "Changing server language to {lng}": "서버 언어를 {lng} 로 변경",
+  "DEMO mode enabled": "데모 모드 활성화",
+  "Error sending notifications: {error}": "알림 전송 오류: {error}",
+  "Everything up to date": "모든 것이 최신 버전입니다",
+  "Password cannot be empty": "비밀번호는 비워둘 수 없습니다",
+  "Passwords do not match": "비밀번호가 일치하지 않습니다.",
+  "Running migrations": "마이그레이션 실행 중",
+  "Season {0} of {1} has been canceled": "{1}의 {0}시즌이 취소되었습니다.",
+  "Season {0} of {1} will be released at {2}": "{1}의 {0}시즌이 {2}에 출시됩니다.",
+  "Server closed": "서버 종료됨",
+  "TMDB language changed to: \"{value}\", updating metadata for all items": "TMDB 언어 변경됨: \"{value}\", 모든 항목에 대한 메타데이터 업데이트 중",
+  "Test message": "테스트 메시지",
+  "Updating metadata": "메타데이터 업데이트 중",
+  "Updating: {title}": "업데이트 중: {title}",
+  "User already exists": "이미 존재하는 사용자입니다.",
+  "Username cannot be empty": "사용자 이름은 비워둘 수 없습니다.",
+  "{0} got a new season": "{0}에 새 시즌이 있습니다.",
+  "{title} has been released": "{title}이(가) 출시되었습니다"
 }
