@@ -328,14 +328,19 @@ export const updateMediaItem = async (
         const episodesIdToDelete = [
           ...episodesToDelete.map((episode) => episode.id),
           ...seasonToDelete.flatMap((season) =>
-            season.episodes.map((episode) => episode.id)
+            season.episodes?.map((episode) => episode.id)
           ),
-        ];
+        ].filter(Boolean);
 
         const seasonsIdsToDelete = seasonToDelete.map((season) => season.id);
 
-        await tvEpisodeRepository.deleteManyById(episodesIdToDelete);
-        await tvSeasonRepository.deleteManyById(seasonsIdsToDelete);
+        if (episodesIdToDelete.length > 0) {
+          await tvEpisodeRepository.deleteManyById(episodesIdToDelete);
+        }
+
+        if (seasonsIdsToDelete.length > 0) {
+          await tvSeasonRepository.deleteManyById(seasonsIdsToDelete);
+        }
       }
     }
 
