@@ -172,9 +172,8 @@ export class TMDbTv extends TMDb {
         );
 
         season.tvdbId = res.data.external_ids?.tvdb_id;
-        season.episodes = res.data.episodes.map((item) =>
-          this.mapEpisode(item)
-        );
+        season.episodes =
+          res.data.episodes?.map((item) => this.mapEpisode(item)) || [];
         return season;
       })
     );
