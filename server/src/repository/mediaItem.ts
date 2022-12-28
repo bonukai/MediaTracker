@@ -22,10 +22,11 @@ import {
 } from 'src/entity/mediaItem';
 import { imageRepository } from 'src/repository/image';
 import { getImageId, Image } from 'src/entity/image';
-import { parseISO, subDays, subMinutes } from 'date-fns';
+import { isValid, parseISO, subDays, subMinutes } from 'date-fns';
 import { randomSlugId } from 'src/slug';
 import { TvSeason } from 'src/entity/tvseason';
 import { ListItem } from 'src/entity/list';
+import { logger } from 'src/logger';
 
 export type MediaItemOrderBy =
   | 'title'
@@ -324,6 +325,11 @@ class MediaItemRepository extends repository<MediaItemBase>({
   public async create(mediaItem: MediaItemBaseWithSeasons) {
     const slug = mediaItemSlug(mediaItem);
 
+    if (mediaItem.releaseDate && !isValid(parseISO(mediaItem.releaseDate))) {
+      logger.error(`Invalid date format for ${mediaItem.id}`);
+      mediaItem.releaseDate = undefined;
+    }
+
     return await Database.knex.transaction(async (trx) => {
       const result = {
         ..._.cloneDeep(mediaItem),
@@ -382,6 +388,13 @@ class MediaItemRepository extends repository<MediaItemBase>({
         tvShowId: result.id,
       }));
 
+      result.seasons?.forEach((season) => {
+        if (season.releaseDate && !isValid(parseISO(season.releaseDate))) {
+          logger.error(`Invalid date format for season ${season.id}`);
+          season.releaseDate = undefined;
+        }
+      });
+
       if (result.seasons?.length > 0) {
         const seasonsId = await Database.knex
           .batchInsert(
@@ -422,6 +435,16 @@ class MediaItemRepository extends repository<MediaItemBase>({
               seasonAndEpisodeNumber:
                 episode.seasonNumber * 1000 + episode.episodeNumber,
             }));
+
+            season.episodes?.forEach((episode) => {
+              if (
+                episode.releaseDate &&
+                !isValid(parseISO(episode.releaseDate))
+              ) {
+                logger.error(`Invalid date format for episode ${episode.id}`);
+                episode.releaseDate = undefined;
+              }
+            });
 
             const episodesId = await Database.knex
               .batchInsert('episode', season.episodes, 30)
