@@ -297,7 +297,6 @@ export const initialize = async (args: {
 
   Config.migrate();
   Config.validate();
-  setupI18n(serverLang);
   logger.init();
   Database.init();
   await Database.runMigrations();
@@ -307,14 +306,14 @@ export const initialize = async (args: {
   );
   logger.info(`Server time: ${new Date().toLocaleString()}`);
 
-  const configuration = await configurationRepository.findOne();
+  let configuration = await configurationRepository.findOne();
 
   if (!configuration) {
     await configurationRepository.create({
       enableRegistration: true,
-      serverLang: serverLang,
-      tmdbLang: tmdbLang,
-      audibleLang: audibleLang,
+      serverLang: serverLang || 'en',
+      tmdbLang: tmdbLang || 'en',
+      audibleLang: audibleLang || 'us',
       igdbClientId: igdbClientId,
       igdbClientSecret: igdbClientSecret,
     });
@@ -327,6 +326,9 @@ export const initialize = async (args: {
       igdbClientSecret: igdbClientSecret || configuration.igdbClientSecret,
     });
   }
+
+  configuration = await configurationRepository.findOne();
+  setupI18n(configuration.serverLang);
 
   if (demo) {
     const demoUser = await userRepository.findOne({ name: 'demo' });
@@ -405,9 +407,9 @@ export const createAndStartServer = async () => {
 
   try {
     const res = await initialize({
-      serverLang: Config.SERVER_LANG || 'en',
-      tmdbLang: Config.TMDB_LANG || 'en',
-      audibleLang: Config.AUDIBLE_LANG || 'us',
+      serverLang: Config.SERVER_LANG,
+      tmdbLang: Config.TMDB_LANG,
+      audibleLang: Config.AUDIBLE_LANG,
       igdbClientId: Config.IGDB_CLIENT_ID,
       igdbClientSecret: Config.IGDB_CLIENT_SECRET,
       demo: Config.DEMO,
