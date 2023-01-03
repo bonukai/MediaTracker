@@ -110,8 +110,16 @@ router.get(
       $schema: 'http://json-schema.org/draft-07/schema#',
       type: 'object',
       properties: {
-        start: { type: ['string', 'null'] },
-        end: { type: ['string', 'null'] },
+        start: {
+          description: 'Date string in ISO 8601 format',
+          type: ['string', 'null'],
+          examples: ['2022-05-21'],
+        },
+        end: {
+          description: 'Date string in ISO 8601 format',
+          type: ['string', 'null'],
+          examples: ['2022-05-21T23:37:36+00:00'],
+        },
       },
     },
   }),
@@ -272,7 +280,7 @@ router.patch(
           type: 'string',
         },
         ServerLang: {
-          enum: ['da', 'de', 'en', 'es', 'fr', 'pt'],
+          enum: ['da', 'de', 'en', 'es', 'fr', 'ko', 'pt'],
           type: 'string',
         },
       },
