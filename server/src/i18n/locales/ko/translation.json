@@ -6,6 +6,8 @@
   "Error sending notifications: {error}": "알림 전송 오류: {error}",
   "Everything up to date": "모든 것이 최신 버전입니다",
   "Failed to delete unused assets files": "사용하지 않는 자산 파일을 삭제하지 못했습니다.",
+  "MediaTracker listening at {address}": "MediaTracker가 {address} 에서 리스닝 중",
+  "MediaTracker {0} listening at {address}": "MediaTracker {0}이(가) {address} 에서 리스닝 중",
   "New season of {0} will be released at {1}": "{0}의 새 시즌이 {1}에 출시됩니다.",
   "Password cannot be empty": "비밀번호는 비워둘 수 없습니다",
   "Passwords do not match": "비밀번호가 일치하지 않습니다.",
