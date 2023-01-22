@@ -36,7 +36,7 @@ export const SeenHistoryPage: FunctionComponent = () => {
 
   return (
     <>
-      {mediaItem.seenHistory?.length > 0 && (
+      {mediaItem.seenHistory?.length && (
         <div className="mt-3">
           <div>
             {isAudiobook(mediaItem) && (
@@ -75,51 +75,47 @@ export const SeenHistoryPage: FunctionComponent = () => {
           <ul className="list-disc">
             {mediaItem.seenHistory
               .sort((a, b) => b.date - a.date)
+              .map((seenEntry) => ({
+                ...seenEntry,
+                dateStr: seenEntry.date
+                  ? new Date(seenEntry.date).toLocaleString()
+                  : null,
+              }))
               .map((seenEntry) => (
                 <li key={seenEntry.id}>
-                  {isAudiobook(mediaItem) &&
-                    (seenEntry.date > 0 ? (
-                      <Trans>
-                        Listened at {new Date(seenEntry.date).toLocaleString()}
-                      </Trans>
-                    ) : (
-                      <Trans>No date</Trans>
-                    ))}
+                  {seenEntry.date ? (
+                    <>
+                      {isAudiobook(mediaItem) && (
+                        <Trans>Listened at {seenEntry.dateStr}</Trans>
+                      )}
 
-                  {isBook(mediaItem) &&
-                    (seenEntry.date > 0 ? (
-                      <Trans>
-                        Read at {new Date(seenEntry.date).toLocaleString()}
-                      </Trans>
-                    ) : (
-                      <Trans>No date</Trans>
-                    ))}
+                      {isBook(mediaItem) && (
+                        <Trans>Read at {seenEntry.dateStr}</Trans>
+                      )}
 
-                  {(isMovie(mediaItem) || isTvShow(mediaItem)) &&
-                    (seenEntry.date > 0 ? (
-                      <Trans>
-                        Seen at {new Date(seenEntry.date).toLocaleString()}
-                      </Trans>
-                    ) : (
-                      <Trans>No date</Trans>
-                    ))}
+                      {(isMovie(mediaItem) || isTvShow(mediaItem)) && (
+                        <Trans>Seen at {seenEntry.dateStr}</Trans>
+                      )}
 
-                  {isVideoGame(mediaItem) &&
-                    (seenEntry.date > 0 ? (
-                      <Trans>
-                        Played at {new Date(seenEntry.date).toLocaleString()}
-                      </Trans>
-                    ) : (
-                      <Trans>No date</Trans>
-                    ))}
+                      {isVideoGame(mediaItem) && (
+                        <Trans>Played at {seenEntry.dateStr}</Trans>
+                      )}
+                    </>
+                  ) : (
+                    <Trans>No date</Trans>
+                  )}
+
                   <div>
-                    {seenEntry.episodeId && episodesMap[seenEntry.episodeId] && (
-                      <Trans>
-                        Episode{' '}
-                        {formatEpisodeNumber(episodesMap[seenEntry.episodeId])}{' '}
-                        {episodesMap[seenEntry.episodeId].title}
-                      </Trans>
-                    )}
+                    {seenEntry.episodeId &&
+                      episodesMap[seenEntry.episodeId] && (
+                        <Trans>
+                          Episode{' '}
+                          {formatEpisodeNumber(
+                            episodesMap[seenEntry.episodeId]
+                          )}{' '}
+                          {episodesMap[seenEntry.episodeId].title}
+                        </Trans>
+                      )}
                   </div>
 
                   <div className="mt-1 mb-3">
