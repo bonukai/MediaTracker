@@ -145,17 +145,12 @@ export const SelectSeenDateComponent: FunctionComponent<{
             ref={dateInputRef}
             defaultValue={todayDateString}
             max={todayDateString}
-            onChange={() => {
-              if (dateInputRef.current.value !== todayDateString) {
-                timeInputRef.current.value = '00:00';
-              }
-            }}
           />
           <input
             className="mx-1 mt-1 w-min"
             type="time"
             ref={timeInputRef}
-            defaultValue={format(new Date(), 'HH:mm')}
+            defaultValue={'00:00'}
           />
           <button className="flex-grow mt-1 btn">
             <Trans>Select date</Trans>
