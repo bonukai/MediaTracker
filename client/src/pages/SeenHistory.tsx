@@ -36,7 +36,7 @@ export const SeenHistoryPage: FunctionComponent = () => {
 
   return (
     <>
-      {mediaItem.seenHistory?.length && (
+      {mediaItem.seenHistory?.length > 0 && (
         <div className="mt-3">
           <div>
             {isAudiobook(mediaItem) && (
