@@ -14,7 +14,7 @@ const LinkComponent: FunctionComponent<{
     <Link to={path} className="mt-4 no-underline w-fit">
       <div className="flex flex-row items-center text-lg btn-blue">
         <Trans>Import from</Trans>{' '}
-        <img src={imgSrc} className="inline-block h-8 ml-2 " />
+        <img src={imgSrc} className="inline-block h-8 ml-2" />
       </div>
     </Link>
   );

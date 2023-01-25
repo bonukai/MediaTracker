@@ -1,11 +1,12 @@
-import React, { FunctionComponent, useState } from 'react';
-import { useQuery } from 'react-query';
+import React, { FunctionComponent, useEffect, useState } from 'react';
+import { useMutation, useQuery } from 'react-query';
 import { Spring } from 'react-spring';
 import { t, Trans } from '@lingui/macro';
 
 import { mediaTrackerApi } from 'src/api/api';
-import { ImportState } from 'mediatracker-api';
-import { ImportSummaryTable } from 'src/components/ImportSummaryTable';
+import { ImportState, ImportTrakttv } from 'mediatracker-api';
+import { TvImportSummaryTable } from 'src/components/ImportSummaryTable';
+import { queryClient } from 'src/App';
 
 const useTraktTvImport = () => {
   const [_state, setState] = useState<ImportState>();
@@ -15,24 +16,41 @@ const useTraktTvImport = () => {
     mediaTrackerApi.importTrakttv.deviceToken
   );
 
-  const { data: state } = useQuery(
-    ['import', 'TraktTv', 'state'],
-    mediaTrackerApi.importTrakttv.state,
+  const [state, setStateResponse] =
+    useState<ImportTrakttv.State.ResponseBody>();
+
+  useEffect(() => {
+    const events = new EventSource('/api/import-trakttv/state');
+
+    events.onmessage = (event) => {
+      setStateResponse(JSON.parse(event.data));
+    };
+
+    return () => {
+      events.close();
+    };
+  }, []);
+
+  const startOverMutation = useMutation(
+    () => mediaTrackerApi.importTrakttv.startOver(),
     {
-      refetchInterval: 100,
-      enabled: _state !== 'imported',
-      onSettled: (data) => setState(data?.state),
+      onSettled: () => {
+        setState(undefined);
+        queryClient.removeQueries(['import', 'TraktTv']);
+        queryClient.invalidateQueries(['import', 'TraktTv']);
+      },
     }
   );
 
   return {
     deviceCode,
     state,
+    startOver: startOverMutation.mutate,
   };
 };
 
 export const TraktTvImportPage: FunctionComponent = () => {
-  const { deviceCode, state } = useTraktTvImport();
+  const { deviceCode, state, startOver } = useTraktTvImport();
 
   return (
     <div className="flex flex-col justify-center w-full mt-4">
@@ -74,6 +92,17 @@ export const TraktTvImportPage: FunctionComponent = () => {
             ) : (
               <>
                 <div className="text-2xl">{stateMap[state.state]}</div>
+                {state.error && (
+                  <div className="mt-2 text-red-500">{state.error}</div>
+                )}
+              </>
+            )}
+
+            {state.state === 'imported' && (
+              <>
+                <div className="mt-2 btn" onClick={() => startOver()}>
+                  <Trans>Start over</Trans>
+                </div>
               </>
             )}
           </>
@@ -82,68 +111,12 @@ export const TraktTvImportPage: FunctionComponent = () => {
         )}
         <div className="py-4">
           {state?.progress > 0 && (
-            <Spring
-              from={{ percent: 0 }}
-              to={{ percent: state.progress * 100 }}
-            >
-              {({ percent }) => (
-                <div
-                  className="block h-4 border rounded w-80 bg-grad"
-                  style={{
-                    background: `linear-gradient(to right, black ${percent}%, transparent ${percent}%)`,
-                  }}
-                />
-              )}
-            </Spring>
+            <ProgressBarComponent progress={state.progress} />
           )}
         </div>
+
         {state?.exportSummary && (
-          <ImportSummaryTable
-            columns={[t`Movies`, t`Shows`, t`Seasons`, t`Episodes`]}
-            rows={[t`Watchlist`, t`Seen history`, t`Ratings`]}
-            exported={[
-              [
-                state.exportSummary?.watchlist?.movies,
-                state.exportSummary?.watchlist?.shows,
-                null,
-                null,
-              ],
-              [
-                state.exportSummary?.seen?.movies,
-                null,
-                null,
-                state.exportSummary?.seen?.episodes,
-                ,
-              ],
-              [
-                state.exportSummary?.ratings?.movies,
-                state.exportSummary?.ratings?.shows,
-                state.exportSummary?.ratings?.seasons,
-                state.exportSummary?.ratings?.episodes,
-              ],
-            ]}
-            imported={[
-              [
-                state.importSummary?.watchlist?.movies,
-                state.importSummary?.watchlist?.shows,
-                null,
-                null,
-              ],
-              [
-                state.importSummary?.seen?.movies,
-                null,
-                null,
-                state.importSummary?.seen?.episodes,
-                ,
-              ],
-              [
-                state.importSummary?.ratings?.movies,
-                state.importSummary?.ratings?.shows,
-                state.importSummary?.ratings?.seasons,
-                state.importSummary?.ratings?.episodes,
-              ],
-            ]}
-          />
+          <TraktImportSummaryTableComponent state={state} />
         )}
       </div>
     </div>
@@ -157,4 +130,102 @@ const stateMap: Record<ImportState, string> = {
   'waiting-for-authentication': t`Waiting for authentication`,
   imported: t`Imported`,
   importing: t`Importing`,
+  error: t`Error`,
+};
+
+const ProgressBarComponent: FunctionComponent<{ progress: number }> = (
+  props
+) => {
+  const { progress } = props;
+
+  return (
+    <Spring from={{ percent: 0 }} to={{ percent: progress * 100 }}>
+      {({ percent }) => (
+        <div
+          className="block h-4 border rounded w-80 bg-grad"
+          style={{
+            background: `linear-gradient(to right, black ${percent}%, transparent ${percent}%)`,
+          }}
+        />
+      )}
+    </Spring>
+  );
+};
+
+const TraktImportSummaryTableComponent: FunctionComponent<{
+  state: ImportTrakttv.State.ResponseBody;
+}> = (props) => {
+  const { state } = props;
+
+  const importedListsByTraktId =
+    state.importSummary?.lists.reduce(
+      (prev, current) => ({ [current.listId]: current, ...prev }),
+      {}
+    ) || {};
+
+  return (
+    <>
+      <TvImportSummaryTable
+        rows={[
+          {
+            title: t`Watchlist`,
+            exported: {
+              movies: state.exportSummary?.watchlist?.movies,
+              shows: state.exportSummary?.watchlist?.shows,
+              seasons: state.exportSummary?.watchlist?.seasons,
+              episodes: state.exportSummary?.watchlist?.episodes,
+            },
+            imported: {
+              movies: state.importSummary?.watchlist?.movies,
+              shows: state.importSummary?.watchlist?.shows,
+              seasons: state.importSummary?.watchlist?.seasons,
+              episodes: state.importSummary?.watchlist?.episodes,
+            },
+          },
+          {
+            title: t`Seen history`,
+            exported: {
+              movies: state.exportSummary?.seen?.movies,
+              episodes: state.exportSummary?.seen?.episodes,
+            },
+            imported: {
+              movies: state.importSummary?.seen?.movies,
+              episodes: state.importSummary?.seen?.episodes,
+            },
+          },
+          {
+            title: t`Ratings`,
+            exported: {
+              movies: state.exportSummary?.ratings?.movies,
+              shows: state.exportSummary?.ratings?.shows,
+              seasons: state.exportSummary?.ratings?.seasons,
+              episodes: state.exportSummary?.ratings?.episodes,
+            },
+            imported: {
+              movies: state.importSummary?.ratings?.movies,
+              shows: state.importSummary?.ratings?.shows,
+              seasons: state.importSummary?.ratings?.seasons,
+              episodes: state.importSummary?.ratings?.episodes,
+            },
+          },
+          ...state.exportSummary?.lists?.map((list) => ({
+            key: list.listId,
+            title: t`List: ${list.listName}`,
+            exported: {
+              movies: list?.movies,
+              shows: list?.shows,
+              seasons: list?.seasons,
+              episodes: list?.episodes,
+            },
+            imported: {
+              movies: importedListsByTraktId[list.listId]?.movies,
+              shows: importedListsByTraktId[list.listId]?.shows,
+              seasons: importedListsByTraktId[list.listId]?.seasons,
+              episodes: importedListsByTraktId[list.listId]?.episodes,
+            },
+          })),
+        ]}
+      />
+    </>
+  );
 };

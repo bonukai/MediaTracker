@@ -115,6 +115,7 @@ class ListRepository extends repository<List>({
     sortOrder?: ListSortOrder;
     userId: number;
     isWatchlist?: boolean;
+    traktId?: number;
   }): Promise<List> {
     const {
       userId,
@@ -124,6 +125,7 @@ class ListRepository extends repository<List>({
       sortBy,
       sortOrder,
       isWatchlist,
+      traktId,
     } = args;
 
     if (name.trim().length === 0) {
@@ -144,6 +146,7 @@ class ListRepository extends repository<List>({
         createdAt: createdAt,
         updatedAt: createdAt,
         isWatchlist: isWatchlist || false,
+        traktId: traktId,
         rank: Database.knex.raw(
           `(${Database.knex<List>('list')
             .count()
@@ -165,6 +168,7 @@ class ListRepository extends repository<List>({
       ...res,
       displayNumbers: Boolean(res.displayNumbers),
       allowComments: Boolean(res.allowComments),
+      isWatchlist: Boolean(res.isWatchlist),
     };
   }
 
@@ -281,6 +285,7 @@ class ListRepository extends repository<List>({
       description: res.description,
       sortBy: res.sortBy,
       sortOrder: res.sortOrder,
+      traktId: res.traktId,
       user: {
         id: res.userId,
         username: res['user.name'],

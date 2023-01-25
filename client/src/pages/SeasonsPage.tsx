@@ -76,7 +76,7 @@ const EpisodeComponent: FunctionComponent<{
       {/* Second row */}
       <div className="flex py-2 md:ml-auto md:py-0">
         {/* Rating */}
-        <div className="flex w-10 md:justify-center">
+        <div className="flex w-16 items- md:justify-center">
           {(hasBeenReleased(episode) || !hasReleaseDate(mediaItem)) && (
             <BadgeRating mediaItem={mediaItem} episode={episode} />
           )}
@@ -198,7 +198,9 @@ const SeasonComponent: FunctionComponent<{
 
   return (
     <>
-      {season.title && <div className='py-2 text-lg font-bold'>{season.title}</div>}
+      {season.title && (
+        <div className="py-2 text-lg font-bold">{season.title}</div>
+      )}
 
       <div className="flex flex-col my-2 md:flex-row">
         <div className="self-center w-60 shrink-0 md:mr-2 md:self-start">

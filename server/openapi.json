@@ -2105,38 +2105,6 @@
         }
       }
     },
-    "/api/import-trakttv/device-token": {
-      "get": {
-        "tags": [
-          "TraktTvImport"
-        ],
-        "operationId": "deviceToken",
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "userCode": {
-                      "type": "string"
-                    },
-                    "verificationUrl": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "userCode",
-                    "verificationUrl"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/import-trakttv/state": {
       "get": {
         "tags": [
@@ -2173,12 +2141,98 @@
                         }
                       ],
                       "nullable": true
+                    },
+                    "error": {
+                      "type": "string",
+                      "nullable": true
                     }
                   },
                   "required": [
                     "state"
                   ]
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/import-trakttv": {
+      "get": {
+        "tags": [
+          "TraktTvImport"
+        ],
+        "operationId": "import",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userCode": {
+                      "type": "string"
+                    },
+                    "verificationUrl": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "userCode",
+                    "verificationUrl"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/import-trakttv/device-token": {
+      "get": {
+        "tags": [
+          "TraktTvImport"
+        ],
+        "operationId": "deviceToken",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userCode": {
+                      "type": "string"
+                    },
+                    "verificationUrl": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "userCode",
+                    "verificationUrl"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/import-trakttv/start-over": {
+      "get": {
+        "tags": [
+          "TraktTvImport"
+        ],
+        "operationId": "startOver",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
               }
             }
           }
@@ -3369,6 +3423,10 @@
           },
           "isWatchlist": {
             "type": "boolean"
+          },
+          "traktId": {
+            "type": "number",
+            "nullable": true
           }
         },
         "required": [
@@ -3525,6 +3583,10 @@
               },
               "description": {
                 "type": "string",
+                "nullable": true
+              },
+              "traktId": {
+                "type": "number",
                 "nullable": true
               },
               "rank": {
@@ -3688,6 +3750,10 @@
               },
               "description": {
                 "type": "string",
+                "nullable": true
+              },
+              "traktId": {
+                "type": "number",
                 "nullable": true
               },
               "rank": {
@@ -4383,6 +4449,7 @@
       },
       "ImportState": {
         "enum": [
+          "error",
           "exporting",
           "imported",
           "importing",
@@ -4455,9 +4522,44 @@
               "seasons",
               "shows"
             ]
+          },
+          "lists": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "listName": {
+                  "type": "string"
+                },
+                "listId": {
+                  "type": "string"
+                },
+                "movies": {
+                  "type": "number"
+                },
+                "shows": {
+                  "type": "number"
+                },
+                "seasons": {
+                  "type": "number"
+                },
+                "episodes": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "episodes",
+                "listId",
+                "listName",
+                "movies",
+                "seasons",
+                "shows"
+              ]
+            }
           }
         },
         "required": [
+          "lists",
           "ratings",
           "seen",
           "watchlist"

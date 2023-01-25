@@ -68,7 +68,7 @@ describe('TraktTv import', () => {
 
   test('should import', async () => {
     mockedAxios.get.mockImplementation(
-      async (url) =>
+      async (url, { data }) =>
         ({
           'https://api.trakt.tv/sync/watchlist': {
             status: 200,
@@ -147,46 +147,63 @@ describe('TraktTv import', () => {
             ],
           },
           'https://api.trakt.tv/sync/history': {
-            status: 200,
-            data: [
-              {
-                id: 1,
-                watched_at: new Date().toISOString(),
-                action: 'watch',
-                type: 'movie',
-                movie: {
-                  title: Data.movie.title,
-                  year: parseISO(Data.movie.releaseDate).getFullYear(),
-                  ids: {
-                    slug: Data.movie.slug,
-                    tmdb: Data.movie.tmdbId,
+            1: {
+              status: 200,
+              data: [
+                {
+                  id: 1,
+                  watched_at: new Date().toISOString(),
+                  action: 'watch',
+                  type: 'movie',
+                  movie: {
+                    title: Data.movie.title,
+                    year: parseISO(Data.movie.releaseDate).getFullYear(),
+                    ids: {
+                      slug: Data.movie.slug,
+                      tmdb: Data.movie.tmdbId,
+                    },
                   },
                 },
+              ],
+              headers: {
+                'x-pagination-page-count': 2,
+                'x-pagination-page': 1,
+                'x-pagination-limit': 1,
               },
-              {
-                id: 2,
-                watched_at: new Date().toISOString(),
-                action: 'watch',
-                type: 'episode',
-                show: {
-                  title: Data.tvShow.title,
-                  year: parseISO(Data.tvShow.releaseDate).getFullYear(),
-                  ids: {
-                    slug: Data.tvShow.slug,
-                    tmdb: Data.tvShow.tmdbId,
+            },
+            2: {
+              status: 200,
+              data: [
+                {
+                  id: 2,
+                  watched_at: new Date().toISOString(),
+                  action: 'watch',
+                  type: 'episode',
+                  show: {
+                    title: Data.tvShow.title,
+                    year: parseISO(Data.tvShow.releaseDate).getFullYear(),
+                    ids: {
+                      slug: Data.tvShow.slug,
+                      tmdb: Data.tvShow.tmdbId,
+                    },
+                  },
+                  episode: {
+                    season: Data.episode.seasonNumber,
+                    number: Data.episode.episodeNumber,
+                    title: Data.episode.title,
+                    ids: {
+                      tmdb: Data.episode.tmdbId,
+                    },
                   },
                 },
-                episode: {
-                  season: Data.episode.seasonNumber,
-                  number: Data.episode.episodeNumber,
-                  title: Data.episode.title,
-                  ids: {
-                    tmdb: Data.episode.tmdbId,
-                  },
-                },
+              ],
+              headers: {
+                'x-pagination-page-count': 2,
+                'x-pagination-page': 2,
+                'x-pagination-limit': 1,
               },
-            ],
-          },
+            },
+          }[(data as { page: number })?.page],
           'https://api.trakt.tv/sync/ratings': {
             status: 200,
             data: [

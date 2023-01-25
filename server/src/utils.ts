@@ -101,3 +101,7 @@ export const catchAndLogError = async (fn: () => Promise<void> | void) => {
     logger.error(error);
   }
 };
+
+export const inArray = <T extends string>(value: T, values: T[]) => {
+  return values.includes(value);
+};

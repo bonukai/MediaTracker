@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { t, Trans } from '@lingui/macro';
 import { mediaTrackerApi } from 'src/api/api';
 import { useMutation } from 'react-query';
-import { ImportSummaryTable } from 'src/components/ImportSummaryTable';
+import { TvImportSummaryTable } from 'src/components/ImportSummaryTable';
 
 const useGoodreadsImport = () => {
   const importMutation = useMutation(mediaTrackerApi.importGoodreads.import);
@@ -60,7 +60,7 @@ export const GoodreadsImportPage: FunctionComponent = () => {
       )}
       {loading && <Trans>Importing</Trans>}
       {summary && (
-        <ImportSummaryTable
+        <TvImportSummaryTable
           columns={[t`Books`]}
           rows={[t`Read`, t`To read`, t`Currently reading`, t`Rating`]}
           exported={[

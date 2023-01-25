@@ -770,11 +770,9 @@ class MediaItemRepository extends repository<MediaItemBase>({
     searchResult: MediaItemForProvider[],
     mediaType: MediaType
   ) {
-    let idCounter = 0;
-
-    const searchResultWithId = _.cloneDeep(searchResult).map((item) => ({
+    const searchResultWithId = _.cloneDeep(searchResult).map((item, index) => ({
       ...item,
-      searchResultId: idCounter++,
+      searchResultId: index,
     }));
 
     const externalIds = _(externalIdColumnNames)
@@ -784,15 +782,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       )
       .value();
 
-    const searchResultsByExternalId = _(externalIdColumnNames)
-      .keyBy()
-      .mapValues((value) =>
-        _(searchResultWithId)
-          .filter((item) => Boolean(item[value]))
-          .keyBy(value)
-          .value()
-      )
-      .value();
+    const searchResultsByExternalId = groupByExternalId(searchResultWithId);
 
     return await Database.knex.transaction(async (trx) => {
       const existingItems = (
@@ -837,16 +827,20 @@ class MediaItemRepository extends repository<MediaItemBase>({
         externalIdColumnNames.forEach((value) => {
           const res = searchResultsByExternalId[value][item[value]];
 
-          if (res) {
-            existingSearchResults.push({
-              ...res,
-              id: item.id,
-            });
+          if (res?.length > 0) {
+            existingSearchResults.push(
+              ...res.map((value) => ({
+                ...value,
+                id: item.id,
+              }))
+            );
 
             return;
           }
         });
       });
+
+      console.log(existingSearchResults, searchResultsByExternalId);
 
       const existingImages = _(
         await trx<Image>(imageRepository.tableName)
@@ -901,16 +895,52 @@ class MediaItemRepository extends repository<MediaItemBase>({
         'searchResultId'
       );
 
+      console.log(newItems);
+
       newItems.forEach((item) => (item.lastTimeUpdated = new Date().getTime()));
+
+      const newItemsByExternalId = groupByExternalId(newItems);
+
+      const uniqueNewItems = _.uniqWith(newItems, (a, b) =>
+        externalIdColumnNames.some(
+          (externalIdColumnName) =>
+            a[externalIdColumnName] !== undefined &&
+            b[externalIdColumnName] !== undefined &&
+            a[externalIdColumnName] === b[externalIdColumnName]
+        )
+      );
+
+      const duplicateNewItems = _.difference(newItems, uniqueNewItems);
+
+      console.log(uniqueNewItems, duplicateNewItems);
+
+      // const foo = _(externalIdColumnNames)
+      //   .keyBy()
+      //   .mapValues(() => false)
+      //   .value();
+
+      const foo = _(externalIdColumnNames)
+        .keyBy()
+        .mapValues(() => new Map())
+        .value();
 
       const newItemsId: { id: number }[] = [];
 
       for (const newItem of newItems) {
-        const [res] = await trx<MediaItemBase>(this.tableName)
-          .insert({
-            ...this.serialize(this.stripValue(newItem)),
-            slug: Database.knex.raw(
-              `(CASE
+        const [a] = externalIdColumnNames
+          .map((externalIdColumnName) =>
+            foo[externalIdColumnName].get(newItem[externalIdColumnName])
+          )
+          .filter((value) => value !== undefined);
+
+        if (a) {
+          newItemsId.push(a);
+        } else {
+          const [res] = await trx<MediaItemBase>(this.tableName)
+            .insert({
+              ...this.serialize(this.stripValue(newItem)),
+              slug: Database.knex.raw(
+                `(CASE
               WHEN (
                 ${Database.knex('mediaItem')
                   .count()
@@ -919,11 +949,21 @@ class MediaItemRepository extends repository<MediaItemBase>({
                 THEN '${mediaItemSlug(newItem)}'
               ELSE '${mediaItemSlug(newItem)}-${randomSlugId()}'
             END)`
-            ),
-          })
-          .returning<{ id: number }[]>('id');
+              ),
+            })
+            .returning<{ id: number }[]>('id');
 
-        newItemsId.push(res);
+          externalIdColumnNames
+            .filter(
+              (externalIdColumnName) =>
+                newItem[externalIdColumnName] !== undefined
+            )
+            .forEach((externalIdColumnName) =>
+              foo[externalIdColumnName].set(newItem[externalIdColumnName], res)
+            );
+
+          newItemsId.push(res);
+        }
       }
 
       const newItemsWithId = _.merge(
@@ -1016,3 +1056,15 @@ const externalIdColumnNames = <const>[
   'goodreadsId',
   'tvdbId',
 ];
+
+const groupByExternalId = <T extends MediaItemForProvider>(items: T[]) => {
+  return _(externalIdColumnNames)
+    .keyBy()
+    .mapValues((externalIdColumnName) =>
+      _(items)
+        .filter((item) => Boolean(item[externalIdColumnName]))
+        .groupBy(externalIdColumnName)
+        .value()
+    )
+    .value();
+};

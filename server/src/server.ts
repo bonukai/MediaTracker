@@ -25,6 +25,11 @@ import { catchAndLogError, durationToMilliseconds } from 'src/utils';
 import { updateMetadata } from 'src/updateMetadata';
 import { sendNotifications } from 'src/sendNotifications';
 import { AudibleLang, ServerLang, TmdbLang } from 'src/entity/configuration';
+import { readJSON } from 'fs-extra';
+import { Seen } from 'src/entity/seen';
+import { seenRepository } from 'src/repository/seen';
+import { userRatingRepository } from 'src/repository/userRating';
+import { notificationsHistoryRepository } from 'src/repository/notificationsHistory';
 
 type ServerConfig = {
   publicPath: string;
@@ -167,11 +172,13 @@ export class Server {
             process.once('SIGTERM', onCloseHandler);
             process.once('SIGKILL ', onCloseHandler);
 
+            await notificationsHistoryRepository.delete();
+
             resolve();
+            await catchAndLogError(sendNotifications);
 
             if (this.#config.production) {
               await catchAndLogError(updateMetadata);
-              await catchAndLogError(sendNotifications);
 
               setInterval(async () => {
                 await catchAndLogError(updateMetadata);
@@ -294,12 +301,12 @@ export const initialize = async (args: {
     igdbClientSecret,
     demo,
   } = args;
-
   Config.migrate();
   Config.validate();
   logger.init();
   Database.init();
   await Database.runMigrations();
+
 
   logger.info(
     `Server timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`
@@ -424,14 +431,53 @@ export const createAndStartServer = async () => {
     });
 
     server.create();
+    await foo();
     await server.listen();
   } catch (error) {
     await server?.close();
-    console.log(chalk.red.bold(`error: ${error}`));
+    console.log(chalk.red.bold(error.stack || error));
     createAndStartErrorServer({
       hostname: Config.HOSTNAME,
       port: Config.PORT,
       error: error,
     });
   }
+};
+
+const foo = async () => {
+  // seenMovies: 1:12.763 (m:ss.mmm)
+  // seenEpisodes: 2:09.971 (m:ss.mmm)
+  // ratedMovies: 1.897s
+
+  // return;
+
+  const seenMovies: Seen[] = await readJSON('seenMovies.json');
+  const seenEpisodes: Seen[] = await readJSON('seenEpisodes.json');
+  const ratedMovies = await readJSON('ratedMovies.json');
+
+  const seenUniqueBy = (seen: Seen) => ({
+    userId: seen.userId,
+    mediaItemId: seen.mediaItemId,
+    episodeId: seen.episodeId || null,
+    date: seen.date || null,
+    type: seen.type || null,
+    action: seen.action || null,
+    progress: seen.progress || null,
+  });
+
+  console.time('seenEpisodes');
+
+  await seenRepository.createManyUnique(
+    seenEpisodes.slice(0, 1),
+    seenUniqueBy,
+    {
+      userId: 1,
+    }
+  );
+
+  console.timeEnd('seenEpisodes');
+
+  console.time('ratedMovies');
+  await userRatingRepository.createMany(ratedMovies);
+  console.timeEnd('ratedMovies');
 };

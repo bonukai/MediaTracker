@@ -2,7 +2,7 @@ import { milliseconds } from 'date-fns';
 
 import { Config } from 'src/config';
 import { clearDatabase, randomNumericId } from '../__utils__/utils';
-import { InitialData } from '__tests__/__utils__/data';
+import { Data, InitialData } from '__tests__/__utils__/data';
 import { Image } from 'src/entity/image';
 import { Configuration } from 'src/entity/configuration';
 import { MediaItemBase } from 'src/entity/mediaItem';
@@ -956,6 +956,36 @@ describe('migrations', () => {
         .where('addedAt', watchlistItem.addedAt)
         .first()
     ).toBeDefined();
+  });
+
+  test('20220603191400_listTraktId', async () => {
+    await Database.knex.migrate.up({
+      name: `20220603191400_listTraktId.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20220603191400_listTraktId.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex('list').insert({
+      rank: 999,
+      name: 'trakt-list',
+      slug: 'trakt-list',
+      traktId: 12345,
+      privacy: 'private',
+      sortBy: 'rank',
+      sortOrder: 'asc',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      userId: InitialData.user.id,
+      isWatchlist: false,
+    });
   });
 
   afterAll(clearDatabase);

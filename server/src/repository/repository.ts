@@ -176,27 +176,44 @@ export const repository = <T extends object>(args: {
 
     public async createManyUnique(
       values: Partial<T>[],
-      uniqueBy: (value: Partial<T>) => Partial<T>
+      uniqueBy: (value: Partial<T>) => Partial<T>,
+      limitQuery?: Partial<T>
     ) {
-      return await Database.knex.transaction(async (trx) => {
-        const existingItems: Partial<T>[] = _.concat(
-          ...(await Promise.all(
-            _.chunk(values, BATCH_SIZE).flatMap((chunk) => {
-              const qb = trx(this.tableName);
+      const serialize = (item: Partial<T>) => JSON.stringify(uniqueBy(item));
 
-              for (const value of chunk) {
-                qb.orWhere(omitUndefinedValues(uniqueBy(value)));
-              }
-              return qb;
-            })
-          ))
+      return await Database.knex.transaction(async (trx) => {
+        const fetchAllItems = async () => {
+          return await trx(this.tableName).where(limitQuery ? limitQuery : {});
+        };
+
+        const fetchMatchingItems = async () => {
+          const existingItems: T[] = [];
+
+          for (const value of values) {
+            const res = await trx(this.tableName).where(uniqueBy(value));
+
+            res.forEach((item) => existingItems.push(item));
+          }
+
+          return existingItems;
+        };
+
+        const existingItems =
+          values.length < 100
+            ? await fetchMatchingItems()
+            : await fetchAllItems();
+        const uniqueExistingItems = new Set(
+          existingItems.map((item) => serialize(item))
         );
 
         const newItems = _(values)
-          .differenceWith(existingItems, (a, b) =>
-            _.isEqual(uniqueBy(a), uniqueBy(b))
-          )
-          .uniqWith((a, b) => _.isEqual(uniqueBy(a), uniqueBy(b)))
+          .filter((item) => !uniqueExistingItems.has(serialize(item)))
+          .map((item) => ({
+            item: item,
+            serializedItem: serialize(item),
+          }))
+          .uniqBy('serializedItem')
+          .map((value) => value.item)
           .value();
 
         if (newItems.length > 0) {

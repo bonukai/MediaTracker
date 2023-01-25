@@ -1053,14 +1053,24 @@ router.post(
   _GoodreadsImportController.import
 );
 router.get(
+  '/api/import-trakttv/state',
+  validatorHandler({}),
+  _TraktTvImportController.state
+);
+router.get(
+  '/api/import-trakttv',
+  validatorHandler({}),
+  _TraktTvImportController.import
+);
+router.get(
   '/api/import-trakttv/device-token',
   validatorHandler({}),
   _TraktTvImportController.getUserCode
 );
 router.get(
-  '/api/import-trakttv/state',
+  '/api/import-trakttv/start-over',
   validatorHandler({}),
-  _TraktTvImportController.state
+  _TraktTvImportController.startOver
 );
 
 export { router as generatedRoutes };
