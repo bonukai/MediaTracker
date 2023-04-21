@@ -763,18 +763,21 @@ class ListRepository extends repository<List>({
             .min('seasonAndEpisodeNumber', {
               as: 'seasonAndEpisodeNumber',
             })
-            .leftJoin('seen', (qb) =>
-              qb
-                .on('seen.episodeId', 'episode.id')
-                .andOnVal('seen.type', 'seen')
+            .leftJoin(
+              (qb) =>
+                qb
+                  .from<Seen>('seen')
+                  .where('userId', userId)
+                  .where('type', 'seen')
+                  .as('seen'),
+              'seen.episodeId',
+              'episode.id'
             )
             .where('episode.isSpecialEpisode', false)
-            .andWhereNot('episode.releaseDate', '')
-            .andWhereNot('episode.releaseDate', null)
-            .andWhere('episode.releaseDate', '<=', currentDateString)
-            .andWhere((qb) => {
-              qb.where('seen.userId', '<>', userId).orWhereNull('seen.userId');
-            })
+            .whereNot('episode.releaseDate', '')
+            .whereNot('episode.releaseDate', null)
+            .where('episode.releaseDate', '<=', currentDateString)
+            .whereNull('seen.userId')
             .groupBy('tvShowId')
             .as('mediaItemFirstUnwatchedEpisodeHelper'),
         'mediaItemFirstUnwatchedEpisodeHelper.tvShowId',
@@ -802,18 +805,21 @@ class ListRepository extends repository<List>({
             .min('seasonAndEpisodeNumber', {
               as: 'seasonAndEpisodeNumber',
             })
-            .leftJoin('seen', (qb) =>
-              qb
-                .on('seen.episodeId', 'episode.id')
-                .andOnVal('seen.type', 'seen')
+            .leftJoin(
+              (qb) =>
+                qb
+                  .from<Seen>('seen')
+                  .where('userId', userId)
+                  .where('type', 'seen')
+                  .as('seen'),
+              'seen.episodeId',
+              'episode.id'
             )
             .where('episode.isSpecialEpisode', false)
-            .andWhereNot('episode.releaseDate', '')
-            .andWhereNot('episode.releaseDate', null)
-            .andWhere('episode.releaseDate', '<=', currentDateString)
-            .andWhere((qb) => {
-              qb.where('seen.userId', '<>', userId).orWhereNull('seen.userId');
-            })
+            .whereNot('episode.releaseDate', '')
+            .whereNot('episode.releaseDate', null)
+            .where('episode.releaseDate', '<=', currentDateString)
+            .whereNull('seen.userId')
             .groupBy('seasonId')
             .as('seasonFirstUnwatchedEpisodeHelper'),
         'seasonFirstUnwatchedEpisodeHelper.seasonId',
@@ -972,7 +978,9 @@ class ListRepository extends repository<List>({
               'mediaItemUpcomingEpisodeHelper.seasonAndEpisodeNumber'
             )
       )
-      .orderBy('listItem.rank', 'asc');
+      .limit(10)
+      .orderBy('mediaItemSeenEpisodes.seenEpisodesCount', 'asc');
+      // .orderBy('listItem.rank', 'asc');
 
     return res.map((listItem) => ({
       rank: Number(listItem['listItem.rank']),

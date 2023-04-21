@@ -238,16 +238,21 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
             as: 'seasonAndEpisodeNumber',
           })
           .count('*', { as: 'unseenEpisodesCount' })
-          .leftJoin<Seen>('seen', (qb) =>
-            qb.on('seen.episodeId', 'episode.id').andOnVal('seen.type', 'seen')
+          .leftJoin(
+            (qb) =>
+              qb
+                .from<Seen>('seen')
+                .where('userId', userId)
+                .where('type', 'seen')
+                .as('seen'),
+            'seen.episodeId',
+            'episode.id'
           )
           .whereNot('episode.isSpecialEpisode', true)
-          .andWhereNot('episode.releaseDate', '')
-          .andWhereNot('episode.releaseDate', null)
-          .andWhere('episode.releaseDate', '<=', currentDateString)
-          .andWhere((qb) => {
-            qb.where('seen.userId', '<>', userId).orWhereNull('seen.userId');
-          })
+          .whereNot('episode.releaseDate', '')
+          .whereNot('episode.releaseDate', null)
+          .where('episode.releaseDate', '<=', currentDateString)
+          .whereNull('seen.userId')
           .groupBy('tvShowId')
           .as('firstUnwatchedEpisodeHelper'),
       'firstUnwatchedEpisodeHelper.tvShowId',
@@ -741,18 +746,21 @@ export class QueryBuilderHelper {
             .min('seasonAndEpisodeNumber', {
               as: 'seasonAndEpisodeNumber',
             })
-            .leftJoin<Seen>('seen', (qb) =>
-              qb
-                .on('seen.episodeId', 'episode.id')
-                .andOnVal('seen.type', 'seen')
+            .leftJoin(
+              (qb) =>
+                qb
+                  .from<Seen>('seen')
+                  .where('userId', userId)
+                  .where('type', 'seen')
+                  .as('seen'),
+              'seen.episodeId',
+              'episode.id'
             )
             .whereNot('episode.isSpecialEpisode', true)
-            .andWhereNot('episode.releaseDate', '')
-            .andWhereNot('episode.releaseDate', null)
-            .andWhere('episode.releaseDate', '<=', new Date().toISOString())
-            .andWhere((qb) => {
-              qb.where('seen.userId', '<>', userId).orWhereNull('seen.userId');
-            })
+            .whereNot('episode.releaseDate', '')
+            .whereNot('episode.releaseDate', null)
+            .where('episode.releaseDate', '<=', new Date().toISOString())
+            .whereNull('seen.userId')
             .groupBy('tvShowId')
             .as('firstUnwatchedEpisodeHelper'),
         'firstUnwatchedEpisodeHelper.tvShowId',

@@ -58,6 +58,14 @@ const seenEpisodes: Seen[] = [
     episodeId: 4,
     type: 'seen',
   },
+  {
+    id: 5,
+    date: new Date().getTime(),
+    mediaItemId: 1,
+    userId: user2.id,
+    episodeId: 1,
+    type: 'seen',
+  },
 ];
 
 const firstUnwatchedEpisode: TvEpisode = {
@@ -179,7 +187,7 @@ describe('firstUnwatchedEpisode', () => {
     });
 
     expect(fetchedMediaItem.firstUnwatchedEpisode).toMatchObject({
-      id: 1,
+      id: 2,
     });
   });
 
@@ -205,7 +213,7 @@ describe('firstUnwatchedEpisode', () => {
     });
 
     expect(fetchedMediaItem.firstUnwatchedEpisode).toMatchObject({
-      id: 1,
+      id: 2,
     });
   });
 });
