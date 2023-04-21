@@ -1,6 +1,9 @@
 import { Knex } from 'knex';
+import { fixItemsWithInvalidMediaItemId } from 'src/migrations/20220312002700_mediaItemSlug';
 
 export async function up(knex: Knex): Promise<void> {
+  await fixItemsWithInvalidMediaItemId(knex);
+
   await knex.schema
     .alterTable('image', (table) => {
       table.dropForeign('mediaItemId');
@@ -55,20 +58,20 @@ export async function up(knex: Knex): Promise<void> {
       table.unique(['tvdbId']);
     })
     .alterTable('season', (table) => {
-      table.integer('traktId ');
+      table.integer('traktId');
       table.index('traktId');
       table.unique(['traktId']);
 
-      table.integer('tvdbId ');
+      table.integer('tvdbId');
       table.index('tvdbId');
       table.unique(['tvdbId']);
     })
     .alterTable('episode', (table) => {
-      table.integer('traktId ');
+      table.integer('traktId');
       table.index('traktId');
       table.unique(['traktId']);
 
-      table.integer('tvdbId ');
+      table.integer('tvdbId');
       table.index('tvdbId');
       table.unique(['tvdbId']);
     });
