@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { Spring } from 'react-spring';
+import { useSpring, animated } from 'react-spring';
 import { t, Trans } from '@lingui/macro';
 
 import { mediaTrackerApi } from 'src/api/api';
@@ -137,19 +137,18 @@ const stateMap: Record<ImportState, string> = {
 const ProgressBarComponent: FunctionComponent<{ progress: number }> = (
   props
 ) => {
-  const { progress } = props;
+  const progress = props.progress * 100;
+
+  const style = useSpring({
+    background: `linear-gradient(to right, blue ${progress}%, transparent 0%)`,
+    from: { background: 'linear-gradient(to right, blue 0%, transparent 0%)' },
+  });
 
   return (
-    <Spring from={{ percent: 0 }} to={{ percent: progress * 100 }}>
-      {({ percent }) => (
-        <div
-          className="block h-4 border rounded w-80 bg-grad"
-          style={{
-            background: `linear-gradient(to right, black ${percent}%, transparent ${percent}%)`,
-          }}
-        />
-      )}
-    </Spring>
+    <animated.div
+      className="block h-4 border rounded w-80 bg-grad"
+      style={style}
+    ></animated.div>
   );
 };
 
