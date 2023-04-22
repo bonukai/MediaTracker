@@ -626,7 +626,11 @@ class MediaItemRepository extends repository<MediaItemBase>({
       ]);
     }
 
-    return this.deserialize(await qb.first());
+    const res = await qb.first();
+
+    if (res) {
+      return this.deserialize(res);
+    }
   }
 
   public async itemsToPossiblyUpdate(): Promise<MediaItemBase[]> {
