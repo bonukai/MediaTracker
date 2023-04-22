@@ -978,9 +978,7 @@ class ListRepository extends repository<List>({
               'mediaItemUpcomingEpisodeHelper.seasonAndEpisodeNumber'
             )
       )
-      .limit(10)
-      .orderBy('mediaItemSeenEpisodes.seenEpisodesCount', 'asc');
-      // .orderBy('listItem.rank', 'asc');
+      .orderBy('listItem.rank', 'asc');
 
     return res.map((listItem) => ({
       rank: Number(listItem['listItem.rank']),
