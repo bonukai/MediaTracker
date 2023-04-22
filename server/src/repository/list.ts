@@ -90,8 +90,6 @@ class ListRepository extends repository<List>({
           updatedAt: updatedAt,
           sortBy: sortBy,
           sortOrder: sortOrder,
-          // displayNumbers: args.displayNumbers || false,
-          // allowComments: args.allowComments || false,
           slug: Database.knex.raw(
             `(CASE WHEN (${Database.knex<List>('list')
               .count()
@@ -190,7 +188,14 @@ class ListRepository extends repository<List>({
       }
 
       await trx<ListItem>('listItem').delete().where('listId', listId);
-      return await trx<ListItem>('list').delete().where('id', listId);
+      const res = await trx<ListItem>('list').delete().where('id', listId);
+
+      await trx<List>('list')
+        .update('rank', trx.raw('rank - 1'))
+        .where('rank', '>', list.rank)
+        .where('userId', userId);
+
+      return res;
     });
   }
 

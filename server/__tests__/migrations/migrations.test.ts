@@ -1431,5 +1431,98 @@ describe('migrations', () => {
     ]);
   });
 
+  test('20230422000000_updateListRanks', async () => {
+    const initialLists = await Database.knex('list');
+    const initialListItems = await Database.knex('listItem');
+
+    await Database.knex('listItem').delete();
+    await Database.knex('list').delete();
+    await Database.knex('list').insert([
+      {
+        id: 0,
+        rank: 0,
+        name: 'List',
+        slug: 'list',
+        privacy: 'private',
+        sortBy: 'rank',
+        sortOrder: 'asc',
+        createdAt: new Date().getTime(),
+        updatedAt: new Date().getTime(),
+        userId: InitialData.user.id,
+        isWatchlist: false,
+      },
+      {
+        id: 1,
+        rank: 1,
+        name: 'List 2',
+        slug: 'list-2',
+        privacy: 'private',
+        sortBy: 'rank',
+        sortOrder: 'asc',
+        createdAt: new Date().getTime(),
+        updatedAt: new Date().getTime(),
+        userId: InitialData.user.id,
+        isWatchlist: false,
+      },
+      {
+        id: 3,
+        rank: 3,
+        name: 'List 3',
+        slug: 'list-3',
+        privacy: 'private',
+        sortBy: 'rank',
+        sortOrder: 'asc',
+        createdAt: new Date().getTime(),
+        updatedAt: new Date().getTime(),
+        userId: InitialData.user.id,
+        isWatchlist: false,
+      },
+      {
+        id: 4,
+        rank: 4,
+        name: 'List 4',
+        slug: 'list-4',
+        privacy: 'private',
+        sortBy: 'rank',
+        sortOrder: 'asc',
+        createdAt: new Date().getTime(),
+        updatedAt: new Date().getTime(),
+        userId: InitialData.user.id,
+        isWatchlist: false,
+      },
+    ]);
+
+    await Database.knex.migrate.up({
+      name: `20230422000000_updateListRanks.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20230422000000_updateListRanks.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    const lists = await Database.knex('list')
+      .select('name', 'rank')
+      .where('userId', InitialData.user.id)
+      .orderBy('rank');
+
+    expect(lists).toEqual([
+      { name: 'List', rank: 0 },
+      { name: 'List 2', rank: 1 },
+      { name: 'List 3', rank: 2 },
+      { name: 'List 4', rank: 3 },
+    ]);
+
+    await Database.knex('listItem').delete();
+    await Database.knex('list').delete();
+    await Database.knex('list').insert(initialLists);
+    await Database.knex('listItem').insert(initialListItems);
+  });
+
   afterAll(clearDatabase);
 });
