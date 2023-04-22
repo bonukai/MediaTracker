@@ -37,7 +37,7 @@ abstract class TMDb extends MetadataProvider {
         ? getPosterUrl(response.backdrop_path)
         : null,
       poster: response.poster_path ? getPosterUrl(response.poster_path) : null,
-      tmdbId: response.id || null,
+      tmdbId: response.id,
       overview: response.overview || null,
       status: response.status || null,
       url: response.homepage || null,
@@ -112,12 +112,12 @@ export class TMDbMovie extends TMDb {
 
   private mapMovie(item: Partial<TMDbApi.MovieDetailsResponse>) {
     const movie = this.mapItem(item);
-    movie.imdbId = item.imdb_id || null;
-    movie.originalTitle = item.original_title || null;
+    movie.imdbId = item.imdb_id || undefined;
+    movie.originalTitle = item.original_title;
     movie.releaseDate = item.release_date || null;
     movie.title = item.title;
-    movie.runtime = item.runtime || null;
-    movie.tmdbRating = item.vote_average || null;
+    movie.runtime = item.runtime;
+    movie.tmdbRating = item.vote_average;
 
     return movie;
   }
@@ -209,13 +209,13 @@ export class TMDbTv extends TMDb {
 
   private mapTvShow(item: Partial<TMDbApi.TvDetailsResponse>) {
     const tvShow = this.mapItem(item);
-    tvShow.imdbId = item.external_ids?.imdb_id || null;
-    tvShow.tvdbId = item.external_ids?.tvdb_id || null;
+    tvShow.imdbId = item.external_ids?.imdb_id || undefined;
+    tvShow.tvdbId = item.external_ids?.tvdb_id || undefined;
     tvShow.title = item.name;
-    tvShow.originalTitle = item.original_name || null;
+    tvShow.originalTitle = item.original_name;
     tvShow.releaseDate = item.first_air_date || null;
-    tvShow.numberOfSeasons = item.number_of_seasons || null;
-    tvShow.tmdbRating = item.vote_average || null;
+    tvShow.numberOfSeasons = item.number_of_seasons;
+    tvShow.tmdbRating = item.vote_average;
     tvShow.network =
       item.networks?.length > 0 ? item.networks[0].name : undefined;
     tvShow.runtime =
@@ -223,7 +223,7 @@ export class TMDbTv extends TMDb {
 
     tvShow.seasons = item.seasons?.map((item) => {
       return {
-        tmdbId: item.id || null,
+        tmdbId: item.id,
         title: item.name,
         description: item.overview || null,
         poster: item.poster_path ? getPosterUrl(item.poster_path) : null,
