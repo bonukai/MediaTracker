@@ -58,36 +58,37 @@ export const TraktTvImportPage: FunctionComponent = () => {
         {state ? (
           <>
             {deviceCode && state?.state === 'waiting-for-authentication' ? (
-              <div className="">
-                <Trans>
-                  Go to{' '}
-                  <a
-                    href={deviceCode.verificationUrl}
-                    className="link"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {deviceCode.verificationUrl}
-                  </a>{' '}
-                  and enter following code: {deviceCode.userCode}
-                </Trans>
-                <div
-                  className="ml-2 text-sm btn"
-                  onClick={() => {
-                    navigator.permissions
-                      .query({ name: 'clipboard-write' as PermissionName })
-                      .then((result) => {
-                        if (
-                          result.state == 'granted' ||
-                          result.state == 'prompt'
-                        ) {
-                          navigator.clipboard.writeText(deviceCode.userCode);
-                        }
-                      });
-                  }}
-                >
-                  <Trans>Copy to clipboard</Trans>
+              <div className="flex flex-col items-center mt-10">
+                <div>
+                  <Trans>
+                    Go to{' '}
+                    <a
+                      href={deviceCode.verificationUrl}
+                      className="link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {deviceCode.verificationUrl}
+                    </a>{' '}
+                    and enter following code: <b>{deviceCode.userCode}</b>
+                  </Trans>
                 </div>
+                {navigator.clipboard && (
+                  <div>
+                    <div
+                      className="mt-2 text-sm btn"
+                      onClick={async () => {
+                        try {
+                          navigator.clipboard.writeText(deviceCode.userCode);
+                        } catch (error) {
+                          console.log(error);
+                        }
+                      }}
+                    >
+                      <Trans>Copy to clipboard</Trans>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <>
