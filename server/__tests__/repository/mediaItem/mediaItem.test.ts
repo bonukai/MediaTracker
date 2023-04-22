@@ -422,7 +422,6 @@ describe('mediaItemRepository', () => {
     ];
 
     expect(res.mergeWithSearchResult()).toMatchObject(expected);
-    expect(res.mergeWithSearchResult()).toMatchObject(expected);
 
     expect(res.existingItems).toMatchObject([
       {
@@ -444,11 +443,12 @@ describe('mediaItemRepository', () => {
       },
     ]);
 
-    expect(res.newItems).toMatchObject([
-      _.omit(searchResult[3], 'backdrop', 'poster'),
-      searchResult[5],
-      searchResult[6],
-    ]);
+    expect(res.newItems[0]).toMatchObject(
+      _.omit(searchResult[3], ['poster', 'backdrop'])
+    );
+
+    expect(res.newItems[1]).toMatchObject(searchResult[5]);
+    expect(res.newItems[2]).toMatchObject(searchResult[6]);
 
     expect(res.newItems[0].lastTimeUpdated).toBeDefined();
     expect(updatedMediaItem).toMatchObject(searchResult[4]);

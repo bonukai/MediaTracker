@@ -840,8 +840,6 @@ class MediaItemRepository extends repository<MediaItemBase>({
         });
       });
 
-      console.log(existingSearchResults, searchResultsByExternalId);
-
       const existingImages = _(
         await trx<Image>(imageRepository.tableName)
           .where({
@@ -859,23 +857,23 @@ class MediaItemRepository extends repository<MediaItemBase>({
       for (const item of existingSearchResults) {
         const slug = mediaItemSlug(item);
 
-        await trx(this.tableName)
+        const otherMediaItemWithSlug = await trx<MediaItemBase>(this.tableName)
+          .where({ slug: slug })
+          .whereNot({ id: item.id })
+          .first();
+
+        const newSlug = otherMediaItemWithSlug
+          ? `${slug}-${randomSlugId()}`
+          : slug;
+
+        await trx<MediaItemBase>(this.tableName)
           .update({
             ...this.serialize(this.stripValue(item)),
-            slug: Database.knex.raw(
-              `(CASE 
-              WHEN (
-                ${Database.knex<MediaItemBase>('mediaItem')
-                  .count()
-                  .where('slug', slug)
-                  .whereNot('id', item.id)
-                  .toQuery()}) = 0 
-                THEN '${slug}' 
-              ELSE '${slug}-${randomSlugId()}' 
-            END)`
-            ),
+            slug: newSlug,
           })
           .where({ id: item.id });
+
+        item.slug = newSlug;
       }
 
       existingSearchResults.forEach((value) => {
@@ -889,17 +887,14 @@ class MediaItemRepository extends repository<MediaItemBase>({
         value.backdrop = backdropId ? `/img/${backdropId}` : null;
       });
 
-      const newItems: MediaItemBase[] = _.differenceBy(
-        searchResultWithId,
-        existingSearchResults,
-        'searchResultId'
-      );
-
-      console.log(newItems);
+      const newItems: (MediaItemBase & { searchResultId: number })[] =
+        _.differenceBy(
+          searchResultWithId,
+          existingSearchResults,
+          'searchResultId'
+        );
 
       newItems.forEach((item) => (item.lastTimeUpdated = new Date().getTime()));
-
-      const newItemsByExternalId = groupByExternalId(newItems);
 
       const uniqueNewItems = _.uniqWith(newItems, (a, b) =>
         externalIdColumnNames.some(
@@ -910,68 +905,37 @@ class MediaItemRepository extends repository<MediaItemBase>({
         )
       );
 
-      const duplicateNewItems = _.difference(newItems, uniqueNewItems);
+      for (const newItem of uniqueNewItems) {
+        const slug = mediaItemSlug(newItem);
 
-      console.log(uniqueNewItems, duplicateNewItems);
+        const otherMediaItemWithSlug = await trx<MediaItemBase>(this.tableName)
+          .where({ slug: slug })
+          .first();
 
-      // const foo = _(externalIdColumnNames)
-      //   .keyBy()
-      //   .mapValues(() => false)
-      //   .value();
+        const newSlug = otherMediaItemWithSlug
+          ? `${slug}-${randomSlugId()}`
+          : slug;
 
-      const foo = _(externalIdColumnNames)
-        .keyBy()
-        .mapValues(() => new Map())
-        .value();
+        const [res] = await trx<MediaItemBase>(this.tableName)
+          .insert({
+            ...this.serialize(this.stripValue(newItem)),
+            slug: newSlug,
+          })
+          .returning<{ id: number }[]>('id');
 
-      const newItemsId: { id: number }[] = [];
-
-      for (const newItem of newItems) {
-        const [a] = externalIdColumnNames
-          .map((externalIdColumnName) =>
-            foo[externalIdColumnName].get(newItem[externalIdColumnName])
-          )
-          .filter((value) => value !== undefined);
-
-        if (a) {
-          newItemsId.push(a);
-        } else {
-          const [res] = await trx<MediaItemBase>(this.tableName)
-            .insert({
-              ...this.serialize(this.stripValue(newItem)),
-              slug: Database.knex.raw(
-                `(CASE
-              WHEN (
-                ${Database.knex('mediaItem')
-                  .count()
-                  .where('slug', mediaItemSlug(newItem))
-                  .toQuery()}) = 0
-                THEN '${mediaItemSlug(newItem)}'
-              ELSE '${mediaItemSlug(newItem)}-${randomSlugId()}'
-            END)`
-              ),
-            })
-            .returning<{ id: number }[]>('id');
-
-          externalIdColumnNames
-            .filter(
-              (externalIdColumnName) =>
-                newItem[externalIdColumnName] !== undefined
-            )
-            .forEach((externalIdColumnName) =>
-              foo[externalIdColumnName].set(newItem[externalIdColumnName], res)
-            );
-
-          newItemsId.push(res);
-        }
+        newItem.id = res.id;
+        newItem.slug = newSlug;
       }
 
-      const newItemsWithId = _.merge(
-        newItems,
-        newItemsId
-      ) as (MediaItemItemsResponse & {
-        searchResultId: number;
-      })[];
+      const searchResultIdToMediaItemId = _(uniqueNewItems)
+        .keyBy('searchResultId')
+        .mapValues((mediaItem) => mediaItem.id)
+        .value();
+
+      const newItemsWithId = newItems.map((mediaItem) => ({
+        ...mediaItem,
+        id: searchResultIdToMediaItemId[mediaItem.searchResultId],
+      })) as (MediaItemItemsResponse & { searchResultId: number })[];
 
       await Database.knex
         .batchInsert(
