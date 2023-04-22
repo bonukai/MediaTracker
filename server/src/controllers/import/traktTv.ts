@@ -1,6 +1,5 @@
 import Express from 'express';
-import _, { endsWith } from 'lodash';
-import { nanoid } from 'nanoid';
+import _ from 'lodash';
 
 import { MediaItemBaseWithSeasons, MediaType } from 'src/entity/mediaItem';
 import { Seen } from 'src/entity/seen';
@@ -90,7 +89,7 @@ export class TraktTvImportController {
       progress: args.progress,
       error: args.error,
       exportSummary: args.exportSummary || currentState.exportSummary,
-      importSummary: args.importSummary  || currentState.importSummary,
+      importSummary: args.importSummary || currentState.importSummary,
       deviceCode: args.deviceCode || currentState.deviceCode,
     };
 
@@ -146,6 +145,37 @@ export class TraktTvImportController {
 
     const importState = this.importState.get(userId);
 
+    res.send({
+      state: importState.state,
+      progress: importState.progress,
+      exportSummary: importState.exportSummary,
+      importSummary: importState.importSummary,
+      error: importState.error,
+    });
+  });
+
+  /**
+   * @openapi_operationId state-stream
+   */
+  stateStream = createExpressRoute<{
+    method: 'get';
+    path: '/api/import-trakttv/state-stream';
+    responseBody: {
+      state: ImportState;
+      progress?: number;
+      exportSummary?: TraktTvImportSummary;
+      importSummary?: TraktTvImportSummary;
+      error?: string;
+    };
+  }>(async (req, res) => {
+    const userId = Number(req.user);
+
+    if (!this.importState.has(userId)) {
+      this.initState({ userId });
+    }
+
+    const importState = this.importState.get(userId);
+
     const state = {
       state: importState.state,
       progress: importState.progress,
@@ -167,66 +197,6 @@ export class TraktTvImportController {
     } else {
       res.send(state);
     }
-  });
-
-  /**
-   * @openapi_operationId import
-   */
-  import = createExpressRoute<{
-    method: 'get';
-    path: '/api/import-trakttv';
-    responseBody: {
-      userCode: string;
-      verificationUrl: string;
-    };
-  }>(async (req, res) => {
-    console.log();
-
-    // setInterval(() => {
-    //   console.log(`sending message`);
-    //   res.write(
-    //     'data:' +
-    //       JSON.stringify({
-    //         price: 1,
-    //       })
-    //   );
-    //   res.write('\\n\\n');
-    // }, 1000);
-
-    // const userId = Number(req.user);
-
-    //
-
-    // res.writeHead(200, {
-    //   'Content-Type': 'text/event-stream',
-    //   Connection: 'keep-alive',
-    //   'Cache-Control': 'no-cache',
-    // });
-
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // res.write(`id: ${1}\n`);
-    // res.write('event: count\n');
-    // res.write(`data: ${JSON.stringify({ count: 1 })}\n\n`);
-
-    // res.end()
-
-    // this.addClient({ userId: userId, client: res });
-
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
-    // this.updateState({ userId, state: 'importing', progress: 0.1 });
-
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
-    // this.updateState({ userId, state: 'importing', progress: 0.2 });
-
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
-    // this.updateState({ userId, state: 'importing', progress: 1 });
-
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // this.importState.get(userId).clients.forEach((client) => {
-    //   client.end();
-    // });
   });
 
   /**
