@@ -293,8 +293,22 @@ export class TraktTvImportController {
           this.updateState({
             userId: userId,
             state: 'importing',
-            progress: undefined,
+            progress: 0,
           });
+
+          const incrementImportingStep = () => {
+            let step = 0;
+            const numberOfSteps = 8;
+            return () => {
+              step++;
+
+              this.updateState({
+                userId: userId,
+                state: 'importing',
+                progress: step / numberOfSteps,
+              });
+            };
+          };
 
           const movieMetadata = <
             T extends {
@@ -526,6 +540,8 @@ export class TraktTvImportController {
             };
           });
 
+          incrementImportingStep();
+
           for (const list of lists) {
             const mediaTrackerListName = `TraktTv-${list.name}`;
 
@@ -546,24 +562,16 @@ export class TraktTvImportController {
                 sortOrder: list.sortOrder,
               }));
 
-            for (const listItem of [
-              ...list.movies,
-              ...list.shows,
-              ...list.seasons,
-              ...list.episodes,
-            ] as {
-              mediaItemId: number;
-              seasonId?: number;
-              episodeId?: number;
-            }[]) {
-              await listItemRepository.addItem({
-                listId: mediaTrackerList.id,
-                userId: userId,
-                mediaItemId: listItem.mediaItemId,
-                seasonId: listItem.seasonId || undefined,
-                episodeId: listItem.episodeId || undefined,
-              });
-            }
+            await listItemRepository.addManyItems({
+              listId: mediaTrackerList.id,
+              userId: userId,
+              listItems: [
+                ...list.movies,
+                ...list.shows,
+                ...list.seasons,
+                ...list.episodes,
+              ],
+            });
           }
 
           const uniqBy = (seen: Seen) => {
@@ -578,17 +586,24 @@ export class TraktTvImportController {
             };
           };
 
+          incrementImportingStep();
+
           await seenRepository.createManyUnique(seenMovies, uniqBy, {
             userId: userId,
           });
+          incrementImportingStep();
 
           await seenRepository.createManyUnique(seenEpisodes, uniqBy, {
             userId: userId,
           });
 
+          incrementImportingStep();
           await userRatingRepository.createMany(ratedMovies);
+          incrementImportingStep();
           await userRatingRepository.createMany(ratedTvShows);
+          incrementImportingStep();
           await userRatingRepository.createMany(ratedSeasons);
+          incrementImportingStep();
           await userRatingRepository.createMany(ratedEpisodes);
 
           this.updateState({
@@ -798,38 +813,47 @@ const updateMetadataForTraktTvImport = async (
   const movieMetadataProvider = metadataProviders.get('movie');
   const tvShowMetadataProvider = metadataProviders.get('tv');
 
-  const updateProgress = async <T>(promise: Promise<T>): Promise<T> => {
-    const res = await promise;
+  const updateProgress = () => {
     currentItem++;
     onProgress(currentItem / total);
-    return res;
   };
 
-  const foundMovies = (
-    await Promise.all(
-      movies.missingItems
-        .map((tmdbId) =>
-          errorHandler(findMediaItemFromTmdbId(tmdbId, movieMetadataProvider))
-        )
-        .map(updateProgress)
-        .map(errorHandler)
-    )
-  ).filter(Boolean);
+  const foundMovies = new Array<MediaItemBaseWithSeasons>();
 
-  const foundTvShows = (
-    await Promise.all(
-      tvShows.missingItems
-        .map((tmdbId) =>
-          errorHandler(findMediaItemFromTmdbId(tmdbId, tvShowMetadataProvider))
-        )
-        .map(updateProgress)
-        .map(errorHandler)
-    )
-  ).filter(Boolean);
+  for (const tmdbId of movies.missingItems) {
+    try {
+      foundMovies.push(
+        await findMediaItemFromTmdbId(tmdbId, movieMetadataProvider)
+      );
+      updateProgress();
+    } catch (error) {
+      //
+    }
+  }
 
-  const updatedTvShows = await Promise.all(
-    tvShowsToUpdate.map(updateMediaItem).map(updateProgress).map(errorHandler)
-  );
+  const foundTvShows = new Array<MediaItemBaseWithSeasons>();
+
+  for (const tmdbId of tvShows.missingItems) {
+    try {
+      foundMovies.push(
+        await findMediaItemFromTmdbId(tmdbId, tvShowMetadataProvider)
+      );
+      updateProgress();
+    } catch (error) {
+      //
+    }
+  }
+
+  const updatedTvShows = new Array<MediaItemBaseWithSeasons>();
+
+  for (const mediaItem of tvShowsToUpdate) {
+    try {
+      updatedTvShows.push(await updateMediaItem(mediaItem));
+      updateProgress();
+    } catch (error) {
+      //
+    }
+  }
 
   return _.keyBy(
     [
