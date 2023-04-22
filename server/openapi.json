@@ -2157,12 +2157,12 @@
         }
       }
     },
-    "/api/import-trakttv": {
+    "/api/import-trakttv/state-stream": {
       "get": {
         "tags": [
           "TraktTvImport"
         ],
-        "operationId": "import",
+        "operationId": "state-stream",
         "responses": {
           "200": {
             "description": "",
@@ -2171,16 +2171,36 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "userCode": {
-                      "type": "string"
+                    "state": {
+                      "$ref": "#/components/schemas/ImportState"
                     },
-                    "verificationUrl": {
-                      "type": "string"
+                    "progress": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "exportSummary": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/TraktTvImportSummary"
+                        }
+                      ],
+                      "nullable": true
+                    },
+                    "importSummary": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/TraktTvImportSummary"
+                        }
+                      ],
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "string",
+                      "nullable": true
                     }
                   },
                   "required": [
-                    "userCode",
-                    "verificationUrl"
+                    "state"
                   ]
                 }
               }

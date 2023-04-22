@@ -1058,9 +1058,9 @@ router.get(
   _TraktTvImportController.state
 );
 router.get(
-  '/api/import-trakttv',
+  '/api/import-trakttv/state-stream',
   validatorHandler({}),
-  _TraktTvImportController.import
+  _TraktTvImportController.stateStream
 );
 router.get(
   '/api/import-trakttv/device-token',
