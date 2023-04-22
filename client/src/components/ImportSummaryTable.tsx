@@ -21,19 +21,19 @@ export const TvImportSummaryTableRowComponent: FunctionComponent<{
   return (
     <tr className="divide-x">
       <td className="py-2 pr-4 text-md whitespace-nowrap">{title}</td>
-      <TvImportSummaryTableCellComponent
+      <ImportSummaryTableCellComponent
         exported={exported.movies}
         imported={imported.movies}
       />
-      <TvImportSummaryTableCellComponent
+      <ImportSummaryTableCellComponent
         exported={exported.shows}
         imported={imported.shows}
       />
-      <TvImportSummaryTableCellComponent
+      <ImportSummaryTableCellComponent
         exported={exported.seasons}
         imported={imported.seasons}
       />
-      <TvImportSummaryTableCellComponent
+      <ImportSummaryTableCellComponent
         exported={exported.episodes}
         imported={imported.episodes}
       />
@@ -41,7 +41,7 @@ export const TvImportSummaryTableRowComponent: FunctionComponent<{
   );
 };
 
-const TvImportSummaryTableCellComponent: FunctionComponent<{
+const ImportSummaryTableCellComponent: FunctionComponent<{
   exported?: number;
   imported?: number;
 }> = (props) => {
@@ -76,7 +76,7 @@ export const TvImportSummaryTable: FunctionComponent<{
     };
   }[];
 }> = (props) => {
-  const { children, rows } = props;
+  const { rows } = props;
 
   return (
     <>
@@ -103,7 +103,6 @@ export const TvImportSummaryTable: FunctionComponent<{
             />
           ))}
         </tbody>
-        {/* <tbody className="divide-y">{children}</tbody> */}
       </table>
     </>
   );
@@ -116,5 +115,61 @@ const HeaderCell: FunctionComponent<{ header: string }> = (props) => {
     <th className="py-2 text-lg font-semibold writing-mode-vertical sm:writing-mode-initial">
       {name}
     </th>
+  );
+};
+
+export const ImportSummaryTable: FunctionComponent<{
+  column: string;
+  rows: {
+    key?: string;
+    title: string;
+    exported?: number;
+    imported?: number;
+  }[];
+}> = (props) => {
+  const { column, rows } = props;
+
+  return (
+    <>
+      <div className="my-4 text-2xl font-bold text-center">
+        <Trans>Summary</Trans>
+      </div>
+      <table className="w-full divide-y divide-gray-300 table-auto">
+        <thead>
+          <tr className="divide-x">
+            <th className="w-[1%]"></th>
+            <HeaderCell header={column} />
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {rows.map((data) => (
+            <ImportSummaryTableRowComponent
+              key={data.key || data.title}
+              exported={data.exported}
+              imported={data.imported}
+              title={data.title}
+            />
+          ))}
+        </tbody>
+      </table>
+    </>
+  );
+};
+
+export const ImportSummaryTableRowComponent: FunctionComponent<{
+  title: string;
+  exported?: number;
+  imported?: number;
+}> = (props) => {
+  const { title, exported, imported } = props;
+
+  return (
+    <tr className="divide-x">
+      <td className="py-2 pr-4 text-md whitespace-nowrap">{title}</td>
+      <ImportSummaryTableCellComponent
+        exported={exported}
+        imported={imported}
+      />
+    </tr>
   );
 };
