@@ -76,7 +76,7 @@ const EpisodeComponent: FunctionComponent<{
       {/* Second row */}
       <div className="flex py-2 md:ml-auto md:py-0">
         {/* Rating */}
-        <div className="flex w-16 items- md:justify-center">
+        <div className="flex w-10 md:justify-center">
           {(hasBeenReleased(episode) || !hasReleaseDate(mediaItem)) && (
             <BadgeRating mediaItem={mediaItem} episode={episode} />
           )}
