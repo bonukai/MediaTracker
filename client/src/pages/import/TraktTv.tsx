@@ -20,7 +20,7 @@ const useTraktTvImport = () => {
     useState<ImportTrakttv.State.ResponseBody>();
 
   useEffect(() => {
-    const events = new EventSource('/api/import-trakttv/state');
+    const events = new EventSource('/api/import-trakttv/state-stream');
 
     events.onmessage = (event) => {
       setStateResponse(JSON.parse(event.data));
