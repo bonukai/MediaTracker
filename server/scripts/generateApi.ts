@@ -1,4 +1,4 @@
-import { generateApi, GenerateApiParams } from 'swagger-typescript-api';
+import { generateApi } from 'swagger-typescript-api';
 import path from 'path';
 
 generateApi({
@@ -13,4 +13,4 @@ generateApi({
   enumNamesAsValues: false,
   moduleNameIndex: 1,
   generateUnionEnums: true,
-} as Omit<GenerateApiParams, 'url' | 'spec'>);
+});
