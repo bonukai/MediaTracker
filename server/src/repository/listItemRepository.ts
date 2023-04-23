@@ -44,20 +44,22 @@ class ListItemRepository extends repository<ListItem>({
         existingListItems.map(serializeListItem)
       );
 
-      await trx<ListItem>('listItem').insert(
-        listItems
-          .filter(
-            (listItem) => !existingListItemsSet.has(serializeListItem(listItem))
-          )
-          .map((listItem, index) => ({
-            listId: listId,
-            addedAt: new Date().getTime(),
-            rank: existingListItems.length + index,
-            mediaItemId: listItem.mediaItemId,
-            seasonId: listItem.seasonId,
-            episodeId: listItem.episodeId,
-          }))
-      );
+      const itemsToAdd = listItems
+        .filter(
+          (listItem) => !existingListItemsSet.has(serializeListItem(listItem))
+        )
+        .map((listItem, index) => ({
+          listId: listId,
+          addedAt: new Date().getTime(),
+          rank: existingListItems.length + index,
+          mediaItemId: listItem.mediaItemId,
+          seasonId: listItem.seasonId,
+          episodeId: listItem.episodeId,
+        }));
+
+      if (itemsToAdd.length > 0) {
+        await trx<ListItem>('listItem').insert(itemsToAdd);
+      }
 
       return true;
     });
