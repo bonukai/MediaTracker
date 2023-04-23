@@ -721,21 +721,32 @@ const findEpisodeOrSeason = (args: {
 };
 
 const getMediaItemsByTmdbIds = async (
-  tmdbId: number[],
+  ids: {
+    trakt: number;
+    slug: string;
+    tvdb: number;
+    imdb: string;
+    tmdb: number;
+    tvrage: number;
+  }[],
   mediaType: MediaType
 ) => {
   const existingItems: MediaItemBaseWithSeasons[] =
     await mediaItemRepository.findByExternalIds({
-      tmdbId: tmdbId,
+      tmdbId: ids.map((item) => item.tmdb).filter(Boolean),
+      imdbId: ids.map((item) => item.imdb).filter(Boolean),
+      tvdbId: ids.map((item) => item.tvdb).filter(Boolean),
+      traktId: ids.map((item) => item.trakt).filter(Boolean),
       mediaType: mediaType,
     });
 
   const existingItemsMapByTmdbId: _.Dictionary<MediaItemBaseWithSeasons> =
     _.keyBy(existingItems, (mediaItem) => mediaItem.tmdbId);
 
-  const missingItems = tmdbId.filter(
-    (tmdbId) => !existingItemsMapByTmdbId[tmdbId]
-  );
+  const missingItems = _(ids)
+    .filter((item) => !existingItemsMapByTmdbId[item.tmdb])
+    .uniqBy((item) => item.trakt)
+    .value();
 
   await Promise.all(
     existingItems
@@ -775,7 +786,7 @@ const updateMetadataForTraktTvImport = async (
         ...listItems,
       ]
         .filter((item) => item.type === 'movie')
-        .map((item) => item.movie.ids.tmdb)
+        .map((item) => item.movie.ids)
     ),
     'movie'
   );
@@ -794,7 +805,7 @@ const updateMetadataForTraktTvImport = async (
             item.type === 'season' ||
             item.type === 'episode'
         )
-        .map((item) => item.show.ids.tmdb)
+        .map((item) => item.show.ids)
     ),
     'tv'
   );
@@ -820,11 +831,9 @@ const updateMetadataForTraktTvImport = async (
 
   const foundMovies = new Array<MediaItemBaseWithSeasons>();
 
-  for (const tmdbId of movies.missingItems) {
+  for (const item of movies.missingItems) {
     try {
-      foundMovies.push(
-        await findMediaItemFromTmdbId(tmdbId, movieMetadataProvider)
-      );
+      foundMovies.push(await findMediaItemById(item, movieMetadataProvider));
       updateProgress();
     } catch (error) {
       //
@@ -833,11 +842,9 @@ const updateMetadataForTraktTvImport = async (
 
   const foundTvShows = new Array<MediaItemBaseWithSeasons>();
 
-  for (const tmdbId of tvShows.missingItems) {
+  for (const item of tvShows.missingItems) {
     try {
-      foundMovies.push(
-        await findMediaItemFromTmdbId(tmdbId, tvShowMetadataProvider)
-      );
+      foundTvShows.push(await findMediaItemById(item, tvShowMetadataProvider));
       updateProgress();
     } catch (error) {
       //
@@ -858,25 +865,50 @@ const updateMetadataForTraktTvImport = async (
   return _.keyBy(
     [
       ...movies.existingItems,
-      ...foundMovies,
+      ...foundMovies.filter(Boolean),
       ..._.uniqBy(
         [...updatedTvShows, ...tvShows.existingItems],
         (item) => item.id
       ),
-      ...foundTvShows,
+      ...foundTvShows.filter(Boolean),
     ],
     (mediaItem) => mediaItem.tmdbId
   );
 };
 
-const findMediaItemFromTmdbId = async (
-  tmdbId: number,
+const findMediaItemById = async (
+  id: {
+    trakt: number;
+    slug: string;
+    tvdb: number;
+    imdb: string;
+    tmdb: number;
+    tvrage: number;
+  },
   metadataProvider: MetadataProvider
 ) => {
-  const item = await metadataProvider.findByTmdbId(tmdbId);
+  if (id.tmdb) {
+    try {
+      const item = await metadataProvider.findByTmdbId(id.tmdb);
 
-  if (item) {
-    return await mediaItemRepository.create(item);
+      if (item) {
+        return await mediaItemRepository.create(item);
+      }
+    } catch (error) {
+      //
+    }
+  }
+
+  if (id.imdb) {
+    try {
+      const item = await metadataProvider.findByImdbId(id.imdb);
+
+      if (item) {
+        return await mediaItemRepository.create(item);
+      }
+    } catch (error) {
+      //
+    }
   }
 };
 
