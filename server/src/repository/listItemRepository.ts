@@ -58,7 +58,7 @@ class ListItemRepository extends repository<ListItem>({
         }));
 
       if (itemsToAdd.length > 0) {
-        await trx<ListItem>('listItem').insert(itemsToAdd);
+        await trx.batchInsert<ListItem>('listItem', itemsToAdd, 30);
       }
 
       return true;
