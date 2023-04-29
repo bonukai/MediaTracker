@@ -4751,10 +4751,14 @@
           },
           "year": {
             "type": "number"
+          },
+          "traktTvLink": {
+            "type": "string"
           }
         },
         "required": [
           "title",
+          "traktTvLink",
           "year"
         ]
       },
@@ -4766,10 +4770,14 @@
           },
           "year": {
             "type": "number"
+          },
+          "traktTvLink": {
+            "type": "string"
           }
         },
         "required": [
           "title",
+          "traktTvLink",
           "year"
         ]
       },
@@ -4777,7 +4785,19 @@
         "type": "object",
         "properties": {
           "show": {
-            "$ref": "#/components/schemas/TraktTvNotImportedTvShow"
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "year": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "title",
+              "year"
+            ]
           },
           "season": {
             "type": "object",
@@ -4789,18 +4809,34 @@
             "required": [
               "seasonNumber"
             ]
+          },
+          "traktTvLink": {
+            "type": "string"
           }
         },
         "required": [
           "season",
-          "show"
+          "show",
+          "traktTvLink"
         ]
       },
       "TraktTvNotImportedEpisode": {
         "type": "object",
         "properties": {
           "show": {
-            "$ref": "#/components/schemas/TraktTvNotImportedTvShow"
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "year": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "title",
+              "year"
+            ]
           },
           "episode": {
             "type": "object",
@@ -4816,11 +4852,15 @@
               "episodeNumber",
               "seasonNumber"
             ]
+          },
+          "traktTvLink": {
+            "type": "string"
           }
         },
         "required": [
           "episode",
-          "show"
+          "show",
+          "traktTvLink"
         ]
       }
     }
