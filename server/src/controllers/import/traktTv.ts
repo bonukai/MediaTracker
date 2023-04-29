@@ -52,6 +52,58 @@ type TraktTvImportSummary = {
   }[];
 };
 
+type TraktTvNotImportedMovie = {
+  title: string;
+  year: number;
+};
+
+type TraktTvNotImportedTvShow = {
+  title: string;
+  year: number;
+};
+
+type TraktTvNotImportedSeason = {
+  show: TraktTvNotImportedTvShow;
+  season: {
+    seasonNumber: number;
+  };
+};
+
+type TraktTvNotImportedEpisode = {
+  show: TraktTvNotImportedTvShow;
+  episode: {
+    episodeNumber: number;
+    seasonNumber: number;
+  };
+};
+
+type TraktTvImportNotImportedItems = {
+  watchlist: {
+    movies?: TraktTvNotImportedMovie[];
+    shows?: TraktTvNotImportedTvShow[];
+    seasons?: TraktTvNotImportedSeason[];
+    episodes?: TraktTvNotImportedEpisode[];
+  };
+  seen: {
+    movies?: TraktTvNotImportedMovie[];
+    episodes?: TraktTvNotImportedEpisode[];
+  };
+  ratings: {
+    movies?: TraktTvNotImportedMovie[];
+    shows?: TraktTvNotImportedTvShow[];
+    seasons?: TraktTvNotImportedSeason[];
+    episodes?: TraktTvNotImportedEpisode[];
+  };
+  lists: {
+    listName: string;
+    listId: string;
+    movies?: TraktTvNotImportedMovie[];
+    shows?: TraktTvNotImportedTvShow[];
+    seasons?: TraktTvNotImportedSeason[];
+    episodes?: TraktTvNotImportedEpisode[];
+  }[];
+};
+
 /**
  * @openapi_tags TraktTvImport
  */
@@ -65,6 +117,7 @@ export class TraktTvImportController {
       >;
       exportSummary?: TraktTvImportSummary;
       importSummary?: TraktTvImportSummary;
+      notImportedItems?: TraktTvImportNotImportedItems;
       progress?: number;
       error?: string;
       clients: Array<Express.Response>;
@@ -79,6 +132,7 @@ export class TraktTvImportController {
     >;
     exportSummary?: TraktTvImportSummary;
     importSummary?: TraktTvImportSummary;
+    notImportedItems?: TraktTvImportNotImportedItems;
     progress?: number;
     error?: string;
   }) {
@@ -90,6 +144,7 @@ export class TraktTvImportController {
       error: args.error,
       exportSummary: args.exportSummary || currentState.exportSummary,
       importSummary: args.importSummary || currentState.importSummary,
+      notImportedItems: args.notImportedItems || currentState.notImportedItems,
       deviceCode: args.deviceCode || currentState.deviceCode,
     };
 
@@ -134,6 +189,7 @@ export class TraktTvImportController {
       progress?: number;
       exportSummary?: TraktTvImportSummary;
       importSummary?: TraktTvImportSummary;
+      notImportedItems?: TraktTvImportNotImportedItems;
       error?: string;
     };
   }>(async (req, res) => {
@@ -150,6 +206,7 @@ export class TraktTvImportController {
       progress: importState.progress,
       exportSummary: importState.exportSummary,
       importSummary: importState.importSummary,
+      notImportedItems: importState.notImportedItems,
       error: importState.error,
     });
   });
@@ -165,6 +222,7 @@ export class TraktTvImportController {
       progress?: number;
       exportSummary?: TraktTvImportSummary;
       importSummary?: TraktTvImportSummary;
+      notImportedItems?: TraktTvImportNotImportedItems;
       error?: string;
     };
   }>(async (req, res) => {
@@ -181,6 +239,7 @@ export class TraktTvImportController {
       progress: importState.progress,
       exportSummary: importState.exportSummary,
       importSummary: importState.importSummary,
+      notImportedItems: importState.notImportedItems,
       error: importState.error,
     };
 
@@ -238,61 +297,27 @@ export class TraktTvImportController {
           this.updateState({
             userId: userId,
             state: 'updating-metadata',
-            exportSummary: {
-              watchlist: {
-                movies:
-                  exportedData.watchlist.filter(traktTvMovieFilter).length,
-                shows: exportedData.watchlist.filter(traktTvShowFilter).length,
-                seasons:
-                  exportedData.watchlist.filter(traktTvSeasonFilter).length,
-                episodes:
-                  exportedData.watchlist.filter(traktTvEpisodeFilter).length,
-              },
-              seen: {
-                movies: exportedData.history.filter(traktTvMovieFilter).length,
-                episodes:
-                  exportedData.history.filter(traktTvEpisodeFilter).length,
-              },
-              ratings: {
-                movies: exportedData.rating.filter(traktTvMovieFilter).length,
-                shows: exportedData.rating.filter(
-                  (item) => item.show && !item.season && !item.episode
-                ).length,
-                seasons: exportedData.rating.filter(traktTvSeasonFilter).length,
-                episodes:
-                  exportedData.rating.filter(traktTvEpisodeFilter).length,
-              },
-              lists: exportedData.lists.map((list) => {
-                const listItems = exportedData.listsItems.get(list.ids.slug);
-
-                return {
-                  listName: list.name,
-                  listId: list.ids.slug,
-                  movies: listItems?.filter(traktTvMovieFilter)?.length || 0,
-                  shows: listItems?.filter(traktTvShowFilter)?.length || 0,
-                  seasons: listItems?.filter(traktTvSeasonFilter)?.length || 0,
-                  episodes:
-                    listItems?.filter(traktTvEpisodeFilter)?.length || 0,
-                };
-              }),
-            },
+            exportSummary: getExportedSummery(exportedData),
             progress: undefined,
           });
 
-          const mediaItemsMap = await updateMetadataForTraktTvImport(
-            exportedData,
-            (progress) => {
+          const { movieMetadata, tvShowMetadata } =
+            await updateMetadataForTraktTvImport(exportedData, (progress) => {
               this.updateState({
                 userId: userId,
                 state: 'updating-metadata',
                 progress: progress,
               });
-            }
-          );
+            });
 
           this.updateState({
             userId: userId,
             state: 'importing',
+            notImportedItems: getNotImportedItems(
+              exportedData,
+              movieMetadata,
+              tvShowMetadata
+            ),
             progress: 0,
           });
 
@@ -308,40 +333,6 @@ export class TraktTvImportController {
                 progress: step / numberOfSteps,
               });
             };
-          };
-
-          const movieMetadata = <
-            T extends {
-              movie?: TraktApi.MovieResponse;
-            }
-          >(
-            item: T
-          ) => {
-            const res = mediaItemsMap[item.movie?.ids?.tmdb];
-
-            if (res) {
-              return {
-                mediaItem: res,
-                item,
-              };
-            }
-          };
-
-          const tvShowMetadata = <
-            T extends {
-              show?: TraktApi.ShowResponse;
-            }
-          >(
-            item: T
-          ) => {
-            const res = mediaItemsMap[item.show?.ids?.tmdb];
-
-            if (res) {
-              return {
-                mediaItem: res,
-                item,
-              };
-            }
           };
 
           const watchlistMovies = exportedData.watchlist
@@ -862,7 +853,7 @@ const updateMetadataForTraktTvImport = async (
     }
   }
 
-  return _.keyBy(
+  const mediaItemsMap = _.keyBy(
     [
       ...movies.existingItems,
       ...foundMovies.filter(Boolean),
@@ -874,6 +865,8 @@ const updateMetadataForTraktTvImport = async (
     ],
     (mediaItem) => mediaItem.tmdbId
   );
+
+  return createMetadataFunctions(mediaItemsMap);
 };
 
 const findMediaItemById = async (
@@ -991,3 +984,254 @@ const traktTvEpisodeFilter = (item: {
   movie?: TraktApi.MovieResponse;
   season?: TraktApi.SeasonResponse;
 }) => item.show && !item.season && item.episode;
+
+const getExportedSummery = (
+  exportedData: Awaited<ReturnType<TraktTvExport['export']>>
+) => {
+  return {
+    watchlist: {
+      movies: exportedData.watchlist.filter(traktTvMovieFilter).length,
+      shows: exportedData.watchlist.filter(traktTvShowFilter).length,
+      seasons: exportedData.watchlist.filter(traktTvSeasonFilter).length,
+      episodes: exportedData.watchlist.filter(traktTvEpisodeFilter).length,
+    },
+    seen: {
+      movies: exportedData.history.filter(traktTvMovieFilter).length,
+      episodes: exportedData.history.filter(traktTvEpisodeFilter).length,
+    },
+    ratings: {
+      movies: exportedData.rating.filter(traktTvMovieFilter).length,
+      shows: exportedData.rating.filter(
+        (item) => item.show && !item.season && !item.episode
+      ).length,
+      seasons: exportedData.rating.filter(traktTvSeasonFilter).length,
+      episodes: exportedData.rating.filter(traktTvEpisodeFilter).length,
+    },
+    lists: exportedData.lists.map((list) => {
+      const listItems = exportedData.listsItems.get(list.ids.slug);
+
+      return {
+        listName: list.name,
+        listId: list.ids.slug,
+        movies: listItems?.filter(traktTvMovieFilter)?.length || 0,
+        shows: listItems?.filter(traktTvShowFilter)?.length || 0,
+        seasons: listItems?.filter(traktTvSeasonFilter)?.length || 0,
+        episodes: listItems?.filter(traktTvEpisodeFilter)?.length || 0,
+      };
+    }),
+  };
+};
+
+const createMetadataFunctions = (
+  mediaItemsMap: _.Dictionary<MediaItemBaseWithSeasons>
+) => {
+  const movieMetadata = <
+    T extends {
+      movie?: TraktApi.MovieResponse;
+    }
+  >(
+    item: T
+  ) => {
+    const res = mediaItemsMap[item.movie?.ids?.tmdb];
+
+    if (res) {
+      return {
+        mediaItem: res,
+        item,
+      };
+    }
+  };
+
+  const tvShowMetadata = <
+    T extends {
+      show?: TraktApi.ShowResponse;
+    }
+  >(
+    item: T
+  ) => {
+    const res = mediaItemsMap[item.show?.ids?.tmdb];
+
+    if (res) {
+      return {
+        mediaItem: res,
+        item,
+      };
+    }
+  };
+
+  return {
+    movieMetadata,
+    tvShowMetadata,
+  };
+};
+
+const getNotImportedItems = (
+  exportedData: Awaited<ReturnType<TraktTvExport['export']>>,
+  movieMetadata: <
+    T extends {
+      movie?: TraktApi.MovieResponse;
+    }
+  >(
+    item: T
+  ) => {
+    mediaItem: MediaItemBaseWithSeasons;
+    item: T;
+  },
+  tvShowMetadata: <
+    T extends {
+      show?: TraktApi.ShowResponse;
+    }
+  >(
+    item: T
+  ) => {
+    mediaItem: MediaItemBaseWithSeasons;
+    item: T;
+  }
+) => {
+  const not = <T, U>(f: (args: T) => U) => {
+    return (args: T) => !f(args);
+  };
+
+  const filterSeasonsWithoutMetadata = (item: {
+    episode?: TraktApi.EpisodeResponse;
+    show?: TraktApi.ShowResponse;
+    movie?: TraktApi.MovieResponse;
+    season?: TraktApi.SeasonResponse;
+  }) => {
+    if (!traktTvSeasonFilter(item)) {
+      return false;
+    }
+
+    const show = tvShowMetadata(item);
+
+    if (!show) {
+      return true;
+    }
+
+    return !withSeason(show);
+  };
+
+  const filterEpisodesWithoutMetadata = (item: {
+    episode?: TraktApi.EpisodeResponse;
+    show?: TraktApi.ShowResponse;
+    movie?: TraktApi.MovieResponse;
+    season?: TraktApi.SeasonResponse;
+  }) => {
+    if (!traktTvEpisodeFilter(item)) {
+      return false;
+    }
+
+    const show = tvShowMetadata(item);
+
+    if (!show) {
+      return true;
+    }
+
+    return !withEpisode(show);
+  };
+
+  const mapSeason = (item: {
+    episode?: TraktApi.EpisodeResponse;
+    show?: TraktApi.ShowResponse;
+    movie?: TraktApi.MovieResponse;
+    season?: TraktApi.SeasonResponse;
+  }) => {
+    return {
+      show: item.show,
+      season: {
+        seasonNumber: item.season?.number,
+        ids: item.season.ids,
+      },
+    };
+  };
+
+  const mapEpisode = (item: {
+    episode?: TraktApi.EpisodeResponse;
+    show?: TraktApi.ShowResponse;
+    movie?: TraktApi.MovieResponse;
+    season?: TraktApi.SeasonResponse;
+  }) => {
+    return {
+      show: item.show,
+      episode: {
+        episodeNumber: item.episode.number,
+        seasonNumber: item.episode.season,
+        ids: item.episode.ids,
+      },
+    };
+  };
+
+  return {
+    watchlist: {
+      movies: exportedData.watchlist
+        .filter(traktTvMovieFilter)
+        .filter(not(movieMetadata))
+        .map((item) => item.movie),
+      shows: exportedData.watchlist
+        .filter(traktTvShowFilter)
+        .filter(not(tvShowMetadata))
+        .map((item) => item.show),
+      seasons: exportedData.watchlist
+        .filter(filterSeasonsWithoutMetadata)
+        .map(mapSeason),
+      episodes: exportedData.watchlist
+        .filter(filterEpisodesWithoutMetadata)
+        .map(mapEpisode),
+    },
+    seen: {
+      movies: exportedData.history
+        .filter(traktTvMovieFilter)
+        .filter(not(movieMetadata))
+        .map((item) => item.movie),
+      episodes: exportedData.history
+        .filter(filterEpisodesWithoutMetadata)
+        .map(mapEpisode),
+    },
+    ratings: {
+      movies: exportedData.rating
+        .filter(traktTvMovieFilter)
+        .filter(not(movieMetadata))
+        .map((item) => item.movie),
+      shows: exportedData.rating
+        .filter((item) => item.show && !item.season && !item.episode)
+        .filter(not(tvShowMetadata))
+        .map((item) => item.show),
+      seasons: exportedData.rating
+        .filter(filterSeasonsWithoutMetadata)
+        .map(mapSeason),
+      episodes: exportedData.rating
+        .filter(filterEpisodesWithoutMetadata)
+        .map(mapEpisode),
+    },
+    lists: exportedData.lists
+      .map((list) => {
+        const listItems = exportedData.listsItems.get(list.ids.slug);
+
+        return {
+          listName: list.name,
+          listId: list.ids.slug,
+          movies: listItems
+            ?.filter(traktTvMovieFilter)
+            ?.filter(not(movieMetadata))
+            .map((item) => item.movie),
+          shows: listItems
+            ?.filter(traktTvShowFilter)
+            ?.filter(not(tvShowMetadata))
+            .map((item) => item.show),
+          seasons: listItems
+            ?.filter(filterSeasonsWithoutMetadata)
+            ?.map(mapSeason),
+          episodes: listItems
+            ?.filter(filterEpisodesWithoutMetadata)
+            ?.map(mapEpisode),
+        };
+      })
+      .filter(
+        (list) =>
+          list.movies?.length > 0 ||
+          list.shows?.length > 0 ||
+          list.seasons?.length > 0 ||
+          list.episodes?.length > 0
+      ),
+  };
+};

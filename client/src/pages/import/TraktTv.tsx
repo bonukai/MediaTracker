@@ -1,10 +1,14 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useSpring, animated } from 'react-spring';
-import { t, Trans } from '@lingui/macro';
+import { Plural, t, Trans } from '@lingui/macro';
 
 import { mediaTrackerApi } from 'src/api/api';
-import { ImportState, ImportTrakttv } from 'mediatracker-api';
+import {
+  ImportState,
+  ImportTrakttv,
+  TraktTvImportNotImportedItems,
+} from 'mediatracker-api';
 import { TvImportSummaryTable } from 'src/components/ImportSummaryTable';
 import { queryClient } from 'src/App';
 
@@ -119,6 +123,10 @@ export const TraktTvImportPage: FunctionComponent = () => {
         {state?.exportSummary && (
           <TraktImportSummaryTableComponent state={state} />
         )}
+
+        {state?.notImportedItems && (
+          <NotImportedItems notImportedItems={state.notImportedItems} />
+        )}
       </div>
     </div>
   );
@@ -164,68 +172,211 @@ const TraktImportSummaryTableComponent: FunctionComponent<{
     ) || {};
 
   return (
+    <TvImportSummaryTable
+      rows={[
+        {
+          title: t`Watchlist`,
+          exported: {
+            movies: state.exportSummary?.watchlist?.movies,
+            shows: state.exportSummary?.watchlist?.shows,
+            seasons: state.exportSummary?.watchlist?.seasons,
+            episodes: state.exportSummary?.watchlist?.episodes,
+          },
+          imported: {
+            movies: state.importSummary?.watchlist?.movies,
+            shows: state.importSummary?.watchlist?.shows,
+            seasons: state.importSummary?.watchlist?.seasons,
+            episodes: state.importSummary?.watchlist?.episodes,
+          },
+        },
+        {
+          title: t`Seen history`,
+          exported: {
+            movies: state.exportSummary?.seen?.movies,
+            episodes: state.exportSummary?.seen?.episodes,
+          },
+          imported: {
+            movies: state.importSummary?.seen?.movies,
+            episodes: state.importSummary?.seen?.episodes,
+          },
+        },
+        {
+          title: t`Ratings`,
+          exported: {
+            movies: state.exportSummary?.ratings?.movies,
+            shows: state.exportSummary?.ratings?.shows,
+            seasons: state.exportSummary?.ratings?.seasons,
+            episodes: state.exportSummary?.ratings?.episodes,
+          },
+          imported: {
+            movies: state.importSummary?.ratings?.movies,
+            shows: state.importSummary?.ratings?.shows,
+            seasons: state.importSummary?.ratings?.seasons,
+            episodes: state.importSummary?.ratings?.episodes,
+          },
+        },
+        ...state.exportSummary?.lists?.map((list) => ({
+          key: list.listId,
+          title: t`List: ${list.listName}`,
+          exported: {
+            movies: list?.movies,
+            shows: list?.shows,
+            seasons: list?.seasons,
+            episodes: list?.episodes,
+          },
+          imported: {
+            movies: importedListsByTraktId[list.listId]?.movies,
+            shows: importedListsByTraktId[list.listId]?.shows,
+            seasons: importedListsByTraktId[list.listId]?.seasons,
+            episodes: importedListsByTraktId[list.listId]?.episodes,
+          },
+        })),
+      ]}
+    />
+  );
+};
+
+const NotImportedItems: FunctionComponent<{
+  notImportedItems: TraktTvImportNotImportedItems;
+}> = (props) => {
+  const { notImportedItems } = props;
+
+  console.log(notImportedItems.watchlist.shows.filter(item => item.year == 2016))
+  return (
     <>
-      <TvImportSummaryTable
-        rows={[
-          {
-            title: t`Watchlist`,
-            exported: {
-              movies: state.exportSummary?.watchlist?.movies,
-              shows: state.exportSummary?.watchlist?.shows,
-              seasons: state.exportSummary?.watchlist?.seasons,
-              episodes: state.exportSummary?.watchlist?.episodes,
-            },
-            imported: {
-              movies: state.importSummary?.watchlist?.movies,
-              shows: state.importSummary?.watchlist?.shows,
-              seasons: state.importSummary?.watchlist?.seasons,
-              episodes: state.importSummary?.watchlist?.episodes,
-            },
-          },
-          {
-            title: t`Seen history`,
-            exported: {
-              movies: state.exportSummary?.seen?.movies,
-              episodes: state.exportSummary?.seen?.episodes,
-            },
-            imported: {
-              movies: state.importSummary?.seen?.movies,
-              episodes: state.importSummary?.seen?.episodes,
-            },
-          },
-          {
-            title: t`Ratings`,
-            exported: {
-              movies: state.exportSummary?.ratings?.movies,
-              shows: state.exportSummary?.ratings?.shows,
-              seasons: state.exportSummary?.ratings?.seasons,
-              episodes: state.exportSummary?.ratings?.episodes,
-            },
-            imported: {
-              movies: state.importSummary?.ratings?.movies,
-              shows: state.importSummary?.ratings?.shows,
-              seasons: state.importSummary?.ratings?.seasons,
-              episodes: state.importSummary?.ratings?.episodes,
-            },
-          },
-          ...state.exportSummary?.lists?.map((list) => ({
-            key: list.listId,
-            title: t`List: ${list.listName}`,
-            exported: {
-              movies: list?.movies,
-              shows: list?.shows,
-              seasons: list?.seasons,
-              episodes: list?.episodes,
-            },
-            imported: {
-              movies: importedListsByTraktId[list.listId]?.movies,
-              shows: importedListsByTraktId[list.listId]?.shows,
-              seasons: importedListsByTraktId[list.listId]?.seasons,
-              episodes: importedListsByTraktId[list.listId]?.episodes,
-            },
-          })),
-        ]}
-      />
+      <div className="mt-8 text-2xl font-bold">
+        <Trans>Not imported items</Trans>
+      </div>
+      <div className="self-start">
+        <Foo
+          title={t`Watchlist - movies`}
+          items={notImportedItems.watchlist.movies?.map(formatTitle)}
+        />
+
+        <Foo
+          title={t`Watchlist - shows`}
+          items={notImportedItems.watchlist.shows?.map(formatTitle)}
+        />
+
+        <Foo
+          title={t`Watchlist - season`}
+          items={notImportedItems.watchlist.seasons?.map(formatSeasonTitle)}
+        />
+
+        <Foo
+          title={t`Watchlist - episodes`}
+          items={notImportedItems.watchlist.episodes?.map(formatEpisodeTitle)}
+        />
+
+        <Foo
+          title={t`Seen history - movies`}
+          items={notImportedItems.seen.movies?.map(formatTitle)}
+        />
+
+        <Foo
+          title={t`Seen history - episodes`}
+          items={notImportedItems.seen.episodes?.map(formatEpisodeTitle)}
+        />
+
+        <Foo
+          title={t`Ratings - movies`}
+          items={notImportedItems.ratings.movies?.map(formatTitle)}
+        />
+
+        <Foo
+          title={t`Ratings - shows`}
+          items={notImportedItems.ratings.shows?.map(formatTitle)}
+        />
+
+        <Foo
+          title={t`Ratings - seasons`}
+          items={notImportedItems.ratings.seasons?.map(formatSeasonTitle)}
+        />
+
+        <Foo
+          title={t`Ratings - episodes`}
+          items={notImportedItems.ratings.episodes?.map(formatEpisodeTitle)}
+        />
+
+        {notImportedItems.lists?.map((item) => (
+          <div key={item.listId}>
+            <Foo
+              key={item.listId}
+              title={t`List ${item.listName} - movies`}
+              items={item.movies?.map(formatTitle)}
+            />
+
+            <Foo
+              key={item.listId}
+              title={t`List ${item.listName} - shows`}
+              items={item.shows?.map(formatTitle)}
+            />
+
+            <Foo
+              key={item.listId}
+              title={t`List ${item.listName} - seasons`}
+              items={item.seasons?.map(formatSeasonTitle)}
+            />
+
+            <Foo
+              key={item.listId}
+              title={t`List ${item.listName} - episodes`}
+              items={item.episodes?.map(formatEpisodeTitle)}
+            />
+          </div>
+        ))}
+      </div>
     </>
   );
+};
+
+const Foo: FunctionComponent<{ items: string[]; title: string }> = (props) => {
+  const { items, title } = props;
+
+  return (
+    <>
+      {items?.length > 0 && (
+        <>
+          <div className="mt-4 text-xl font-bold">
+            {title} (
+            <Plural value={items.length} one="1 item" other="# items" />)
+          </div>
+
+          {items?.map((item) => (
+            <div key={item}>{item}</div>
+          ))}
+        </>
+      )}
+    </>
+  );
+};
+
+const formatTitle = (args: { title: string; year?: number }) => {
+  const { title, year } = args;
+
+  if (!year) {
+    return title;
+  }
+
+  return `${title} (${year})`;
+};
+
+const formatSeasonTitle = (args: {
+  show: { title: string; year?: number };
+  season: { seasonNumber: number };
+}) => {
+  return `${formatTitle(args.show)} S${args.season.seasonNumber
+    .toString()
+    .padStart(2, '0')}`;
+};
+
+const formatEpisodeTitle = (args: {
+  show: { title: string; year?: number };
+  episode: { seasonNumber: number; episodeNumber: number };
+}) => {
+  return `${formatTitle(args.show)} S${args.episode.seasonNumber
+    .toString()
+    .padStart(2, '0')}E${args.episode.episodeNumber
+    .toString()
+    .padStart(2, '0')}`;
 };
