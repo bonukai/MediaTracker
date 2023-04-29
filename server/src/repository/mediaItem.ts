@@ -494,39 +494,51 @@ class MediaItemRepository extends repository<MediaItemBase>({
     tvdbId?: number[];
     mediaType: MediaType;
   }) {
-    return (
-      await Database.knex<MediaItemBase>(this.tableName)
-        .where({ mediaType: params.mediaType })
-        .andWhere((qb) => {
-          if (params.tmdbId) {
-            qb.orWhereIn('tmdbId', params.tmdbId);
-          }
-          if (params.imdbId) {
-            qb.orWhereIn('imdbId', params.imdbId);
-          }
-          if (params.tvmazeId) {
-            qb.orWhereIn('tvmazeId', params.tvmazeId);
-          }
-          if (params.igdbId) {
-            qb.orWhereIn('igdbId', params.igdbId);
-          }
-          if (params.openlibraryId) {
-            qb.orWhereIn('openlibraryId', params.openlibraryId);
-          }
-          if (params.audibleId) {
-            qb.orWhereIn('audibleId', params.audibleId);
-          }
-          if (params.goodreadsId) {
-            qb.orWhereIn('goodreadsId', params.goodreadsId);
-          }
-          if (params.traktId) {
-            qb.orWhereIn('traktId', params.traktId);
-          }
+    const totalNumberOfIds = externalIdColumnNames.reduce(
+      (sum, id) => sum + params[id]?.length,
+      0
+    );
 
-          if (params.tvdbId) {
-            qb.orWhereIn('tvdbId', params.tvdbId);
-          }
-        })
+    if (totalNumberOfIds < 100) {
+      return (
+        await Database.knex<MediaItemBase>(this.tableName)
+          .where({ mediaType: params.mediaType })
+          .andWhere((qb) => {
+            externalIdColumnNames.forEach((id) => {
+              if (params[id]?.length > 0) {
+                qb.orWhereIn(id, params[id]);
+              }
+            });
+          })
+      ).map((item) => this.deserialize(item));
+    }
+
+    const splittedExternalIds = externalIdColumnNames
+      .flatMap((id) =>
+        params[id]
+          ? _.chunk(params[id] as (string | number)[], 100).map((values) => ({
+              columnName: id,
+              values: values,
+            }))
+          : undefined
+      )
+      .filter(Boolean);
+
+    return (
+      await Database.knex.transaction(async (trx) => {
+        return _.flatten(
+          await Promise.all(
+            splittedExternalIds.map(
+              async (item) =>
+                await trx<MediaItemBase>(this.tableName)
+                  .where({
+                    mediaType: params.mediaType,
+                  })
+                  .whereIn(item.columnName, item.values)
+            )
+          )
+        );
+      })
     ).map((item) => this.deserialize(item));
   }
 
