@@ -10,14 +10,6 @@ export abstract class MetadataProvider<Name extends string = string> {
   public abstract readonly name: Name;
   public abstract readonly mediaType: MediaType;
 
-  async findByImdbId(imdbId: string): Promise<MediaItemForProvider> {
-    throw new Error('Not implemented');
-  }
-
-  async findByTmdbId(tmdbId: number): Promise<MediaItemForProvider> {
-    throw new Error('Not implemented');
-  }
-
   /**
    * Search for media
    * @param query

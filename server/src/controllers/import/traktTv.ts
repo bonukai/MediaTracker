@@ -5,8 +5,7 @@ import { MediaItemBaseWithSeasons, MediaType } from 'src/entity/mediaItem';
 import { Seen } from 'src/entity/seen';
 import { UserRating } from 'src/entity/userRating';
 import { TraktApi, TraktTvExport } from 'src/export/trakttv';
-import { MetadataProvider } from 'src/metadata/metadataProvider';
-import { metadataProviders } from 'src/metadata/metadataProviders';
+import { findMediaItemByExternalIdInExternalSources } from 'src/metadata/findByExternalId';
 import { listRepository } from 'src/repository/list';
 import { listItemRepository } from 'src/repository/listItemRepository';
 import { mediaItemRepository } from 'src/repository/mediaItem';
@@ -822,9 +821,6 @@ const updateMetadataForTraktTvImport = async (
 
   let currentItem = 0;
 
-  const movieMetadataProvider = metadataProviders.get('movie');
-  const tvShowMetadataProvider = metadataProviders.get('tv');
-
   const updateProgress = () => {
     currentItem++;
     onProgress(currentItem / total);
@@ -834,7 +830,17 @@ const updateMetadataForTraktTvImport = async (
 
   for (const item of movies.missingItems) {
     try {
-      foundMovies.push(await findMediaItemById(item, movieMetadataProvider));
+      foundMovies.push(
+        await findMediaItemByExternalIdInExternalSources({
+          id: {
+            traktId: item.trakt,
+            imdbId: item.imdb,
+            tmdbId: item.tmdb,
+            tvdbId: item.tvdb,
+          },
+          mediaType: 'movie',
+        })
+      );
       updateProgress();
     } catch (error) {
       //
@@ -845,7 +851,17 @@ const updateMetadataForTraktTvImport = async (
 
   for (const item of tvShows.missingItems) {
     try {
-      foundTvShows.push(await findMediaItemById(item, tvShowMetadataProvider));
+      foundTvShows.push(
+        await findMediaItemByExternalIdInExternalSources({
+          id: {
+            traktId: item.trakt,
+            imdbId: item.imdb,
+            tmdbId: item.tmdb,
+            tvdbId: item.tvdb,
+          },
+          mediaType: 'tv',
+        })
+      );
       updateProgress();
     } catch (error) {
       //
@@ -877,42 +893,6 @@ const updateMetadataForTraktTvImport = async (
   );
 
   return createMetadataFunctions(mediaItemsMap);
-};
-
-const findMediaItemById = async (
-  id: {
-    trakt: number;
-    slug: string;
-    tvdb: number;
-    imdb: string;
-    tmdb: number;
-    tvrage: number;
-  },
-  metadataProvider: MetadataProvider
-) => {
-  if (id.tmdb) {
-    try {
-      const item = await metadataProvider.findByTmdbId(id.tmdb);
-
-      if (item) {
-        return await mediaItemRepository.create(item);
-      }
-    } catch (error) {
-      //
-    }
-  }
-
-  if (id.imdb) {
-    try {
-      const item = await metadataProvider.findByImdbId(id.imdb);
-
-      if (item) {
-        return await mediaItemRepository.create(item);
-      }
-    } catch (error) {
-      //
-    }
-  }
 };
 
 const withEpisode = <

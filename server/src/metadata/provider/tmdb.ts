@@ -203,6 +203,26 @@ export class TMDbTv extends TMDb {
     };
   }
 
+  async findByTvdbId(tvdbId: number): Promise<MediaItemForProvider> {
+    const res = await axios.get(`https://api.themoviedb.org/3/find/${tvdbId}`, {
+      params: {
+        api_key: TMDB_API_KEY,
+        external_source: 'tvdb_id',
+        language: GlobalConfiguration.configuration.tmdbLang,
+      },
+    });
+
+    if (res.data.tv_results?.length === 0) {
+      return;
+    }
+
+    return {
+      ...this.mapTvShow(res.data.tv_results[0]),
+      tvdbId: tvdbId,
+      needsDetails: true,
+    };
+  }
+
   async findByTmdbId(tmdbId: number): Promise<MediaItemForProvider> {
     return this.details({ tmdbId: tmdbId });
   }

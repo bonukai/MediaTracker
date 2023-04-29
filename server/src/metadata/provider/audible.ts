@@ -65,6 +65,29 @@ export class Audible extends MetadataProvider {
     throw new Error(`Error: ${res.status}`);
   }
 
+  async findByAudibleId(audibleId: string): Promise<MediaItemForProvider> {
+    const countryCode = GlobalConfiguration.configuration.audibleLang;
+
+    const res = await axios.get<AudibleResponse.DetailsResult>(
+      `https://api.audible.${this.domain(
+        countryCode
+      )}/1.0/catalog/products/${audibleId}`,
+      {
+        params: this.queryParams,
+      }
+    );
+
+    if (res.status !== 200) {
+      throw new Error(`Error: ${res.status}`);
+    }
+
+    if (res.data?.product?.title === undefined) {
+      return;
+    }
+
+    return this.mapResponse(res.data.product, countryCode);
+  }
+
   async details(
     arg: ExternalIds & { countryCode?: AudibleCountryCode }
   ): Promise<MediaItemForProvider> {
