@@ -247,77 +247,77 @@ const NotImportedItems: FunctionComponent<{
         <Trans>Not imported items</Trans>
       </div>
       <div className="self-start">
-        <Foo
+        <NotImportedItemsSubList
           title={t`Watchlist - movies`}
-          items={notImportedItems.watchlist.movies?.map(formatTitle)}
+          items={notImportedItems.watchlist.movies?.map(formatMovieOrShow)}
         />
 
-        <Foo
+        <NotImportedItemsSubList
           title={t`Watchlist - shows`}
-          items={notImportedItems.watchlist.shows?.map(formatTitle)}
+          items={notImportedItems.watchlist.shows?.map(formatMovieOrShow)}
         />
 
-        <Foo
+        <NotImportedItemsSubList
           title={t`Watchlist - season`}
           items={notImportedItems.watchlist.seasons?.map(formatSeasonTitle)}
         />
 
-        <Foo
+        <NotImportedItemsSubList
           title={t`Watchlist - episodes`}
           items={notImportedItems.watchlist.episodes?.map(formatEpisodeTitle)}
         />
 
-        <Foo
+        <NotImportedItemsSubList
           title={t`Seen history - movies`}
-          items={notImportedItems.seen.movies?.map(formatTitle)}
+          items={notImportedItems.seen.movies?.map(formatMovieOrShow)}
         />
 
-        <Foo
+        <NotImportedItemsSubList
           title={t`Seen history - episodes`}
           items={notImportedItems.seen.episodes?.map(formatEpisodeTitle)}
         />
 
-        <Foo
+        <NotImportedItemsSubList
           title={t`Ratings - movies`}
-          items={notImportedItems.ratings.movies?.map(formatTitle)}
+          items={notImportedItems.ratings.movies?.map(formatMovieOrShow)}
         />
 
-        <Foo
+        <NotImportedItemsSubList
           title={t`Ratings - shows`}
-          items={notImportedItems.ratings.shows?.map(formatTitle)}
+          items={notImportedItems.ratings.shows?.map(formatMovieOrShow)}
         />
 
-        <Foo
+        <NotImportedItemsSubList
           title={t`Ratings - seasons`}
           items={notImportedItems.ratings.seasons?.map(formatSeasonTitle)}
         />
 
-        <Foo
+        <NotImportedItemsSubList
           title={t`Ratings - episodes`}
           items={notImportedItems.ratings.episodes?.map(formatEpisodeTitle)}
         />
 
         {notImportedItems.lists?.map((item) => (
           <div key={item.listId}>
-            <Foo
+            <NotImportedItemsSubList
               key={item.listId}
               title={t`List ${item.listName} - movies`}
-              items={item.movies?.map(formatTitle)}
+              items={item.movies?.map(formatMovieOrShow)}
             />
 
-            <Foo
+            <NotImportedItemsSubList
               key={item.listId}
               title={t`List ${item.listName} - shows`}
-              items={item.shows?.map(formatTitle)}
+              items={item.shows?.map(formatMovieOrShow)}
             />
 
-            <Foo
+            <NotImportedItemsSubList
               key={item.listId}
               title={t`List ${item.listName} - seasons`}
               items={item.seasons?.map(formatSeasonTitle)}
             />
 
-            <Foo
+            <NotImportedItemsSubList
               key={item.listId}
               title={t`List ${item.listName} - episodes`}
               items={item.episodes?.map(formatEpisodeTitle)}
@@ -329,7 +329,10 @@ const NotImportedItems: FunctionComponent<{
   );
 };
 
-const Foo: FunctionComponent<{ items: string[]; title: string }> = (props) => {
+const NotImportedItemsSubList: FunctionComponent<{
+  items: { title: string; url: string }[];
+  title: string;
+}> = (props) => {
   const { items, title } = props;
 
   return (
@@ -342,12 +345,25 @@ const Foo: FunctionComponent<{ items: string[]; title: string }> = (props) => {
           </div>
 
           {items?.map((item) => (
-            <div key={item}>{item}</div>
+            <a key={item.title} href={item.url} className="block">
+              {item.title}
+            </a>
           ))}
         </>
       )}
     </>
   );
+};
+
+const formatMovieOrShow = (args: {
+  title: string;
+  year?: number;
+  traktTvLink: string;
+}) => {
+  return {
+    title: formatTitle(args),
+    url: args.traktTvLink,
+  };
 };
 
 const formatTitle = (args: { title: string; year?: number }) => {
@@ -363,19 +379,27 @@ const formatTitle = (args: { title: string; year?: number }) => {
 const formatSeasonTitle = (args: {
   show: { title: string; year?: number };
   season: { seasonNumber: number };
+  traktTvLink: string;
 }) => {
-  return `${formatTitle(args.show)} S${args.season.seasonNumber
-    .toString()
-    .padStart(2, '0')}`;
+  return {
+    title: `${formatTitle(args.show)} S${args.season.seasonNumber
+      .toString()
+      .padStart(2, '0')}`,
+    url: args.traktTvLink,
+  };
 };
 
 const formatEpisodeTitle = (args: {
   show: { title: string; year?: number };
   episode: { seasonNumber: number; episodeNumber: number };
+  traktTvLink: string;
 }) => {
-  return `${formatTitle(args.show)} S${args.episode.seasonNumber
-    .toString()
-    .padStart(2, '0')}E${args.episode.episodeNumber
-    .toString()
-    .padStart(2, '0')}`;
+  return {
+    title: `${formatTitle(args.show)} S${args.episode.seasonNumber
+      .toString()
+      .padStart(2, '0')}E${args.episode.episodeNumber
+      .toString()
+      .padStart(2, '0')}`,
+    url: args.traktTvLink,
+  };
 };

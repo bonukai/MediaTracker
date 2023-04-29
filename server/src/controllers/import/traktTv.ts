@@ -55,26 +55,36 @@ type TraktTvImportSummary = {
 type TraktTvNotImportedMovie = {
   title: string;
   year: number;
+  traktTvLink: string;
 };
 
 type TraktTvNotImportedTvShow = {
   title: string;
   year: number;
+  traktTvLink: string;
 };
 
 type TraktTvNotImportedSeason = {
-  show: TraktTvNotImportedTvShow;
+  show: {
+    title: string;
+    year: number;
+  };
   season: {
     seasonNumber: number;
   };
+  traktTvLink: string;
 };
 
 type TraktTvNotImportedEpisode = {
-  show: TraktTvNotImportedTvShow;
+  show: {
+    title: string;
+    year: number;
+  };
   episode: {
     episodeNumber: number;
     seasonNumber: number;
   };
+  traktTvLink: string;
 };
 
 type TraktTvImportNotImportedItems = {
@@ -1022,6 +1032,13 @@ const getExportedSummery = (
   };
 };
 
+type TraktTvItem = {
+  episode?: TraktApi.EpisodeResponse;
+  show?: TraktApi.ShowResponse;
+  movie?: TraktApi.MovieResponse;
+  season?: TraktApi.SeasonResponse;
+};
+
 const createMetadataFunctions = (
   mediaItemsMap: _.Dictionary<MediaItemBaseWithSeasons>
 ) => {
@@ -1087,17 +1104,12 @@ const getNotImportedItems = (
     mediaItem: MediaItemBaseWithSeasons;
     item: T;
   }
-) => {
+): TraktTvImportNotImportedItems => {
   const not = <T, U>(f: (args: T) => U) => {
     return (args: T) => !f(args);
   };
 
-  const filterSeasonsWithoutMetadata = (item: {
-    episode?: TraktApi.EpisodeResponse;
-    show?: TraktApi.ShowResponse;
-    movie?: TraktApi.MovieResponse;
-    season?: TraktApi.SeasonResponse;
-  }) => {
+  const filterSeasonsWithoutMetadata = (item: TraktTvItem) => {
     if (!traktTvSeasonFilter(item)) {
       return false;
     }
@@ -1111,12 +1123,7 @@ const getNotImportedItems = (
     return !withSeason(show);
   };
 
-  const filterEpisodesWithoutMetadata = (item: {
-    episode?: TraktApi.EpisodeResponse;
-    show?: TraktApi.ShowResponse;
-    movie?: TraktApi.MovieResponse;
-    season?: TraktApi.SeasonResponse;
-  }) => {
+  const filterEpisodesWithoutMetadata = (item: TraktTvItem) => {
     if (!traktTvEpisodeFilter(item)) {
       return false;
     }
@@ -1130,34 +1137,42 @@ const getNotImportedItems = (
     return !withEpisode(show);
   };
 
-  const mapSeason = (item: {
-    episode?: TraktApi.EpisodeResponse;
-    show?: TraktApi.ShowResponse;
-    movie?: TraktApi.MovieResponse;
-    season?: TraktApi.SeasonResponse;
-  }) => {
+  const mapMovie = (item: TraktTvItem) => ({
+    title: item.movie.title,
+    year: item.movie.year,
+    traktTvLink: `https://trakt.tv/movies/${item.movie.ids.slug}`,
+  });
+
+  const mapTvShow = (item: TraktTvItem) => ({
+    title: item.show.title,
+    year: item.show.year,
+    traktTvLink: `https://trakt.tv/shows/${item.show.ids.slug}`,
+  });
+
+  const mapSeason = (item: TraktTvItem) => {
     return {
-      show: item.show,
+      show: {
+        title: item.show.title,
+        year: item.show.year,
+      },
       season: {
         seasonNumber: item.season?.number,
-        ids: item.season.ids,
       },
+      traktTvLink: `https://trakt.tv/shows/${item.show.ids.slug}/seasons/${item.season.number}`,
     };
   };
 
-  const mapEpisode = (item: {
-    episode?: TraktApi.EpisodeResponse;
-    show?: TraktApi.ShowResponse;
-    movie?: TraktApi.MovieResponse;
-    season?: TraktApi.SeasonResponse;
-  }) => {
+  const mapEpisode = (item: TraktTvItem) => {
     return {
-      show: item.show,
+      show: {
+        title: item.show.title,
+        year: item.show.year,
+      },
       episode: {
         episodeNumber: item.episode.number,
         seasonNumber: item.episode.season,
-        ids: item.episode.ids,
       },
+      traktTvLink: `https://trakt.tv/shows/${item.show.ids.slug}/seasons/${item.episode.season}/episodes/${item.episode.number}`,
     };
   };
 
@@ -1166,11 +1181,11 @@ const getNotImportedItems = (
       movies: exportedData.watchlist
         .filter(traktTvMovieFilter)
         .filter(not(movieMetadata))
-        .map((item) => item.movie),
+        .map(mapMovie),
       shows: exportedData.watchlist
         .filter(traktTvShowFilter)
         .filter(not(tvShowMetadata))
-        .map((item) => item.show),
+        .map(mapTvShow),
       seasons: exportedData.watchlist
         .filter(filterSeasonsWithoutMetadata)
         .map(mapSeason),
@@ -1182,7 +1197,7 @@ const getNotImportedItems = (
       movies: exportedData.history
         .filter(traktTvMovieFilter)
         .filter(not(movieMetadata))
-        .map((item) => item.movie),
+        .map(mapMovie),
       episodes: exportedData.history
         .filter(filterEpisodesWithoutMetadata)
         .map(mapEpisode),
@@ -1191,11 +1206,11 @@ const getNotImportedItems = (
       movies: exportedData.rating
         .filter(traktTvMovieFilter)
         .filter(not(movieMetadata))
-        .map((item) => item.movie),
+        .map(mapMovie),
       shows: exportedData.rating
         .filter((item) => item.show && !item.season && !item.episode)
         .filter(not(tvShowMetadata))
-        .map((item) => item.show),
+        .map(mapTvShow),
       seasons: exportedData.rating
         .filter(filterSeasonsWithoutMetadata)
         .map(mapSeason),
@@ -1213,11 +1228,11 @@ const getNotImportedItems = (
           movies: listItems
             ?.filter(traktTvMovieFilter)
             ?.filter(not(movieMetadata))
-            .map((item) => item.movie),
+            .map(mapMovie),
           shows: listItems
             ?.filter(traktTvShowFilter)
             ?.filter(not(tvShowMetadata))
-            .map((item) => item.show),
+            .map(mapTvShow),
           seasons: listItems
             ?.filter(filterSeasonsWithoutMetadata)
             ?.map(mapSeason),
