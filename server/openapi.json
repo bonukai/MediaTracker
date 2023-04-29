@@ -2142,6 +2142,14 @@
                       ],
                       "nullable": true
                     },
+                    "notImportedItems": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/TraktTvImportNotImportedItems"
+                        }
+                      ],
+                      "nullable": true
+                    },
                     "error": {
                       "type": "string",
                       "nullable": true
@@ -2190,6 +2198,14 @@
                       "allOf": [
                         {
                           "$ref": "#/components/schemas/TraktTvImportSummary"
+                        }
+                      ],
+                      "nullable": true
+                    },
+                    "notImportedItems": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/TraktTvImportNotImportedItems"
                         }
                       ],
                       "nullable": true
@@ -4583,6 +4599,228 @@
           "ratings",
           "seen",
           "watchlist"
+        ]
+      },
+      "TraktTvImportNotImportedItems": {
+        "type": "object",
+        "properties": {
+          "watchlist": {
+            "type": "object",
+            "properties": {
+              "movies": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedMovie"
+                },
+                "nullable": true
+              },
+              "shows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedTvShow"
+                },
+                "nullable": true
+              },
+              "seasons": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedSeason"
+                },
+                "nullable": true
+              },
+              "episodes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedEpisode"
+                },
+                "nullable": true
+              }
+            }
+          },
+          "seen": {
+            "type": "object",
+            "properties": {
+              "movies": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedMovie"
+                },
+                "nullable": true
+              },
+              "episodes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedEpisode"
+                },
+                "nullable": true
+              }
+            }
+          },
+          "ratings": {
+            "type": "object",
+            "properties": {
+              "movies": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedMovie"
+                },
+                "nullable": true
+              },
+              "shows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedTvShow"
+                },
+                "nullable": true
+              },
+              "seasons": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedSeason"
+                },
+                "nullable": true
+              },
+              "episodes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedEpisode"
+                },
+                "nullable": true
+              }
+            }
+          },
+          "lists": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "listName": {
+                  "type": "string"
+                },
+                "listId": {
+                  "type": "string"
+                },
+                "movies": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TraktTvNotImportedMovie"
+                  },
+                  "nullable": true
+                },
+                "shows": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TraktTvNotImportedTvShow"
+                  },
+                  "nullable": true
+                },
+                "seasons": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TraktTvNotImportedSeason"
+                  },
+                  "nullable": true
+                },
+                "episodes": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TraktTvNotImportedEpisode"
+                  },
+                  "nullable": true
+                }
+              },
+              "required": [
+                "listId",
+                "listName"
+              ]
+            }
+          }
+        },
+        "required": [
+          "lists",
+          "ratings",
+          "seen",
+          "watchlist"
+        ]
+      },
+      "TraktTvNotImportedMovie": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "year": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "title",
+          "year"
+        ]
+      },
+      "TraktTvNotImportedTvShow": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "year": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "title",
+          "year"
+        ]
+      },
+      "TraktTvNotImportedSeason": {
+        "type": "object",
+        "properties": {
+          "show": {
+            "$ref": "#/components/schemas/TraktTvNotImportedTvShow"
+          },
+          "season": {
+            "type": "object",
+            "properties": {
+              "seasonNumber": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "seasonNumber"
+            ]
+          }
+        },
+        "required": [
+          "season",
+          "show"
+        ]
+      },
+      "TraktTvNotImportedEpisode": {
+        "type": "object",
+        "properties": {
+          "show": {
+            "$ref": "#/components/schemas/TraktTvNotImportedTvShow"
+          },
+          "episode": {
+            "type": "object",
+            "properties": {
+              "episodeNumber": {
+                "type": "number"
+              },
+              "seasonNumber": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "episodeNumber",
+              "seasonNumber"
+            ]
+          }
+        },
+        "required": [
+          "episode",
+          "show"
         ]
       }
     }
