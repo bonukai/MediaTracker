@@ -74,9 +74,9 @@ export class Audible extends MetadataProvider {
       arg.countryCode || GlobalConfiguration.configuration.audibleLang;
 
     const res = await axios.get<AudibleResponse.DetailsResult>(
-      `https://api.audible.${this.domain(countryCode)}/1.0/catalog/products/${
-        audibleId + 1
-      }`,
+      `https://api.audible.${this.domain(
+        countryCode
+      )}/1.0/catalog/products/${audibleId}`,
       {
         params: this.queryParams,
       }
