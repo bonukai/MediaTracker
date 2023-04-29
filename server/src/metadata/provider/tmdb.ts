@@ -112,7 +112,7 @@ export class TMDbMovie extends TMDb {
 
   private mapMovie(item: Partial<TMDbApi.MovieDetailsResponse>) {
     const movie = this.mapItem(item);
-    movie.imdbId = item.imdb_id;
+    movie.imdbId = item.imdb_id || undefined;
     movie.originalTitle = item.original_title;
     movie.releaseDate = item.release_date || null;
     movie.title = item.title;
@@ -209,8 +209,8 @@ export class TMDbTv extends TMDb {
 
   private mapTvShow(item: Partial<TMDbApi.TvDetailsResponse>) {
     const tvShow = this.mapItem(item);
-    tvShow.imdbId = item.external_ids?.imdb_id;
-    tvShow.tvdbId = item.external_ids?.tvdb_id;
+    tvShow.imdbId = item.external_ids?.imdb_id || undefined;
+    tvShow.tvdbId = item.external_ids?.tvdb_id || undefined;
     tvShow.title = item.name;
     tvShow.originalTitle = item.original_name;
     tvShow.releaseDate = item.first_air_date || null;

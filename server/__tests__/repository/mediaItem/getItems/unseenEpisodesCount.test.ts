@@ -7,9 +7,6 @@ import { userRepository } from 'src/repository/user';
 import { Seen } from 'src/entity/seen';
 import { seenRepository } from 'src/repository/seen';
 import { clearDatabase, runMigrations } from '../../../__utils__/utils';
-import { Database } from 'src/dbconfig';
-import { Data } from '__tests__/__utils__/data';
-import { listRepository } from 'src/repository/list';
 import { listItemRepository } from 'src/repository/listItemRepository';
 
 const user: User = {
@@ -76,6 +73,13 @@ const seenEpisodes: Seen[] = [
     date: new Date().getTime(),
     mediaItemId: 5,
     episodeId: 8,
+    userId: 2,
+    type: 'seen',
+  },
+  {
+    date: new Date().getTime(),
+    mediaItemId: 1,
+    episodeId: 1,
     userId: 2,
     type: 'seen',
   },
@@ -237,7 +241,7 @@ const unseenEpisodesCountUser1: Record<number, number> = {
 };
 
 const unseenEpisodesCountUser2: Record<number, number> = {
-  1: 3,
+  1: 2,
   2: 0,
   3: 0,
   4: 1,

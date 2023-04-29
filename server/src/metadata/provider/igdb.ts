@@ -73,7 +73,7 @@ export class IGDB extends MetadataProvider {
         websites.url; 
       where id = ${gameId} & version_parent = null;`
     )) as Game[];
-    if (res.length > 0) {
+    if (res?.length > 0) {
       return res[0];
     }
   }

@@ -69,15 +69,41 @@ export class TraktTvExport {
     return this.deviceToken !== undefined;
   }
 
-  private async get<T>(url: string) {
-    return await axios.get<T>(url, {
-      headers: {
-        'Content-type': 'application/json',
-        'trakt-api-version': 2,
-        'trakt-api-key': CLIENT_ID,
-        Authorization: `Bearer ${this.deviceToken.access_token}`,
-      },
-    });
+  private headers() {
+    return {
+      'Content-type': 'application/json',
+      'trakt-api-version': 2,
+      'trakt-api-key': CLIENT_ID,
+      Authorization: `Bearer ${this.deviceToken.access_token}`,
+    };
+  }
+
+  private async getHistory() {
+    const result: TraktApi.HistoryResponse = [];
+
+    const limit = 1000;
+
+    let page = 1;
+    let pageCount: number = undefined;
+
+    do {
+      const historyResponse = await axios.get<TraktApi.HistoryResponse>(
+        'https://api.trakt.tv/sync/history',
+        {
+          headers: this.headers(),
+          data: {
+            page: page++,
+            limit: limit,
+          },
+        }
+      );
+
+      pageCount = Number(historyResponse.headers['x-pagination-page-count']);
+
+      result.push(...historyResponse.data);
+    } while (page <= pageCount);
+
+    return result;
   }
 
   async export() {
@@ -85,27 +111,29 @@ export class TraktTvExport {
       throw new Error('No device token');
     }
 
-    const watchlistResponse = await this.get<TraktApi.WatchlistResponse>(
-      'https://api.trakt.tv/sync/watchlist'
+    const watchlistResponse = await axios.get<TraktApi.WatchlistResponse>(
+      'https://api.trakt.tv/sync/watchlist',
+      { headers: this.headers() }
     );
 
-    const historyResponse = await this.get<TraktApi.HistoryResponse>(
-      'https://api.trakt.tv/sync/history'
+    const historyResponse = await this.getHistory();
+
+    const ratingResponse = await axios.get<TraktApi.RatingResponse>(
+      'https://api.trakt.tv/sync/ratings',
+      { headers: this.headers() }
     );
 
-    const ratingResponse = await this.get<TraktApi.RatingResponse>(
-      'https://api.trakt.tv/sync/ratings'
+    const listsResponse = await axios.get<TraktApi.ListsResponse>(
+      'https://api.trakt.tv/users/me/lists',
+      { headers: this.headers() }
     );
 
-    const listsResponse = await this.get<TraktApi.ListsResponse>(
-      'https://api.trakt.tv/users/me/lists'
-    );
-
-    const listsItems = new Map<string, TraktApi.ListsResponse>();
+    const listsItems = new Map<string, TraktApi.ListItemsResponse>();
 
     for (const list of listsResponse.data) {
-      const listItemsResponse = await this.get<TraktApi.ListsResponse>(
-        `https://api.trakt.tv/users/me/lists/${list.ids.slug}/items`
+      const listItemsResponse = await axios.get<TraktApi.ListItemsResponse>(
+        `https://api.trakt.tv/users/me/lists/${list.ids.slug}/items`,
+        { headers: this.headers() }
       );
 
       listsItems.set(list.ids.slug, listItemsResponse.data);
@@ -113,7 +141,7 @@ export class TraktTvExport {
 
     return {
       watchlist: watchlistResponse.data,
-      history: historyResponse.data,
+      history: historyResponse,
       rating: ratingResponse.data,
       lists: listsResponse.data,
       listsItems,
@@ -204,10 +232,10 @@ export namespace TraktApi {
     rated_at: string;
     rating: number;
     type: 'movie' | 'show' | 'season' | 'episode';
-    episode: EpisodeResponse;
-    show: ShowResponse;
-    season: SeasonResponse;
-    movie: MovieResponse;
+    episode?: EpisodeResponse;
+    show?: ShowResponse;
+    season?: SeasonResponse;
+    movie?: MovieResponse;
   }>;
 
   export type ListsResponse = Array<{
@@ -237,5 +265,17 @@ export namespace TraktApi {
         slug: string;
       };
     };
+  }>;
+
+  export type ListItemsResponse = Array<{
+    rank: number;
+    id: number;
+    listed_at: string;
+    notes?: string;
+    type: 'movie' | 'show' | 'season' | 'episode';
+    episode?: EpisodeResponse;
+    show?: ShowResponse;
+    season?: SeasonResponse;
+    movie?: MovieResponse;
   }>;
 }

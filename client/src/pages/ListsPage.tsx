@@ -55,7 +55,9 @@ export const ListsPage: FunctionComponent = () => {
             <Plural value={list.itemsCount} one="# item" other="# items" />
           </div>
 
-          <div>{listDescription(list)}</div>
+          <div className="overflow-hidden whitespace-nowrap text-ellipsis">
+            {listDescription(list)}
+          </div>
         </div>
       ))}
     </>

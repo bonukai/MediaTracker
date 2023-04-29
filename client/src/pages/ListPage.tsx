@@ -15,9 +15,11 @@ import { useList } from 'src/api/list';
 import { useListItems } from 'src/api/listItems';
 import { usePagination } from 'src/hooks/pagination';
 import { listDescription, listName } from 'src/utils';
+import { useDarkMode } from 'src/hooks/darkMode';
 
 export const ListPage: FunctionComponent = () => {
   const { listId } = useParams();
+  const { darkMode } = useDarkMode();
 
   const { list } = useList({ listId: Number(listId) });
   const { listItems } = useListItems({ listId: Number(listId) });
@@ -43,10 +45,12 @@ export const ListPage: FunctionComponent = () => {
   const sortBy = sortByTranslation.translationToKey(translatedSortBy);
 
   const filteredItems = searchQuery
-    ? listItems.filter((listItem) =>
-        listItem.mediaItem.title
-          ?.toLowerCase()
-          ?.includes(searchQuery.toLowerCase())
+    ? listItems.filter(
+        (listItem) =>
+          listItem.mediaItem.title
+            ?.toLowerCase()
+            ?.includes(searchQuery.toLowerCase()) ||
+          listItem.rank === Number(searchQuery)
       )
     : listItems;
 
@@ -86,11 +90,24 @@ export const ListPage: FunctionComponent = () => {
             </div>
           </div>
 
-          <div>{listDescription(list)}</div>
+          <div className="mb-3 whitespace-pre">{listDescription(list)}</div>
 
           <div>
             <FormatDuration milliseconds={list.totalRuntime * 60 * 1000} />
           </div>
+
+          {list.traktId && (
+            <div className="py-4">
+              <a href={`https://trakt.tv/lists/${list.traktId}`}>
+                <img
+                  src={
+                    darkMode ? 'logo/trakt-white.svg' : 'logo/trakt-black.svg'
+                  }
+                  className="inline-block h-8"
+                />
+              </a>
+            </div>
+          )}
 
           <div>
             <input

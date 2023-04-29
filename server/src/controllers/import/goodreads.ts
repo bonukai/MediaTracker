@@ -57,7 +57,6 @@ export const importFromGoodreadsRss = async (
   const mediaItems = items?.map(
     (item): MediaItemBase => ({
       title: item.title,
-      // slug: toSlug(item.title),
       mediaType: 'book',
       source: 'goodreads',
       goodreadsId: item.book_id,
@@ -65,7 +64,10 @@ export const importFromGoodreadsRss = async (
       poster: item.book_large_image_url,
       authors: [item.author_name],
       releaseDate: item.book_published?.toString(),
-      numberOfPages: item.book?.num_pages,
+      numberOfPages:
+        typeof item.book?.num_pages === 'number'
+          ? item.book.num_pages
+          : undefined,
     })
   );
 

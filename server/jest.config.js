@@ -4,8 +4,6 @@ module.exports = {
   testEnvironment: 'node',
   testPathIgnorePatterns: ['/__utils__/', '/__setup__/', 'build'],
   modulePathIgnorePatterns: ['build'],
-  maxConcurrency: 1,
-  maxWorkers: 1,
   transform: {
     '^.+\\.[t|j]sx?$': 'babel-jest',
   },

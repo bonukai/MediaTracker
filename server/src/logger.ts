@@ -27,6 +27,14 @@ const fileTransport = (filename: string) => {
   });
 };
 
+export const stackErrorFormatter = format((info: LogEntry) => {
+  if ('stack' in info) {
+    info.message = info.stack;
+  }
+
+  return info;
+});
+
 export class logger {
   private static httpLogger: Logger;
   private static debugLogger: Logger;
@@ -62,11 +70,12 @@ export class logger {
         new transports.Console({
           handleExceptions: true,
           format: format.combine(
+            stackErrorFormatter(),
             validationErrorLogFormatter(),
             httpLogFormatter(),
             format.cli({
-              all: false,
-              message: false,
+              all: true,
+              message: true,
               levels: {
                 error: 5,
                 warn: 4,

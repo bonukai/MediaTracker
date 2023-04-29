@@ -2,7 +2,7 @@ import { milliseconds } from 'date-fns';
 
 import { Config } from 'src/config';
 import { clearDatabase, randomNumericId } from '../__utils__/utils';
-import { InitialData } from '__tests__/__utils__/data';
+import { Data, InitialData } from '__tests__/__utils__/data';
 import { Image } from 'src/entity/image';
 import { Configuration } from 'src/entity/configuration';
 import { MediaItemBase } from 'src/entity/mediaItem';
@@ -956,6 +956,572 @@ describe('migrations', () => {
         .where('addedAt', watchlistItem.addedAt)
         .first()
     ).toBeDefined();
+  });
+
+  test('20220603191400_listTraktId', async () => {
+    await Database.knex.migrate.up({
+      name: `20220603191400_listTraktId.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20220603191400_listTraktId.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex('list').insert({
+      rank: 999,
+      name: 'trakt-list',
+      slug: 'trakt-list',
+      traktId: 12345,
+      privacy: 'private',
+      sortBy: 'rank',
+      sortOrder: 'asc',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      userId: InitialData.user.id,
+      isWatchlist: false,
+    });
+  });
+
+  test('20230205000000_uniqueExternalIds', async () => {
+    await Database.knex('mediaItem').insert([
+      {
+        id: 91,
+        title: '91',
+        mediaType: 'movie',
+        source: 'user',
+        slug: '91',
+        imdbId: '',
+      },
+      {
+        id: 92,
+        title: '92',
+        mediaType: 'movie',
+        source: 'user',
+        slug: '92',
+        imdbId: '',
+      },
+    ]);
+
+    await Database.knex.migrate.up({
+      name: `20230205000000_uniqueExternalIds.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20230205000000_uniqueExternalIds.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await expect(
+      async () =>
+        await Database.knex('season').insert([
+          {
+            id: 123456,
+            title: 'Season 2',
+            seasonNumber: 8,
+            isSpecialSeason: false,
+            numberOfEpisodes: 1,
+            tvShowId: InitialData.mediaItem.id,
+            tmdbId: 123,
+          },
+          {
+            id: 123457,
+            title: 'Season 2',
+            seasonNumber: 9,
+            isSpecialSeason: false,
+            numberOfEpisodes: 1,
+            tvShowId: InitialData.mediaItem.id,
+            tmdbId: 123,
+          },
+        ])
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
+
+    await expect(
+      async () =>
+        await Database.knex('episode').insert([
+          {
+            id: 123456,
+            title: 'Episode 1',
+            seasonNumber: 8,
+            episodeNumber: 1,
+            seasonAndEpisodeNumber: 8001,
+            isSpecialEpisode: false,
+            tvShowId: InitialData.mediaItem.id,
+            seasonId: InitialData.season.id,
+            tmdbId: 123,
+          },
+          {
+            id: 123457,
+            title: 'Episode 2',
+            seasonNumber: 8,
+            episodeNumber: 12,
+            seasonAndEpisodeNumber: 8002,
+            isSpecialEpisode: false,
+            tvShowId: InitialData.mediaItem.id,
+            seasonId: InitialData.season.id,
+            tmdbId: 123,
+          },
+        ])
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
+
+    await expect(
+      async () =>
+        await Database.knex('episode').insert([
+          {
+            id: 123456,
+            title: 'Episode 1',
+            seasonNumber: 8,
+            episodeNumber: 1,
+            seasonAndEpisodeNumber: 8001,
+            isSpecialEpisode: false,
+            tvShowId: InitialData.mediaItem.id,
+            seasonId: InitialData.season.id,
+            imdbId: '123',
+          },
+          {
+            id: 123457,
+            title: 'Episode 2',
+            seasonNumber: 8,
+            episodeNumber: 12,
+            seasonAndEpisodeNumber: 8002,
+            isSpecialEpisode: false,
+            tvShowId: InitialData.mediaItem.id,
+            seasonId: InitialData.season.id,
+            imdbId: '123',
+          },
+        ])
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
+
+    await expect(
+      async () =>
+        await Database.knex('mediaItem').insert([
+          {
+            id: 81,
+            title: '81',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '81',
+            imdbId: 123,
+          },
+          {
+            id: 82,
+            title: '82',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '82',
+            imdbId: 123,
+          },
+        ])
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
+
+    await expect(
+      async () =>
+        await Database.knex('mediaItem').insert([
+          {
+            id: 81,
+            title: '81',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '81',
+            tmdbId: '123',
+          },
+          {
+            id: 82,
+            title: '82',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '82',
+            tmdbId: '123',
+          },
+        ])
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
+
+    await expect(
+      async () =>
+        await Database.knex('mediaItem').insert([
+          {
+            id: 81,
+            title: '81',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '81',
+            tvmazeId: 123,
+          },
+          {
+            id: 82,
+            title: '82',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '82',
+            tvmazeId: 123,
+          },
+        ])
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
+
+    await expect(
+      async () =>
+        await Database.knex('mediaItem').insert([
+          {
+            id: 81,
+            title: '81',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '81',
+            traktId: 123,
+          },
+          {
+            id: 82,
+            title: '82',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '82',
+            traktId: 123,
+          },
+        ])
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
+
+    await expect(
+      async () =>
+        await Database.knex('mediaItem').insert([
+          {
+            id: 81,
+            title: '81',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '81',
+            igdbId: 123,
+          },
+          {
+            id: 82,
+            title: '82',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '82',
+            igdbId: 123,
+          },
+        ])
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
+
+    await expect(
+      async () =>
+        await Database.knex('mediaItem').insert([
+          {
+            id: 81,
+            title: '81',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '81',
+            openlibraryId: 123,
+          },
+          {
+            id: 82,
+            title: '82',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '82',
+            openlibraryId: 123,
+          },
+        ])
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
+
+    await expect(
+      async () =>
+        await Database.knex('mediaItem').insert([
+          {
+            id: 81,
+            title: '81',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '81',
+            audibleId: 123,
+          },
+          {
+            id: 82,
+            title: '82',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '82',
+            audibleId: 123,
+          },
+        ])
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
+
+    await expect(
+      async () =>
+        await Database.knex('mediaItem').insert([
+          {
+            id: 81,
+            title: '81',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '81',
+            goodreadsId: 123,
+          },
+          {
+            id: 82,
+            title: '82',
+            mediaType: 'movie',
+            source: 'user',
+            slug: '82',
+            goodreadsId: 123,
+          },
+        ])
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_UNIQUE' });
+
+    await Database.knex('mediaItem').insert([
+      {
+        id: 101,
+        title: '101',
+        mediaType: 'movie',
+        source: 'user',
+        slug: '101',
+        tmdbId: 123456,
+      },
+      {
+        id: 102,
+        title: '102',
+        mediaType: 'tv',
+        source: 'user',
+        slug: '102',
+        tmdbId: 123456,
+      },
+    ]);
+
+    await Database.knex('mediaItem').insert([
+      {
+        id: 201,
+        title: '201',
+        mediaType: 'movie',
+        source: 'user',
+        slug: '201',
+        imdbId: 123456,
+      },
+      {
+        id: 202,
+        title: '202',
+        mediaType: 'tv',
+        source: 'user',
+        slug: '202',
+        imdbId: 123456,
+      },
+    ]);
+
+    await Database.knex('mediaItem').insert([
+      {
+        id: 301,
+        title: '301',
+        mediaType: 'movie',
+        source: 'user',
+        slug: '301',
+        tvmazeId: 123456,
+      },
+      {
+        id: 302,
+        title: '302',
+        mediaType: 'tv',
+        source: 'user',
+        slug: '302',
+        tvmazeId: 123456,
+      },
+    ]);
+
+    await Database.knex('mediaItem').insert([
+      {
+        id: 401,
+        title: '401',
+        mediaType: 'movie',
+        source: 'user',
+        slug: '401',
+        traktId: 123456,
+      },
+      {
+        id: 402,
+        title: '402',
+        mediaType: 'tv',
+        source: 'user',
+        slug: '402',
+        traktId: 123456,
+      },
+    ]);
+
+    await Database.knex('mediaItem').insert([
+      {
+        id: 501,
+        title: '501',
+        mediaType: 'movie',
+        source: 'user',
+        slug: '501',
+        igdbId: 123456,
+      },
+      {
+        id: 502,
+        title: '502',
+        mediaType: 'tv',
+        source: 'user',
+        slug: '502',
+        igdbId: 123456,
+      },
+    ]);
+
+    await Database.knex('mediaItem').insert([
+      {
+        id: 601,
+        title: '601',
+        mediaType: 'movie',
+        source: 'user',
+        slug: '601',
+        openlibraryId: 123456,
+      },
+      {
+        id: 602,
+        title: '602',
+        mediaType: 'tv',
+        source: 'user',
+        slug: '602',
+        openlibraryId: 123456,
+      },
+    ]);
+
+    await Database.knex('mediaItem').insert([
+      {
+        id: 701,
+        title: '701',
+        mediaType: 'movie',
+        source: 'user',
+        slug: '701',
+        audibleId: 123456,
+      },
+      {
+        id: 702,
+        title: '702',
+        mediaType: 'tv',
+        source: 'user',
+        slug: '702',
+        audibleId: 123456,
+      },
+    ]);
+
+    await Database.knex('mediaItem').insert([
+      {
+        id: 801,
+        title: '801',
+        mediaType: 'movie',
+        source: 'user',
+        slug: '801',
+        goodreadsId: 123456,
+      },
+      {
+        id: 802,
+        title: '802',
+        mediaType: 'tv',
+        source: 'user',
+        slug: '802',
+        goodreadsId: 123456,
+      },
+    ]);
+  });
+
+  test('20230422000000_updateListRanks', async () => {
+    const initialLists = await Database.knex('list');
+    const initialListItems = await Database.knex('listItem');
+
+    await Database.knex('listItem').delete();
+    await Database.knex('list').delete();
+    await Database.knex('list').insert([
+      {
+        id: 0,
+        rank: 0,
+        name: 'List',
+        slug: 'list',
+        privacy: 'private',
+        sortBy: 'rank',
+        sortOrder: 'asc',
+        createdAt: new Date().getTime(),
+        updatedAt: new Date().getTime(),
+        userId: InitialData.user.id,
+        isWatchlist: false,
+      },
+      {
+        id: 1,
+        rank: 1,
+        name: 'List 2',
+        slug: 'list-2',
+        privacy: 'private',
+        sortBy: 'rank',
+        sortOrder: 'asc',
+        createdAt: new Date().getTime(),
+        updatedAt: new Date().getTime(),
+        userId: InitialData.user.id,
+        isWatchlist: false,
+      },
+      {
+        id: 3,
+        rank: 3,
+        name: 'List 3',
+        slug: 'list-3',
+        privacy: 'private',
+        sortBy: 'rank',
+        sortOrder: 'asc',
+        createdAt: new Date().getTime(),
+        updatedAt: new Date().getTime(),
+        userId: InitialData.user.id,
+        isWatchlist: false,
+      },
+      {
+        id: 4,
+        rank: 4,
+        name: 'List 4',
+        slug: 'list-4',
+        privacy: 'private',
+        sortBy: 'rank',
+        sortOrder: 'asc',
+        createdAt: new Date().getTime(),
+        updatedAt: new Date().getTime(),
+        userId: InitialData.user.id,
+        isWatchlist: false,
+      },
+    ]);
+
+    await Database.knex.migrate.up({
+      name: `20230422000000_updateListRanks.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20230422000000_updateListRanks.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    const lists = await Database.knex('list')
+      .select('name', 'rank')
+      .where('userId', InitialData.user.id)
+      .orderBy('rank');
+
+    expect(lists).toEqual([
+      { name: 'List', rank: 0 },
+      { name: 'List 2', rank: 1 },
+      { name: 'List 3', rank: 2 },
+      { name: 'List 4', rank: 3 },
+    ]);
+
+    await Database.knex('listItem').delete();
+    await Database.knex('list').delete();
+    await Database.knex('list').insert(initialLists);
+    await Database.knex('listItem').insert(initialListItems);
   });
 
   afterAll(clearDatabase);

@@ -25,6 +25,7 @@ import { catchAndLogError, durationToMilliseconds } from 'src/utils';
 import { updateMetadata } from 'src/updateMetadata';
 import { sendNotifications } from 'src/sendNotifications';
 import { AudibleLang, ServerLang, TmdbLang } from 'src/entity/configuration';
+import { ListItem } from 'src/entity/list';
 
 type ServerConfig = {
   publicPath: string;
@@ -168,10 +169,10 @@ export class Server {
             process.once('SIGKILL ', onCloseHandler);
 
             resolve();
+            await catchAndLogError(sendNotifications);
 
             if (this.#config.production) {
               await catchAndLogError(updateMetadata);
-              await catchAndLogError(sendNotifications);
 
               setInterval(async () => {
                 await catchAndLogError(updateMetadata);
@@ -294,7 +295,6 @@ export const initialize = async (args: {
     igdbClientSecret,
     demo,
   } = args;
-
   Config.migrate();
   Config.validate();
   logger.init();
@@ -427,7 +427,7 @@ export const createAndStartServer = async () => {
     await server.listen();
   } catch (error) {
     await server?.close();
-    console.log(chalk.red.bold(`error: ${error}`));
+    console.log(chalk.red.bold(error.stack || error));
     createAndStartErrorServer({
       hostname: Config.HOSTNAME,
       port: Config.PORT,

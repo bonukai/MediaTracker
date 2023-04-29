@@ -7,6 +7,7 @@ export const usePagination = (args: {
 }) => {
   const [page, setPage] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams();
+  const numberOfPages = Math.ceil(args.totalItems / args.itemsPerPage) - 1;
 
   useEffect(() => {
     if (searchParams.has('page') && Number(searchParams.get('page')) !== page) {
@@ -14,6 +15,12 @@ export const usePagination = (args: {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
+
+  useEffect(() => {
+    if (page > numberOfPages) {
+      setPage(1);
+    }
+  }, [page, numberOfPages]);
 
   useEffect(() => {
     window.document.body.scrollIntoView({ behavior: 'auto' });
@@ -38,7 +45,6 @@ export const usePagination = (args: {
   }, [page]);
 
   return useMemo(() => {
-    const numberOfPages = Math.ceil(args.totalItems / args.itemsPerPage) - 1;
     const from = args.itemsPerPage * (page - 1);
     const to = args.itemsPerPage * (page - 1) + args.itemsPerPage;
     const getPaginatedItems = <T,>(items?: Array<T>) => items?.slice(from, to);
@@ -51,5 +57,5 @@ export const usePagination = (args: {
       setPage,
       showPaginationComponent,
     };
-  }, [args.itemsPerPage, args.totalItems, page]);
+  }, [args.itemsPerPage, page, numberOfPages]);
 };

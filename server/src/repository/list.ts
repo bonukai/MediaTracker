@@ -90,8 +90,6 @@ class ListRepository extends repository<List>({
           updatedAt: updatedAt,
           sortBy: sortBy,
           sortOrder: sortOrder,
-          // displayNumbers: args.displayNumbers || false,
-          // allowComments: args.allowComments || false,
           slug: Database.knex.raw(
             `(CASE WHEN (${Database.knex<List>('list')
               .count()
@@ -115,6 +113,7 @@ class ListRepository extends repository<List>({
     sortOrder?: ListSortOrder;
     userId: number;
     isWatchlist?: boolean;
+    traktId?: number;
   }): Promise<List> {
     const {
       userId,
@@ -124,6 +123,7 @@ class ListRepository extends repository<List>({
       sortBy,
       sortOrder,
       isWatchlist,
+      traktId,
     } = args;
 
     if (name.trim().length === 0) {
@@ -144,6 +144,7 @@ class ListRepository extends repository<List>({
         createdAt: createdAt,
         updatedAt: createdAt,
         isWatchlist: isWatchlist || false,
+        traktId: traktId,
         rank: Database.knex.raw(
           `(${Database.knex<List>('list')
             .count()
@@ -165,6 +166,7 @@ class ListRepository extends repository<List>({
       ...res,
       displayNumbers: Boolean(res.displayNumbers),
       allowComments: Boolean(res.allowComments),
+      isWatchlist: Boolean(res.isWatchlist),
     };
   }
 
@@ -186,7 +188,14 @@ class ListRepository extends repository<List>({
       }
 
       await trx<ListItem>('listItem').delete().where('listId', listId);
-      return await trx<ListItem>('list').delete().where('id', listId);
+      const res = await trx<ListItem>('list').delete().where('id', listId);
+
+      await trx<List>('list')
+        .update('rank', trx.raw('rank - 1'))
+        .where('rank', '>', list.rank)
+        .where('userId', userId);
+
+      return res;
     });
   }
 
@@ -281,6 +290,7 @@ class ListRepository extends repository<List>({
       description: res.description,
       sortBy: res.sortBy,
       sortOrder: res.sortOrder,
+      traktId: res.traktId,
       user: {
         id: res.userId,
         username: res['user.name'],
@@ -758,18 +768,21 @@ class ListRepository extends repository<List>({
             .min('seasonAndEpisodeNumber', {
               as: 'seasonAndEpisodeNumber',
             })
-            .leftJoin('seen', (qb) =>
-              qb
-                .on('seen.episodeId', 'episode.id')
-                .andOnVal('seen.type', 'seen')
+            .leftJoin(
+              (qb) =>
+                qb
+                  .from<Seen>('seen')
+                  .where('userId', userId)
+                  .where('type', 'seen')
+                  .as('seen'),
+              'seen.episodeId',
+              'episode.id'
             )
             .where('episode.isSpecialEpisode', false)
-            .andWhereNot('episode.releaseDate', '')
-            .andWhereNot('episode.releaseDate', null)
-            .andWhere('episode.releaseDate', '<=', currentDateString)
-            .andWhere((qb) => {
-              qb.where('seen.userId', '<>', userId).orWhereNull('seen.userId');
-            })
+            .whereNot('episode.releaseDate', '')
+            .whereNot('episode.releaseDate', null)
+            .where('episode.releaseDate', '<=', currentDateString)
+            .whereNull('seen.userId')
             .groupBy('tvShowId')
             .as('mediaItemFirstUnwatchedEpisodeHelper'),
         'mediaItemFirstUnwatchedEpisodeHelper.tvShowId',
@@ -797,18 +810,21 @@ class ListRepository extends repository<List>({
             .min('seasonAndEpisodeNumber', {
               as: 'seasonAndEpisodeNumber',
             })
-            .leftJoin('seen', (qb) =>
-              qb
-                .on('seen.episodeId', 'episode.id')
-                .andOnVal('seen.type', 'seen')
+            .leftJoin(
+              (qb) =>
+                qb
+                  .from<Seen>('seen')
+                  .where('userId', userId)
+                  .where('type', 'seen')
+                  .as('seen'),
+              'seen.episodeId',
+              'episode.id'
             )
             .where('episode.isSpecialEpisode', false)
-            .andWhereNot('episode.releaseDate', '')
-            .andWhereNot('episode.releaseDate', null)
-            .andWhere('episode.releaseDate', '<=', currentDateString)
-            .andWhere((qb) => {
-              qb.where('seen.userId', '<>', userId).orWhereNull('seen.userId');
-            })
+            .whereNot('episode.releaseDate', '')
+            .whereNot('episode.releaseDate', null)
+            .where('episode.releaseDate', '<=', currentDateString)
+            .whereNull('seen.userId')
             .groupBy('seasonId')
             .as('seasonFirstUnwatchedEpisodeHelper'),
         'seasonFirstUnwatchedEpisodeHelper.seasonId',

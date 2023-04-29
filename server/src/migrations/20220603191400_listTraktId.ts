@@ -1,9 +1,6 @@
 import { Knex } from 'knex';
-import { fixItemsWithInvalidMediaItemId } from 'src/migrations/20220312002700_mediaItemSlug';
 
 export async function up(knex: Knex): Promise<void> {
-  await fixItemsWithInvalidMediaItemId(knex);
-
   await knex.schema
     .alterTable('image', (table) => {
       table.dropForeign('mediaItemId');
@@ -30,10 +27,6 @@ export async function up(knex: Knex): Promise<void> {
       table.dropForeign('episodeId');
       table.dropForeign('userId');
     })
-    .alterTable('watchlist', (table) => {
-      table.dropForeign('mediaItemId');
-      table.dropForeign('userId');
-    })
     .alterTable('listItem', (table) => {
       table.dropForeign('episodeId');
       table.dropForeign('seasonId');
@@ -51,30 +44,9 @@ export async function up(knex: Knex): Promise<void> {
       table.dropForeign('tvShowId');
     });
 
-  await knex.schema
-    .alterTable('mediaItem', (table) => {
-      table.integer('tvdbId');
-      table.index('tvdbId');
-      table.unique(['tvdbId']);
-    })
-    .alterTable('season', (table) => {
-      table.integer('traktId');
-      table.index('traktId');
-      table.unique(['traktId']);
-
-      table.integer('tvdbId');
-      table.index('tvdbId');
-      table.unique(['tvdbId']);
-    })
-    .alterTable('episode', (table) => {
-      table.integer('traktId');
-      table.index('traktId');
-      table.unique(['traktId']);
-
-      table.integer('tvdbId');
-      table.index('tvdbId');
-      table.unique(['tvdbId']);
-    });
+  await knex.schema.alterTable('list', (table) => {
+    table.integer('traktId');
+  });
 
   await knex.schema
     .alterTable('season', (table) => {
@@ -100,10 +72,6 @@ export async function up(knex: Knex): Promise<void> {
       table.foreign('seasonId').references('id').inTable('season');
       table.foreign('mediaItemId').references('id').inTable('mediaItem');
       table.foreign('listId').references('id').inTable('list');
-    })
-    .alterTable('watchlist', (table) => {
-      table.foreign('mediaItemId').references('id').inTable('mediaItem');
-      table.foreign('userId').references('id').inTable('user');
     })
     .alterTable('userRating', (table) => {
       table.foreign('episodeId').references('id').inTable('episode');
@@ -151,10 +119,7 @@ export async function down(knex: Knex): Promise<void> {
       table.dropForeign('episodeId');
       table.dropForeign('userId');
     })
-    .alterTable('watchlist', (table) => {
-      table.dropForeign('mediaItemId');
-      table.dropForeign('userId');
-    })
+
     .alterTable('listItem', (table) => {
       table.dropForeign('episodeId');
       table.dropForeign('seasonId');
@@ -172,30 +137,9 @@ export async function down(knex: Knex): Promise<void> {
       table.dropForeign('tvShowId');
     });
 
-  await knex.schema
-    .alterTable('mediaItem', (table) => {
-      table.dropIndex('tvdbId');
-      table.dropUnique(['tvdbId']);
-      table.dropColumn('tvdbId');
-    })
-    .alterTable('season', (table) => {
-      table.dropIndex('traktId');
-      table.dropUnique(['traktId']);
-      table.dropColumn('traktId');
-
-      table.dropIndex('tvdbId');
-      table.dropUnique(['tvdbId']);
-      table.dropColumn('tvdbId');
-    })
-    .alterTable('episode', (table) => {
-      table.dropIndex('traktId');
-      table.dropUnique(['traktId']);
-      table.dropColumn('traktId');
-
-      table.dropIndex('tvdbId');
-      table.dropUnique(['tvdbId']);
-      table.dropColumn('tvdbId');
-    });
+  await knex.schema.alterTable('list', (table) => {
+    table.dropColumn('traktId');
+  });
 
   await knex.schema
     .alterTable('season', (table) => {
@@ -221,10 +165,6 @@ export async function down(knex: Knex): Promise<void> {
       table.foreign('seasonId').references('id').inTable('season');
       table.foreign('mediaItemId').references('id').inTable('mediaItem');
       table.foreign('listId').references('id').inTable('list');
-    })
-    .alterTable('watchlist', (table) => {
-      table.foreign('mediaItemId').references('id').inTable('mediaItem');
-      table.foreign('userId').references('id').inTable('user');
     })
     .alterTable('userRating', (table) => {
       table.foreign('episodeId').references('id').inTable('episode');
