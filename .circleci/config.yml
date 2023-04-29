@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   node-v16:
     docker:
-      - image: circleci/node:16
+      - image: cimg/node:16
     steps:
       - test
       
