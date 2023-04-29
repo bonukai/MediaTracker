@@ -241,7 +241,6 @@ const NotImportedItems: FunctionComponent<{
 }> = (props) => {
   const { notImportedItems } = props;
 
-  console.log(notImportedItems.watchlist.shows.filter(item => item.year == 2016))
   return (
     <>
       <div className="mt-8 text-2xl font-bold">
