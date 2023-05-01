@@ -38,6 +38,8 @@ export const findMediaItemByExternalIdInExternalSources = async (args: {
     if (!existingItem) {
       return await mediaItemRepository.create(res);
     }
+
+    return existingItem;
   }
 };
 
@@ -53,10 +55,8 @@ const search = async (args: { id: ExternalIds; mediaType: MediaType }) => {
           return res;
         }
         // eslint-disable-next-line no-empty
-      } catch (error) {
-      } finally {
-        logger.error(`unable to find tv show with tmdbId: ${id.tmdbId}`);
-      }
+      } catch (error) {}
+      logger.error(`unable to find tv show with tmdbId: ${id.tmdbId}`);
     }
     if (id.imdbId) {
       logger.debug(`searching tv show by imdbId: ${id.imdbId}`);
@@ -66,10 +66,8 @@ const search = async (args: { id: ExternalIds; mediaType: MediaType }) => {
           return res;
         }
         // eslint-disable-next-line no-empty
-      } catch (error) {
-      } finally {
-        logger.error(`unable to find tv show with imdbId: ${id.imdbId}`);
-      }
+      } catch (error) {}
+      logger.error(`unable to find tv show with imdbId: ${id.imdbId}`);
     }
     if (id.tvdbId) {
       logger.debug(`searching tv show by tvdbId: ${id.tvdbId}`);
@@ -79,10 +77,8 @@ const search = async (args: { id: ExternalIds; mediaType: MediaType }) => {
           return res;
         }
         // eslint-disable-next-line no-empty
-      } catch (error) {
-      } finally {
-        logger.error(`unable to find tv show with tvdbId: ${id.tvdbId}`);
-      }
+      } catch (error) {}
+      logger.error(`unable to find tv show with tvdbId: ${id.tvdbId}`);
     }
     return;
   } else if (mediaType === 'movie') {
@@ -94,10 +90,8 @@ const search = async (args: { id: ExternalIds; mediaType: MediaType }) => {
           return res;
         }
         // eslint-disable-next-line no-empty
-      } catch (error) {
-      } finally {
-        logger.error(`unable to find movie with tmdbId: ${id.tmdbId}`);
-      }
+      } catch (error) {}
+      logger.error(`unable to find movie with tmdbId: ${id.tmdbId}`);
     }
     if (id.imdbId) {
       logger.debug(`searching movie by imdbId: ${id.imdbId}`);
@@ -107,10 +101,8 @@ const search = async (args: { id: ExternalIds; mediaType: MediaType }) => {
           return res;
         }
         // eslint-disable-next-line no-empty
-      } catch (error) {
-      } finally {
-        logger.error(`unable to find movie with imdbId: ${id.imdbId}`);
-      }
+      } catch (error) {}
+      logger.error(`unable to find movie with imdbId: ${id.imdbId}`);
     }
     return;
   } else if (mediaType === 'audiobook') {
@@ -121,12 +113,8 @@ const search = async (args: { id: ExternalIds; mediaType: MediaType }) => {
           return res;
         }
         // eslint-disable-next-line no-empty
-      } catch (error) {
-      } finally {
-        logger.error(
-          `unable to find audiobook with audibleId: ${id.audibleId}`
-        );
-      }
+      } catch (error) {}
+      logger.error(`unable to find audiobook with audibleId: ${id.audibleId}`);
     }
   } else if (mediaType === 'book') {
     if (id.openlibraryId) {
@@ -138,12 +126,10 @@ const search = async (args: { id: ExternalIds; mediaType: MediaType }) => {
           return res;
         }
         // eslint-disable-next-line no-empty
-      } catch (error) {
-      } finally {
-        logger.error(
-          `unable to find book with openlibraryId: ${id.openlibraryId}`
-        );
-      }
+      } catch (error) {}
+      logger.error(
+        `unable to find book with openlibraryId: ${id.openlibraryId}`
+      );
     }
   }
 
