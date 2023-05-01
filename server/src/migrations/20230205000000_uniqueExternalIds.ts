@@ -1,19 +1,12 @@
 import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
-  await knex('mediaItem').where('tmdbId', '').update('tmdbId', null);
   await knex('mediaItem').where('imdbId', '').update('imdbId', null);
-  await knex('mediaItem').where('tvmazeId', '').update('tvmazeId', null);
-  await knex('mediaItem').where('igdbId', '').update('igdbId', null);
   await knex('mediaItem')
     .where('openlibraryId', '')
     .update('openlibraryId', null);
   await knex('mediaItem').where('audibleId', '').update('audibleId', null);
-  await knex('mediaItem').where('goodreadsId', '').update('goodreadsId', null);
-  await knex('mediaItem').where('traktId', '').update('traktId', null);
 
-  await knex('season').where('tmdbId', '').update('tmdbId', null);
-  await knex('episode').where('tmdbId', '').update('tmdbId', null);
   await knex('episode').where('imdbId', '').update('imdbId', null);
 
   return knex.schema
