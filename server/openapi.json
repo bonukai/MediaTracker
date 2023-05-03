@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "MediaTracker",
-    "version": "0.1.0-beta.35",
+    "version": "0.1.0-beta.42",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
@@ -2105,38 +2105,6 @@
         }
       }
     },
-    "/api/import-trakttv/device-token": {
-      "get": {
-        "tags": [
-          "TraktTvImport"
-        ],
-        "operationId": "deviceToken",
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "userCode": {
-                      "type": "string"
-                    },
-                    "verificationUrl": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "userCode",
-                    "verificationUrl"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/import-trakttv/state": {
       "get": {
         "tags": [
@@ -2173,12 +2141,134 @@
                         }
                       ],
                       "nullable": true
+                    },
+                    "notImportedItems": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/TraktTvImportNotImportedItems"
+                        }
+                      ],
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "string",
+                      "nullable": true
                     }
                   },
                   "required": [
                     "state"
                   ]
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/import-trakttv/state-stream": {
+      "get": {
+        "tags": [
+          "TraktTvImport"
+        ],
+        "operationId": "state-stream",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "state": {
+                      "$ref": "#/components/schemas/ImportState"
+                    },
+                    "progress": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "exportSummary": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/TraktTvImportSummary"
+                        }
+                      ],
+                      "nullable": true
+                    },
+                    "importSummary": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/TraktTvImportSummary"
+                        }
+                      ],
+                      "nullable": true
+                    },
+                    "notImportedItems": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/TraktTvImportNotImportedItems"
+                        }
+                      ],
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "state"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/import-trakttv/device-token": {
+      "get": {
+        "tags": [
+          "TraktTvImport"
+        ],
+        "operationId": "deviceToken",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userCode": {
+                      "type": "string"
+                    },
+                    "verificationUrl": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "userCode",
+                    "verificationUrl"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/import-trakttv/start-over": {
+      "get": {
+        "tags": [
+          "TraktTvImport"
+        ],
+        "operationId": "startOver",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
               }
             }
           }
@@ -2458,6 +2548,7 @@
           "en",
           "es",
           "fr",
+          "ko",
           "pt"
         ],
         "type": "string"
@@ -3368,6 +3459,10 @@
           },
           "isWatchlist": {
             "type": "boolean"
+          },
+          "traktId": {
+            "type": "number",
+            "nullable": true
           }
         },
         "required": [
@@ -3524,6 +3619,10 @@
               },
               "description": {
                 "type": "string",
+                "nullable": true
+              },
+              "traktId": {
+                "type": "number",
                 "nullable": true
               },
               "rank": {
@@ -3687,6 +3786,10 @@
               },
               "description": {
                 "type": "string",
+                "nullable": true
+              },
+              "traktId": {
+                "type": "number",
                 "nullable": true
               },
               "rank": {
@@ -4382,6 +4485,7 @@
       },
       "ImportState": {
         "enum": [
+          "error",
           "exporting",
           "imported",
           "importing",
@@ -4454,12 +4558,309 @@
               "seasons",
               "shows"
             ]
+          },
+          "lists": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "listName": {
+                  "type": "string"
+                },
+                "listId": {
+                  "type": "string"
+                },
+                "movies": {
+                  "type": "number"
+                },
+                "shows": {
+                  "type": "number"
+                },
+                "seasons": {
+                  "type": "number"
+                },
+                "episodes": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "episodes",
+                "listId",
+                "listName",
+                "movies",
+                "seasons",
+                "shows"
+              ]
+            }
           }
         },
         "required": [
+          "lists",
           "ratings",
           "seen",
           "watchlist"
+        ]
+      },
+      "TraktTvImportNotImportedItems": {
+        "type": "object",
+        "properties": {
+          "watchlist": {
+            "type": "object",
+            "properties": {
+              "movies": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedMovie"
+                },
+                "nullable": true
+              },
+              "shows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedTvShow"
+                },
+                "nullable": true
+              },
+              "seasons": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedSeason"
+                },
+                "nullable": true
+              },
+              "episodes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedEpisode"
+                },
+                "nullable": true
+              }
+            }
+          },
+          "seen": {
+            "type": "object",
+            "properties": {
+              "movies": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedMovie"
+                },
+                "nullable": true
+              },
+              "episodes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedEpisode"
+                },
+                "nullable": true
+              }
+            }
+          },
+          "ratings": {
+            "type": "object",
+            "properties": {
+              "movies": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedMovie"
+                },
+                "nullable": true
+              },
+              "shows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedTvShow"
+                },
+                "nullable": true
+              },
+              "seasons": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedSeason"
+                },
+                "nullable": true
+              },
+              "episodes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TraktTvNotImportedEpisode"
+                },
+                "nullable": true
+              }
+            }
+          },
+          "lists": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "listName": {
+                  "type": "string"
+                },
+                "listId": {
+                  "type": "string"
+                },
+                "movies": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TraktTvNotImportedMovie"
+                  },
+                  "nullable": true
+                },
+                "shows": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TraktTvNotImportedTvShow"
+                  },
+                  "nullable": true
+                },
+                "seasons": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TraktTvNotImportedSeason"
+                  },
+                  "nullable": true
+                },
+                "episodes": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TraktTvNotImportedEpisode"
+                  },
+                  "nullable": true
+                }
+              },
+              "required": [
+                "listId",
+                "listName"
+              ]
+            }
+          }
+        },
+        "required": [
+          "lists",
+          "ratings",
+          "seen",
+          "watchlist"
+        ]
+      },
+      "TraktTvNotImportedMovie": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "year": {
+            "type": "number"
+          },
+          "traktTvLink": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "traktTvLink",
+          "year"
+        ]
+      },
+      "TraktTvNotImportedTvShow": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "year": {
+            "type": "number"
+          },
+          "traktTvLink": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "traktTvLink",
+          "year"
+        ]
+      },
+      "TraktTvNotImportedSeason": {
+        "type": "object",
+        "properties": {
+          "show": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "year": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "title",
+              "year"
+            ]
+          },
+          "season": {
+            "type": "object",
+            "properties": {
+              "seasonNumber": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "seasonNumber"
+            ]
+          },
+          "traktTvLink": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "season",
+          "show",
+          "traktTvLink"
+        ]
+      },
+      "TraktTvNotImportedEpisode": {
+        "type": "object",
+        "properties": {
+          "show": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "year": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "title",
+              "year"
+            ]
+          },
+          "episode": {
+            "type": "object",
+            "properties": {
+              "episodeNumber": {
+                "type": "number"
+              },
+              "seasonNumber": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "episodeNumber",
+              "seasonNumber"
+            ]
+          },
+          "traktTvLink": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "episode",
+          "show",
+          "traktTvLink"
         ]
       }
     }

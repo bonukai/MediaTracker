@@ -1,7 +1,5 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useRef } from 'react';
 import format from 'date-fns/format';
-import parse from 'date-fns/parse';
-import { parseISO } from 'date-fns';
 import { Trans } from '@lingui/macro';
 
 import { markAsSeen } from 'src/api/details';
@@ -68,10 +66,13 @@ export const SelectSeenDateComponent: FunctionComponent<{
   onSelected: (args?: { date?: Date; seenAt?: LastSeenAt }) => void;
 }> = (props) => {
   const { mediaItem, episode, onSelected, closeModal } = props;
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const dateInputRef = useRef<HTMLInputElement>(null);
+  const timeInputRef = useRef<HTMLInputElement>(null);
+
+  const todayDateString = format(new Date(), 'yyyy-MM-dd');
 
   return (
-    <>
+    <div className="p-2">
       <div className="max-w-sm mx-5 my-3 text-3xl font-bold text-center">
         {isAudiobook(mediaItem) && (
           <Trans>When did you listen to &quot;{originalAndTranslatedTitle(mediaItem)}&quot;?</Trans>
@@ -99,6 +100,7 @@ export const SelectSeenDateComponent: FunctionComponent<{
           <Trans>When did you play &quot;{originalAndTranslatedTitle(mediaItem)}&quot;?</Trans>
         )}
       </div>
+
       <div className="flex flex-col">
         <div
           className="m-2 btn"
@@ -122,63 +124,34 @@ export const SelectSeenDateComponent: FunctionComponent<{
           className="flex flex-wrap mx-2 my-1 mb-2"
           onSubmit={(e) => {
             e.preventDefault();
-            onSelected({ date: selectedDate });
+
+            const [year, month, day] = dateInputRef.current.value.split('-');
+            const [hours, minutes] = timeInputRef.current.value.split(':');
+
+            onSelected({
+              date: new Date(
+                Number(year),
+                Number(month) - 1,
+                Number(day),
+                Number(hours),
+                Number(minutes)
+              ),
+            });
           }}
         >
           <input
             className="mx-1 mt-1 w-min"
             type="date"
-            value={format(selectedDate, 'yyyy-MM-dd')}
-            max={format(new Date(), 'yyyy-MM-dd')}
-            onChange={(e) => {
-              if (!e.target.valueAsDate) {
-                return;
-              }
-
-              const newDate = parseISO(
-                e.target.valueAsDate.toISOString().split('T').at(0)
-              );
-
-              setSelectedDate(
-                new Date(
-                  newDate.getFullYear(),
-                  newDate.getMonth(),
-                  newDate.getDate(),
-                  selectedDate.getHours(),
-                  selectedDate.getMinutes(),
-                  selectedDate.getSeconds()
-                )
-              );
-            }}
+            pattern="\d{4}-\d{2}-\d{2}"
+            ref={dateInputRef}
+            defaultValue={todayDateString}
+            max={todayDateString}
           />
           <input
             className="mx-1 mt-1 w-min"
             type="time"
-            value={format(selectedDate, 'HH:mm')}
-            max={
-              format(selectedDate, 'yyyy-MM-dd') ===
-              format(new Date(), 'yyyy-MM-dd')
-                ? format(new Date(), 'HH:mm')
-                : undefined
-            }
-            onChange={(e) => {
-              if (!e.target.value) {
-                return;
-              }
-
-              const newTime = parse(e.target.value, 'HH:mm', selectedDate);
-
-              setSelectedDate(
-                new Date(
-                  selectedDate.getFullYear(),
-                  selectedDate.getMonth(),
-                  selectedDate.getDate(),
-                  newTime.getHours(),
-                  newTime.getMinutes(),
-                  newTime.getSeconds()
-                )
-              );
-            }}
+            ref={timeInputRef}
+            defaultValue={'00:00'}
           />
           <button className="flex-grow mt-1 btn">
             <Trans>Select date</Trans>
@@ -188,6 +161,6 @@ export const SelectSeenDateComponent: FunctionComponent<{
           <Trans>Cancel</Trans>
         </div>
       </div>
-    </>
+    </div>
   );
 };

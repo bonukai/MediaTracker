@@ -1,11 +1,16 @@
-import React, { FunctionComponent, useState } from 'react';
-import { useQuery } from 'react-query';
-import { Spring } from 'react-spring';
-import { t, Trans } from '@lingui/macro';
+import React, { FunctionComponent, useEffect, useState } from 'react';
+import { useMutation, useQuery } from 'react-query';
+import { useSpring, animated } from 'react-spring';
+import { Plural, t, Trans } from '@lingui/macro';
 
 import { mediaTrackerApi } from 'src/api/api';
-import { ImportState } from 'mediatracker-api';
-import { ImportSummaryTable } from 'src/components/ImportSummaryTable';
+import {
+  ImportState,
+  ImportTrakttv,
+  TraktTvImportNotImportedItems,
+} from 'mediatracker-api';
+import { TvImportSummaryTable } from 'src/components/ImportSummaryTable';
+import { queryClient } from 'src/App';
 
 const useTraktTvImport = () => {
   const [_state, setState] = useState<ImportState>();
@@ -15,24 +20,41 @@ const useTraktTvImport = () => {
     mediaTrackerApi.importTrakttv.deviceToken
   );
 
-  const { data: state } = useQuery(
-    ['import', 'TraktTv', 'state'],
-    mediaTrackerApi.importTrakttv.state,
+  const [state, setStateResponse] =
+    useState<ImportTrakttv.State.ResponseBody>();
+
+  useEffect(() => {
+    const events = new EventSource('/api/import-trakttv/state-stream');
+
+    events.onmessage = (event) => {
+      setStateResponse(JSON.parse(event.data));
+    };
+
+    return () => {
+      events.close();
+    };
+  }, []);
+
+  const startOverMutation = useMutation(
+    () => mediaTrackerApi.importTrakttv.startOver(),
     {
-      refetchInterval: 100,
-      enabled: _state !== 'imported',
-      onSettled: (data) => setState(data?.state),
+      onSettled: () => {
+        setState(undefined);
+        queryClient.removeQueries(['import', 'TraktTv']);
+        queryClient.invalidateQueries(['import', 'TraktTv']);
+      },
     }
   );
 
   return {
     deviceCode,
     state,
+    startOver: startOverMutation.mutate,
   };
 };
 
 export const TraktTvImportPage: FunctionComponent = () => {
-  const { deviceCode, state } = useTraktTvImport();
+  const { deviceCode, state, startOver } = useTraktTvImport();
 
   return (
     <div className="flex flex-col justify-center w-full mt-4">
@@ -40,40 +62,52 @@ export const TraktTvImportPage: FunctionComponent = () => {
         {state ? (
           <>
             {deviceCode && state?.state === 'waiting-for-authentication' ? (
-              <div className="">
-                <Trans>
-                  Go to{' '}
-                  <a
-                    href={deviceCode.verificationUrl}
-                    className="link"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {deviceCode.verificationUrl}
-                  </a>{' '}
-                  and enter following code: {deviceCode.userCode}
-                </Trans>
-                <div
-                  className="ml-2 text-sm btn"
-                  onClick={() => {
-                    navigator.permissions
-                      .query({ name: 'clipboard-write' as PermissionName })
-                      .then((result) => {
-                        if (
-                          result.state == 'granted' ||
-                          result.state == 'prompt'
-                        ) {
-                          navigator.clipboard.writeText(deviceCode.userCode);
-                        }
-                      });
-                  }}
-                >
-                  <Trans>Copy to clipboard</Trans>
+              <div className="flex flex-col items-center mt-10">
+                <div>
+                  <Trans>
+                    Go to{' '}
+                    <a
+                      href={deviceCode.verificationUrl}
+                      className="link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {deviceCode.verificationUrl}
+                    </a>{' '}
+                    and enter following code: <b>{deviceCode.userCode}</b>
+                  </Trans>
                 </div>
+                {navigator.clipboard && (
+                  <div>
+                    <div
+                      className="mt-2 text-sm btn"
+                      onClick={async () => {
+                        try {
+                          navigator.clipboard.writeText(deviceCode.userCode);
+                        } catch (error) {
+                          console.log(error);
+                        }
+                      }}
+                    >
+                      <Trans>Copy to clipboard</Trans>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <>
                 <div className="text-2xl">{stateMap[state.state]}</div>
+                {state.error && (
+                  <div className="mt-2 text-red-500">{state.error}</div>
+                )}
+              </>
+            )}
+
+            {state.state === 'imported' && (
+              <>
+                <div className="mt-2 btn" onClick={() => startOver()}>
+                  <Trans>Start over</Trans>
+                </div>
               </>
             )}
           </>
@@ -82,68 +116,16 @@ export const TraktTvImportPage: FunctionComponent = () => {
         )}
         <div className="py-4">
           {state?.progress > 0 && (
-            <Spring
-              from={{ percent: 0 }}
-              to={{ percent: state.progress * 100 }}
-            >
-              {({ percent }) => (
-                <div
-                  className="block h-4 border rounded w-80 bg-grad"
-                  style={{
-                    background: `linear-gradient(to right, black ${percent}%, transparent ${percent}%)`,
-                  }}
-                />
-              )}
-            </Spring>
+            <ProgressBarComponent progress={state.progress} />
           )}
         </div>
+
         {state?.exportSummary && (
-          <ImportSummaryTable
-            columns={[t`Movies`, t`Shows`, t`Seasons`, t`Episodes`]}
-            rows={[t`Watchlist`, t`Seen history`, t`Ratings`]}
-            exported={[
-              [
-                state.exportSummary?.watchlist?.movies,
-                state.exportSummary?.watchlist?.shows,
-                null,
-                null,
-              ],
-              [
-                state.exportSummary?.seen?.movies,
-                null,
-                null,
-                state.exportSummary?.seen?.episodes,
-                ,
-              ],
-              [
-                state.exportSummary?.ratings?.movies,
-                state.exportSummary?.ratings?.shows,
-                state.exportSummary?.ratings?.seasons,
-                state.exportSummary?.ratings?.episodes,
-              ],
-            ]}
-            imported={[
-              [
-                state.importSummary?.watchlist?.movies,
-                state.importSummary?.watchlist?.shows,
-                null,
-                null,
-              ],
-              [
-                state.importSummary?.seen?.movies,
-                null,
-                null,
-                state.importSummary?.seen?.episodes,
-                ,
-              ],
-              [
-                state.importSummary?.ratings?.movies,
-                state.importSummary?.ratings?.shows,
-                state.importSummary?.ratings?.seasons,
-                state.importSummary?.ratings?.episodes,
-              ],
-            ]}
-          />
+          <TraktImportSummaryTableComponent state={state} />
+        )}
+
+        {state?.notImportedItems && (
+          <NotImportedItems notImportedItems={state.notImportedItems} />
         )}
       </div>
     </div>
@@ -157,4 +139,267 @@ const stateMap: Record<ImportState, string> = {
   'waiting-for-authentication': t`Waiting for authentication`,
   imported: t`Imported`,
   importing: t`Importing`,
+  error: t`Error`,
+};
+
+const ProgressBarComponent: FunctionComponent<{ progress: number }> = (
+  props
+) => {
+  const progress = props.progress * 100;
+
+  const style = useSpring({
+    background: `linear-gradient(to right, blue ${progress}%, transparent 0%)`,
+    from: { background: 'linear-gradient(to right, blue 0%, transparent 0%)' },
+  });
+
+  return (
+    <animated.div
+      className="block h-4 border rounded w-80 bg-grad"
+      style={style}
+    ></animated.div>
+  );
+};
+
+const TraktImportSummaryTableComponent: FunctionComponent<{
+  state: ImportTrakttv.State.ResponseBody;
+}> = (props) => {
+  const { state } = props;
+
+  const importedListsByTraktId =
+    state.importSummary?.lists.reduce(
+      (prev, current) => ({ [current.listId]: current, ...prev }),
+      {}
+    ) || {};
+
+  return (
+    <TvImportSummaryTable
+      rows={[
+        {
+          title: t`Watchlist`,
+          exported: {
+            movies: state.exportSummary?.watchlist?.movies,
+            shows: state.exportSummary?.watchlist?.shows,
+            seasons: state.exportSummary?.watchlist?.seasons,
+            episodes: state.exportSummary?.watchlist?.episodes,
+          },
+          imported: {
+            movies: state.importSummary?.watchlist?.movies,
+            shows: state.importSummary?.watchlist?.shows,
+            seasons: state.importSummary?.watchlist?.seasons,
+            episodes: state.importSummary?.watchlist?.episodes,
+          },
+        },
+        {
+          title: t`Seen history`,
+          exported: {
+            movies: state.exportSummary?.seen?.movies,
+            episodes: state.exportSummary?.seen?.episodes,
+          },
+          imported: {
+            movies: state.importSummary?.seen?.movies,
+            episodes: state.importSummary?.seen?.episodes,
+          },
+        },
+        {
+          title: t`Ratings`,
+          exported: {
+            movies: state.exportSummary?.ratings?.movies,
+            shows: state.exportSummary?.ratings?.shows,
+            seasons: state.exportSummary?.ratings?.seasons,
+            episodes: state.exportSummary?.ratings?.episodes,
+          },
+          imported: {
+            movies: state.importSummary?.ratings?.movies,
+            shows: state.importSummary?.ratings?.shows,
+            seasons: state.importSummary?.ratings?.seasons,
+            episodes: state.importSummary?.ratings?.episodes,
+          },
+        },
+        ...state.exportSummary?.lists?.map((list) => ({
+          key: list.listId,
+          title: t`List: ${list.listName}`,
+          exported: {
+            movies: list?.movies,
+            shows: list?.shows,
+            seasons: list?.seasons,
+            episodes: list?.episodes,
+          },
+          imported: {
+            movies: importedListsByTraktId[list.listId]?.movies,
+            shows: importedListsByTraktId[list.listId]?.shows,
+            seasons: importedListsByTraktId[list.listId]?.seasons,
+            episodes: importedListsByTraktId[list.listId]?.episodes,
+          },
+        })),
+      ]}
+    />
+  );
+};
+
+const NotImportedItems: FunctionComponent<{
+  notImportedItems: TraktTvImportNotImportedItems;
+}> = (props) => {
+  const { notImportedItems } = props;
+
+  return (
+    <>
+      <div className="mt-8 text-2xl font-bold">
+        <Trans>Not imported items</Trans>
+      </div>
+      <div className="self-start">
+        <NotImportedItemsSubList
+          title={t`Watchlist - movies`}
+          items={notImportedItems.watchlist.movies?.map(formatMovieOrShow)}
+        />
+
+        <NotImportedItemsSubList
+          title={t`Watchlist - shows`}
+          items={notImportedItems.watchlist.shows?.map(formatMovieOrShow)}
+        />
+
+        <NotImportedItemsSubList
+          title={t`Watchlist - season`}
+          items={notImportedItems.watchlist.seasons?.map(formatSeasonTitle)}
+        />
+
+        <NotImportedItemsSubList
+          title={t`Watchlist - episodes`}
+          items={notImportedItems.watchlist.episodes?.map(formatEpisodeTitle)}
+        />
+
+        <NotImportedItemsSubList
+          title={t`Seen history - movies`}
+          items={notImportedItems.seen.movies?.map(formatMovieOrShow)}
+        />
+
+        <NotImportedItemsSubList
+          title={t`Seen history - episodes`}
+          items={notImportedItems.seen.episodes?.map(formatEpisodeTitle)}
+        />
+
+        <NotImportedItemsSubList
+          title={t`Ratings - movies`}
+          items={notImportedItems.ratings.movies?.map(formatMovieOrShow)}
+        />
+
+        <NotImportedItemsSubList
+          title={t`Ratings - shows`}
+          items={notImportedItems.ratings.shows?.map(formatMovieOrShow)}
+        />
+
+        <NotImportedItemsSubList
+          title={t`Ratings - seasons`}
+          items={notImportedItems.ratings.seasons?.map(formatSeasonTitle)}
+        />
+
+        <NotImportedItemsSubList
+          title={t`Ratings - episodes`}
+          items={notImportedItems.ratings.episodes?.map(formatEpisodeTitle)}
+        />
+
+        {notImportedItems.lists?.map((item) => (
+          <div key={item.listId}>
+            <NotImportedItemsSubList
+              key={item.listId}
+              title={t`List ${item.listName} - movies`}
+              items={item.movies?.map(formatMovieOrShow)}
+            />
+
+            <NotImportedItemsSubList
+              key={item.listId}
+              title={t`List ${item.listName} - shows`}
+              items={item.shows?.map(formatMovieOrShow)}
+            />
+
+            <NotImportedItemsSubList
+              key={item.listId}
+              title={t`List ${item.listName} - seasons`}
+              items={item.seasons?.map(formatSeasonTitle)}
+            />
+
+            <NotImportedItemsSubList
+              key={item.listId}
+              title={t`List ${item.listName} - episodes`}
+              items={item.episodes?.map(formatEpisodeTitle)}
+            />
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
+
+const NotImportedItemsSubList: FunctionComponent<{
+  items: { title: string; url: string }[];
+  title: string;
+}> = (props) => {
+  const { items, title } = props;
+
+  return (
+    <>
+      {items?.length > 0 && (
+        <>
+          <div className="mt-4 text-xl font-bold">
+            {title} (
+            <Plural value={items.length} one="1 item" other="# items" />)
+          </div>
+
+          {items?.map((item) => (
+            <a key={item.title} href={item.url} className="block">
+              {item.title}
+            </a>
+          ))}
+        </>
+      )}
+    </>
+  );
+};
+
+const formatMovieOrShow = (args: {
+  title: string;
+  year?: number;
+  traktTvLink: string;
+}) => {
+  return {
+    title: formatTitle(args),
+    url: args.traktTvLink,
+  };
+};
+
+const formatTitle = (args: { title: string; year?: number }) => {
+  const { title, year } = args;
+
+  if (!year) {
+    return title;
+  }
+
+  return `${title} (${year})`;
+};
+
+const formatSeasonTitle = (args: {
+  show: { title: string; year?: number };
+  season: { seasonNumber: number };
+  traktTvLink: string;
+}) => {
+  return {
+    title: `${formatTitle(args.show)} S${args.season.seasonNumber
+      .toString()
+      .padStart(2, '0')}`,
+    url: args.traktTvLink,
+  };
+};
+
+const formatEpisodeTitle = (args: {
+  show: { title: string; year?: number };
+  episode: { seasonNumber: number; episodeNumber: number };
+  traktTvLink: string;
+}) => {
+  return {
+    title: `${formatTitle(args.show)} S${args.episode.seasonNumber
+      .toString()
+      .padStart(2, '0')}E${args.episode.episodeNumber
+      .toString()
+      .padStart(2, '0')}`,
+    url: args.traktTvLink,
+  };
 };

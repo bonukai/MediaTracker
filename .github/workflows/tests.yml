@@ -14,7 +14,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: 17
+          node-version: 18
       - run: npm ci
       - run: npm run build
       - run: npm run lint
@@ -22,8 +22,8 @@ jobs:
   test:
     strategy:
       matrix:
-        node: ['16', '17']
-        os: [ubuntu-20.04, ubuntu-18.04, windows-latest]
+        node: ['16', '17', '18']
+        os: [ubuntu-20.04, ubuntu-22.04, windows-latest]
     concurrency: 
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.node }}
       cancel-in-progress: true

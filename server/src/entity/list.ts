@@ -26,6 +26,7 @@ export type List = {
   allowComments?: boolean;
   displayNumbers?: boolean;
   isWatchlist: boolean;
+  traktId?: number;
 };
 
 export type ListItem = {

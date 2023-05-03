@@ -64,7 +64,7 @@ export class OpenLibrary extends MetadataProvider {
         typeof res.data.description === 'string'
           ? res.data.description
           : res.data.description?.value,
-      releaseDate: res.data.first_publish_date,
+      releaseDate: parseDate(res.data?.first_publish_date),
       poster:
         res.data.covers?.length > 0
           ? `https://covers.openlibrary.org/b/id/${res.data.covers[0]}.jpg`
@@ -73,6 +73,21 @@ export class OpenLibrary extends MetadataProvider {
     };
   }
 }
+
+const parseDate = (dateStr: string): string => {
+  if (dateStr?.length === 4 && !Number.isNaN(dateStr)) {
+    return dateStr;
+  }
+
+  const timestamp = Date.parse(dateStr);
+
+  if (!Number.isNaN(timestamp)) {
+    const date = new Date(timestamp);
+    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  }
+
+  return undefined;
+};
 
 interface Document {
   cover_i: number;

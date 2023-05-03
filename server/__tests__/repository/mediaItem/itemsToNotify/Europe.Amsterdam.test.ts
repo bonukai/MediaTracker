@@ -18,7 +18,7 @@ describe('itemsToNotify in timezone Europe/Amsterdam', () => {
   afterAll(clearDatabase);
 
   it('timezone offset should match Europe/Amsterdam timezone', () => {
-    jest.useFakeTimers();
+    jest.useFakeTimers({ doNotFake: ['performance'] });
     jest.setSystemTime(new Date(2022, 6, 31, 19, 1));
     expect(new Date().getTimezoneOffset()).toBe(-120);
   });
@@ -40,7 +40,7 @@ describe('itemsToNotify in timezone Europe/Amsterdam', () => {
         )
       ).map((item) => _.pick(item, ['id']));
 
-    jest.useFakeTimers();
+    jest.useFakeTimers({ doNotFake: ['performance'] });
 
     // 01/08/2022, 01:01:00 in local time
     // 31/07/2022, 23:01:00 in UTC
@@ -80,7 +80,7 @@ describe('itemsToNotify in timezone Europe/Amsterdam', () => {
         )
       ).map((item) => _.pick(item, ['id']));
 
-    jest.useFakeTimers();
+    jest.useFakeTimers({ doNotFake: ['performance'] });
 
     // 01/08/2022, 02:01:00 in local time
     // 01/08/2022, 00:01:00 in UTC

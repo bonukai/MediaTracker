@@ -8,7 +8,7 @@ export type Configuration = {
   igdbClientSecret?: string;
 };
 
-export type ServerLang = 'da' | 'de' | 'en' | 'es' | 'fr' | 'pt';
+export type ServerLang = 'da' | 'de' | 'en' | 'es' | 'fr' | 'ko' | 'pt';
 
 export type AudibleLang =
   | 'au'
@@ -163,7 +163,7 @@ export type TmdbLang =
   | 'za'
   | 'zu';
 
-export const serverLang = ['da', 'de', 'en', 'es', 'fr', 'pt'];
+export const serverLang = ['da', 'de', 'en', 'es', 'fr', 'ko', 'pt'];
 export const audibleLang = [
   'au',
   'ca',

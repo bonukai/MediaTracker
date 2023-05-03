@@ -1,7 +1,10 @@
 import { Knex } from 'knex';
+import { fixItemsWithInvalidMediaItemId } from 'src/migrations/20220312002700_mediaItemSlug';
 import { randomSlugId } from 'src/slug';
 
 export async function up(knex: Knex): Promise<void> {
+  await fixItemsWithInvalidMediaItemId(knex);
+
   await knex.schema
     .alterTable('image', (table) => {
       table.dropForeign('mediaItemId');

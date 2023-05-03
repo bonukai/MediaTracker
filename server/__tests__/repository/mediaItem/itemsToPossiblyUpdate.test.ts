@@ -75,7 +75,7 @@ describe('itemsToPossiblyUpdate', () => {
       poster: 'posterUrl',
       backdrop: 'backdropUrl',
       releaseDate: '2001-04-12',
-      tmdbId: 123456,
+      tmdbId: 999,
       runtime: 124,
     };
 

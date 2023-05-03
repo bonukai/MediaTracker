@@ -304,6 +304,12 @@ describe('mediaItemRepository', () => {
         title: 'Item 1',
       },
       {
+        tmdbId: 1234567,
+        source: 'user',
+        mediaType: 'tv',
+        title: 'Item 1 duplicate',
+      },
+      {
         tmdbId: 9875321,
         source: 'user',
         mediaType: 'tv',
@@ -336,6 +342,12 @@ describe('mediaItemRepository', () => {
         source: 'tmdb',
         mediaType: 'tv',
         title: 'title123',
+      },
+      {
+        tmdbId: 999,
+        source: 'tmdb',
+        mediaType: 'tv',
+        title: 'title123 duplicate',
       },
     ];
 
@@ -387,22 +399,28 @@ describe('mediaItemRepository', () => {
         poster: `/img/${existingItemPoster.id}`,
         backdrop: `/img/${existingItemBackdrop.id}`,
       },
-      { ...searchResult[1], id: 77773 },
       {
-        ...searchResult[2],
+        ...searchResult[1],
+        id: 77771,
+        poster: `/img/${existingItemPoster.id}`,
+        backdrop: `/img/${existingItemBackdrop.id}`,
+      },
+      { ...searchResult[2], id: 77773 },
+      {
+        ...searchResult[3],
         id: insertedMediaItem.id,
         poster: `/img/${insertedPoster.id}`,
         backdrop: `/img/${insertedBackdrop.id}`,
       },
       {
-        ...searchResult[3],
+        ...searchResult[4],
         id: 77772,
       },
-      searchResult[4],
       searchResult[5],
+      searchResult[6],
+      searchResult[7],
     ];
 
-    expect(res.mergeWithSearchResult()).toMatchObject(expected);
     expect(res.mergeWithSearchResult()).toMatchObject(expected);
 
     expect(res.existingItems).toMatchObject([
@@ -412,16 +430,29 @@ describe('mediaItemRepository', () => {
         poster: `/img/${existingItemPoster.id}`,
         backdrop: `/img/${existingItemBackdrop.id}`,
       },
-      { ...searchResult[1], id: 77773 },
       {
-        ...searchResult[3],
+        ...searchResult[1],
+        id: 77771,
+        poster: `/img/${existingItemPoster.id}`,
+        backdrop: `/img/${existingItemBackdrop.id}`,
+      },
+      { ...searchResult[2], id: 77773 },
+      {
+        ...searchResult[4],
         id: 77772,
       },
     ]);
 
+    expect(res.newItems[0]).toMatchObject(
+      _.omit(searchResult[3], ['poster', 'backdrop'])
+    );
+
+    expect(res.newItems[1]).toMatchObject(searchResult[5]);
+    expect(res.newItems[2]).toMatchObject(searchResult[6]);
+
     expect(res.newItems[0].lastTimeUpdated).toBeDefined();
-    expect(updatedMediaItem).toMatchObject(searchResult[3]);
-    expect(insertedMediaItem).toMatchObject(searchResult[2]);
+    expect(updatedMediaItem).toMatchObject(searchResult[4]);
+    expect(insertedMediaItem).toMatchObject(searchResult[3]);
   });
 });
 

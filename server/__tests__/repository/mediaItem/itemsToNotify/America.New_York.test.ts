@@ -19,7 +19,7 @@ describe('itemsToNotify in timezone America/New_York', () => {
   afterAll(clearDatabase);
 
   it('timezone offset should match America/New_York timezone', () => {
-    jest.useFakeTimers();
+    jest.useFakeTimers({ doNotFake: ['performance'] });
     jest.setSystemTime(new Date(2022, 6, 31, 19, 1));
     expect(new Date().getTimezoneOffset()).toBe(240);
   });
@@ -41,7 +41,7 @@ describe('itemsToNotify in timezone America/New_York', () => {
         )
       ).map((item) => _.pick(item, ['id']));
 
-    jest.useFakeTimers();
+    jest.useFakeTimers({ doNotFake: ['performance'] });
 
     // 31/07/2022, 19:01:00 in local time
     // 31/07/2022, 23:01:00 in UTC
@@ -81,7 +81,7 @@ describe('itemsToNotify in timezone America/New_York', () => {
         )
       ).map((item) => _.pick(item, ['id']));
 
-    jest.useFakeTimers();
+    jest.useFakeTimers({ doNotFake: ['performance'] });
 
     // 31/07/2022, 20:01:00 in local time
     // 01/08/2022, 00:01:00 in UTC

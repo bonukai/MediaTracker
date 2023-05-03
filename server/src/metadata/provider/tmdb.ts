@@ -112,7 +112,7 @@ export class TMDbMovie extends TMDb {
 
   private mapMovie(item: Partial<TMDbApi.MovieDetailsResponse>) {
     const movie = this.mapItem(item);
-    movie.imdbId = item.imdb_id;
+    movie.imdbId = item.imdb_id || undefined;
     movie.originalTitle = item.original_title;
     movie.releaseDate = item.release_date || null;
     movie.title = item.title;
@@ -172,9 +172,8 @@ export class TMDbTv extends TMDb {
         );
 
         season.tvdbId = res.data.external_ids?.tvdb_id;
-        season.episodes = res.data.episodes.map((item) =>
-          this.mapEpisode(item)
-        );
+        season.episodes =
+          res.data.episodes?.map((item) => this.mapEpisode(item)) || [];
         return season;
       })
     );
@@ -204,14 +203,34 @@ export class TMDbTv extends TMDb {
     };
   }
 
+  async findByTvdbId(tvdbId: number): Promise<MediaItemForProvider> {
+    const res = await axios.get(`https://api.themoviedb.org/3/find/${tvdbId}`, {
+      params: {
+        api_key: TMDB_API_KEY,
+        external_source: 'tvdb_id',
+        language: GlobalConfiguration.configuration.tmdbLang,
+      },
+    });
+
+    if (res.data.tv_results?.length === 0) {
+      return;
+    }
+
+    return {
+      ...this.mapTvShow(res.data.tv_results[0]),
+      tvdbId: tvdbId,
+      needsDetails: true,
+    };
+  }
+
   async findByTmdbId(tmdbId: number): Promise<MediaItemForProvider> {
     return this.details({ tmdbId: tmdbId });
   }
 
   private mapTvShow(item: Partial<TMDbApi.TvDetailsResponse>) {
     const tvShow = this.mapItem(item);
-    tvShow.imdbId = item.external_ids?.imdb_id;
-    tvShow.tvdbId = item.external_ids?.tvdb_id;
+    tvShow.imdbId = item.external_ids?.imdb_id || undefined;
+    tvShow.tvdbId = item.external_ids?.tvdb_id || undefined;
     tvShow.title = item.name;
     tvShow.originalTitle = item.original_name;
     tvShow.releaseDate = item.first_air_date || null;

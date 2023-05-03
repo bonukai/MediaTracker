@@ -9,6 +9,62 @@ class ListItemRepository extends repository<ListItem>({
   tableName: 'listItem',
   primaryColumnName: 'id',
 }) {
+  async addManyItems(args: {
+    userId: number;
+    listId: number;
+    listItems: { mediaItemId: number; seasonId?: number; episodeId?: number }[];
+  }) {
+    const { userId, listId, listItems } = args;
+
+    return await Database.knex.transaction(async (trx) => {
+      const list = await trx<List>('list')
+        .where({ id: listId, userId: userId })
+        .first();
+
+      if (!list || (list.userId !== userId && list.privacy === 'private')) {
+        return false;
+      }
+
+      const existingListItems = await trx<ListItem>('listItem').where({
+        listId: listId,
+      });
+
+      const serializeListItem = (listItem: {
+        mediaItemId: number;
+        seasonId?: number;
+        episodeId?: number;
+      }) => {
+        return JSON.stringify([
+          listItem.mediaItemId,
+          listItem.seasonId,
+          listItem.episodeId,
+        ]);
+      };
+      const existingListItemsSet = new Set(
+        existingListItems.map(serializeListItem)
+      );
+
+      const itemsToAdd = listItems
+        .filter(
+          (listItem) => !existingListItemsSet.has(serializeListItem(listItem))
+        )
+        .map((listItem, index) => ({
+          listId: listId,
+          addedAt: new Date().getTime(),
+          rank: existingListItems.length + index,
+          mediaItemId: listItem.mediaItemId,
+          seasonId: listItem.seasonId,
+          episodeId: listItem.episodeId,
+        }));
+
+      if (itemsToAdd.length > 0) {
+        await trx.batchInsert<ListItem>('listItem', itemsToAdd, 30);
+      }
+
+      return true;
+    });
+  }
+
   addItem = this.#addOrRemoveListItemFactory(async (trx, args) => {
     const { mediaItemId, seasonId, episodeId, listId } = args;
 
