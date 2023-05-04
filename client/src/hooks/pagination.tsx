@@ -7,8 +7,8 @@ export const usePagination = (args: {
 }) => {
   const [page, setPage] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams();
-  const numberOfPages = Math.ceil(args.totalItems / args.itemsPerPage) - 1;
-
+  const numberOfPages = Math.ceil(args.totalItems / args.itemsPerPage);
+  
   useEffect(() => {
     if (searchParams.has('page') && Number(searchParams.get('page')) !== page) {
       setPage(Number(searchParams.get('page')));
