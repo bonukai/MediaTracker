@@ -10,6 +10,9 @@ import { seenRepository } from 'src/repository/seen';
 import { Seen } from 'src/entity/seen';
 import { logger } from 'src/logger';
 import { listItemRepository } from 'src/repository/listItemRepository';
+import { MediaType } from 'src/entity/mediaItem';
+import { findMediaItemOrEpisodeByExternalId } from 'src/metadata/findByExternalId';
+import { Database } from 'src/dbconfig';
 
 /**
  * @openapi_tags Seen
@@ -28,12 +31,19 @@ export class SeenController {
       lastSeenEpisodeId?: number;
       lastSeenAt?: LastSeenAt;
       date?: number;
+      duration?: number;
     };
   }>(async (req, res) => {
     const userId = Number(req.user);
 
-    const { mediaItemId, seasonId, episodeId, lastSeenAt, lastSeenEpisodeId } =
-      req.query;
+    const {
+      mediaItemId,
+      seasonId,
+      episodeId,
+      lastSeenAt,
+      lastSeenEpisodeId,
+      duration,
+    } = req.query;
 
     let date = req.query.date ? new Date(req.query.date) : null;
 
@@ -123,7 +133,6 @@ export class SeenController {
               : date?.getTime() || null,
           duration:
             episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
-          type: 'seen',
         }))
       );
     } else {
@@ -151,7 +160,6 @@ export class SeenController {
           mediaItemId: mediaItemId,
           episodeId: episodeId,
           date: date?.getTime() || null,
-          type: 'seen',
         });
       } else if (seasonId) {
         const episodes = await tvEpisodeRepository.find({
@@ -174,7 +182,6 @@ export class SeenController {
                     : date?.getTime() || null,
                 duration:
                   episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
-                type: 'seen',
               })
             )
         );
@@ -200,7 +207,6 @@ export class SeenController {
                   duration:
                     episode.runtime * 60 * 1000 ||
                     mediaItem.runtime * 60 * 1000,
-                  type: 'seen',
                 })
               )
           );
@@ -210,14 +216,7 @@ export class SeenController {
             mediaItemId: mediaItemId,
             episodeId: null,
             date: date?.getTime() || null,
-            type: 'seen',
-          });
-
-          await addProgress({
-            userId: userId,
-            mediaItemId: mediaItemId,
-            episodeId: null,
-            date: date?.getTime() || null,
+            duration: duration || null,
           });
         }
       }
@@ -232,6 +231,76 @@ export class SeenController {
     }
 
     res.send();
+  });
+
+  /**
+   * @openapi_operationId addByExternalId
+   */
+  addByExternalId = createExpressRoute<{
+    method: 'put';
+    path: '/api/seen/by-external-id';
+    requestBody: {
+      mediaType: MediaType;
+      id: {
+        imdbId?: string;
+        tmdbId?: number;
+      };
+      seasonNumber?: number;
+      episodeNumber?: number;
+      duration?: number;
+    };
+  }>(async (req, res) => {
+    const userId = Number(req.user);
+
+    const { mediaType, id, seasonNumber, episodeNumber, duration } = req.body;
+
+    const { mediaItem, episode, error } =
+      await findMediaItemOrEpisodeByExternalId({
+        mediaType: mediaType,
+        id: id,
+        seasonNumber: seasonNumber,
+        episodeNumber: episodeNumber,
+      });
+
+    if (error) {
+      res.status(400);
+      res.send(error);
+      return;
+    }
+
+    await Database.knex.transaction(async (trx) => {
+      const previousSeenItem = await trx<Seen>('seen')
+        .where('userId', userId)
+        .where('mediaItemId', mediaItem.id)
+        .where('episodeId', episode?.id || null)
+        .where('date', '>', Date.now() - 1000 * 60 * 60 * 12);
+
+      if (previousSeenItem.length > 0) {
+        logger.debug(
+          `seen entry for userId ${userId}, mediaItemId: ${
+            mediaItem.id
+          }, episodeId: ${episode?.id} already exists, at ${new Date(
+            previousSeenItem.at(0).date
+          )}`
+        );
+
+        return;
+      }
+
+      logger.debug(
+        `adding seen entry for userId ${userId}, mediaItemId: ${mediaItem.id}, episodeId: ${episode?.id}`
+      );
+
+      await trx<Seen>('seen').insert({
+        userId: userId,
+        mediaItemId: mediaItem.id,
+        episodeId: episode?.id || null,
+        date: Date.now(),
+        duration: duration,
+      });
+    });
+
+    res.status(200);
   });
 
   /**
@@ -289,34 +358,3 @@ export class SeenController {
     res.send();
   });
 }
-
-const addProgress = async (args: {
-  userId: number;
-  mediaItemId: number;
-  date?: number;
-  episodeId?: number;
-}) => {
-  const { date, mediaItemId, userId, episodeId } = args;
-
-  if (!date) {
-    return;
-  }
-
-  const progress = await seenRepository.find({
-    userId: userId,
-    mediaItemId: mediaItemId,
-    episodeId: episodeId,
-    type: 'progress',
-  });
-
-  if (_.maxBy(progress, 'date')?.date < date) {
-    await seenRepository.create({
-      userId: userId,
-      mediaItemId: mediaItemId,
-      episodeId: null,
-      date: date,
-      type: 'progress',
-      progress: 1,
-    });
-  }
-};

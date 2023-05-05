@@ -32,7 +32,6 @@ describe('Seen controller', () => {
     const res = await Database.knex('seen')
       .where('mediaItemId', Data.movie.id)
       .where('userId', Data.user.id)
-      .where('type', 'seen')
       .whereNull('episodeId')
       .first();
 
@@ -54,7 +53,6 @@ describe('Seen controller', () => {
     const res = await Database.knex('seen')
       .where('mediaItemId', Data.tvShow.id)
       .where('userId', Data.user.id)
-      .where('type', 'seen')
       .whereNotNull('episodeId');
 
     expect(res.length).toBe(3);
@@ -80,7 +78,6 @@ describe('Seen controller', () => {
       .where('mediaItemId', Data.tvShow.id)
       .where('userId', Data.user.id)
       .where('episodeId', Data.episode.id)
-      .where('type', 'seen')
       .first();
 
     expect(res.date).toBeNull();
@@ -102,7 +99,6 @@ describe('Seen controller', () => {
     const res = await Database.knex('seen')
       .where('mediaItemId', Data.tvShow.id)
       .where('userId', Data.user.id)
-      .where('type', 'seen')
       .whereNotNull('episodeId');
 
     expect(res.length).toBe(2);

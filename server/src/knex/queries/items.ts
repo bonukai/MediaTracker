@@ -13,6 +13,7 @@ import { TvEpisode, tvEpisodeColumns } from 'src/entity/tvepisode';
 import { Image } from 'src/entity/image';
 import { Knex } from 'knex';
 import { List, listItemColumns } from 'src/entity/list';
+import { Progress } from 'src/entity/progress';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getItemsKnex = async (args: any): Promise<any> => {
@@ -102,7 +103,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
       seenEpisodesCount: 'seenEpisodesCount',
       poster: 'poster.id',
       backdrop: 'backdrop.id',
-      progress: 'progress',
+      progress: 'progress.progress',
     })
     .from<MediaItemBase>('mediaItem')
     .leftJoin<Seen>(
@@ -124,7 +125,6 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           .max('date', { as: 'date' })
           .from<Seen>('seen')
           .where('userId', userId)
-          .where('type', 'seen')
           .groupBy('mediaItemId')
           .as('lastSeen2'),
       'lastSeen2.mediaItemId',
@@ -215,7 +215,6 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
             qb
               .select('mediaItemId')
               .from<Seen>('seen')
-              .where('type', 'seen')
               .where('userId', userId)
               .whereNotNull('episodeId')
               .groupBy('mediaItemId', 'episodeId')
@@ -239,12 +238,7 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           })
           .count('*', { as: 'unseenEpisodesCount' })
           .leftJoin(
-            (qb) =>
-              qb
-                .from<Seen>('seen')
-                .where('userId', userId)
-                .where('type', 'seen')
-                .as('seen'),
+            (qb) => qb.from<Seen>('seen').where('userId', userId).as('seen'),
             'seen.episodeId',
             'episode.id'
           )
@@ -306,35 +300,16 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
       'mediaItem.id'
     )
     // Progress
-    .leftJoin<Seen>(
+    .leftJoin<Progress>(
       (qb) =>
         qb
-          .from<Seen>('seen')
-          .select('mediaItemId')
-          .max('date', { as: 'progressDate' })
+          .from<Progress>('progress')
+          .where('userId', userId)
           .whereNull('episodeId')
-          .where('type', 'progress')
-          .where('userId', userId)
-          .groupBy('mediaItemId')
-          .as('progressHelper'),
-      'progressHelper.mediaItemId',
-      'mediaItem.id'
-    )
-    .leftJoin<Seen>(
-      (qb) =>
-        qb
-          .from<Seen>('seen')
-          .select('date')
-          .max('progress', { as: 'progress' })
-          .groupBy('date')
-          .where('type', 'progress')
-          .where('userId', userId)
           .whereNot('progress', 1)
           .as('progress'),
-      (qb) =>
-        qb
-          .on('progressHelper.mediaItemId', 'mediaItem.id')
-          .andOn('progress.date', 'progressDate')
+      'progress.mediaItemId',
+      'mediaItem.id'
     );
 
   if (Array.isArray(mediaItemIds)) {

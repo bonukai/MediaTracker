@@ -391,7 +391,6 @@ export class TraktTvImportController {
                 userId: userId,
                 mediaItemId: mediaItem.id,
                 date: new Date(item.watched_at).getTime(),
-                type: 'seen',
               })
             );
 
@@ -407,7 +406,6 @@ export class TraktTvImportController {
                 mediaItemId: mediaItem.id,
                 date: new Date(item.watched_at).getTime(),
                 episodeId: episode.id,
-                type: 'seen',
               })
             )
             .filter(Boolean);
@@ -580,9 +578,6 @@ export class TraktTvImportController {
               mediaItemId: seen.mediaItemId,
               episodeId: seen.episodeId || null,
               date: seen.date || null,
-              type: seen.type,
-              action: seen.action || null,
-              progress: seen.progress || null,
             };
           };
 

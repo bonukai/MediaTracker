@@ -33,7 +33,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user.id,
     episodeId: 1,
-    type: 'seen',
   },
   {
     id: 2,
@@ -41,7 +40,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user.id,
     episodeId: 2,
-    type: 'seen',
   },
   {
     id: 3,
@@ -49,7 +47,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user.id,
     episodeId: 3,
-    type: 'seen',
   },
   {
     id: 4,
@@ -57,7 +54,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 3,
     episodeId: null,
     userId: user.id,
-    type: 'seen',
   },
   {
     id: 5,
@@ -65,7 +61,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 4,
     episodeId: 5,
     userId: user.id,
-    type: 'seen',
   },
   {
     id: 6,
@@ -73,7 +68,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 5,
     episodeId: 7,
     userId: 2,
-    type: 'seen',
   },
   {
     id: 7,
@@ -81,7 +75,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 5,
     episodeId: 8,
     userId: 2,
-    type: 'seen',
   },
 ];
 

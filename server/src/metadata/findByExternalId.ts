@@ -4,7 +4,74 @@ import { logger } from 'src/logger';
 import { Audible } from 'src/metadata/provider/audible';
 import { OpenLibrary } from 'src/metadata/provider/openlibrary';
 import { TMDbMovie, TMDbTv } from 'src/metadata/provider/tmdb';
+import { tvEpisodeRepository } from 'src/repository/episode';
 import { mediaItemRepository } from 'src/repository/mediaItem';
+import { updateMediaItem } from 'src/updateMetadata';
+
+export const findMediaItemOrEpisodeByExternalId = async (args: {
+  mediaType: MediaType;
+  id: {
+    imdbId?: string;
+    tmdbId?: number;
+  };
+  seasonNumber?: number;
+  episodeNumber?: number;
+}) => {
+  const { mediaType, id, seasonNumber, episodeNumber } = args;
+
+  if (
+    mediaType === 'tv' &&
+    (typeof seasonNumber !== 'number' || typeof episodeNumber !== 'number')
+  ) {
+    return {
+      error: 'Season end episode number are required for mediaType "tv"',
+    };
+  }
+
+  if (!id.imdbId && !id.tmdbId) {
+    return {
+      error: 'At least one external id is required',
+    };
+  }
+
+  const mediaItem = await findMediaItemByExternalId({
+    id: id,
+    mediaType: mediaType,
+  });
+
+  if (!mediaItem) {
+    return {
+      error: `Unable to find mediaItem with id: ${JSON.stringify(id)}`,
+    };
+  }
+
+  if (mediaType === 'tv') {
+    if (mediaItem.needsDetails) {
+      await updateMediaItem(mediaItem);
+    }
+
+    const episode = await tvEpisodeRepository.findOne({
+      tvShowId: mediaItem.id,
+      episodeNumber: episodeNumber,
+      seasonNumber: seasonNumber,
+    });
+
+    if (!episode) {
+      return {
+        error: `Unable to find episode S${seasonNumber}E${episodeNumber} for ${mediaItem.title}`,
+      };
+    }
+
+    return {
+      mediaItem: mediaItem,
+      episode: episode,
+    };
+  }
+
+  return {
+    mediaItem: mediaItem,
+  };
+};
 
 export const findMediaItemByExternalId = async (args: {
   id: ExternalIds;

@@ -9,6 +9,7 @@ import {
   ListSortOrder,
 } from 'src/entity/list';
 import { MediaItemItemsResponse, MediaType } from 'src/entity/mediaItem';
+import { Progress } from 'src/entity/progress';
 import { Seen } from 'src/entity/seen';
 import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason } from 'src/entity/tvseason';
@@ -543,7 +544,6 @@ class ListRepository extends repository<List>({
             .max('date', { as: 'lastSeenAt' })
             .from('seen')
             .where('userId', userId)
-            .where('type', 'seen')
             .groupBy('episodeId')
             .as('episodeLastSeen'),
         'episodeLastSeen.episodeId',
@@ -558,7 +558,6 @@ class ListRepository extends repository<List>({
             .from('seen')
             .leftJoin('episode', 'episode.id', 'seen.episodeId')
             .where('userId', userId)
-            .where('type', 'seen')
             .groupBy('episode_seasonId')
             .as('seasonLastSeen'),
         'seasonLastSeen.episode_seasonId',
@@ -572,7 +571,6 @@ class ListRepository extends repository<List>({
             .max('date', { as: 'lastSeenAt' })
             .from('seen')
             .where('userId', userId)
-            .where('type', 'seen')
             .groupBy('mediaItemId')
             .as('mediaItemLastSeen'),
         'mediaItemLastSeen.mediaItemId',
@@ -723,7 +721,6 @@ class ListRepository extends repository<List>({
               qb
                 .select('mediaItemId')
                 .from<Seen>('seen')
-                .where('type', 'seen')
                 .where('userId', userId)
                 .whereNotNull('episodeId')
                 .groupBy('mediaItemId', 'episodeId')
@@ -746,7 +743,6 @@ class ListRepository extends repository<List>({
               qb
                 .select('mediaItemId')
                 .from<Seen>('seen')
-                .where('type', 'seen')
                 .where('userId', userId)
                 .whereNotNull('episodeId')
                 .groupBy('mediaItemId', 'episodeId')
@@ -769,12 +765,7 @@ class ListRepository extends repository<List>({
               as: 'seasonAndEpisodeNumber',
             })
             .leftJoin(
-              (qb) =>
-                qb
-                  .from<Seen>('seen')
-                  .where('userId', userId)
-                  .where('type', 'seen')
-                  .as('seen'),
+              (qb) => qb.from<Seen>('seen').where('userId', userId).as('seen'),
               'seen.episodeId',
               'episode.id'
             )
@@ -811,12 +802,7 @@ class ListRepository extends repository<List>({
               as: 'seasonAndEpisodeNumber',
             })
             .leftJoin(
-              (qb) =>
-                qb
-                  .from<Seen>('seen')
-                  .where('userId', userId)
-                  .where('type', 'seen')
-                  .as('seen'),
+              (qb) => qb.from<Seen>('seen').where('userId', userId).as('seen'),
               'seen.episodeId',
               'episode.id'
             )
@@ -841,69 +827,26 @@ class ListRepository extends repository<List>({
             )
       )
       // MediaItem: progress
-      .leftJoin<Seen>(
+      .leftJoin<Progress>(
         (qb) =>
           qb
-            .from<Seen>('seen')
-            .select('mediaItemId')
-            .max('date', { as: 'progressDate' })
-            .whereNull('episodeId')
-            .where('type', 'progress')
+            .from<Progress>('progress')
             .where('userId', userId)
-            .groupBy('mediaItemId')
-            .as('mediaItemProgressHelper'),
-        'mediaItemProgressHelper.mediaItemId',
+            .where('episodeId', null)
+            .as('mediaItemProgress'),
+        'mediaItemProgress.mediaItemId',
         'listItem.mediaItemId'
       )
-      .leftJoin<Seen>(
-        (qb) =>
-          qb
-            .from<Seen>('seen')
-            .select('date')
-            .max('progress', { as: 'progress' })
-            .groupBy('date')
-            .where('type', 'progress')
-            .where('userId', userId)
-            .whereNot('progress', 1)
-            .as('mediaItemProgress'),
-        (qb) =>
-          qb
-            .on('mediaItemProgressHelper.mediaItemId', 'listItem.mediaItemId')
-            .andOn(
-              'mediaItemProgressHelper.progressDate',
-              'mediaItemProgress.date'
-            )
-      )
       // Episode: progress
-      .leftJoin<Seen>(
+      .leftJoin<Progress>(
         (qb) =>
           qb
-            .from<Seen>('seen')
-            .select('episodeId')
-            .max('date', { as: 'progressDate' })
+            .from<Progress>('progress')
+            .where('userId', userId)
             .whereNotNull('episodeId')
-            .where('type', 'progress')
-            .where('userId', userId)
-            .groupBy('episodeId')
-            .as('episodeProgressHelper'),
-        'episodeProgressHelper.episodeId',
-        'listItem.episodeId'
-      )
-      .leftJoin<Seen>(
-        (qb) =>
-          qb
-            .from<Seen>('seen')
-            .select('date')
-            .max('progress', { as: 'progress' })
-            .groupBy('date')
-            .where('type', 'progress')
-            .where('userId', userId)
-            .whereNot('progress', 1)
             .as('episodeProgress'),
-        (qb) =>
-          qb
-            .on('episodeProgressHelper.episodeId', 'listItem.episodeId')
-            .andOn('episodeProgressHelper.progressDate', 'episodeProgress.date')
+        'episodeProgress.episodeId',
+        'listItem.episodeId'
       )
       // MediaItem: last aired episode
       .leftJoin<TvEpisode>(

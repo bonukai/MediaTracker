@@ -17,6 +17,7 @@ export const clearDatabase = async () => {
     .dropTableIfExists('session')
     .dropTableIfExists('userRating')
     .dropTableIfExists('watchlist')
+    .dropTableIfExists('progress')
     .dropTableIfExists('seen')
     .dropTableIfExists('user')
     .dropTableIfExists('episode')

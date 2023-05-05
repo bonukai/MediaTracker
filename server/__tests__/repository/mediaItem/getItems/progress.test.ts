@@ -4,9 +4,10 @@ import { mediaItemRepository } from 'src/repository/mediaItem';
 import { MediaItemBase } from 'src/entity/mediaItem';
 import { User } from 'src/entity/user';
 import { userRepository } from 'src/repository/user';
-import { Seen } from 'src/entity/seen';
-import { seenRepository } from 'src/repository/seen';
 import { clearDatabase, runMigrations } from '../../../__utils__/utils';
+import { Progress } from 'src/entity/progress';
+import { progressRepository } from 'src/repository/progress';
+import { seenRepository } from 'src/repository/seen';
 
 const user: User = {
   id: 1,
@@ -37,45 +38,19 @@ const mediaItem: MediaItemBase = {
 
 const date = new Date().getTime();
 
-const progress: Seen = {
+const progress: Progress = {
   date: date,
   userId: user.id,
   mediaItemId: mediaItem.id,
-  type: 'progress',
   progress: 0.8,
 };
 
-const progress2: Seen = {
+const progress2: Progress = {
   date: date,
   userId: user2.id,
   mediaItemId: mediaItem.id,
-  type: 'progress',
   progress: 0.4,
 };
-
-const progress3: Seen[] = [
-  {
-    date: date - 1,
-    userId: user.id,
-    mediaItemId: mediaItem.id,
-    type: 'progress',
-    progress: 0.3,
-  },
-  {
-    date: date - 2,
-    userId: user.id,
-    mediaItemId: mediaItem.id,
-    type: 'progress',
-    progress: 0.2,
-  },
-  {
-    date: date - 3,
-    userId: user.id,
-    mediaItemId: mediaItem.id,
-    type: 'progress',
-    progress: 0.1,
-  },
-];
 
 describe('progress', () => {
   beforeAll(runMigrations);
@@ -84,9 +59,10 @@ describe('progress', () => {
     await mediaItemRepository.create(mediaItem);
     await userRepository.create(user);
     await userRepository.create(user2);
-    await seenRepository.create(progress);
-    await seenRepository.create(progress2);
-    await seenRepository.createMany(progress3);
+    await seenRepository.create(_.omit(progress, 'progress'));
+    await seenRepository.create(_.omit(progress2, 'progress'));
+    await progressRepository.create(progress);
+    await progressRepository.create(progress2);
   });
 
   afterAll(clearDatabase);
@@ -123,28 +99,5 @@ describe('progress', () => {
     });
 
     expect(res.progress).toEqual(progress2.progress);
-  });
-
-  test('should return null, when progress is 1', async () => {
-    await seenRepository.create({
-      date: new Date().getTime(),
-      mediaItemId: mediaItem.id,
-      userId: user.id,
-      progress: 1,
-      type: 'progress',
-    });
-
-    const [res] = await mediaItemRepository.items({
-      userId: user.id,
-    });
-
-    expect(res.progress).toBeNull();
-
-    const details = await mediaItemRepository.details({
-      mediaItemId: mediaItem.id,
-      userId: user.id,
-    });
-
-    expect(details.progress).toBeNull();
   });
 });

@@ -11,6 +11,8 @@ import { seenRepository } from 'src/repository/seen';
 import { userRatingRepository } from 'src/repository/userRating';
 import { listItemRepository } from 'src/repository/listItemRepository';
 import { listRepository } from 'src/repository/list';
+import { Progress } from 'src/entity/progress';
+import { progressRepository } from 'src/repository/progress';
 
 /**
  * @openapi_tags GoodreadsImport
@@ -92,12 +94,11 @@ export const importFromGoodreadsRss = async (
   const currentlyReading = items
     ?.filter((item) => item.user_shelves === 'currently-reading')
     .map(
-      (item): Seen => ({
+      (item): Progress => ({
         mediaItemId: mediaItemByGoodreadsIdMap[item.book_id].id,
         userId: userId,
         date: new Date(item.user_date_added).getTime(),
         progress: 0,
-        type: 'progress',
       })
     );
 
@@ -108,7 +109,6 @@ export const importFromGoodreadsRss = async (
         mediaItemId: mediaItemByGoodreadsIdMap[item.book_id].id,
         userId: userId,
         date: item.user_read_at ? new Date(item.user_read_at).getTime() : null,
-        type: 'seen',
       })
     );
 
@@ -138,7 +138,10 @@ export const importFromGoodreadsRss = async (
   const seenUniqueBy = (value: Seen) => ({
     mediaItemId: value.mediaItemId,
     date: value.date,
-    type: value.type,
+  });
+
+  const progressUniqueBy = (value: Seen) => ({
+    mediaItemId: value.mediaItemId,
   });
 
   for (const [listName, listItems] of Object.entries(lists)) {
@@ -171,7 +174,7 @@ export const importFromGoodreadsRss = async (
   }
 
   await seenRepository.createManyUnique(read, seenUniqueBy);
-  await seenRepository.createManyUnique(currentlyReading, seenUniqueBy);
+  await progressRepository.createManyUnique(currentlyReading, progressUniqueBy);
   await userRatingRepository.createMany(rating);
 
   return {

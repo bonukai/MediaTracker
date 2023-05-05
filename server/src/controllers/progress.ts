@@ -3,9 +3,14 @@ import { createExpressRoute } from 'typescript-routes-to-openapi-server';
 
 import { tvEpisodeRepository } from 'src/repository/episode';
 import { mediaItemRepository } from 'src/repository/mediaItem';
-import { Seen } from 'src/entity/seen';
 import { seenRepository } from 'src/repository/seen';
 import { listItemRepository } from 'src/repository/listItemRepository';
+import { MediaType } from 'src/entity/mediaItem';
+import { findMediaItemOrEpisodeByExternalId } from 'src/metadata/findByExternalId';
+import { logger } from 'src/logger';
+import { Progress } from 'src/entity/progress';
+import { Database } from 'src/dbconfig';
+import { Seen } from 'src/entity/seen';
 
 /**
  * @openapi_tags Progress
@@ -17,7 +22,7 @@ export class ProgressController {
   add = createExpressRoute<{
     method: 'put';
     path: '/api/progress';
-    requestQuery: Omit<Seen, 'id' | 'userId' | 'type'>;
+    requestQuery: Omit<Progress, 'id' | 'userId'>;
   }>(async (req, res) => {
     const userId = Number(req.user);
 
@@ -48,10 +53,9 @@ export class ProgressController {
       }
     }
 
-    await seenRepository.create({
+    await addItem({
       userId: userId,
       action: action,
-      type: 'progress',
       date: date,
       duration: duration,
       episodeId: episodeId,
@@ -59,27 +63,82 @@ export class ProgressController {
       progress: progress,
     });
 
-    if (progress === 1 && episodeId == undefined) {
-      await listItemRepository.removeItem({
-        userId: userId,
-        mediaItemId: mediaItemId,
-        watchlist: true,
+    res.send();
+  });
+
+  /**
+   * @openapi_operationId addByExternalId
+   */
+  addByExternalId = createExpressRoute<{
+    method: 'put';
+    path: '/api/progress/by-external-id';
+    requestBody: {
+      mediaType: MediaType;
+      id: {
+        imdbId?: string;
+        tmdbId?: number;
+      };
+      seasonNumber?: number;
+      episodeNumber?: number;
+      action?: 'paused' | 'playing';
+      progress?: number;
+      duration?: number;
+      device?: string;
+    };
+  }>(async (req, res) => {
+    const userId = Number(req.user);
+
+    const {
+      mediaType,
+      id,
+      seasonNumber,
+      episodeNumber,
+      action,
+      duration,
+      progress,
+      device,
+    } = req.body;
+
+    if (progress != undefined && (progress < 0 || progress > 1)) {
+      res.status(400);
+      res.send('Progress should be between 0 and 1');
+      return;
+    }
+
+    const { mediaItem, episode, error } =
+      await findMediaItemOrEpisodeByExternalId({
+        mediaType: mediaType,
+        id: id,
+        seasonNumber: seasonNumber,
+        episodeNumber: episodeNumber,
       });
-      await seenRepository.create({
+
+    if (error) {
+      res.status(400);
+      res.send(error);
+      return;
+    }
+
+    if (mediaType === 'tv') {
+      await addItem({
         userId: userId,
         action: action,
-        type: 'seen',
-        date: date,
+        date: Date.now(),
         duration: duration,
-        episodeId: episodeId,
-        mediaItemId: mediaItemId,
+        episodeId: episode.id,
+        mediaItemId: mediaItem.id,
         progress: progress,
+        device: device,
       });
     } else {
-      await listItemRepository.addItem({
+      await addItem({
         userId: userId,
-        mediaItemId: mediaItemId,
-        watchlist: true,
+        action: action,
+        date: Date.now(),
+        duration: duration,
+        mediaItemId: mediaItem.id,
+        progress: progress,
+        device: device,
       });
     }
 
@@ -105,3 +164,66 @@ export class ProgressController {
     res.send();
   });
 }
+
+const addItem = async (args: Progress) => {
+  logger.debug(`added progress ${JSON.stringify(args)}`);
+
+  if (args.progress === 1) {
+    await Database.knex.transaction(async (trx) => {
+      await trx<Progress>('progress')
+        .where({
+          userId: args.userId,
+          mediaItemId: args.mediaItemId,
+          episodeId: args.episodeId || null,
+        })
+        .delete();
+
+      await trx<Seen>('seen').insert({
+        userId: args.userId,
+        mediaItemId: args.mediaItemId,
+        episodeId: args.episodeId || null,
+        date: Date.now(),
+        duration: args.duration,
+      });
+    });
+  } else {
+    await Database.knex.transaction(async (trx) => {
+      const currentProgress = await trx<Progress>('progress')
+        .where({
+          userId: args.userId,
+          mediaItemId: args.mediaItemId,
+          episodeId: args.episodeId || null,
+        })
+        .first();
+
+      if (currentProgress) {
+        await trx<Progress>('progress').where('id', currentProgress.id).update({
+          action: args.action,
+          date: Date.now(),
+          duration: args.duration,
+          progress: args.progress,
+          device: args.device,
+        });
+      } else {
+        await trx<Progress>('progress').insert({
+          userId: args.userId,
+          action: args.action,
+          date: Date.now(),
+          duration: args.duration,
+          mediaItemId: args.mediaItemId,
+          episodeId: args.episodeId || null,
+          progress: args.progress,
+          device: args.device,
+        });
+      }
+    });
+  }
+
+  if (args.progress === 1 && args.episodeId == undefined) {
+    await listItemRepository.removeItem({
+      userId: args.userId,
+      mediaItemId: args.mediaItemId,
+      watchlist: true,
+    });
+  }
+};

@@ -241,7 +241,6 @@ describe('foreign keys', () => {
         mediaItemId: 999,
         episodeId: episode.id,
         userId: user.id,
-        type: 'seen',
       })
     ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
@@ -252,7 +251,6 @@ describe('foreign keys', () => {
         mediaItemId: mediaItem.id,
         episodeId: 999,
         userId: user.id,
-        type: 'seen',
       })
     ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
@@ -263,7 +261,41 @@ describe('foreign keys', () => {
         mediaItemId: mediaItem.id,
         episodeId: episode.id,
         userId: 999,
-        type: 'seen',
+      })
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
+  });
+
+  test('progress', async () => {
+    await expect(async () =>
+      Database.knex('progress').insert({
+        id: 999,
+        date: new Date().getTime(),
+        mediaItemId: 999,
+        episodeId: episode.id,
+        userId: user.id,
+        progress: 0.1,
+      })
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
+
+    await expect(async () =>
+      Database.knex('progress').insert({
+        id: 999,
+        date: new Date().getTime(),
+        mediaItemId: mediaItem.id,
+        episodeId: 999,
+        userId: user.id,
+        progress: 0.1,
+      })
+    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
+
+    await expect(async () =>
+      Database.knex('progress').insert({
+        id: 999,
+        date: new Date().getTime(),
+        mediaItemId: mediaItem.id,
+        episodeId: episode.id,
+        userId: 999,
+        progress: 0.1,
       })
     ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
   });

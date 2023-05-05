@@ -38,21 +38,12 @@ export const userStatisticsSummary = async (userId: number) => {
       runtime: Database.knex.raw(`CASE
                            WHEN "episode"."runtime" IS NOT NULL THEN "episode"."runtime"
                            ELSE "mediaItem"."runtime"
-                         END 
-                         * 
-                         CASE
-                           WHEN "seen"."type" = 'seen' THEN 1
-                           ELSE "seen"."progress"
-                         END`),
+                         END * 1
+                           `),
       numberOfPages: Database.knex.raw(`CASE
                                  WHEN "mediaItem"."numberOfPages" IS NOT NULL THEN "mediaItem"."numberOfPages"
                                  ELSE 0
-                               END
-                               * 
-                               CASE
-                                 WHEN "seen"."type" = 'seen' THEN 1
-                                 ELSE "seen"."progress"
-                               END`),
+                               END * 1`),
       duration: Database.knex.raw(`CASE
                             WHEN "seen"."duration" IS NOT NULL THEN "seen"."duration"
                             ELSE 0

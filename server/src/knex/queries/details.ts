@@ -9,6 +9,7 @@ import { Seen, SeenFilters } from 'src/entity/seen';
 import { Database } from 'src/dbconfig';
 import { Image } from 'src/entity/image';
 import { List } from 'src/entity/list';
+import { Progress } from 'src/entity/progress';
 
 export const getDetailsKnex = async (params: {
   mediaItemId: number;
@@ -49,7 +50,6 @@ export const getDetailsKnex = async (params: {
       .where({
         mediaItemId: mediaItemId,
         userId: userId,
-        type: 'seen',
       })
       .orderBy('date', 'desc');
 
@@ -74,11 +74,10 @@ export const getDetailsKnex = async (params: {
       mediaItemId: mediaItemId,
     });
 
-    const progress = await trx<Seen>('seen').where({
+    const progress = await trx<Progress>('progress').where({
       mediaItemId: mediaItemId,
       episodeId: null,
       userId: userId,
-      type: 'progress',
     });
 
     return {

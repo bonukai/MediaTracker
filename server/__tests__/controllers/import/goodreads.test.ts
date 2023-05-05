@@ -9,6 +9,7 @@ import { UserRating } from 'src/entity/userRating';
 import { Data } from '__tests__/__utils__/data';
 import { clearDatabase, runMigrations } from '__tests__/__utils__/utils';
 import GoodReadsXML from './goodreads.xml';
+import { Progress } from 'src/entity/progress';
 
 jest.mock('axios');
 
@@ -76,15 +77,13 @@ describe('Goodreads import', () => {
   test('read', async () => {
     const read = await Database.knex<Seen>('seen').where({
       userId: Data.user.id,
-      type: 'seen',
     });
     expect(read.length).toEqual(38);
   });
 
   test('toRead', async () => {
-    const toRead = await Database.knex<Seen>('seen').where({
+    const toRead = await Database.knex<Progress>('progress').where({
       progress: 0,
-      type: 'progress',
       userId: Data.user.id,
     });
     expect(toRead.length).toEqual(1);

@@ -315,7 +315,6 @@ describe('migrations', () => {
       id: randomNumericId(),
       userId: 1,
       mediaItemId: 1,
-      startedAt: new Date().getTime(),
       duration: milliseconds({
         hours: 1,
         minutes: 10,
@@ -1522,6 +1521,65 @@ describe('migrations', () => {
     await Database.knex('list').delete();
     await Database.knex('list').insert(initialLists);
     await Database.knex('listItem').insert(initialListItems);
+  });
+
+  test('20230501000000_progress', async () => {
+    const date = Date.now();
+
+    await Database.knex('seen').where('type', 'progress').delete();
+
+    await Database.knex('seen').insert([
+      {
+        mediaItemId: InitialData.mediaItem.id,
+        type: 'progress',
+        progress: 0.1,
+        date: date - 100,
+        userId: InitialData.user.id,
+      },
+      {
+        mediaItemId: InitialData.mediaItem.id,
+        type: 'progress',
+        progress: 0.2,
+        date: date - 90,
+        userId: InitialData.user.id,
+      },
+      {
+        mediaItemId: InitialData.mediaItem.id,
+        type: 'progress',
+        progress: 0.3,
+        date: date - 80,
+        userId: InitialData.user.id,
+      },
+      {
+        mediaItemId: InitialData.mediaItem.id,
+        type: 'progress',
+        progress: 0.4,
+        date: date - 70,
+        userId: InitialData.user.id,
+      },
+    ]);
+
+    await Database.knex.migrate.up({
+      name: `20230501000000_progress.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20230501000000_progress.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    const progress = await Database.knex('progress');
+
+    expect(progress.length).toBe(1);
+    expect(progress.at(0).mediaItemId).toBe(InitialData.mediaItem.id);
+    expect(progress.at(0).progress).toBe(0.4);
+    expect(progress.at(0).date).toBe(date - 70);
+    expect(progress.at(0).userId).toBe(InitialData.user.id);
   });
 
   afterAll(clearDatabase);

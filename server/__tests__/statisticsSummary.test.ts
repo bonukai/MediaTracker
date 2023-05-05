@@ -97,40 +97,33 @@ const user = {
 
 const seen = {
   movie: {
-    type: 'seen',
     userId: user.id,
     mediaItemId: movie.id,
   },
   moviePlay2: {
-    type: 'seen',
     userId: user.id,
     mediaItemId: movie.id,
   },
   book: {
-    type: 'seen',
     userId: user.id,
     mediaItemId: book.id,
     duration: 12,
   },
   audiobook: {
-    type: 'seen',
     userId: user.id,
     mediaItemId: audiobook.id,
   },
   videoGame: {
-    type: 'seen',
     userId: user.id,
     mediaItemId: videoGame.id,
     duration: 123,
   },
   episode: {
-    type: 'seen',
     userId: user.id,
     mediaItemId: tvShow.id,
     episodeId: episode.id,
   },
   episode2: {
-    type: 'seen',
     userId: user.id,
     mediaItemId: tvShow.id,
     episodeId: episode2.id,
@@ -139,44 +132,44 @@ const seen = {
 
 const progress = {
   movie: {
-    type: 'progress',
     userId: user.id,
     mediaItemId: movie.id,
     progress: 0.2,
+    date: Date.now(),
   },
   book: {
-    type: 'progress',
     userId: user.id,
     mediaItemId: book.id,
     duration: 55,
     progress: 0.3,
+    date: Date.now(),
   },
   audiobook: {
-    type: 'progress',
     userId: user.id,
     mediaItemId: audiobook.id,
     progress: 0.4,
+    date: Date.now(),
   },
   videoGame: {
-    type: 'progress',
     userId: user.id,
     mediaItemId: videoGame.id,
     duration: 456,
     progress: 0.5,
+    date: Date.now(),
   },
   episode: {
-    type: 'progress',
     userId: user.id,
     mediaItemId: tvShow.id,
     episodeId: episode.id,
     progress: 0.6,
+    date: Date.now(),
   },
   episode2: {
-    type: 'progress',
     userId: user.id,
     mediaItemId: tvShow.id,
     episodeId: episode2.id,
     progress: 0.7,
+    date: Date.now(),
   },
 };
 
@@ -196,7 +189,7 @@ describe('statistics summary', () => {
     await Database.knex('mediaItem').insert(audiobook);
 
     await Database.knex('seen').insert(Object.values(seen));
-    await Database.knex('seen').insert(Object.values(progress));
+    await Database.knex('progress').insert(Object.values(progress));
   });
 
   afterAll(clearDatabase);
@@ -207,52 +200,31 @@ describe('statistics summary', () => {
     expect(res.audiobook.numberOfPages).toBe(0);
     expect(res.audiobook.episodes).toBe(0);
     expect(res.audiobook.items).toBe(1);
-    expect(res.audiobook.plays).toBe(2);
-    expect(res.audiobook.duration).toBe(
-      Math.round(
-        audiobook.runtime + audiobook.runtime * progress.audiobook.progress
-      )
-    );
+    expect(res.audiobook.plays).toBe(1);
+    expect(res.audiobook.duration).toBe(Math.round(audiobook.runtime));
 
     expect(res.video_game.numberOfPages).toBe(0);
     expect(res.video_game.episodes).toBe(0);
     expect(res.video_game.items).toBe(1);
-    expect(res.video_game.plays).toBe(2);
-    expect(res.video_game.duration).toBe(
-      Math.round(seen.videoGame.duration + progress.videoGame.duration)
-    );
+    expect(res.video_game.plays).toBe(1);
+    expect(res.video_game.duration).toBe(Math.round(seen.videoGame.duration));
 
     expect(res.movie.numberOfPages).toBe(0);
     expect(res.movie.episodes).toBe(0);
     expect(res.movie.items).toBe(1);
-    expect(res.movie.plays).toBe(3);
-    expect(res.movie.duration).toBe(
-      Math.round(movie.runtime * 2 + movie.runtime * progress.movie.progress)
-    );
+    expect(res.movie.plays).toBe(2);
+    expect(res.movie.duration).toBe(Math.round(movie.runtime * 2));
 
-    expect(res.book.numberOfPages).toBe(
-      Math.round(
-        book.numberOfPages + progress.book.progress * book.numberOfPages
-      )
-    );
+    expect(res.book.numberOfPages).toBe(Math.round(book.numberOfPages));
     expect(res.book.episodes).toBe(0);
     expect(res.book.items).toBe(1);
-    expect(res.book.plays).toBe(2);
-    expect(res.book.duration).toBe(
-      Math.round(seen.book.duration + progress.book.duration)
-    );
+    expect(res.book.plays).toBe(1);
+    expect(res.book.duration).toBe(Math.round(seen.book.duration));
 
     expect(res.tv.numberOfPages).toBe(0);
     expect(res.tv.episodes).toBe(2);
     expect(res.tv.items).toBe(1);
-    expect(res.tv.plays).toBe(4);
-    expect(res.tv.duration).toBe(
-      Math.round(
-        episode2.runtime +
-          episode2.runtime * progress.episode2.progress +
-          tvShow.runtime +
-          tvShow.runtime * progress.episode.progress
-      )
-    );
+    expect(res.tv.plays).toBe(2);
+    expect(res.tv.duration).toBe(Math.round(episode2.runtime + tvShow.runtime));
   });
 });
