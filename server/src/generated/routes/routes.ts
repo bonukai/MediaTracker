@@ -70,6 +70,7 @@ import { ListController } from '../../controllers/listController';
 import { ListItemController } from '../../controllers/listItemController';
 import { ListsController } from '../../controllers/listsController';
 import { LogsController } from '../../controllers/logs';
+import { PlexController } from '../../controllers/plexController';
 import { ProgressController } from '../../controllers/progress';
 import { RatingController } from '../../controllers/rating';
 import { SearchController } from '../../controllers/search';
@@ -90,6 +91,7 @@ const _ListController = new ListController();
 const _ListItemController = new ListItemController();
 const _ListsController = new ListsController();
 const _LogsController = new LogsController();
+const _PlexController = new PlexController();
 const _ProgressController = new ProgressController();
 const _RatingController = new RatingController();
 const _SearchController = new SearchController();
@@ -676,6 +678,7 @@ router.get(
   }),
   _LogsController.add
 );
+router.post('/api/plex', validatorHandler({}), _PlexController.post);
 router.put(
   '/api/progress',
   validatorHandler({

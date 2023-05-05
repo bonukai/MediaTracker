@@ -1094,6 +1094,24 @@
         }
       }
     },
+    "/api/plex": {
+      "post": {
+        "tags": [
+          "Lists"
+        ],
+        "operationId": "Plex webhook",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/progress": {
       "put": {
         "tags": [
