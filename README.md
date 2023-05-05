@@ -157,6 +157,10 @@ docker run -p 7481:7481 mediatracker
 - [Pushover](https://pushover.net)
 - [Pushsafer](https://www.pushsafer.com)
 
+# Integrations
+
+- [Jellyfin plugin](https://github.com/bonukai/jellyfin-plugin-mediatracker)
+
 # Contributors
 
 - [URBANsUNITED](https://github.com/URBANsUNITED) (German translation)
