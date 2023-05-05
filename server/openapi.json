@@ -1130,10 +1130,9 @@
           {
             "name": "date",
             "in": "query",
-            "required": false,
+            "required": true,
             "schema": {
-              "type": "number",
-              "nullable": true
+              "type": "number"
             }
           },
           {
@@ -1158,8 +1157,96 @@
               "type": "string",
               "nullable": true
             }
+          },
+          {
+            "name": "device",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/progress/by-external-id": {
+      "put": {
+        "tags": [
+          "Progress"
+        ],
+        "operationId": "addByExternalId",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mediaType": {
+                    "$ref": "#/components/schemas/MediaType"
+                  },
+                  "id": {
+                    "type": "object",
+                    "properties": {
+                      "imdbId": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "tmdbId": {
+                        "type": "number",
+                        "nullable": true
+                      }
+                    }
+                  },
+                  "seasonNumber": {
+                    "type": "number",
+                    "nullable": true
+                  },
+                  "episodeNumber": {
+                    "type": "number",
+                    "nullable": true
+                  },
+                  "action": {
+                    "enum": [
+                      "paused",
+                      "playing",
+                      null
+                    ],
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "progress": {
+                    "type": "number",
+                    "nullable": true
+                  },
+                  "duration": {
+                    "type": "number",
+                    "nullable": true
+                  },
+                  "device": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "mediaType"
+                ]
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
@@ -1356,8 +1443,79 @@
               "type": "number",
               "nullable": true
             }
+          },
+          {
+            "name": "duration",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/text": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/seen/by-external-id": {
+      "put": {
+        "tags": [
+          "Seen"
+        ],
+        "operationId": "addByExternalId",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mediaType": {
+                    "$ref": "#/components/schemas/MediaType"
+                  },
+                  "id": {
+                    "type": "object",
+                    "properties": {
+                      "imdbId": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "tmdbId": {
+                        "type": "number",
+                        "nullable": true
+                      }
+                    }
+                  },
+                  "seasonNumber": {
+                    "type": "number",
+                    "nullable": true
+                  },
+                  "episodeNumber": {
+                    "type": "number",
+                    "nullable": true
+                  },
+                  "duration": {
+                    "type": "number",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "mediaType"
+                ]
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
@@ -3064,34 +3222,13 @@
           "userId": {
             "type": "number"
           },
-          "type": {
-            "enum": [
-              "progress",
-              "seen"
-            ],
-            "type": "string"
-          },
-          "progress": {
-            "type": "number",
-            "nullable": true
-          },
           "duration": {
             "type": "number",
-            "nullable": true
-          },
-          "action": {
-            "enum": [
-              "paused",
-              "playing",
-              null
-            ],
-            "type": "string",
             "nullable": true
           }
         },
         "required": [
           "mediaItemId",
-          "type",
           "userId"
         ]
       },

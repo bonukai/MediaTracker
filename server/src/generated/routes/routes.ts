@@ -686,14 +686,48 @@ router.put(
         mediaItemId: { type: 'number' },
         episodeId: { type: ['number', 'null'] },
         progress: { type: ['number', 'null'] },
-        date: { type: ['number', 'null'] },
+        date: { type: 'number' },
         duration: { type: ['number', 'null'] },
         action: { enum: ['paused', 'playing', null], type: 'string' },
+        device: { type: ['string', 'null'] },
       },
-      required: ['mediaItemId'],
+      required: ['date', 'mediaItemId'],
     },
   }),
   _ProgressController.add
+);
+router.put(
+  '/api/progress/by-external-id',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        MediaType: {
+          enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
+          type: 'string',
+        },
+      },
+      type: 'object',
+      properties: {
+        mediaType: { $ref: '#/definitions/MediaType' },
+        id: {
+          type: 'object',
+          properties: {
+            imdbId: { type: ['string', 'null'] },
+            tmdbId: { type: ['number', 'null'] },
+          },
+        },
+        seasonNumber: { type: ['number', 'null'] },
+        episodeNumber: { type: ['number', 'null'] },
+        action: { enum: ['paused', 'playing', null], type: 'string' },
+        progress: { type: ['number', 'null'] },
+        duration: { type: ['number', 'null'] },
+        device: { type: ['string', 'null'] },
+      },
+      required: ['id', 'mediaType'],
+    },
+  }),
+  _ProgressController.addByExternalId
 );
 router.delete(
   '/api/progress/:progressId',
@@ -767,11 +801,42 @@ router.put(
           oneOf: [{ $ref: '#/definitions/LastSeenAt' }, { type: 'null' }],
         },
         date: { type: ['number', 'null'] },
+        duration: { type: ['number', 'null'] },
       },
       required: ['mediaItemId'],
     },
   }),
   _SeenController.add
+);
+router.put(
+  '/api/seen/by-external-id',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        MediaType: {
+          enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
+          type: 'string',
+        },
+      },
+      type: 'object',
+      properties: {
+        mediaType: { $ref: '#/definitions/MediaType' },
+        id: {
+          type: 'object',
+          properties: {
+            imdbId: { type: ['string', 'null'] },
+            tmdbId: { type: ['number', 'null'] },
+          },
+        },
+        seasonNumber: { type: ['number', 'null'] },
+        episodeNumber: { type: ['number', 'null'] },
+        duration: { type: ['number', 'null'] },
+      },
+      required: ['id', 'mediaType'],
+    },
+  }),
+  _SeenController.addByExternalId
 );
 router.delete(
   '/api/seen/:seenId',
