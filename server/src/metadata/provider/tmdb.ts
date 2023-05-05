@@ -227,6 +227,54 @@ export class TMDbTv extends TMDb {
     return this.details({ tmdbId: tmdbId });
   }
 
+  async findByEpisodeImdbId(episodeImdbId: string) {
+    const res = await axios.get(
+      `https://api.themoviedb.org/3/find/${episodeImdbId}`,
+      {
+        params: {
+          api_key: TMDB_API_KEY,
+          external_source: 'imdb_id',
+          language: GlobalConfiguration.configuration.tmdbLang,
+        },
+      }
+    );
+
+    if (res.data.tv_episode_results?.length === 0) {
+      return;
+    }
+
+    const episode = this.mapEpisode(res.data.tv_episode_results[0]);
+
+    return {
+      tvShowTmdbId: res.data.tv_episode_results[0].show_id as number,
+      episode: episode,
+    };
+  }
+
+  async findByEpisodeTvdbId(episodeTvdbId: number) {
+    const res = await axios.get(
+      `https://api.themoviedb.org/3/find/${episodeTvdbId}`,
+      {
+        params: {
+          api_key: TMDB_API_KEY,
+          external_source: 'tvdb_id',
+          language: GlobalConfiguration.configuration.tmdbLang,
+        },
+      }
+    );
+
+    if (res.data.tv_episode_results?.length === 0) {
+      return;
+    }
+
+    const episode = this.mapEpisode(res.data.tv_episode_results[0]);
+
+    return {
+      tvShowTmdbId: res.data.tv_episode_results[0].show_id as number,
+      episode: episode,
+    };
+  }
+
   private mapTvShow(item: Partial<TMDbApi.TvDetailsResponse>) {
     const tvShow = this.mapItem(item);
     tvShow.imdbId = item.external_ids?.imdb_id || undefined;

@@ -8,6 +8,59 @@ import { tvEpisodeRepository } from 'src/repository/episode';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { updateMediaItem } from 'src/updateMetadata';
 
+export const findEpisodeByExternalId = async (args: {
+  imdbId?: string;
+  tmdbId?: number;
+  tvdbId?: number;
+}) => {
+  const { imdbId, tmdbId, tvdbId } = args;
+
+  const episode = await tvEpisodeRepository.findOne({
+    tmdbId: tmdbId || undefined,
+    tvdbId: tvdbId || undefined,
+    imdbId: imdbId || undefined,
+  });
+
+  if (episode) {
+    const mediaItem = await mediaItemRepository.findOne({ id: episode.tvdbId });
+
+    return {
+      mediaItem: mediaItem,
+      episode: episode,
+    };
+  }
+
+  if (imdbId) {
+    const res = await new TMDbTv().findByEpisodeImdbId(imdbId);
+
+    if (res) {
+      return await findMediaItemOrEpisodeByExternalId({
+        mediaType: 'tv',
+        id: {
+          tmdbId: res.tvShowTmdbId,
+        },
+        episodeNumber: res.episode.episodeNumber,
+        seasonNumber: res.episode.seasonNumber,
+      });
+    }
+  } else if (tvdbId) {
+    const res = await new TMDbTv().findByEpisodeTvdbId(tvdbId);
+
+    if (res) {
+      return await findMediaItemOrEpisodeByExternalId({
+        mediaType: 'tv',
+        id: {
+          tmdbId: res.tvShowTmdbId,
+        },
+        episodeNumber: res.episode.episodeNumber,
+        seasonNumber: res.episode.seasonNumber,
+      });
+    }
+  }
+
+  throw `Unable to find episode with imdbId: ${imdbId}, tmdbId: ${tmdbId}, tvdbId: ${tvdbId}`;
+};
+
 export const findMediaItemOrEpisodeByExternalId = async (args: {
   mediaType: MediaType;
   id: {
@@ -94,7 +147,7 @@ export const findMediaItemByExternalIdInExternalSources = async (args: {
   id: ExternalIds;
   mediaType: MediaType;
 }) => {
-  const res = await search(args);
+  const res = await searchMediaItem(args);
 
   if (res) {
     const existingItem = await mediaItemRepository.findByExternalId(
@@ -110,7 +163,10 @@ export const findMediaItemByExternalIdInExternalSources = async (args: {
   }
 };
 
-const search = async (args: { id: ExternalIds; mediaType: MediaType }) => {
+const searchMediaItem = async (args: {
+  id: ExternalIds;
+  mediaType: MediaType;
+}) => {
   const { id, mediaType } = args;
 
   if (mediaType === 'tv') {
