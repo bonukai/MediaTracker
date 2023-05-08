@@ -7,16 +7,8 @@ export const Discord = createNotificationPlatform({
   sendFunction: async (args) => {
     const { message, title, credentials } = args;
 
-    await axios.post(
-      new URL(credentials.url).href,
-      {
-        content: message
-      },
-      {
-        headers: {
-          'Content-Type': "application/json",
-        },
-      }
-    );
+    await axios.post(new URL(credentials.url).href, {
+      content: message,
+    });
   },
 });
