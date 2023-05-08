@@ -154,6 +154,7 @@ docker run -p 7481:7481 mediatracker
 - [gotify](https://gotify.net)
 - [ntfy](https://ntfy.sh)
 - [Pushbullet](https://www.pushbullet.com)
+- [Discord](https://discord.com)
 - [Pushover](https://pushover.net)
 - [Pushsafer](https://www.pushsafer.com)
 

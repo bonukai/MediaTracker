@@ -1898,6 +1898,18 @@
                       ],
                       "nullable": true
                     },
+                    "Discord": {
+                      "type": "object",
+                      "properties": {
+                        "url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "url"
+                      ],
+                      "nullable": true
+                    },
                     "Pushbullet": {
                       "type": "object",
                       "properties": {
@@ -2035,6 +2047,7 @@
                   },
                   "notificationPlatform": {
                     "enum": [
+                      "Discord",
                       "Pushbullet",
                       "Pushover",
                       "Pushsafer",
@@ -4422,6 +4435,7 @@
           },
           "notificationPlatform": {
             "enum": [
+              "Discord",
               "Pushbullet",
               "Pushover",
               "Pushsafer",
@@ -4492,6 +4506,32 @@
                 "required": [
                   "priority",
                   "token",
+                  "url"
+                ]
+              }
+            },
+            "required": [
+              "credentials",
+              "platformName"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "platformName": {
+                "type": "string",
+                "enum": [
+                  "Discord"
+                ]
+              },
+              "credentials": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
                   "url"
                 ]
               }

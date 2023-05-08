@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { t } from '@lingui/macro';
 
 import { gotify } from 'src/notifications/platforms/gotify';
+import { Discord } from 'src/notifications/platforms/discord';
 import { ntfy } from 'src/notifications/platforms/ntfy';
 import { Pushbullet } from 'src/notifications/platforms/pushbullet';
 import { Pushover } from 'src/notifications/platforms/pushover';
@@ -9,7 +10,7 @@ import { Pushsafer } from 'src/notifications/platforms/pushsafer';
 import { notificationPlatformsCredentialsRepository } from 'src/repository/notificationPlatformsCredentials';
 import { userRepository } from 'src/repository/user';
 
-const platforms = <const>[gotify, Pushbullet, Pushover, Pushsafer, ntfy];
+const platforms = <const>[gotify, Discord, Pushbullet, Pushover, Pushsafer, ntfy];
 export class Notifications {
   private static readonly platformsByName = _.keyBy(
     platforms,
