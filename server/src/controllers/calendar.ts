@@ -127,7 +127,6 @@ export const getCalendarItems = async (args: {
           .select('episodeId')
           .from('seen')
           .where('userId', userId)
-          .where('type', 'seen')
           .groupBy('episodeId')
           .as('episodeSeen'),
       (qb) =>
@@ -143,7 +142,6 @@ export const getCalendarItems = async (args: {
           .select('mediaItemId')
           .from('seen')
           .where('userId', userId)
-          .where('type', 'seen')
           .groupBy('mediaItemId')
           .as('mediaItemSeen'),
       (qb) =>
