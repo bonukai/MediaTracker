@@ -964,6 +964,18 @@ router.put(
             {
               type: 'object',
               properties: {
+                platformName: { type: 'string', enum: ['Discord'] },
+                credentials: {
+                  type: 'object',
+                  properties: { url: { type: 'string' } },
+                  required: ['url'],
+                },
+              },
+              required: ['credentials', 'platformName'],
+            },
+            {
+              type: 'object',
+              properties: {
                 platformName: { type: 'string', enum: ['Pushbullet'] },
                 credentials: {
                   type: 'object',
@@ -1039,7 +1051,15 @@ router.put(
         sendNotificationForReleases: { type: ['boolean', 'null'] },
         sendNotificationForEpisodesReleases: { type: ['boolean', 'null'] },
         notificationPlatform: {
-          enum: ['Pushbullet', 'Pushover', 'Pushsafer', 'gotify', 'ntfy', null],
+          enum: [
+            'Discord',
+            'Pushbullet',
+            'Pushover',
+            'Pushsafer',
+            'gotify',
+            'ntfy',
+            null,
+          ],
           type: 'string',
         },
         hideOverviewForUnseenSeasons: { type: ['boolean', 'null'] },

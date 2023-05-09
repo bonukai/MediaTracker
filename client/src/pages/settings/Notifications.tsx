@@ -108,6 +108,16 @@ export const SettingsNotificationsPage: FunctionComponent = () => {
       </NotificationPlatformsCredentials>
 
       <NotificationPlatformsCredentials
+        platformName="Discord"
+        href="https://discord.com"
+      >
+        <label>
+          <Trans>Webhook URL</Trans>
+          <input name="url" type="url" required className="block" />
+        </label>
+      </NotificationPlatformsCredentials>
+
+      <NotificationPlatformsCredentials
         platformName="ntfy"
         href="https://ntfy.sh"
       >
@@ -135,7 +145,7 @@ export const SettingsNotificationsPage: FunctionComponent = () => {
 
 const platforms: ReadonlyArray<
   keyof User.GetNotificationCredentials.ResponseBody
-> = ['gotify', 'ntfy', 'Pushbullet', 'Pushover', 'Pushsafer'];
+> = ['gotify', 'Discord', 'ntfy', 'Pushbullet', 'Pushover', 'Pushsafer'];
 
 const NotificationPlatform: FunctionComponent = () => {
   const { user, updateUser } = useUser();
