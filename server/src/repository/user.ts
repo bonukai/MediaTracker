@@ -129,7 +129,6 @@ class UserRepository extends repository<User>({
         isWatchlist: true,
         sortBy: 'recently-watched',
         sortOrder: 'desc',
-        rank: 0,
       });
 
       return res;

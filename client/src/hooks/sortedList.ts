@@ -169,7 +169,6 @@ export const useSortedList = (args: {
         (listItem) => listItem.mediaItem.title,
         stringComparator
       ),
-      rank: sortFunctionFactory((listItem) => listItem.rank, numericComparator),
     };
 
     return listItems.sort(sortFunctions[sortBy]);

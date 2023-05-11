@@ -260,7 +260,6 @@ export const mapList = (row: Record<string, any>): List => ({
   updatedAt: row.updatedAt,
   userId: row.userId,
   description: row.description,
-  rank: Number(row.rank),
   sortBy: row.sortBy,
   sortOrder: row.sortOrder,
 });

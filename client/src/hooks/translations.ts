@@ -12,7 +12,6 @@ export const useListSortByKeys = () =>
     'release-date': t`Release date`,
     runtime: t`Runtime`,
     title: t`Title`,
-    rank: t`Rank`,
     'next-airing': t`Next airing`,
   });
 

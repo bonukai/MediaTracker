@@ -2,7 +2,6 @@ export type ListPrivacy = 'public' | 'private' | 'friends';
 export type ListSortOrder = 'asc' | 'desc';
 export type ListSortBy =
   | 'my-rating'
-  | 'rank'
   | 'recently-added'
   | 'recently-watched'
   | 'recently-aired'
@@ -22,7 +21,6 @@ export type List = {
   createdAt: number;
   updatedAt: number;
   userId: number;
-  rank?: number;
   allowComments?: boolean;
   displayNumbers?: boolean;
   isWatchlist: boolean;
@@ -36,7 +34,6 @@ export type ListItem = {
   seasonId?: number;
   episodeId?: number;
   addedAt: number;
-  rank: number;
 };
 
 export const listColumns = <const>[

@@ -43,7 +43,6 @@ describe('create list', () => {
       slug: 'list',
       privacy: 'private',
       description: 'description',
-      rank: 0,
     });
 
     expect(
@@ -54,7 +53,6 @@ describe('create list', () => {
     ).toMatchObject({
       userId: Data.user.id,
       name: 'list2',
-      rank: 1,
     });
   });
 });

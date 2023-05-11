@@ -487,7 +487,6 @@ router.put(
           enum: [
             'my-rating',
             'next-airing',
-            'rank',
             'recently-added',
             'recently-aired',
             'recently-watched',
@@ -529,7 +528,6 @@ router.patch(
           enum: [
             'my-rating',
             'next-airing',
-            'rank',
             'recently-added',
             'recently-aired',
             'recently-watched',

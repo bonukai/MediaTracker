@@ -27,7 +27,6 @@ export type ListDetailsResponse = Omit<List, 'userId'> & {
 };
 
 export type ListItemsResponse = {
-  rank: number;
   id: number;
   listedAt: string;
   type: MediaType | 'season' | 'episode';
@@ -146,12 +145,6 @@ class ListRepository extends repository<List>({
         updatedAt: createdAt,
         isWatchlist: isWatchlist || false,
         traktId: traktId,
-        rank: Database.knex.raw(
-          `(${Database.knex<List>('list')
-            .count()
-            .where('userId', args.userId)
-            .toQuery()})`
-        ),
         slug: Database.knex.raw(
           `(CASE WHEN (${Database.knex<List>('list')
             .count()
@@ -189,14 +182,7 @@ class ListRepository extends repository<List>({
       }
 
       await trx<ListItem>('listItem').delete().where('listId', listId);
-      const res = await trx<ListItem>('list').delete().where('id', listId);
-
-      await trx<List>('list')
-        .update('rank', trx.raw('rank - 1'))
-        .where('rank', '>', list.rank)
-        .where('userId', userId);
-
-      return res;
+      return await trx<ListItem>('list').delete().where('id', listId);
     });
   }
 
@@ -336,7 +322,6 @@ class ListRepository extends repository<List>({
         'listItem.episodeId': 'listItem.episodeId',
         'listItem.id': 'listItem.id',
         'listItem.mediaItemId': 'listItem.mediaItemId',
-        'listItem.rank': 'listItem.rank',
         'listItem.seasonId': 'listItem.seasonId',
         'mediaItem.airedEpisodesCount': 'mediaItemAiredEpisodes.count',
         'mediaItem.backdrop.id': 'mediaItemBackdrop.id',
@@ -926,10 +911,9 @@ class ListRepository extends repository<List>({
               'mediaItemUpcomingEpisodeHelper.seasonAndEpisodeNumber'
             )
       )
-      .orderBy('listItem.rank', 'asc');
+      .orderBy('listItem.id', 'asc');
 
     return res.map((listItem) => ({
-      rank: Number(listItem['listItem.rank']),
       id: Number(listItem['listItem.id']),
       listedAt: new Date(listItem['listItem.addedAt']).toISOString(),
       type: listItem['listItem.seasonId']

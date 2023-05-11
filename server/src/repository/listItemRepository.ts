@@ -48,10 +48,9 @@ class ListItemRepository extends repository<ListItem>({
         .filter(
           (listItem) => !existingListItemsSet.has(serializeListItem(listItem))
         )
-        .map((listItem, index) => ({
+        .map((listItem) => ({
           listId: listId,
           addedAt: new Date().getTime(),
-          rank: existingListItems.length + index,
           mediaItemId: listItem.mediaItemId,
           seasonId: listItem.seasonId,
           episodeId: listItem.episodeId,
@@ -107,9 +106,6 @@ class ListItemRepository extends repository<ListItem>({
       seasonId: episodeId == undefined ? seasonId || null : null,
       episodeId: episodeId || null,
       addedAt: new Date().getTime(),
-      rank: trx.raw(
-        `(${trx<List>('listItem').count().where('listId', listId).toQuery()})`
-      ),
     });
 
     return true;
@@ -129,21 +125,6 @@ class ListItemRepository extends repository<ListItem>({
 
     if (listItem) {
       await trx('listItem').delete().where('id', listItem.id);
-
-      // update `listItem` set `rank` = `rank` - 1 where `rank` > `listItem`.`rank`
-      // will fail on SQLite when deleted item is not last by rowId due to
-      // UNIQUE constraint on listId and rank
-
-      const listItems = await trx('listItem')
-        .where('rank', '>', listItem.rank)
-        .where('listId', listId)
-        .orderBy('rank', 'asc');
-
-      for (const item of listItems) {
-        await trx('listItem')
-          .update('rank', item.rank - 1)
-          .where('id', item.id);
-      }
     }
 
     return true;

@@ -3613,10 +3613,6 @@
           "userId": {
             "type": "number"
           },
-          "rank": {
-            "type": "number",
-            "nullable": true
-          },
           "allowComments": {
             "type": "boolean",
             "nullable": true
@@ -3656,7 +3652,6 @@
         "enum": [
           "my-rating",
           "next-airing",
-          "rank",
           "recently-added",
           "recently-aired",
           "recently-watched",
@@ -3793,10 +3788,6 @@
                 "type": "number",
                 "nullable": true
               },
-              "rank": {
-                "type": "number",
-                "nullable": true
-              },
               "sortOrder": {
                 "allOf": [
                   {
@@ -3879,9 +3870,6 @@
         "items": {
           "type": "object",
           "properties": {
-            "rank": {
-              "type": "number"
-            },
             "id": {
               "type": "number"
             },
@@ -3924,7 +3912,6 @@
             "id",
             "listedAt",
             "mediaItem",
-            "rank",
             "type"
           ]
         }
@@ -3957,10 +3944,6 @@
                 "nullable": true
               },
               "traktId": {
-                "type": "number",
-                "nullable": true
-              },
-              "rank": {
                 "type": "number",
                 "nullable": true
               },

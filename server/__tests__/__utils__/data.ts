@@ -134,9 +134,8 @@ export class Data {
     userId: this.user.id,
     allowComments: false,
     displayNumbers: false,
-    sortBy: 'rank',
+    sortBy: 'recently-added',
     sortOrder: 'asc',
-    rank: 0,
   };
 
   static list: List = {
@@ -150,9 +149,8 @@ export class Data {
     userId: this.user.id,
     allowComments: false,
     displayNumbers: false,
-    sortBy: 'rank',
+    sortBy: 'recently-added',
     sortOrder: 'asc',
-    rank: 1,
   };
 
   static listUser2: List = {
