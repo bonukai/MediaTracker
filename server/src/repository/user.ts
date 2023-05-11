@@ -119,7 +119,6 @@ class UserRepository extends repository<User>({
 
       await trx('list').insert({
         name: 'Watchlist',
-        slug: 'watchlist',
         userId: res.id,
         privacy: 'private',
         allowComments: false,

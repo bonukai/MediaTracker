@@ -13,7 +13,6 @@ export type ListSortBy =
 export type List = {
   id: number;
   name: string;
-  slug: string;
   description?: string;
   privacy: ListPrivacy;
   sortBy?: ListSortBy;

@@ -15,7 +15,7 @@ import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason } from 'src/entity/tvseason';
 import { UserRating } from 'src/entity/userRating';
 import { repository } from 'src/repository/repository';
-import { randomSlugId, toSlug } from 'src/slug';
+import { toSlug } from 'src/slug';
 
 export type ListDetailsResponse = Omit<List, 'userId'> & {
   totalRuntime: number;
@@ -59,8 +59,6 @@ class ListRepository extends repository<List>({
     }
 
     const updatedAt = new Date().getTime();
-    const slug = toSlug(name);
-
     return await Database.knex.transaction(async (trx) => {
       const list = await trx<List>('list').where('id', id).first();
 
@@ -90,14 +88,6 @@ class ListRepository extends repository<List>({
           updatedAt: updatedAt,
           sortBy: sortBy,
           sortOrder: sortOrder,
-          slug: Database.knex.raw(
-            `(CASE WHEN (${Database.knex<List>('list')
-              .count()
-              .where('userId', userId)
-              .where('slug', slug)
-              .whereNot('id', id)
-              .toQuery()}) = 0  THEN '${slug}' ELSE '${slug}-${randomSlugId()}' END)`
-          ),
         })
         .where('id', id);
 
@@ -131,7 +121,6 @@ class ListRepository extends repository<List>({
     }
 
     const createdAt = new Date().getTime();
-    const slug = toSlug(name);
 
     const [res] = await Database.knex<List>('list').insert(
       {
@@ -145,13 +134,6 @@ class ListRepository extends repository<List>({
         updatedAt: createdAt,
         isWatchlist: isWatchlist || false,
         traktId: traktId,
-        slug: Database.knex.raw(
-          `(CASE WHEN (${Database.knex<List>('list')
-            .count()
-            .where('userId', args.userId)
-            .where('slug', slug)
-            .toQuery()}) = 0  THEN '${slug}' ELSE '${slug}-${randomSlugId()}' END)`
-        ),
       },
       '*'
     );
@@ -271,7 +253,6 @@ class ListRepository extends repository<List>({
       displayNumbers: Boolean(res.displayNumbers),
       name: res.name,
       privacy: res.privacy,
-      slug: res.slug,
       totalRuntime: res.totalRuntime,
       updatedAt: res.updatedAt,
       description: res.description,

@@ -38,7 +38,6 @@ const user = {
 const list = {
   id: 1,
   name: 'list',
-  slug: 'list',
   privacy: 'private',
   createdAt: new Date().getTime(),
   updatedAt: new Date().getTime(),
@@ -124,7 +123,6 @@ describe('foreign keys', () => {
       Database.knex('list').insert({
         id: 999,
         name: 'list2',
-        slug: 'list2',
         privacy: 'private',
         sortBy: 'recently-watched',
         sortOrder: 'desc',

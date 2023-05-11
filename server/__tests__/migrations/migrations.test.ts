@@ -1631,5 +1631,21 @@ describe('migrations', () => {
     });
   });
 
+  test('20230512000001_dropSlugInList', async () => {
+    await Database.knex.migrate.up({
+      name: `20230512000001_dropSlugInList.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20230512000001_dropSlugInList.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+  });
+
   afterAll(clearDatabase);
 });

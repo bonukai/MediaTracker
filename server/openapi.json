@@ -3578,9 +3578,6 @@
           "name": {
             "type": "string"
           },
-          "slug": {
-            "type": "string"
-          },
           "description": {
             "type": "string",
             "nullable": true
@@ -3635,7 +3632,6 @@
           "isWatchlist",
           "name",
           "privacy",
-          "slug",
           "updatedAt",
           "userId"
         ]
@@ -3777,9 +3773,6 @@
               "name": {
                 "type": "string"
               },
-              "slug": {
-                "type": "string"
-              },
               "description": {
                 "type": "string",
                 "nullable": true
@@ -3828,7 +3821,6 @@
               "isWatchlist",
               "name",
               "privacy",
-              "slug",
               "updatedAt"
             ]
           },
@@ -3936,9 +3928,6 @@
               "name": {
                 "type": "string"
               },
-              "slug": {
-                "type": "string"
-              },
               "description": {
                 "type": "string",
                 "nullable": true
@@ -3987,7 +3976,6 @@
               "isWatchlist",
               "name",
               "privacy",
-              "slug",
               "updatedAt"
             ]
           },

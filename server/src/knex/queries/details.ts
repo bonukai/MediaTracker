@@ -251,7 +251,6 @@ export const getDetailsKnex = async (params: {
 export const mapList = (row: Record<string, any>): List => ({
   id: row.id,
   name: row.name,
-  slug: row.slug,
   createdAt: row.createdAt,
   isWatchlist: Boolean(row.isWatchlist),
   allowComments: Boolean(row.allowComments),

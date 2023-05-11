@@ -40,7 +40,6 @@ describe('create list', () => {
     ).toMatchObject({
       userId: Data.user.id,
       name: 'list',
-      slug: 'list',
       privacy: 'private',
       description: 'description',
     });
