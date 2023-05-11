@@ -31,7 +31,6 @@ const episode = {
 const user = {
   id: 1,
   name: 'user',
-  slug: 'user',
   password: 'password',
 };
 

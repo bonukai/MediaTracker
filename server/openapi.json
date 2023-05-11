@@ -2017,10 +2017,6 @@
                     "type": "string",
                     "nullable": true
                   },
-                  "slug": {
-                    "type": "string",
-                    "nullable": true
-                  },
                   "publicReviews": {
                     "type": "boolean",
                     "nullable": true
@@ -2762,10 +2758,6 @@
                 "type": "string",
                 "nullable": true
               },
-              "slug": {
-                "type": "string",
-                "nullable": true
-              },
               "numberOfEpisodes": {
                 "type": "number",
                 "nullable": true
@@ -2909,6 +2901,10 @@
                     "$ref": "#/components/schemas/AudibleLang"
                   }
                 ],
+                "nullable": true
+              },
+              "slug": {
+                "type": "string",
                 "nullable": true
               },
               "seasons": {
@@ -3315,10 +3311,6 @@
                 "type": "string",
                 "nullable": true
               },
-              "slug": {
-                "type": "string",
-                "nullable": true
-              },
               "numberOfEpisodes": {
                 "type": "number",
                 "nullable": true
@@ -3462,6 +3454,10 @@
                     "$ref": "#/components/schemas/AudibleLang"
                   }
                 ],
+                "nullable": true
+              },
+              "slug": {
+                "type": "string",
                 "nullable": true
               }
             },
@@ -4373,9 +4369,6 @@
           "name": {
             "type": "string"
           },
-          "slug": {
-            "type": "string"
-          },
           "admin": {
             "type": "boolean",
             "nullable": true
@@ -4428,8 +4421,7 @@
         },
         "required": [
           "id",
-          "name",
-          "slug"
+          "name"
         ]
       },
       "RequestError": {

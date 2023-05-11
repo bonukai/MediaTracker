@@ -15,7 +15,6 @@ import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason } from 'src/entity/tvseason';
 import { UserRating } from 'src/entity/userRating';
 import { repository } from 'src/repository/repository';
-import { toSlug } from 'src/slug';
 
 export type ListDetailsResponse = Omit<List, 'userId'> & {
   totalRuntime: number;

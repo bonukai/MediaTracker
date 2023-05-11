@@ -1039,7 +1039,6 @@ router.put(
       type: 'object',
       properties: {
         name: { type: ['string', 'null'] },
-        slug: { type: ['string', 'null'] },
         publicReviews: { type: ['boolean', 'null'] },
         sendNotificationWhenStatusChanges: { type: ['boolean', 'null'] },
         sendNotificationWhenReleaseDateChanges: { type: ['boolean', 'null'] },

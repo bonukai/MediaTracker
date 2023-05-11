@@ -108,7 +108,6 @@ export class Data {
   static user = {
     id: 0,
     name: 'admin',
-    slug: 'admin',
     admin: true,
     password: 'password',
     publicReviews: false,
@@ -117,7 +116,6 @@ export class Data {
   static user2 = {
     id: 1,
     name: 'user',
-    slug: 'user',
     admin: false,
     password: 'password',
     publicReviews: false,
