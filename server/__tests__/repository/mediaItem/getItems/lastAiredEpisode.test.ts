@@ -124,7 +124,6 @@ const episodes: TvEpisode[] = [
 const user: User = {
   id: 1,
   name: 'admin',
-  slug: 'admin',
   admin: true,
   password: 'password',
   publicReviews: false,
