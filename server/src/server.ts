@@ -306,7 +306,7 @@ export const initialize = async (args: {
   );
   logger.info(`Server time: ${new Date().toLocaleString()}`);
 
-  let configuration = await configurationRepository.findOne();
+  let configuration = await configurationRepository.get();
 
   if (!configuration) {
     await configurationRepository.create({
@@ -327,7 +327,7 @@ export const initialize = async (args: {
     });
   }
 
-  configuration = await configurationRepository.findOne();
+  configuration = await configurationRepository.get();
   setupI18n(configuration.serverLang);
 
   if (demo) {

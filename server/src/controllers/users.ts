@@ -86,7 +86,7 @@ export class UsersController {
         return;
       }
 
-      const configuration = await configurationRepository.findOne();
+      const configuration = await configurationRepository.get();
       const usersCount = await userRepository.count();
 
       if (usersCount > 0 && !configuration.enableRegistration) {

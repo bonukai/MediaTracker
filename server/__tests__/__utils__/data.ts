@@ -266,7 +266,7 @@ export class InitialData {
     sendDate: new Date().getTime(),
   };
 
-  static configuration: Configuration = {
+  static configuration = {
     id: 1,
     enableRegistration: true,
   };

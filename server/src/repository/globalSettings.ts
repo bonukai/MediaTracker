@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import _ from 'lodash';
+import { Database } from 'src/dbconfig';
 import { Configuration } from 'src/entity/configuration';
 import { logger } from 'src/logger';
 import { repository } from 'src/repository/repository';
@@ -11,7 +12,36 @@ class ConfigurationRepository extends repository<Configuration>({
 }) {
   public async update(value: Partial<Configuration>) {
     GlobalConfiguration.update(value);
-    return await super.update(value);
+
+    return await Database.knex.transaction(async (trx) => {
+      const currentConfigEntry = await trx('configuration').first();
+      const currentConfig = JSON.parse(currentConfigEntry.configurationJson);
+
+      const res = _.merge(currentConfig, value);
+
+      await trx('configuration').update('configurationJson', res);
+
+      return res;
+    });
+  }
+
+  public async get(): Promise<Configuration> {
+    const configEntry = await Database.knex('configuration').first();
+
+    if (!configEntry || !configEntry.configurationJson) {
+      return;
+    }
+
+    return JSON.parse(configEntry.configurationJson);
+  }
+
+  public async create(value: Partial<Configuration>) {
+    await Database.knex.transaction(async (trx) => {
+      await trx('configuration').delete();
+      await trx('configuration').insert({
+        configurationJson: JSON.stringify(value),
+      });
+    });
   }
 }
 

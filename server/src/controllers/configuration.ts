@@ -36,7 +36,7 @@ export class ConfigurationController {
       version: string;
     };
   }>(async (req, res) => {
-    const configuration = await configurationRepository.findOne();
+    const configuration = await configurationRepository.get();
     const numberOfUsers = await userRepository.count();
 
     res.send({

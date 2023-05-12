@@ -1663,5 +1663,33 @@ describe('migrations', () => {
     });
   });
 
+  test('20230512000003_refactorConfigurationToJson', async () => {
+    const config = await Database.knex('configuration').first();
+
+    expect(config).toBeDefined();
+
+    delete config.id;
+
+    await Database.knex.migrate.up({
+      name: `20230512000003_refactorConfigurationToJson.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20230512000003_refactorConfigurationToJson.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    expect(config).toEqual(
+      JSON.parse(
+        (await Database.knex('configuration').first()).configurationJson
+      )
+    );
+  });
+
   afterAll(clearDatabase);
 });
