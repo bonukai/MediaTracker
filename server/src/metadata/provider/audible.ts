@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AudibleLang as AudibleCountryCode } from 'src/entity/configuration';
+import { AudibleCountryCode } from 'src/entity/configuration';
 
 import { MediaItemForProvider, ExternalIds } from 'src/entity/mediaItem';
 import { MetadataProvider } from 'src/metadata/metadataProvider';

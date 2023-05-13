@@ -24,7 +24,7 @@ import { Database } from 'src/dbconfig';
 import { catchAndLogError, durationToMilliseconds } from 'src/utils';
 import { updateMetadata } from 'src/updateMetadata';
 import { sendNotifications } from 'src/sendNotifications';
-import { AudibleLang, ServerLang, TmdbLang } from 'src/entity/configuration';
+import { AudibleCountryCode, ServerLang, TmdbLang } from 'src/entity/configuration';
 import { ListItem } from 'src/entity/list';
 
 type ServerConfig = {
@@ -198,7 +198,7 @@ export class Server {
 type ApplicationConfig = {
   serverLang: ServerLang;
   tmdbLang: TmdbLang;
-  audibleLang: AudibleLang;
+  audibleLang: AudibleCountryCode;
   igdbClientId?: string;
   igdbClientSecret?: string;
   demo?: boolean;
@@ -282,7 +282,7 @@ export class Application {
 export const initialize = async (args: {
   serverLang: ServerLang;
   tmdbLang: TmdbLang;
-  audibleLang: AudibleLang;
+  audibleLang: AudibleCountryCode;
   igdbClientId?: string;
   igdbClientSecret?: string;
   demo?: boolean;
