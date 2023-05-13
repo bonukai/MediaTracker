@@ -13,14 +13,13 @@ import { TvSeason, TvSeasonFilters } from 'src/entity/tvseason';
 import { metadataProviders } from 'src/metadata/metadataProviders';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { durationToMilliseconds, updateAsset } from 'src/utils';
-import { tvEpisodeRepository } from 'src/repository/episode';
-import { tvSeasonRepository } from 'src/repository/season';
 import { Notifications } from 'src/notifications/notifications';
 import { userRepository } from 'src/repository/user';
 import { User } from 'src/entity/user';
 import { CancellationToken } from 'src/cancellationToken';
 import { createLock } from 'src/lock';
 import { logger } from 'src/logger';
+import { Database } from 'src/dbconfig';
 
 const getItemsToDelete = (
   oldMediaItem: MediaItemBaseWithSeasons,
@@ -310,46 +309,23 @@ export const updateMediaItem = async (
       throw new Error('No metadata');
     }
 
-    if (newMediaItem.mediaType === 'tv') {
-      oldMediaItem.seasons = await mediaItemRepository.seasonsWithEpisodes(
-        oldMediaItem
-      );
-    }
+    const updatedMediaItem =
+      newMediaItem.mediaType === 'tv'
+        ? await margeTvShow(oldMediaItem, newMediaItem)
+        : {
+            ...newMediaItem,
+            lastTimeUpdated: new Date().getTime(),
+            id: oldMediaItem.id,
+          };
 
-    let updatedMediaItem = merge(oldMediaItem, newMediaItem);
+    if (updatedMediaItem) {
+      await mediaItemRepository.update(updatedMediaItem);
 
-    if (newMediaItem.mediaType === 'tv') {
-      const [episodesToDelete, seasonToDelete] = getItemsToDelete(
-        oldMediaItem,
-        updatedMediaItem
-      );
+      await downloadNewAssets(oldMediaItem, updatedMediaItem);
 
-      if (episodesToDelete.length > 0 || seasonToDelete.length > 0) {
-        const episodesIdToDelete = [
-          ...episodesToDelete.map((episode) => episode.id),
-          ...seasonToDelete.flatMap((season) =>
-            season.episodes?.map((episode) => episode.id)
-          ),
-        ].filter(Boolean);
-
-        const seasonsIdsToDelete = seasonToDelete.map((season) => season.id);
-
-        if (episodesIdToDelete.length > 0) {
-          await tvEpisodeRepository.deleteManyById(episodesIdToDelete);
-        }
-
-        if (seasonsIdsToDelete.length > 0) {
-          await tvSeasonRepository.deleteManyById(seasonsIdsToDelete);
-        }
+      if (!oldMediaItem.needsDetails) {
+        await sendNotifications(oldMediaItem, updatedMediaItem);
       }
-    }
-
-    updatedMediaItem = await mediaItemRepository.update(updatedMediaItem);
-
-    await downloadNewAssets(oldMediaItem, updatedMediaItem);
-
-    if (!oldMediaItem.needsDetails) {
-      await sendNotifications(oldMediaItem, updatedMediaItem);
     }
 
     await mediaItemRepository.unlock(oldMediaItem.id);
@@ -378,6 +354,168 @@ const shouldUpdate = (mediaItem: MediaItemBase) => {
   }
 
   return timePassed >= durationToMilliseconds({ hours: 24 });
+};
+
+const margeTvShow = async (
+  oldMediaItem: MediaItemBase,
+  newMediaItem: MediaItemForProvider
+) => {
+  const oldMediaItemWithSeason = {
+    ...oldMediaItem,
+    seasons: await mediaItemRepository.seasonsWithEpisodes(oldMediaItem),
+  };
+  const updatedMediaItem = merge(oldMediaItemWithSeason, newMediaItem);
+
+  const [episodesToDelete, seasonsToDelete] = getItemsToDelete(
+    oldMediaItemWithSeason,
+    updatedMediaItem
+  );
+
+  if (episodesToDelete.length > 0) {
+    logger.info(
+      `Local database has episodes not present in the external source. Attempting to remove local episodes: ${episodesToDelete
+        .map(
+          (episode) =>
+            `${episode.seasonNumber}x${episode.episodeNumber} "${episode.title}"`
+        )
+        .join(', ')}`
+    );
+  }
+
+  if (seasonsToDelete.length > 0) {
+    logger.info(
+      `Local database has seasons not present in the external source. Attempting to remove local seasons: ${seasonsToDelete
+        .map((season) => `${season.seasonNumber} "${season.title}"`)
+        .join(', ')}`
+    );
+  }
+
+  if (episodesToDelete.length > 0 || seasonsToDelete.length > 0) {
+    const episodesIdToDelete = [
+      ...episodesToDelete.map((episode) => episode.id),
+      ...seasonsToDelete.flatMap((season) =>
+        season.episodes?.map((episode) => episode.id)
+      ),
+    ].filter(Boolean);
+
+    const seasonsIdsToDelete = seasonsToDelete.map((season) => season.id);
+
+    if (episodesIdToDelete.length > 0 || seasonsIdsToDelete.length > 0) {
+      const res = await Database.knex.transaction(async (trx) => {
+        if (episodesIdToDelete.length > 0) {
+          const seen = await trx('seen').whereIn(
+            'episodeId',
+            episodesIdToDelete
+          );
+
+          if (seen.length > 0) {
+            return {
+              error: `failed to delete local episodes, there are seen entries with those episodes`,
+            };
+          }
+
+          const progress = await trx('progress').whereIn(
+            'episodeId',
+            episodesIdToDelete
+          );
+
+          if (progress.length > 0) {
+            return {
+              error: `failed to delete local episodes, there are progress entries with those episodes`,
+            };
+          }
+
+          const listItems = await trx('listItem').whereIn(
+            'episodeId',
+            episodesIdToDelete
+          );
+
+          if (listItems.length > 0) {
+            return {
+              error: `failed to delete local episodes, there are listItems with those episodes`,
+            };
+          }
+
+          const userRating = await trx('userRating').whereIn(
+            'episodeId',
+            episodesIdToDelete
+          );
+
+          if (userRating.length > 0) {
+            return {
+              error: `failed to delete local episodes, there are userRating with those episodes`,
+            };
+          }
+
+          await trx('seen').whereIn('episodeId', episodesIdToDelete).delete();
+          await trx('progress')
+            .whereIn('episodeId', episodesIdToDelete)
+            .delete();
+
+          await trx('listItem')
+            .whereIn('episodeId', episodesIdToDelete)
+            .delete();
+
+          await trx('userRating')
+            .whereIn('episodeId', episodesIdToDelete)
+            .delete();
+
+          await trx('notificationsHistory')
+            .whereIn('episodeId', episodesIdToDelete)
+            .delete();
+
+          await trx('episode').whereIn('id', episodesIdToDelete).delete();
+        }
+
+        if (seasonsIdsToDelete.length > 0) {
+          const listItems = await trx('listItem').whereIn(
+            'seasonId',
+            seasonsIdsToDelete
+          );
+
+          if (listItems.length > 0) {
+            return {
+              error: `failed to delete local seasons, there are listItems with those seasons`,
+            };
+          }
+
+          const userRating = await trx('userRating').whereIn(
+            'seasonId',
+            seasonsIdsToDelete
+          );
+
+          if (userRating.length > 0) {
+            return {
+              error: `failed to delete local seasons, there are userRating with those seasons`,
+            };
+          }
+
+          await trx('listItem')
+            .whereIn('seasonId', seasonsIdsToDelete)
+            .delete();
+
+          await trx('userRating')
+            .whereIn('seasonId', seasonsIdsToDelete)
+            .delete();
+
+          await trx('image').whereIn('seasonId', seasonsIdsToDelete).delete();
+
+          await trx('season').whereIn('id', seasonsIdsToDelete).delete();
+        }
+
+        return true;
+      });
+
+      if (res === true) {
+        logger.info(`deleted local episodes and seasons`);
+      } else {
+        logger.error(res.error);
+        return;
+      }
+    }
+  }
+
+  return updatedMediaItem;
 };
 
 export const updateMediaItems = async (args: {
