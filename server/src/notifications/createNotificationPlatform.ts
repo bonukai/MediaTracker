@@ -1,3 +1,5 @@
+import { FormattedNotification } from 'src/notifications/notificationFormatter';
+
 export const createNotificationPlatform = <
   Credentials extends ReadonlyArray<string> = [],
   PlatformName extends string = never,
@@ -6,10 +8,10 @@ export const createNotificationPlatform = <
   args: {
     name: PlatformName;
     sendFunction: (args: {
-      title: string;
-      message: string;
-      messageMarkdown?: string;
-      imagePath?: string;
+      content: {
+        title: string;
+        body: FormattedNotification;
+      };
       credentials: Credentials extends readonly []
         ? Record<CredentialName, string>
         : Record<Credentials[number], string>;

@@ -13,6 +13,10 @@ import { Notifications } from 'src/notifications/notifications';
 import { notificationPlatformsCredentialsRepository } from 'src/repository/notificationPlatformsCredentials';
 import { createLock } from 'src/lock';
 import { logger } from 'src/logger';
+import {
+  FormattedNotification,
+  formatNotification,
+} from 'src/notifications/notificationFormatter';
 
 const notificationForPastItems = async () => {
   const releasedItems = await mediaItemRepository.itemsToNotify(
@@ -146,10 +150,12 @@ const sendNotificationForEpisodes = async (episodes: TvEpisode[]) => {
 
   const count = episodes.length;
 
-  const notificationMessage = plural(count, {
-    one: `# episode of **${title}** has been released`,
-    other: `# episodes of **${title}** has been released`,
-  });
+  const notificationMessage = formatNotification((f) =>
+    plural(count, {
+      one: `# episode of ${f.mediaItemUrl(tvShow)} has been released`,
+      other: `# episodes of ${f.mediaItemUrl(tvShow)} has been released`,
+    })
+  );
 
   await sendNotificationForItem({
     mediaItem: tvShow,
@@ -161,8 +167,6 @@ const sendNotificationForEpisodes = async (episodes: TvEpisode[]) => {
 
 const sendNotificationForMediaItem = async (mediaItem: MediaItemBase) => {
   const title = mediaItem.title;
-  const notificationMessage = t`${title} has been released`;
-
   const usersToNotify = await userRepository.findUsersWithMediaItemOnWatchlist({
     mediaItemId: mediaItem.id,
     sendNotificationForReleases: true,
@@ -179,7 +183,9 @@ const sendNotificationForMediaItem = async (mediaItem: MediaItemBase) => {
 
   await sendNotificationForItem({
     mediaItem: mediaItem,
-    notificationMessage: notificationMessage,
+    notificationMessage: formatNotification(
+      (f) => t`${f.mediaItemUrl(mediaItem)} has been released`
+    ),
     users: usersToNotify,
   });
 };
@@ -188,10 +194,9 @@ const sendNotificationForItem = async (args: {
   mediaItem: MediaItemBase;
   episodes?: TvEpisode[];
   users: User[];
-  notificationMessage: string;
+  notificationMessage: FormattedNotification;
 }) => {
   const { mediaItem, episodes, users, notificationMessage } = args;
-  const notificationTitle = 'MediaTracker';
 
   for (const user of users) {
     const platform = user.notificationPlatform;
@@ -200,9 +205,7 @@ const sendNotificationForItem = async (args: {
     );
 
     await Notifications.sendNotification(platform, {
-      title: notificationTitle,
       message: notificationMessage,
-      messageMarkdown: notificationMessage,
       credentials: credentials[platform],
     });
   }

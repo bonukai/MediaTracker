@@ -5,14 +5,14 @@ export const ntfy = createNotificationPlatform({
   name: 'ntfy',
   credentialNames: <const>['topic', 'url', 'priority'],
   sendFunction: async (args) => {
-    const { credentials, message, title } = args;
+    const { credentials, content } = args;
 
     await axios.post(
       new URL(credentials.topic, credentials.url || 'https://ntfy.sh').href,
-      message,
+      content.body.plainText,
       {
         headers: {
-          Title: title,
+          Title: content.title,
           Priority: credentials.priority,
         },
       }

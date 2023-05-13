@@ -91,7 +91,7 @@
                   "audibleLang": {
                     "allOf": [
                       {
-                        "$ref": "#/components/schemas/AudibleLang"
+                        "$ref": "#/components/schemas/AudibleCountryCode"
                       }
                     ],
                     "nullable": true
@@ -157,7 +157,7 @@
                         "audibleLang": {
                           "allOf": [
                             {
-                              "$ref": "#/components/schemas/AudibleLang"
+                              "$ref": "#/components/schemas/AudibleCountryCode"
                             }
                           ],
                           "nullable": true
@@ -2711,7 +2711,7 @@
         ],
         "type": "string"
       },
-      "AudibleLang": {
+      "AudibleCountryCode": {
         "enum": [
           "au",
           "ca",
@@ -2898,7 +2898,7 @@
               "audibleCountryCode": {
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/AudibleLang"
+                    "$ref": "#/components/schemas/AudibleCountryCode"
                   }
                 ],
                 "nullable": true
@@ -3451,7 +3451,7 @@
               "audibleCountryCode": {
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/AudibleLang"
+                    "$ref": "#/components/schemas/AudibleCountryCode"
                   }
                 ],
                 "nullable": true
