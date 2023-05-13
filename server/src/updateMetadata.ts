@@ -439,122 +439,108 @@ const margeTvShow = async (
     const seasonsIdsToDelete = seasonsToDelete.map((season) => season.id);
 
     if (episodesIdToDelete.length > 0 || seasonsIdsToDelete.length > 0) {
-      const res = await Database.knex.transaction(async (trx) => {
-        if (episodesIdToDelete.length > 0) {
-          const seen = await trx('seen').whereIn(
-            'episodeId',
-            episodesIdToDelete
-          );
+      try {
+        await Database.knex.transaction(async (trx) => {
+          if (episodesIdToDelete.length > 0) {
+            const seen = await trx('seen').whereIn(
+              'episodeId',
+              episodesIdToDelete
+            );
 
-          if (seen.length > 0) {
-            await trx.rollback();
-            return {
-              error: `failed to delete local episodes, there are seen entries with those episodes`,
-            };
+            if (seen.length > 0) {
+              throw `failed to delete local episodes, there are seen entries with those episodes`;
+            }
+
+            const progress = await trx('progress').whereIn(
+              'episodeId',
+              episodesIdToDelete
+            );
+
+            if (progress.length > 0) {
+              throw `failed to delete local episodes, there are progress entries with those episodes`;
+            }
+
+            const listItems = await trx('listItem').whereIn(
+              'episodeId',
+              episodesIdToDelete
+            );
+
+            if (listItems.length > 0) {
+              throw `failed to delete local episodes, there are listItems with those episodes`;
+            }
+
+            const userRating = await trx('userRating').whereIn(
+              'episodeId',
+              episodesIdToDelete
+            );
+
+            if (userRating.length > 0) {
+              throw `failed to delete local episodes, there are userRating with those episodes`;
+            }
+
+            await trx('seen').whereIn('episodeId', episodesIdToDelete).delete();
+            await trx('progress')
+              .whereIn('episodeId', episodesIdToDelete)
+              .delete();
+
+            await trx('listItem')
+              .whereIn('episodeId', episodesIdToDelete)
+              .delete();
+
+            await trx('userRating')
+              .whereIn('episodeId', episodesIdToDelete)
+              .delete();
+
+            await trx('notificationsHistory')
+              .whereIn('episodeId', episodesIdToDelete)
+              .delete();
+
+            await trx('episode').whereIn('id', episodesIdToDelete).delete();
+          }
+          if (seasonsIdsToDelete.length > 0) {
+            const listItems = await trx('listItem').whereIn(
+              'seasonId',
+              seasonsIdsToDelete
+            );
+
+            if (listItems.length > 0) {
+              throw `failed to delete local seasons, there are listItems with those seasons`;
+            }
+
+            const userRating = await trx('userRating').whereIn(
+              'seasonId',
+              seasonsIdsToDelete
+            );
+
+            if (userRating.length > 0) {
+              throw `failed to delete local seasons, there are userRating with those seasons`;
+            }
+
+            await trx('listItem')
+              .whereIn('seasonId', seasonsIdsToDelete)
+              .delete();
+
+            await trx('userRating')
+              .whereIn('seasonId', seasonsIdsToDelete)
+              .delete();
+
+            await trx('image').whereIn('seasonId', seasonsIdsToDelete).delete();
+
+            await trx('season').whereIn('id', seasonsIdsToDelete).delete();
           }
 
-          const progress = await trx('progress').whereIn(
-            'episodeId',
-            episodesIdToDelete
-          );
-
-          if (progress.length > 0) {
-            await trx.rollback();
-            return {
-              error: `failed to delete local episodes, there are progress entries with those episodes`,
-            };
-          }
-
-          const listItems = await trx('listItem').whereIn(
-            'episodeId',
-            episodesIdToDelete
-          );
-
-          if (listItems.length > 0) {
-            await trx.rollback();
-            return {
-              error: `failed to delete local episodes, there are listItems with those episodes`,
-            };
-          }
-
-          const userRating = await trx('userRating').whereIn(
-            'episodeId',
-            episodesIdToDelete
-          );
-
-          if (userRating.length > 0) {
-            await trx.rollback();
-            return {
-              error: `failed to delete local episodes, there are userRating with those episodes`,
-            };
-          }
-
-          await trx('seen').whereIn('episodeId', episodesIdToDelete).delete();
-          await trx('progress')
-            .whereIn('episodeId', episodesIdToDelete)
-            .delete();
-
-          await trx('listItem')
-            .whereIn('episodeId', episodesIdToDelete)
-            .delete();
-
-          await trx('userRating')
-            .whereIn('episodeId', episodesIdToDelete)
-            .delete();
-
-          await trx('notificationsHistory')
-            .whereIn('episodeId', episodesIdToDelete)
-            .delete();
-
-          await trx('episode').whereIn('id', episodesIdToDelete).delete();
-        }
-
-        if (seasonsIdsToDelete.length > 0) {
-          const listItems = await trx('listItem').whereIn(
-            'seasonId',
-            seasonsIdsToDelete
-          );
-
-          if (listItems.length > 0) {
-            await trx.rollback();
-            return {
-              error: `failed to delete local seasons, there are listItems with those seasons`,
-            };
-          }
-
-          const userRating = await trx('userRating').whereIn(
-            'seasonId',
-            seasonsIdsToDelete
-          );
-
-          if (userRating.length > 0) {
-            await trx.rollback();
-            return {
-              error: `failed to delete local seasons, there are userRating with those seasons`,
-            };
-          }
-
-          await trx('listItem')
-            .whereIn('seasonId', seasonsIdsToDelete)
-            .delete();
-
-          await trx('userRating')
-            .whereIn('seasonId', seasonsIdsToDelete)
-            .delete();
-
-          await trx('image').whereIn('seasonId', seasonsIdsToDelete).delete();
-
-          await trx('season').whereIn('id', seasonsIdsToDelete).delete();
-        }
-
-        return true;
-      });
-
-      if (res === true) {
+          return true;
+        });
         logger.info(`deleted local episodes and seasons`);
-      } else {
-        logger.error(res.error);
-        return;
+      } catch (error) {
+        logger.error(error);
+
+        return {
+          ...newMediaItem,
+          id: oldMediaItemWithSeason.id,
+          lastTimeUpdated: new Date().getTime(),
+          seasons: oldMediaItemWithSeason.seasons,
+        };
       }
     }
   }
