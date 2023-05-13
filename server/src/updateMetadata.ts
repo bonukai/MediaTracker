@@ -25,7 +25,6 @@ import {
   formatNotification,
 } from 'src/notifications/notificationFormatter';
 
-
 const getItemsToDelete = (
   oldMediaItem: MediaItemBaseWithSeasons,
   updatedMediaItem: MediaItemBaseWithSeasons
@@ -448,6 +447,7 @@ const margeTvShow = async (
           );
 
           if (seen.length > 0) {
+            await trx.rollback();
             return {
               error: `failed to delete local episodes, there are seen entries with those episodes`,
             };
@@ -459,6 +459,7 @@ const margeTvShow = async (
           );
 
           if (progress.length > 0) {
+            await trx.rollback();
             return {
               error: `failed to delete local episodes, there are progress entries with those episodes`,
             };
@@ -470,6 +471,7 @@ const margeTvShow = async (
           );
 
           if (listItems.length > 0) {
+            await trx.rollback();
             return {
               error: `failed to delete local episodes, there are listItems with those episodes`,
             };
@@ -481,6 +483,7 @@ const margeTvShow = async (
           );
 
           if (userRating.length > 0) {
+            await trx.rollback();
             return {
               error: `failed to delete local episodes, there are userRating with those episodes`,
             };
@@ -513,6 +516,7 @@ const margeTvShow = async (
           );
 
           if (listItems.length > 0) {
+            await trx.rollback();
             return {
               error: `failed to delete local seasons, there are listItems with those seasons`,
             };
@@ -524,6 +528,7 @@ const margeTvShow = async (
           );
 
           if (userRating.length > 0) {
+            await trx.rollback();
             return {
               error: `failed to delete local seasons, there are userRating with those seasons`,
             };
