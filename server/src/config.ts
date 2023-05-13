@@ -5,7 +5,7 @@ import { version } from '../package.json';
 
 import {
   audibleLang,
-  AudibleLang,
+  AudibleCountryCode,
   serverLang,
   ServerLang,
   tmdbLang,
@@ -69,7 +69,7 @@ export class Config {
     process.env.SERVER_LANG?.toLowerCase() as ServerLang;
   static readonly TMDB_LANG = process.env.TMDB_LANG?.toLowerCase() as TmdbLang;
   static readonly AUDIBLE_LANG =
-    process.env.AUDIBLE_LANG?.toLowerCase() as AudibleLang;
+    process.env.AUDIBLE_LANG?.toLowerCase() as AudibleCountryCode;
 
   static validate() {
     if (this.SERVER_LANG && !serverLang.includes(this.SERVER_LANG)) {

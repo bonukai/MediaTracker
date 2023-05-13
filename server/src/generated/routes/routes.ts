@@ -277,7 +277,7 @@ router.patch(
           ],
           type: 'string',
         },
-        AudibleLang: {
+        AudibleCountryCode: {
           enum: ['au', 'ca', 'de', 'es', 'fr', 'in', 'it', 'jp', 'uk', 'us'],
           type: 'string',
         },
@@ -293,7 +293,10 @@ router.patch(
           oneOf: [{ $ref: '#/definitions/TmdbLang' }, { type: 'null' }],
         },
         audibleLang: {
-          oneOf: [{ $ref: '#/definitions/AudibleLang' }, { type: 'null' }],
+          oneOf: [
+            { $ref: '#/definitions/AudibleCountryCode' },
+            { type: 'null' },
+          ],
         },
         serverLang: {
           oneOf: [{ $ref: '#/definitions/ServerLang' }, { type: 'null' }],
@@ -487,7 +490,6 @@ router.put(
           enum: [
             'my-rating',
             'next-airing',
-            'rank',
             'recently-added',
             'recently-aired',
             'recently-watched',
@@ -529,7 +531,6 @@ router.patch(
           enum: [
             'my-rating',
             'next-airing',
-            'rank',
             'recently-added',
             'recently-aired',
             'recently-watched',
@@ -1041,7 +1042,6 @@ router.put(
       type: 'object',
       properties: {
         name: { type: ['string', 'null'] },
-        slug: { type: ['string', 'null'] },
         publicReviews: { type: ['boolean', 'null'] },
         sendNotificationWhenStatusChanges: { type: ['boolean', 'null'] },
         sendNotificationWhenReleaseDateChanges: { type: ['boolean', 'null'] },

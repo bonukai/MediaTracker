@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AudibleLang as AudibleCountryCode } from 'src/entity/configuration';
+import { AudibleCountryCode } from 'src/entity/configuration';
 
 import { MediaItemForProvider, ExternalIds } from 'src/entity/mediaItem';
 import { MetadataProvider } from 'src/metadata/metadataProvider';
@@ -26,7 +26,7 @@ export class Audible extends MetadataProvider {
     return GlobalConfiguration.configuration.audibleLang?.toLocaleLowerCase() as AudibleCountryCode;
   }
 
-  private domain(countryCode: AudibleCountryCode) {
+  public domain(countryCode: AudibleCountryCode) {
     if (countryCode in this.languages) {
       return this.languages[countryCode];
     }

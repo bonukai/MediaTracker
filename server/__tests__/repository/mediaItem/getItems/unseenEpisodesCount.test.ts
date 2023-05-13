@@ -12,7 +12,6 @@ import { listItemRepository } from 'src/repository/listItemRepository';
 const user: User = {
   id: 1,
   name: 'admin',
-  slug: 'admin',
   admin: true,
   password: 'password',
   publicReviews: false,
@@ -21,7 +20,6 @@ const user: User = {
 const user2: User = {
   id: 2,
   name: 'user',
-  slug: 'user',
   admin: false,
   password: 'password',
   publicReviews: false,

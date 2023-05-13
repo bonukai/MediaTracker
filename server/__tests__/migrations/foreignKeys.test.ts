@@ -31,14 +31,12 @@ const episode = {
 const user = {
   id: 1,
   name: 'user',
-  slug: 'user',
   password: 'password',
 };
 
 const list = {
   id: 1,
   name: 'list',
-  slug: 'list',
   privacy: 'private',
   createdAt: new Date().getTime(),
   updatedAt: new Date().getTime(),
@@ -46,7 +44,6 @@ const list = {
   isWatchlist: false,
   sortBy: 'recently-watched',
   sortOrder: 'desc',
-  rank: 0,
 };
 
 describe('foreign keys', () => {
@@ -125,14 +122,12 @@ describe('foreign keys', () => {
       Database.knex('list').insert({
         id: 999,
         name: 'list2',
-        slug: 'list2',
         privacy: 'private',
         sortBy: 'recently-watched',
         sortOrder: 'desc',
         createdAt: new Date().getTime(),
         updatedAt: new Date().getTime(),
         userId: 999,
-        rank: 1,
         isWatchlist: false,
       })
     ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
@@ -147,7 +142,6 @@ describe('foreign keys', () => {
         seasonId: season.id,
         episodeId: episode.id,
         addedAt: new Date().getTime(),
-        rank: 1,
       })
     ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
@@ -159,7 +153,6 @@ describe('foreign keys', () => {
         seasonId: season.id,
         episodeId: episode.id,
         addedAt: new Date().getTime(),
-        rank: 1,
       })
     ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
@@ -171,7 +164,6 @@ describe('foreign keys', () => {
         seasonId: 999,
         episodeId: episode.id,
         addedAt: new Date().getTime(),
-        rank: 1,
       })
     ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
 
@@ -183,7 +175,6 @@ describe('foreign keys', () => {
         seasonId: season.id,
         episodeId: 999,
         addedAt: new Date().getTime(),
-        rank: 1,
       })
     ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
   });

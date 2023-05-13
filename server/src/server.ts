@@ -24,7 +24,7 @@ import { Database } from 'src/dbconfig';
 import { catchAndLogError, durationToMilliseconds } from 'src/utils';
 import { updateMetadata } from 'src/updateMetadata';
 import { sendNotifications } from 'src/sendNotifications';
-import { AudibleLang, ServerLang, TmdbLang } from 'src/entity/configuration';
+import { AudibleCountryCode, ServerLang, TmdbLang } from 'src/entity/configuration';
 import { ListItem } from 'src/entity/list';
 
 type ServerConfig = {
@@ -198,7 +198,7 @@ export class Server {
 type ApplicationConfig = {
   serverLang: ServerLang;
   tmdbLang: TmdbLang;
-  audibleLang: AudibleLang;
+  audibleLang: AudibleCountryCode;
   igdbClientId?: string;
   igdbClientSecret?: string;
   demo?: boolean;
@@ -282,7 +282,7 @@ export class Application {
 export const initialize = async (args: {
   serverLang: ServerLang;
   tmdbLang: TmdbLang;
-  audibleLang: AudibleLang;
+  audibleLang: AudibleCountryCode;
   igdbClientId?: string;
   igdbClientSecret?: string;
   demo?: boolean;
@@ -306,7 +306,7 @@ export const initialize = async (args: {
   );
   logger.info(`Server time: ${new Date().toLocaleString()}`);
 
-  let configuration = await configurationRepository.findOne();
+  let configuration = await configurationRepository.get();
 
   if (!configuration) {
     await configurationRepository.create({
@@ -327,7 +327,7 @@ export const initialize = async (args: {
     });
   }
 
-  configuration = await configurationRepository.findOne();
+  configuration = await configurationRepository.get();
   setupI18n(configuration.serverLang);
 
   if (demo) {

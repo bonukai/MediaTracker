@@ -91,7 +91,7 @@
                   "audibleLang": {
                     "allOf": [
                       {
-                        "$ref": "#/components/schemas/AudibleLang"
+                        "$ref": "#/components/schemas/AudibleCountryCode"
                       }
                     ],
                     "nullable": true
@@ -157,7 +157,7 @@
                         "audibleLang": {
                           "allOf": [
                             {
-                              "$ref": "#/components/schemas/AudibleLang"
+                              "$ref": "#/components/schemas/AudibleCountryCode"
                             }
                           ],
                           "nullable": true
@@ -2017,10 +2017,6 @@
                     "type": "string",
                     "nullable": true
                   },
-                  "slug": {
-                    "type": "string",
-                    "nullable": true
-                  },
                   "publicReviews": {
                     "type": "boolean",
                     "nullable": true
@@ -2715,7 +2711,7 @@
         ],
         "type": "string"
       },
-      "AudibleLang": {
+      "AudibleCountryCode": {
         "enum": [
           "au",
           "ca",
@@ -2759,10 +2755,6 @@
                 "nullable": true
               },
               "releaseDate": {
-                "type": "string",
-                "nullable": true
-              },
-              "slug": {
                 "type": "string",
                 "nullable": true
               },
@@ -2906,9 +2898,13 @@
               "audibleCountryCode": {
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/AudibleLang"
+                    "$ref": "#/components/schemas/AudibleCountryCode"
                   }
                 ],
+                "nullable": true
+              },
+              "slug": {
+                "type": "string",
                 "nullable": true
               },
               "seasons": {
@@ -3315,10 +3311,6 @@
                 "type": "string",
                 "nullable": true
               },
-              "slug": {
-                "type": "string",
-                "nullable": true
-              },
               "numberOfEpisodes": {
                 "type": "number",
                 "nullable": true
@@ -3459,9 +3451,13 @@
               "audibleCountryCode": {
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/AudibleLang"
+                    "$ref": "#/components/schemas/AudibleCountryCode"
                   }
                 ],
+                "nullable": true
+              },
+              "slug": {
+                "type": "string",
                 "nullable": true
               }
             },
@@ -3578,9 +3574,6 @@
           "name": {
             "type": "string"
           },
-          "slug": {
-            "type": "string"
-          },
           "description": {
             "type": "string",
             "nullable": true
@@ -3613,10 +3606,6 @@
           "userId": {
             "type": "number"
           },
-          "rank": {
-            "type": "number",
-            "nullable": true
-          },
           "allowComments": {
             "type": "boolean",
             "nullable": true
@@ -3639,7 +3628,6 @@
           "isWatchlist",
           "name",
           "privacy",
-          "slug",
           "updatedAt",
           "userId"
         ]
@@ -3656,7 +3644,6 @@
         "enum": [
           "my-rating",
           "next-airing",
-          "rank",
           "recently-added",
           "recently-aired",
           "recently-watched",
@@ -3782,18 +3769,11 @@
               "name": {
                 "type": "string"
               },
-              "slug": {
-                "type": "string"
-              },
               "description": {
                 "type": "string",
                 "nullable": true
               },
               "traktId": {
-                "type": "number",
-                "nullable": true
-              },
-              "rank": {
                 "type": "number",
                 "nullable": true
               },
@@ -3837,7 +3817,6 @@
               "isWatchlist",
               "name",
               "privacy",
-              "slug",
               "updatedAt"
             ]
           },
@@ -3879,9 +3858,6 @@
         "items": {
           "type": "object",
           "properties": {
-            "rank": {
-              "type": "number"
-            },
             "id": {
               "type": "number"
             },
@@ -3924,7 +3900,6 @@
             "id",
             "listedAt",
             "mediaItem",
-            "rank",
             "type"
           ]
         }
@@ -3949,18 +3924,11 @@
               "name": {
                 "type": "string"
               },
-              "slug": {
-                "type": "string"
-              },
               "description": {
                 "type": "string",
                 "nullable": true
               },
               "traktId": {
-                "type": "number",
-                "nullable": true
-              },
-              "rank": {
                 "type": "number",
                 "nullable": true
               },
@@ -4004,7 +3972,6 @@
               "isWatchlist",
               "name",
               "privacy",
-              "slug",
               "updatedAt"
             ]
           },
@@ -4402,9 +4369,6 @@
           "name": {
             "type": "string"
           },
-          "slug": {
-            "type": "string"
-          },
           "admin": {
             "type": "boolean",
             "nullable": true
@@ -4457,8 +4421,7 @@
         },
         "required": [
           "id",
-          "name",
-          "slug"
+          "name"
         ]
       },
       "RequestError": {

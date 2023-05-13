@@ -9,6 +9,9 @@ import { MediaItemBase } from 'src/entity/mediaItem';
 import { Database } from 'src/dbconfig';
 import { randomSlugId, toSlug } from 'src/slug';
 import { nanoid } from 'nanoid';
+import { listRepository } from 'src/repository/list';
+import { ListSortBy } from 'src/entity/list';
+import { listItemRepository } from 'src/repository/listItemRepository';
 
 describe('migrations', () => {
   beforeAll(async () => {
@@ -1580,6 +1583,112 @@ describe('migrations', () => {
     expect(progress.at(0).progress).toBe(0.4);
     expect(progress.at(0).date).toBe(date - 70);
     expect(progress.at(0).userId).toBe(InitialData.user.id);
+  });
+
+  test('20230511000000_dropRankInList', async () => {
+    const listId = 999;
+    const { count } = await Database.knex('list')
+      .where('userId', InitialData.user.id)
+      .count({ count: '*' })
+      .as('count')
+      .first();
+
+    await Database.knex('list').insert({
+      id: listId,
+      name: 'migration test',
+      slug: 'migration-test',
+      userId: InitialData.user.id,
+      sortBy: 'rank' as unknown as ListSortBy,
+      rank: count,
+      privacy: 'private',
+      sortOrder: 'asc',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      isWatchlist: false,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20230511000000_dropRankInList.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    expect(
+      await Database.knex('list')
+        .where('userId', InitialData.user.id)
+        .orderBy('id')
+        .select('rank')
+    ).toEqual(
+      new Array(count + 1).fill(null).map((_, index) => ({ rank: index }))
+    );
+
+    await Database.knex.migrate.up({
+      name: `20230511000000_dropRankInList.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+  });
+
+  test('20230512000001_dropSlugInList', async () => {
+    await Database.knex.migrate.up({
+      name: `20230512000001_dropSlugInList.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20230512000001_dropSlugInList.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+  });
+
+  test('20230512000002_dropSlugInUser', async () => {
+    await Database.knex.migrate.up({
+      name: `20230512000002_dropSlugInUser.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20230512000002_dropSlugInUser.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+  });
+
+  test('20230512000003_refactorConfigurationToJson', async () => {
+    const config = await Database.knex('configuration').first();
+
+    expect(config).toBeDefined();
+
+    delete config.id;
+
+    await Database.knex.migrate.up({
+      name: `20230512000003_refactorConfigurationToJson.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20230512000003_refactorConfigurationToJson.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    expect(config).toEqual(
+      JSON.parse(
+        (await Database.knex('configuration').first()).configurationJson
+      )
+    );
   });
 
   afterAll(clearDatabase);

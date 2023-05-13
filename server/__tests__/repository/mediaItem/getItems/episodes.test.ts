@@ -9,7 +9,6 @@ import { clearDatabase, runMigrations } from '../../../__utils__/utils';
 const user: User = {
   id: 1,
   name: 'admin',
-  slug: 'admin',
   admin: true,
   password: 'password',
   publicReviews: false,

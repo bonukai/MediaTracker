@@ -14,6 +14,7 @@ import { configurationRepository } from 'src/repository/globalSettings';
 import { RequestError, toRequestErrorObject } from 'src/requestError';
 import { Config } from 'src/config';
 import { t } from '@lingui/macro';
+import { formatNotification } from 'src/notifications/notificationFormatter';
 
 type UserResponse = Omit<User, 'password'>;
 
@@ -86,7 +87,7 @@ export class UsersController {
         return;
       }
 
-      const configuration = await configurationRepository.findOne();
+      const configuration = await configurationRepository.get();
       const usersCount = await userRepository.count();
 
       if (usersCount > 0 && !configuration.enableRegistration) {
@@ -165,8 +166,7 @@ export class UsersController {
 
     try {
       await Notifications.sendNotification(platformName, {
-        title: 'MediaTracker',
-        message: t`Test message`,
+        message: formatNotification(() => t`Test message`),
         credentials: credentials,
       });
     } catch (error) {
@@ -201,7 +201,7 @@ export class UsersController {
     requestBody: Partial<
       Pick<
         User,
-        Exclude<typeof userNonSensitiveColumns[number], 'id' | 'admin'>
+        Exclude<(typeof userNonSensitiveColumns)[number], 'id' | 'admin'>
       >
     >;
   }>(async (req, res) => {

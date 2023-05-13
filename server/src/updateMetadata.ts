@@ -20,6 +20,11 @@ import { CancellationToken } from 'src/cancellationToken';
 import { createLock } from 'src/lock';
 import { logger } from 'src/logger';
 import { Database } from 'src/dbconfig';
+import {
+  FormattedNotification,
+  formatNotification,
+} from 'src/notifications/notificationFormatter';
+
 
 const getItemsToDelete = (
   oldMediaItem: MediaItemBaseWithSeasons,
@@ -161,7 +166,7 @@ const sendNotifications = async (
   );
 
   const send = async (args: {
-    message: string;
+    message: FormattedNotification;
     filter: (user: User) => boolean;
   }) => {
     await Promise.all(
@@ -178,8 +183,13 @@ const sendNotifications = async (
     newMediaItem.status !== oldMediaItem.status &&
     !(!newMediaItem.status && !oldMediaItem.status)
   ) {
+    const status = newMediaItem.status;
+
     await send({
-      message: t`Status changed for ${newMediaItem.title}: "${newMediaItem.status}"`,
+      message: formatNotification(
+        (f) =>
+          t`Status changed for ${f.mediaItemUrl(newMediaItem)}: "${status}"`
+      ),
       filter: (user) => user.sendNotificationWhenStatusChanges,
     });
   }
@@ -188,8 +198,15 @@ const sendNotifications = async (
     newMediaItem.releaseDate !== oldMediaItem.releaseDate &&
     parseISO(newMediaItem.releaseDate) > new Date()
   ) {
+    const releaseDate = newMediaItem.releaseDate;
+
     await send({
-      message: t`Release date changed for ${newMediaItem.title}: "${newMediaItem.releaseDate}"`,
+      message: formatNotification(
+        (f) =>
+          t`Release date changed for ${f.mediaItemUrl(
+            newMediaItem
+          )}: "${releaseDate}"`
+      ),
       filter: (user) => user.sendNotificationWhenReleaseDateChanges,
     });
   }
@@ -214,8 +231,15 @@ const sendNotifications = async (
             1
         ];
 
+      const seasonNumber = removedSeason.seasonNumber;
+
       await send({
-        message: t`Season ${removedSeason.seasonNumber} of ${newMediaItem.title} has been canceled`,
+        message: formatNotification(
+          (f) =>
+            t`Season ${seasonNumber} of ${f.mediaItemUrl(
+              newMediaItem
+            )} has been canceled`
+        ),
         filter: (user) => user.sendNotificationWhenNumberOfSeasonsChanges,
       });
     } else if (
@@ -231,18 +255,27 @@ const sendNotifications = async (
         ];
 
       if (newSeason.releaseDate) {
-        if (parseISO(newSeason.releaseDate) > new Date())
+        if (parseISO(newSeason.releaseDate) > new Date()) {
+          const releaseDate = parseISO(
+            newSeason.releaseDate
+          ).toLocaleDateString();
+
           await send({
-            message: t`New season of ${
-              newMediaItem.title
-            } will be released at ${parseISO(
-              newSeason.releaseDate
-            ).toLocaleDateString()}`,
+            message: formatNotification(
+              (f) =>
+                t`New season of ${f.mediaItemUrl(
+                  newMediaItem
+                )} will be released at ${releaseDate}`
+            ),
             filter: (user) => user.sendNotificationWhenNumberOfSeasonsChanges,
           });
+        }
       } else {
         await send({
-          message: t`${newMediaItem.title} got a new season`,
+          message: formatNotification(
+            (f) => t`${f.mediaItemUrl(newMediaItem)} got a new season`
+          ),
+
           filter: (user) => user.sendNotificationWhenNumberOfSeasonsChanges,
         });
       }
@@ -257,12 +290,18 @@ const sendNotifications = async (
           newMediaItemLastSeason.releaseDate &&
         parseISO(newMediaItemLastSeason.releaseDate) > new Date()
       ) {
+        const seasonNumber = newMediaItemLastSeason.seasonNumber;
+        const releaseDate = parseISO(
+          newMediaItemLastSeason.releaseDate
+        ).toLocaleDateString();
+
         await send({
-          message: t`Season ${newMediaItemLastSeason.seasonNumber} of ${
-            newMediaItem.title
-          } will be released at ${parseISO(
-            newMediaItemLastSeason.releaseDate
-          ).toLocaleDateString()}`,
+          message: formatNotification(
+            (f) =>
+              t`Season ${seasonNumber} of ${f.mediaItemUrl(
+                newMediaItem
+              )} will be released at ${releaseDate}`
+          ),
           filter: (user) => user.sendNotificationWhenNumberOfSeasonsChanges,
         });
       }

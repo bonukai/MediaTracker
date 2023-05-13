@@ -5,22 +5,19 @@ export const gotify = createNotificationPlatform({
   name: 'gotify',
   credentialNames: <const>['url', 'token', 'priority'],
   sendFunction: async (args) => {
-    const { title, message, messageMarkdown, credentials, imagePath } = args;
+    const { credentials, content } = args;
 
     await axios.post(
       new URL('/message', credentials.url).href,
       {
         extras: {
           'client::display': {
-            contentType: messageMarkdown ? 'text/markdown' : 'text/plain',
-          },
-          'client::notification': {
-            imageUrl: imagePath,
+            contentType: 'text/markdown',
           },
         },
         priority: Number(credentials.priority) || 5,
-        message: messageMarkdown || message,
-        title: title,
+        message: content.body.markdown,
+        title: content.title,
       },
       {
         headers: {

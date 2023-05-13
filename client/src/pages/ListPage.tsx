@@ -45,12 +45,10 @@ export const ListPage: FunctionComponent = () => {
   const sortBy = sortByTranslation.translationToKey(translatedSortBy);
 
   const filteredItems = searchQuery
-    ? listItems.filter(
-        (listItem) =>
-          listItem.mediaItem.title
-            ?.toLowerCase()
-            ?.includes(searchQuery.toLowerCase()) ||
-          listItem.rank === Number(searchQuery)
+    ? listItems.filter((listItem) =>
+        listItem.mediaItem.title
+          ?.toLowerCase()
+          ?.includes(searchQuery.toLowerCase())
       )
     : listItems;
 

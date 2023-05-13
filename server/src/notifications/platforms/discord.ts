@@ -5,11 +5,11 @@ export const Discord = createNotificationPlatform({
   name: 'Discord',
   credentialNames: <const>['url'],
   sendFunction: async (args) => {
-    const { messageMarkdown, message, title, credentials } = args;
+    const { credentials, content } = args;
 
     await axios.post(new URL(credentials.url).href, {
-      content: messageMarkdown || message,
-      username: title,
+      content: content.body.markdown,
+      username: content.title,
     });
   },
 });

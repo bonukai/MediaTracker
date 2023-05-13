@@ -5,7 +5,7 @@ import { Plural, Trans } from '@lingui/macro';
 import { parseISO } from 'date-fns';
 
 import {
-  AudibleLang,
+  AudibleCountryCode,
   MediaItemDetailsResponse,
   MediaItemItemsResponse,
   TvEpisode,
@@ -127,7 +127,7 @@ const WhereToWatchComponent: FunctionComponent<{
   );
 };
 
-const audibleLanguages: Record<AudibleLang, string> = {
+const audibleLanguages: Record<AudibleCountryCode, string> = {
   au: 'au',
   ca: 'ca',
   de: 'de',

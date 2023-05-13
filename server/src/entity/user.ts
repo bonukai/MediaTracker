@@ -4,7 +4,6 @@ import { NotificationPlatformsCredentialsType } from 'src/notifications/notifica
 export type User = {
   id: number;
   name: string;
-  slug: string;
   password: string;
   admin?: boolean;
   publicReviews?: boolean;
@@ -21,7 +20,6 @@ export type User = {
 export const userNonSensitiveColumns = <const>[
   'id',
   'name',
-  'slug',
   'admin',
   'publicReviews',
   'sendNotificationWhenStatusChanges',

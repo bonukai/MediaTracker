@@ -4,7 +4,7 @@ import { UserRating } from 'src/entity/userRating';
 import { Seen } from 'src/entity/seen';
 import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason } from 'src/entity/tvseason';
-import { AudibleLang } from 'src/entity/configuration';
+import { AudibleCountryCode } from 'src/entity/configuration';
 import { toSlug } from 'src/slug';
 import { List } from 'src/entity/list';
 
@@ -48,7 +48,7 @@ export type MediaItemBase = ExternalIds & {
   narrators?: string[];
   language?: string;
   numberOfPages?: number;
-  audibleCountryCode?: AudibleLang;
+  audibleCountryCode?: AudibleCountryCode;
   needsDetails?: boolean;
   lockedAt?: number;
 };

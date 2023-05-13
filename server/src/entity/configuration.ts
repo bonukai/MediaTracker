@@ -2,7 +2,7 @@ export type Configuration = {
   id?: number;
   enableRegistration: boolean;
   tmdbLang?: TmdbLang;
-  audibleLang?: AudibleLang;
+  audibleLang?: AudibleCountryCode;
   serverLang?: ServerLang;
   igdbClientId?: string;
   igdbClientSecret?: string;
@@ -10,7 +10,7 @@ export type Configuration = {
 
 export type ServerLang = 'da' | 'de' | 'en' | 'es' | 'fr' | 'ko' | 'pt';
 
-export type AudibleLang =
+export type AudibleCountryCode =
   | 'au'
   | 'ca'
   | 'de'
