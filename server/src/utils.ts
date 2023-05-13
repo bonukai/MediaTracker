@@ -5,8 +5,12 @@ import path from 'path';
 import sharp from 'sharp';
 
 import { Config } from 'src/config';
+import { AudibleCountryCode } from 'src/entity/configuration';
 import { getImageId, ImageType } from 'src/entity/image';
+import { MediaItemBase } from 'src/entity/mediaItem';
 import { logger } from 'src/logger';
+import { Audible } from 'src/metadata/provider/audible';
+import { GlobalConfiguration } from 'src/repository/globalSettings';
 import { imageRepository } from 'src/repository/image';
 
 export const durationToMilliseconds = (duration: Duration) =>
@@ -104,4 +108,41 @@ export const catchAndLogError = async (fn: () => Promise<void> | void) => {
 
 export const inArray = <T extends string>(value: T, values: T[]) => {
   return values.includes(value);
+};
+
+export const generateExternalUrl = (mediaItem: MediaItemBase) => {
+  if (mediaItem.mediaType === 'tv' || mediaItem.mediaType === 'movie') {
+    if (mediaItem.imdbId) {
+      return `https://www.imdb.com/title/${mediaItem.imdbId}`;
+    }
+
+    if (mediaItem.tmdbId) {
+      return `https://www.themoviedb.org/${mediaItem.mediaType}/${mediaItem.tmdbId}`;
+    }
+  }
+
+  if (mediaItem.mediaType === 'video_game') {
+    if (mediaItem.igdbId) {
+      return `https://www.igdb.com/games/${mediaItem.title
+        .toLowerCase()
+        .replaceAll(' ', '-')}`;
+    }
+  }
+
+  if (mediaItem.mediaType === 'book') {
+    if (mediaItem.openlibraryId) {
+      return `https://openlibrary.org${mediaItem.openlibraryId}`;
+    }
+  }
+
+  if (mediaItem.mediaType === 'audiobook') {
+    if (mediaItem.audibleId) {
+      const audibleDomain = new Audible().domain(
+        mediaItem.audibleCountryCode ||
+          (GlobalConfiguration.configuration.audibleLang?.toLocaleLowerCase() as AudibleCountryCode)
+      );
+
+      return `https://audible.${audibleDomain}/pd/${mediaItem.audibleId}?overrideBaseCountry=true&ipRedirectOverride=true`;
+    }
+  }
 };

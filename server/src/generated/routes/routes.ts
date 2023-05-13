@@ -277,7 +277,7 @@ router.patch(
           ],
           type: 'string',
         },
-        AudibleLang: {
+        AudibleCountryCode: {
           enum: ['au', 'ca', 'de', 'es', 'fr', 'in', 'it', 'jp', 'uk', 'us'],
           type: 'string',
         },
@@ -293,7 +293,10 @@ router.patch(
           oneOf: [{ $ref: '#/definitions/TmdbLang' }, { type: 'null' }],
         },
         audibleLang: {
-          oneOf: [{ $ref: '#/definitions/AudibleLang' }, { type: 'null' }],
+          oneOf: [
+            { $ref: '#/definitions/AudibleCountryCode' },
+            { type: 'null' },
+          ],
         },
         serverLang: {
           oneOf: [{ $ref: '#/definitions/ServerLang' }, { type: 'null' }],

@@ -26,7 +26,7 @@ export class Audible extends MetadataProvider {
     return GlobalConfiguration.configuration.audibleLang?.toLocaleLowerCase() as AudibleCountryCode;
   }
 
-  private domain(countryCode: AudibleCountryCode) {
+  public domain(countryCode: AudibleCountryCode) {
     if (countryCode in this.languages) {
       return this.languages[countryCode];
     }

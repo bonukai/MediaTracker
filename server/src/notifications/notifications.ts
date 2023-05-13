@@ -9,8 +9,16 @@ import { Pushover } from 'src/notifications/platforms/pushover';
 import { Pushsafer } from 'src/notifications/platforms/pushsafer';
 import { notificationPlatformsCredentialsRepository } from 'src/repository/notificationPlatformsCredentials';
 import { userRepository } from 'src/repository/user';
+import { FormattedNotification } from 'src/notifications/notificationFormatter';
 
-const platforms = <const>[gotify, Discord, Pushbullet, Pushover, Pushsafer, ntfy];
+const platforms = <const>[
+  gotify,
+  Discord,
+  Pushbullet,
+  Pushover,
+  Pushsafer,
+  ntfy,
+];
 export class Notifications {
   private static readonly platformsByName = _.keyBy(
     platforms,
@@ -19,11 +27,9 @@ export class Notifications {
 
   public static send = async (args: {
     userId: number;
-    message: string;
-    messageMarkdown?: string;
-    imagePath?: string;
+    message: FormattedNotification;
   }): Promise<void> => {
-    const { userId, message, messageMarkdown, imagePath } = args;
+    const { userId, message } = args;
 
     const user = await userRepository.findOne({ id: userId });
 
@@ -42,10 +48,7 @@ export class Notifications {
     }
 
     await this.sendNotification(user.notificationPlatform, {
-      title: 'MediaTracker',
       message: message,
-      messageMarkdown: messageMarkdown,
-      imagePath: imagePath,
       credentials: credentials[user.notificationPlatform],
     });
   };
@@ -55,10 +58,7 @@ export class Notifications {
   >(
     platformName: T,
     args: {
-      title: string;
-      message: string;
-      messageMarkdown?: string;
-      imagePath?: string;
+      message: FormattedNotification;
       credentials: NotificationPlatformsCredentialsType[T];
     }
   ): Promise<void> => {
@@ -68,7 +68,13 @@ export class Notifications {
       throw new Error(t`Platform ${platformName} does not exist`);
     }
 
-    await platform.sendFunction(args as never);
+    await platform.sendFunction({
+      content: {
+        title: 'MediaTracker',
+        body: args.message,
+      },
+      credentials: args.credentials as never,
+    });
   };
 }
 
