@@ -1,6 +1,6 @@
 {
   "name": "mediatracker",
-  "version": "0.2.0-beta",
+  "version": "0.2.0",
   "description": "Self hosted media tracker for movies, tv shows, video games, books and audiobooks",
   "repository": {
     "type": "git",
