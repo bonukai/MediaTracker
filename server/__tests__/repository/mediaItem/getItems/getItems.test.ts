@@ -11,7 +11,6 @@ const mediaItem: MediaItemBase = {
   mediaType: 'tv',
   source: 'user',
   title: 'title',
-  slug: 'title',
 };
 
 const user: User = {

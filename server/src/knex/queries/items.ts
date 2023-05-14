@@ -542,7 +542,6 @@ const mapRawResult = (row: any): MediaItemItemsResponse => {
       ? JSON.parse(row['mediaItem.platform'])
       : null,
     title: row['mediaItem.title'],
-    slug: row['mediaItem.slug'],
     originalTitle: row['mediaItem.originalTitle'],
     tmdbRating: row['mediaItem.tmdbRating'],
     runtime: row['mediaItem.runtime'],

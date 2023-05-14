@@ -82,7 +82,6 @@ describe('TraktTv import', () => {
                   title: Data.movie.title,
                   year: parseISO(Data.movie.releaseDate).getFullYear(),
                   ids: {
-                    slug: Data.movie.slug,
                     tmdb: Data.movie.tmdbId,
                   },
                 },
@@ -96,7 +95,6 @@ describe('TraktTv import', () => {
                   title: Data.tvShow.title,
                   year: parseISO(Data.tvShow.releaseDate).getFullYear(),
                   ids: {
-                    slug: Data.tvShow.slug,
                     tmdb: Data.tvShow.tmdbId,
                   },
                 },
@@ -110,7 +108,6 @@ describe('TraktTv import', () => {
                   title: Data.tvShow.title,
                   year: parseISO(Data.tvShow.releaseDate).getFullYear(),
                   ids: {
-                    slug: Data.tvShow.slug,
                     tmdb: Data.tvShow.tmdbId,
                   },
                 },
@@ -131,7 +128,6 @@ describe('TraktTv import', () => {
                   title: Data.tvShow.title,
                   year: parseISO(Data.tvShow.releaseDate).getFullYear(),
                   ids: {
-                    slug: Data.tvShow.slug,
                     tmdb: Data.tvShow.tmdbId,
                   },
                 },
@@ -159,7 +155,6 @@ describe('TraktTv import', () => {
                     title: Data.movie.title,
                     year: parseISO(Data.movie.releaseDate).getFullYear(),
                     ids: {
-                      slug: Data.movie.slug,
                       tmdb: Data.movie.tmdbId,
                     },
                   },
@@ -183,7 +178,6 @@ describe('TraktTv import', () => {
                     title: Data.tvShow.title,
                     year: parseISO(Data.tvShow.releaseDate).getFullYear(),
                     ids: {
-                      slug: Data.tvShow.slug,
                       tmdb: Data.tvShow.tmdbId,
                     },
                   },
@@ -215,7 +209,6 @@ describe('TraktTv import', () => {
                   title: Data.movie.title,
                   year: parseISO(Data.movie.releaseDate).getFullYear(),
                   ids: {
-                    slug: Data.movie.slug,
                     tmdb: Data.movie.tmdbId,
                   },
                 },
@@ -228,7 +221,6 @@ describe('TraktTv import', () => {
                   title: Data.tvShow.title,
                   year: parseISO(Data.tvShow.releaseDate).getFullYear(),
                   ids: {
-                    slug: Data.tvShow.slug,
                     tmdb: Data.tvShow.tmdbId,
                   },
                 },
@@ -241,7 +233,6 @@ describe('TraktTv import', () => {
                   title: Data.tvShow.title,
                   year: parseISO(Data.tvShow.releaseDate).getFullYear(),
                   ids: {
-                    slug: Data.tvShow.slug,
                     tmdb: Data.tvShow.tmdbId,
                   },
                 },
@@ -261,7 +252,6 @@ describe('TraktTv import', () => {
                   title: Data.tvShow.title,
                   year: parseISO(Data.tvShow.releaseDate).getFullYear(),
                   ids: {
-                    slug: Data.tvShow.slug,
                     tmdb: Data.tvShow.tmdbId,
                   },
                 },

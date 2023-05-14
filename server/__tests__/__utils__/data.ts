@@ -14,7 +14,6 @@ export class Data {
     mediaType: 'tv',
     source: 'tmdb',
     title: 'title',
-    slug: 'title',
     poster: 'posterUrl',
     backdrop: 'backdropUrl',
     releaseDate: '2002-05-07',
@@ -75,7 +74,6 @@ export class Data {
     mediaType: 'movie',
     source: 'tmdb',
     title: 'movie',
-    slug: 'movie',
     poster: 'posterUrl',
     backdrop: 'backdropUrl',
     releaseDate: '2001-04-12',
@@ -89,7 +87,6 @@ export class Data {
     mediaType: 'video_game',
     source: 'imdb',
     title: 'video_game',
-    slug: 'video_game',
     poster: 'posterUrl',
     backdrop: 'backdropUrl',
   };
@@ -100,7 +97,6 @@ export class Data {
     mediaType: 'book',
     source: 'openlibrary',
     title: 'book',
-    slug: 'book',
     poster: 'posterUrl',
     backdrop: 'backdropUrl',
   };

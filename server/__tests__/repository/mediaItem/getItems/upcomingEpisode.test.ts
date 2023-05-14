@@ -32,7 +32,6 @@ const mediaItems: MediaItemBaseWithSeasons[] = [
     mediaType: 'tv',
     source: 'user',
     title: 'title',
-    slug: 'title',
     seasons: [
       {
         id: 1,
@@ -85,7 +84,6 @@ const mediaItems: MediaItemBaseWithSeasons[] = [
     mediaType: 'tv',
     source: 'user',
     title: 'title2',
-    slug: 'title2',
     seasons: [
       {
         id: 3,
@@ -122,7 +120,6 @@ const mediaItems: MediaItemBaseWithSeasons[] = [
     mediaType: 'tv',
     source: 'user',
     title: 'title3',
-    slug: 'title3',
     seasons: [
       {
         id: 4,
@@ -140,7 +137,6 @@ const mediaItems: MediaItemBaseWithSeasons[] = [
     mediaType: 'movie',
     source: 'user',
     title: 'title4',
-    slug: 'title4',
   },
   {
     id: 5,
@@ -148,7 +144,6 @@ const mediaItems: MediaItemBaseWithSeasons[] = [
     mediaType: 'video_game',
     source: 'user',
     title: 'title5',
-    slug: 'title5',
   },
   {
     id: 6,
@@ -156,7 +151,6 @@ const mediaItems: MediaItemBaseWithSeasons[] = [
     mediaType: 'book',
     source: 'user',
     title: 'title6',
-    slug: 'title6',
   },
   {
     id: 7,
@@ -164,7 +158,6 @@ const mediaItems: MediaItemBaseWithSeasons[] = [
     mediaType: 'tv',
     source: 'user',
     title: 'title7',
-    slug: 'title7',
     seasons: [
       {
         id: 5,

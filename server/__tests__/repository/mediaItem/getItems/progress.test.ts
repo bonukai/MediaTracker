@@ -31,7 +31,6 @@ const mediaItem: MediaItemBase = {
   mediaType: 'book',
   source: 'user',
   title: 'title',
-  slug: 'title',
 };
 
 const date = new Date().getTime();

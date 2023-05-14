@@ -9,9 +9,7 @@ import { MediaItemBase } from 'src/entity/mediaItem';
 import { Database } from 'src/dbconfig';
 import { randomSlugId, toSlug } from 'src/slug';
 import { nanoid } from 'nanoid';
-import { listRepository } from 'src/repository/list';
 import { ListSortBy } from 'src/entity/list';
-import { listItemRepository } from 'src/repository/listItemRepository';
 
 describe('migrations', () => {
   beforeAll(async () => {
@@ -1689,6 +1687,22 @@ describe('migrations', () => {
         (await Database.knex('configuration').first()).configurationJson
       )
     );
+  });
+
+  test('20230514000000_dropMediaItemSlug', async () => {
+    await Database.knex.migrate.up({
+      name: `20230514000000_dropMediaItemSlug.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20230514000000_dropMediaItemSlug.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
   });
 
   afterAll(clearDatabase);

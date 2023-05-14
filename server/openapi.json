@@ -2495,9 +2495,6 @@
                 "releaseDate": {
                   "type": "string"
                 },
-                "slug": {
-                  "type": "string"
-                },
                 "mediaType": {
                   "$ref": "#/components/schemas/MediaType"
                 },
@@ -2510,7 +2507,6 @@
                 "id",
                 "mediaType",
                 "releaseDate",
-                "slug",
                 "title"
               ]
             },
@@ -2901,10 +2897,6 @@
                     "$ref": "#/components/schemas/AudibleCountryCode"
                   }
                 ],
-                "nullable": true
-              },
-              "slug": {
-                "type": "string",
                 "nullable": true
               },
               "seasons": {
@@ -3455,10 +3447,6 @@
                   }
                 ],
                 "nullable": true
-              },
-              "slug": {
-                "type": "string",
-                "nullable": true
               }
             },
             "required": [
@@ -3834,14 +3822,10 @@
                   },
                   "username": {
                     "type": "string"
-                  },
-                  "slug": {
-                    "type": "string"
                   }
                 },
                 "required": [
                   "id",
-                  "slug",
                   "username"
                 ]
               }

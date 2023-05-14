@@ -51,7 +51,6 @@ describe('mediaItemRepository', () => {
   test('create without id', async () => {
     const mediaItem: MediaItemBaseWithSeasons = {
       title: 'mediaItem123',
-      slug: 'mediaitem123',
       mediaType: 'tv',
       source: 'user',
       poster: 'poster',
@@ -172,7 +171,6 @@ describe('mediaItemRepository', () => {
     const mediaItem: MediaItemBaseWithSeasons = {
       id: 123,
       title: 'title111',
-      slug: 'title111',
       source: 'user',
       mediaType: 'tv',
       seasons: [
@@ -462,7 +460,6 @@ const mediaItem: MediaItemBaseWithSeasons = {
   mediaType: 'tv',
   source: 'user',
   title: 'title2',
-  slug: 'title2',
   audibleId: null,
   authors: null,
   backdrop: 'backdrop',
@@ -600,7 +597,6 @@ const updatedMediaItem = {
   overview: 'new overview',
   lastTimeUpdated: new Date().getTime(),
   title: 'new title',
-  slug: 'new-title-2000',
   audibleId: 'audibleId',
   authors: ['author', 'author 2'],
   backdrop: 'backdrop',

@@ -21,7 +21,6 @@ export type ListDetailsResponse = Omit<List, 'userId'> & {
   user: {
     id: number;
     username: string;
-    slug: string;
   };
 };
 
@@ -174,7 +173,7 @@ class ListRepository extends repository<List>({
     const { listId, userId } = args;
 
     const res = await Database.knex('list')
-      .select('list.*', 'user.name AS user.name', 'user.slug AS user.slug')
+      .select('list.*', 'user.name AS user.name')
       .where('list.id', listId)
       .where((qb) =>
         qb.where('list.userId', userId).orWhere('list.privacy', 'public')
@@ -261,7 +260,6 @@ class ListRepository extends repository<List>({
       user: {
         id: res.userId,
         username: res['user.name'],
-        slug: res['user.slug'],
       },
     };
   }
@@ -390,7 +388,6 @@ class ListRepository extends repository<List>({
         'mediaItem.runtime': 'mediaItem.runtime',
         'mediaItem.seenEpisodesCount':
           'mediaItemSeenEpisodes.seenEpisodesCount',
-        'mediaItem.slug': 'mediaItem.slug',
         'mediaItem.status': 'mediaItem.status',
         'mediaItem.source': 'mediaItem.source',
         'mediaItem.title': 'mediaItem.title',
@@ -921,7 +918,6 @@ class ListRepository extends repository<List>({
           : undefined,
         releaseDate: listItem['mediaItem.releaseDate'],
         runtime: listItem['mediaItem.runtime'] || null,
-        slug: listItem['mediaItem.slug'],
         source: listItem['mediaItem.source'],
         progress: listItem['mediaItem.progress'],
         status: listItem['mediaItem.status']?.toLowerCase(),
