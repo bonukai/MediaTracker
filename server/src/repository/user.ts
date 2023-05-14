@@ -91,7 +91,7 @@ class UserRepository extends repository<User>({
     return await Database.knex<User>(this.tableName).where(where).first();
   }
 
-  public async create(user: Omit<User, 'id' | 'slug'>) {
+  public async create(user: Omit<User, 'id'>) {
     user.password = await argon2.hash(user.password);
 
     const res = await Database.knex.transaction(async (trx) => {

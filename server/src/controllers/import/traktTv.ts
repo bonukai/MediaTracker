@@ -718,7 +718,6 @@ const findEpisodeOrSeason = (args: {
 const getMediaItemsByTmdbIds = async (
   ids: {
     trakt: number;
-    slug: string;
     tvdb: number;
     imdb: string;
     tmdb: number;

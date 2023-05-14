@@ -130,7 +130,6 @@ export const getUserLists = async (args: {
     description: row.description,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
-    slug: row.slug,
     itemsCount: row.itemsCount,
     allowComments: Boolean(row.allowComments),
     displayNumbers: Boolean(row.displayNumbers),

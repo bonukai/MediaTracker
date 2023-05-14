@@ -17,7 +17,6 @@ const tvShow: MediaItemBase = {
   mediaType: 'tv',
   source: 'user',
   title: 'title',
-  slug: 'title',
   runtime: 40,
 };
 
@@ -82,7 +81,6 @@ const movie = {
   mediaType: 'movie',
   source: 'user',
   title: 'title2',
-  slug: 'title2',
   runtime: 120,
 };
 

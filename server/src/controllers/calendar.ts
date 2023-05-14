@@ -49,7 +49,6 @@ export type GetCalendarItemsResponse = {
     id: number;
     title: string;
     releaseDate: string;
-    slug: string;
     mediaType: MediaType;
     seen?: boolean;
   };
@@ -88,7 +87,6 @@ export const getCalendarItems = async (args: {
       'mediaItem.releaseDate': 'mediaItem.releaseDate',
       'mediaItem.runtime': 'mediaItem.runtime',
       'mediaItem.seen': 'mediaItemSeen.mediaItemId',
-      'mediaItem.slug': 'mediaItem.slug',
       'mediaItem.title': 'mediaItem.title',
       'mediaItemEpisode.episodeNumber': 'mediaItemEpisode.episodeNumber',
       'mediaItemEpisode.id': 'mediaItemEpisode.id',
@@ -169,7 +167,6 @@ export const getCalendarItems = async (args: {
       id: row['listItem.mediaItemId'],
       title: row['mediaItem.title'],
       releaseDate: row['mediaItem.releaseDate'],
-      slug: row['mediaItem.slug'],
       mediaType: row['mediaItem.mediaType'],
       seen: row['mediaItem.seen'] != undefined,
     },

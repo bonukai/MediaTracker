@@ -9,7 +9,6 @@ const tvShow = {
   mediaType: 'tv',
   source: 'user',
   title: 'title',
-  slug: 'title',
   runtime: 40,
 };
 
@@ -53,7 +52,6 @@ const movie = {
   mediaType: 'movie',
   source: 'user',
   title: 'title2',
-  slug: 'title2',
   runtime: 120,
 };
 
@@ -63,7 +61,6 @@ const book = {
   mediaType: 'book',
   source: 'user',
   title: 'title3',
-  slug: 'title3',
   numberOfPages: 123,
 };
 
@@ -73,7 +70,6 @@ const audiobook = {
   mediaType: 'audiobook',
   source: 'user',
   title: 'title4',
-  slug: 'title4',
   runtime: 999,
 };
 
@@ -83,7 +79,6 @@ const videoGame = {
   mediaType: 'video_game',
   source: 'user',
   title: 'title5',
-  slug: 'title5',
 };
 
 const user = {

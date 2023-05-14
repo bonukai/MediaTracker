@@ -71,7 +71,6 @@ describe('itemsToPossiblyUpdate', () => {
       mediaType: 'movie',
       source: 'user',
       title: 'UserMovie',
-      slug: 'usermovie',
       poster: 'posterUrl',
       backdrop: 'backdropUrl',
       releaseDate: '2001-04-12',

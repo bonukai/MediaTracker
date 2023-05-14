@@ -6,7 +6,6 @@ const mediaItem = {
   mediaType: 'movie',
   source: 'tmdb',
   title: 'movie',
-  slug: 'movie',
   releaseDate: '2022-07-01',
 };
 
@@ -16,7 +15,6 @@ const mediaItem2 = {
   mediaType: 'movie',
   source: 'tmdb',
   title: 'movie2',
-  slug: 'movie2',
   releaseDate: '2022-08-01T00:00:00.000Z',
 };
 
@@ -26,7 +24,6 @@ const mediaItem3 = {
   mediaType: 'movie',
   source: 'tmdb',
   title: 'movie3',
-  slug: 'movie3',
   releaseDate: '2022-08-01',
 };
 
@@ -36,7 +33,6 @@ const mediaItem4 = {
   mediaType: 'movie',
   source: 'tmdb',
   title: 'movie4',
-  slug: 'movie4',
   releaseDate: '2022-08-01',
 };
 

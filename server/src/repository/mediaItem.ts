@@ -17,13 +17,11 @@ import {
   mediaItemColumns,
   MediaItemForProvider,
   MediaItemItemsResponse,
-  mediaItemSlug,
   MediaType,
 } from 'src/entity/mediaItem';
 import { imageRepository } from 'src/repository/image';
 import { getImageId, Image } from 'src/entity/image';
 import { isValid, parseISO, subDays, subMinutes } from 'date-fns';
-import { randomSlugId } from 'src/slug';
 import { TvSeason } from 'src/entity/tvseason';
 import { ListItem } from 'src/entity/list';
 import { logger } from 'src/logger';
@@ -157,8 +155,6 @@ class MediaItemRepository extends repository<MediaItemBase>({
       throw new Error('mediaItem.id filed is required');
     }
 
-    const slug = mediaItemSlug(mediaItem);
-
     return await Database.knex.transaction(async (trx) => {
       const result = {
         ..._.cloneDeep(mediaItem),
@@ -168,21 +164,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       };
 
       await trx(this.tableName)
-        .update({
-          ...this.serialize(this.stripValue(mediaItem)),
-          slug: Database.knex.raw(
-            `(CASE 
-              WHEN (
-                ${Database.knex<MediaItemBase>('mediaItem')
-                  .count()
-                  .where('slug', slug)
-                  .whereNot('id', mediaItem.id)
-                  .toQuery()}) = 0 
-                THEN '${slug}' 
-              ELSE '${slug}-${randomSlugId()}' 
-            END)`
-          ),
-        })
+        .update(this.serialize(this.stripValue(mediaItem)))
         .where({
           id: mediaItem.id,
         });
@@ -323,8 +305,6 @@ class MediaItemRepository extends repository<MediaItemBase>({
   }
 
   public async create(mediaItem: MediaItemBaseWithSeasons) {
-    const slug = mediaItemSlug(mediaItem);
-
     if (mediaItem.releaseDate && !isValid(parseISO(mediaItem.releaseDate))) {
       logger.error(`Invalid date format for ${mediaItem.id}`);
       mediaItem.releaseDate = undefined;
@@ -339,20 +319,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       };
 
       const res = await trx(this.tableName)
-        .insert({
-          ...this.serialize(omitUndefinedValues(this.stripValue(mediaItem))),
-          slug: Database.knex.raw(
-            `(CASE 
-              WHEN (
-                ${Database.knex<MediaItemBase>('mediaItem')
-                  .count()
-                  .where('slug', slug)
-                  .toQuery()}) = 0 
-                THEN '${slug}' 
-              ELSE '${slug}-${randomSlugId()}' 
-            END)`
-          ),
-        })
+        .insert(this.serialize(omitUndefinedValues(this.stripValue(mediaItem))))
         .returning(this.primaryColumnName);
 
       result.id = res.at(0)[this.primaryColumnName];
@@ -871,25 +838,9 @@ class MediaItemRepository extends repository<MediaItemBase>({
         .value();
 
       for (const item of existingSearchResults) {
-        const slug = mediaItemSlug(item);
-
-        const otherMediaItemWithSlug = await trx<MediaItemBase>(this.tableName)
-          .where({ slug: slug })
-          .whereNot({ id: item.id })
-          .first();
-
-        const newSlug = otherMediaItemWithSlug
-          ? `${slug}-${randomSlugId()}`
-          : slug;
-
         await trx<MediaItemBase>(this.tableName)
-          .update({
-            ...this.serialize(this.stripValue(item)),
-            slug: newSlug,
-          })
+          .update(this.serialize(this.stripValue(item)))
           .where({ id: item.id });
-
-        item.slug = newSlug;
       }
 
       existingSearchResults.forEach((value) => {
@@ -922,25 +873,11 @@ class MediaItemRepository extends repository<MediaItemBase>({
       );
 
       for (const newItem of uniqueNewItems) {
-        const slug = mediaItemSlug(newItem);
-
-        const otherMediaItemWithSlug = await trx<MediaItemBase>(this.tableName)
-          .where({ slug: slug })
-          .first();
-
-        const newSlug = otherMediaItemWithSlug
-          ? `${slug}-${randomSlugId()}`
-          : slug;
-
         const [res] = await trx<MediaItemBase>(this.tableName)
-          .insert({
-            ...this.serialize(this.stripValue(newItem)),
-            slug: newSlug,
-          })
+          .insert(this.serialize(this.stripValue(newItem)))
           .returning<{ id: number }[]>('id');
 
         newItem.id = res.id;
-        newItem.slug = newSlug;
       }
 
       const searchResultIdToMediaItemId = _(uniqueNewItems)

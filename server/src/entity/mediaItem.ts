@@ -1,11 +1,8 @@
-import { parseISO } from 'date-fns';
-
 import { UserRating } from 'src/entity/userRating';
 import { Seen } from 'src/entity/seen';
 import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason } from 'src/entity/tvseason';
 import { AudibleCountryCode } from 'src/entity/configuration';
-import { toSlug } from 'src/slug';
 import { List } from 'src/entity/list';
 
 export type MediaType = 'tv' | 'movie' | 'book' | 'video_game' | 'audiobook';
@@ -28,7 +25,6 @@ export type MediaItemBase = ExternalIds & {
   status?: string;
   platform?: string[];
   title: string;
-  slug?: string;
   originalTitle?: string;
   poster?: string;
   backdrop?: string;
@@ -159,7 +155,6 @@ export const mediaItemColumns = <const>[
   'numberOfPages',
   'traktId',
   'audibleCountryCode',
-  'slug',
   'tvdbId',
 ];
 
@@ -187,14 +182,4 @@ export const seasonPosterPath = (
     seasonId: seasonId.toString(),
     size: size,
   })}`;
-};
-
-export const mediaItemSlug = (mediaItem: MediaItemBase) => {
-  if (mediaItem.releaseDate) {
-    return toSlug(
-      `${mediaItem.title}-${parseISO(mediaItem.releaseDate).getFullYear()}`
-    );
-  } else {
-    return toSlug(mediaItem.title);
-  }
 };
