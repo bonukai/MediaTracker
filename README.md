@@ -162,7 +162,7 @@ docker run -p 7481:7481 mediatracker
 
 - [Jellyfin](https://jellyfin.org/) - [Plugin](https://github.com/bonukai/jellyfin-plugin-mediatracker), minimum MediaTracker version: `0.1.0`
 - [Plex](https://www.plex.tv/) - Generate Application token in your MediaTracker instance, and add a [webhook](https://app.plex.tv/desktop/#!/settings/webhooks) in plex `[your MediaTracker url]/api/plex?token=[MediaTracker Application Token]`
-  
+- [Kodi](https://kodi.tv/) - [Plugin](https://github.com/bonukai/script.mediatracker), minimum MediaTracker version: `0.1.0`
   
 
 # Contributors
