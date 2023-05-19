@@ -40,7 +40,7 @@ export class IGDB extends MetadataProvider {
         : null,
       title: searchResult.name,
       overview: searchResult.summary,
-      poster: searchResult.cover
+      externalPosterUrl: searchResult.cover
         ? getPosterUrl(searchResult.cover.image_id)
         : null,
       genres: searchResult.genres

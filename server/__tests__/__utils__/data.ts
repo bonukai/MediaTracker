@@ -14,8 +14,8 @@ export class Data {
     mediaType: 'tv',
     source: 'tmdb',
     title: 'title',
-    poster: 'posterUrl',
-    backdrop: 'backdropUrl',
+    externalPosterUrl: 'posterUrl',
+    externalBackdropUrl: 'backdropUrl',
     releaseDate: '2002-05-07',
     runtime: 51,
     tmdbId: 754234,
@@ -74,8 +74,8 @@ export class Data {
     mediaType: 'movie',
     source: 'tmdb',
     title: 'movie',
-    poster: 'posterUrl',
-    backdrop: 'backdropUrl',
+    externalPosterUrl: 'posterUrl',
+    externalBackdropUrl: 'backdropUrl',
     releaseDate: '2001-04-12',
     tmdbId: 123456,
     runtime: 124,
@@ -87,8 +87,8 @@ export class Data {
     mediaType: 'video_game',
     source: 'imdb',
     title: 'video_game',
-    poster: 'posterUrl',
-    backdrop: 'backdropUrl',
+    externalPosterUrl: 'posterUrl',
+    externalBackdropUrl: 'backdropUrl',
   };
 
   static book = {
@@ -97,8 +97,8 @@ export class Data {
     mediaType: 'book',
     source: 'openlibrary',
     title: 'book',
-    poster: 'posterUrl',
-    backdrop: 'backdropUrl',
+    externalPosterUrl: 'posterUrl',
+    externalBackdropUrl: 'backdropUrl',
   };
 
   static user = {
@@ -179,7 +179,7 @@ export class InitialData {
     runtime: 51,
   };
 
-  static season: TvSeason = {
+  static season = {
     id: 1,
     description: 'description',
     releaseDate: '2001-02-20',

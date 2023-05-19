@@ -33,10 +33,12 @@ abstract class TMDb extends MetadataProvider {
       source: this.name,
       mediaType: this.mediaType,
       title: null,
-      backdrop: response.backdrop_path
+      externalBackdropUrl: response.backdrop_path
         ? getPosterUrl(response.backdrop_path)
         : null,
-      poster: response.poster_path ? getPosterUrl(response.poster_path) : null,
+      externalPosterUrl: response.poster_path
+        ? getPosterUrl(response.poster_path)
+        : null,
       tmdbId: response.id,
       overview: response.overview || null,
       status: response.status || null,
@@ -294,7 +296,7 @@ export class TMDbTv extends TMDb {
         tmdbId: item.id,
         title: item.name,
         description: item.overview || null,
-        poster: item.poster_path ? getPosterUrl(item.poster_path) : null,
+        externalPosterUrl: item.poster_path ? getPosterUrl(item.poster_path) : null,
         seasonNumber: item.season_number,
         numberOfEpisodes: item.episode_count,
         releaseDate: item.air_date || null,

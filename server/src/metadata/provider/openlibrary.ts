@@ -36,7 +36,7 @@ export class OpenLibrary extends MetadataProvider {
         mediaType: this.mediaType,
         source: this.name,
         title: doc.title,
-        poster: doc.cover_i
+        externalPosterUrl: doc.cover_i
           ? `https://covers.openlibrary.org/b/id/${doc.cover_i}.jpg`
           : undefined,
         releaseDate: doc.first_publish_year?.toString(),
@@ -50,7 +50,7 @@ export class OpenLibrary extends MetadataProvider {
   async details(args: {
     openlibraryId: string;
     numberOfPages?: number;
-    poster?: string;
+    externalPosterUrl?: string;
   }): Promise<MediaItemForProvider> {
     const res = await axios.get<DetailsResponse>(
       `https://openlibrary.org${args.openlibraryId}.json`
@@ -65,10 +65,10 @@ export class OpenLibrary extends MetadataProvider {
           ? res.data.description
           : res.data.description?.value,
       releaseDate: parseDate(res.data?.first_publish_date),
-      poster:
+      externalPosterUrl:
         res.data.covers?.length > 0
           ? `https://covers.openlibrary.org/b/id/${res.data.covers[0]}.jpg`
-          : args.poster,
+          : args.externalPosterUrl,
       numberOfPages: args.numberOfPages,
     };
   }

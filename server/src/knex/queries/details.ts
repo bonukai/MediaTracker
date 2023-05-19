@@ -7,7 +7,6 @@ import { UserRating, UserRatingFilters } from 'src/entity/userRating';
 import { TvSeason } from 'src/entity/tvseason';
 import { Seen, SeenFilters } from 'src/entity/seen';
 import { Database } from 'src/dbconfig';
-import { Image } from 'src/entity/image';
 import { List } from 'src/entity/list';
 import { Progress } from 'src/entity/progress';
 
@@ -24,7 +23,6 @@ export const getDetailsKnex = async (params: {
     seenHistory,
     userRating,
     lists,
-    images,
     progress,
   } = await Database.knex.transaction(async (trx) => {
     const mediaItem = await trx<MediaItemBase>('mediaItem')
@@ -70,10 +68,6 @@ export const getDetailsKnex = async (params: {
       )
       .where('userId', userId);
 
-    const images = await trx<Image>('image').where({
-      mediaItemId: mediaItemId,
-    });
-
     const progress = await trx<Progress>('progress').where({
       mediaItemId: mediaItemId,
       episodeId: null,
@@ -87,7 +81,6 @@ export const getDetailsKnex = async (params: {
       seenHistory,
       userRating,
       lists,
-      images,
       progress,
     };
   });
@@ -125,30 +118,25 @@ export const getDetailsKnex = async (params: {
   });
 
   const groupedEpisodes = _.groupBy(episodes, (episode) => episode.seasonId);
-  const seasonPosters = _.keyBy(
-    images.filter((image) => image.seasonId),
-    (image) => image.seasonId
-  );
 
-  seasons.forEach((season) => {
-    const hasPoster = Boolean(season.poster) && seasonPosters[season.id];
-
-    season.isSpecialSeason = Boolean(season.isSpecialSeason);
-    season.poster = hasPoster ? `/img/${seasonPosters[season.id].id}` : null;
-    season.posterSmall = hasPoster
-      ? `/img/${seasonPosters[season.id].id}?size=small`
-      : null;
-    season.episodes = groupedEpisodes[season.id] || [];
-    season.userRating = groupedSeasonRating[season.id];
-    season.seen =
+  const seasonsWithPosters = seasons.map((season) => ({
+    ...season,
+    isSpecialSeason: Boolean(season.isSpecialSeason),
+    poster: season.posterId ? `/img/${season.posterId}` : null,
+    posterSmall: season.posterId
+      ? `/img/${season.posterId}?size=small`
+      : null,
+    episodes: groupedEpisodes[season.id] || [],
+    userRating: groupedSeasonRating[season.id],
+    seen:
       season.episodes
         ?.filter(TvEpisodeFilters.withReleaseDateEpisodes)
         .filter(TvEpisodeFilters.releasedEpisodes).length > 0 &&
       season.episodes
         ?.filter(TvEpisodeFilters.withReleaseDateEpisodes)
         .filter(TvEpisodeFilters.releasedEpisodes)
-        .filter(TvEpisodeFilters.unwatchedEpisodes).length === 0;
-  });
+        .filter(TvEpisodeFilters.unwatchedEpisodes).length === 0,
+  }));
 
   const firstUnwatchedEpisode = _(episodes)
     .filter(TvEpisodeFilters.unwatchedEpisodes)
@@ -198,11 +186,6 @@ export const getDetailsKnex = async (params: {
 
   const lastSeen = _.first(seenHistory)?.date || null;
 
-  const { poster, backdrop } = _.keyBy(
-    images.filter((image) => !image.seasonId),
-    (image) => image.type
-  );
-
   const progressGroupedByDate = _(progress).groupBy('date');
   const progressValue = _.maxBy(
     progressGroupedByDate.get(progressGroupedByDate.keys().max()),
@@ -226,7 +209,7 @@ export const getDetailsKnex = async (params: {
     progress: progressValue !== 1 ? progressValue ?? null : null,
     seenHistory: seenHistory,
     seen: seen,
-    seasons: seasons,
+    seasons: seasonsWithPosters,
     upcomingEpisode: upcomingEpisode,
     lastAiredEpisode: lastAiredEpisode,
     firstUnwatchedEpisode: firstUnwatchedEpisode,
@@ -239,9 +222,15 @@ export const getDetailsKnex = async (params: {
     lastAiring: lastAiring,
     numberOfEpisodes: numberOfEpisodes,
     lastSeenAt: lastSeen,
-    poster: poster?.id ? `/img/${poster?.id}` : null,
-    posterSmall: poster?.id ? `/img/${poster?.id}?size=small` : null,
-    backdrop: backdrop?.id ? `/img/${backdrop?.id}` : null,
+    poster: mediaItem.posterId
+      ? `/img/${mediaItem.posterId}`
+      : null,
+    posterSmall: mediaItem.posterId
+      ? `/img/${mediaItem.posterId}?size=small`
+      : null,
+    backdrop: mediaItem.backdropId
+      ? `/img/${mediaItem.backdropId}`
+      : null,
     lists: mediaItemLists.map(mapList),
     totalRuntime: totalRuntime || undefined,
   };

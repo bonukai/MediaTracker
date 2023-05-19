@@ -1,23 +1,28 @@
 import axios from 'axios';
 import { add } from 'date-fns';
 import { ensureDir, pathExists, rm } from 'fs-extra';
+import { customAlphabet } from 'nanoid';
 import path from 'path';
 import sharp from 'sharp';
 
 import { Config } from 'src/config';
+import { Database } from 'src/dbconfig';
 import { AudibleCountryCode } from 'src/entity/configuration';
-import { getImageId, ImageType } from 'src/entity/image';
 import { MediaItemBase } from 'src/entity/mediaItem';
+import { TvSeason } from 'src/entity/tvseason';
 import { logger } from 'src/logger';
 import { Audible } from 'src/metadata/provider/audible';
 import { GlobalConfiguration } from 'src/repository/globalSettings';
-import { imageRepository } from 'src/repository/image';
+
+export type ImageType = 'poster' | 'backdrop';
 
 export const durationToMilliseconds = (duration: Duration) =>
   add(0, duration).getTime();
 
 export const downloadAsset = async (args: { imageId: string; url: string }) => {
   const { imageId, url } = args;
+
+  logger.debug(`downloading image ${imageId} from ${url}`);
 
   const imagePath = path.resolve(
     Config.ASSETS_PATH,
@@ -50,51 +55,45 @@ export const downloadAsset = async (args: { imageId: string; url: string }) => {
 
 export const updateAsset = async (args: {
   type: ImageType;
-  url: string;
-  mediaItemId: number;
-  seasonId?: number;
+  mediaItem?: MediaItemBase;
+  season?: TvSeason;
 }) => {
-  const { mediaItemId, url, seasonId, type } = args;
+  const { mediaItem, season, type } = args;
 
-  const oldPoster = await imageRepository.findOne({
-    mediaItemId: mediaItemId,
-    seasonId: seasonId || null,
-    type: type,
-  });
+  const oldPosterId = season
+    ? type === 'poster' && season.posterId
+    : type === 'poster' && mediaItem && !season
+    ? mediaItem.posterId
+    : type === 'backdrop' && mediaItem && !season
+    ? mediaItem.backdropId
+    : undefined;
 
   const newImageId = getImageId();
 
-  await downloadAsset({
-    imageId: newImageId,
-    url: url,
-  });
+  if (type === 'poster' && season) {
+    await Database.knex('season')
+      .update('posterId', newImageId)
+      .where('id', season.id);
+  } else if (type === 'poster' && mediaItem && !season) {
+    await Database.knex('mediaItem')
+      .update('posterId', newImageId)
+      .where('id', mediaItem.id);
+  } else if (type === 'backdrop' && mediaItem && !season) {
+    await Database.knex('mediaItem')
+      .update('backdropId', newImageId)
+      .where('id', mediaItem.id);
+  }
 
-  if (oldPoster) {
-    await imageRepository.updateWhere({
-      value: {
-        id: newImageId,
-      },
-      where: {
-        id: oldPoster.id,
-      },
-    });
-
-    const imagePath = `/img/original/${oldPoster.id}`;
+  if (oldPosterId) {
+    const imagePath = `/img/original/${oldPosterId}`;
     if (await pathExists(imagePath)) {
       await rm(imagePath);
     }
 
-    const smallImagePath = `/img/original/${oldPoster.id}`;
+    const smallImagePath = `/img/small/${oldPosterId}`;
     if (await pathExists(smallImagePath)) {
       await rm(smallImagePath);
     }
-  } else {
-    await imageRepository.create({
-      id: newImageId,
-      mediaItemId: mediaItemId,
-      seasonId: seasonId || null,
-      type: type,
-    });
   }
 };
 
@@ -146,3 +145,5 @@ export const generateExternalUrl = (mediaItem: MediaItemBase) => {
     }
   }
 };
+
+export const getImageId = customAlphabet('1234567890abcdef', 32);

@@ -26,8 +26,10 @@ export type MediaItemBase = ExternalIds & {
   platform?: string[];
   title: string;
   originalTitle?: string;
-  poster?: string;
-  backdrop?: string;
+  externalPosterUrl?: string;
+  externalBackdropUrl?: string;
+  posterId?: string;
+  backdropId?: string;
   tmdbRating?: number;
   releaseDate?: string;
   overview?: string;
@@ -122,7 +124,6 @@ export type MediaItemItemsResponse = Omit<MediaItemBase, 'lockedAt'> & {
 };
 
 export const mediaItemColumns = <const>[
-  'backdrop',
   'developer',
   'genres',
   'id',
@@ -137,7 +138,6 @@ export const mediaItemColumns = <const>[
   'originalTitle',
   'overview',
   'platform',
-  'poster',
   'releaseDate',
   'tmdbRating',
   'runtime',
@@ -156,6 +156,10 @@ export const mediaItemColumns = <const>[
   'traktId',
   'audibleCountryCode',
   'tvdbId',
+  'externalPosterUrl',
+  'externalBackdropUrl',
+  'posterId',
+  'backdropId',
 ];
 
 export const mediaItemPosterPath = (

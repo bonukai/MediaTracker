@@ -5,7 +5,8 @@ export type TvSeason = {
   id?: number;
   description?: string;
   numberOfEpisodes?: number;
-  poster?: string;
+  externalPosterUrl?: string;
+  posterId?: string;
   releaseDate?: string;
   tvShowId?: number;
   tmdbId?: number;
@@ -30,7 +31,8 @@ export const tvSeasonColumns = <const>[
   'id',
   'isSpecialSeason',
   'numberOfEpisodes',
-  'poster',
+  'externalPosterUrl',
+  'posterId',
   'releaseDate',
   'seasonNumber',
   'title',

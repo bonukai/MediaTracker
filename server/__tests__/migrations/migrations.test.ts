@@ -3,7 +3,6 @@ import { milliseconds } from 'date-fns';
 import { Config } from 'src/config';
 import { clearDatabase, randomNumericId } from '../__utils__/utils';
 import { Data, InitialData } from '__tests__/__utils__/data';
-import { Image } from 'src/entity/image';
 import { Configuration } from 'src/entity/configuration';
 import { MediaItemBase } from 'src/entity/mediaItem';
 import { Database } from 'src/dbconfig';
@@ -111,13 +110,13 @@ describe('migrations', () => {
       directory: Config.MIGRATIONS_DIRECTORY,
     });
 
-    await Database.knex<Image>('image').insert({
+    await Database.knex('image').insert({
       id: '1',
       mediaItemId: InitialData.mediaItem.id,
       type: 'poster',
     });
 
-    await Database.knex<Image>('image').insert({
+    await Database.knex('image').insert({
       id: '2',
       mediaItemId: InitialData.season.tvShowId,
       seasonId: InitialData.season.id,
@@ -1703,6 +1702,75 @@ describe('migrations', () => {
       name: `20230514000000_dropMediaItemSlug.${Config.MIGRATIONS_EXTENSION}`,
       directory: Config.MIGRATIONS_DIRECTORY,
     });
+  });
+
+  test('20230514000001_dropTableImage', async () => {
+    const mediaItem = {
+      id: 3219321321,
+      lastTimeUpdated: new Date().getTime(),
+      mediaType: 'tv',
+      source: 'user',
+      title: 'title',
+      poster: 'posterUrl',
+      backdrop: 'backdropUrl',
+    };
+
+    const season = {
+      id: 123456,
+      seasonNumber: 1,
+      title: 'Season 1',
+      isSpecialSeason: false,
+      numberOfEpisodes: 3,
+      tvShowId: mediaItem.id,
+    };
+
+    await Database.knex('mediaItem').insert(mediaItem);
+    await Database.knex('season').insert(season);
+
+    await Database.knex('image').insert([
+      {
+        id: 'poster-1',
+        mediaItemId: mediaItem.id,
+        type: 'poster',
+      },
+      {
+        id: 'backdrop-1',
+        mediaItemId: mediaItem.id,
+        type: 'backdrop',
+      },
+      {
+        id: 'poster-2',
+        mediaItemId: mediaItem.id,
+        seasonId: season.id,
+        type: 'poster',
+      },
+    ]);
+
+    await Database.knex.migrate.up({
+      name: `20230514000001_dropTableImage.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.down({
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    await Database.knex.migrate.up({
+      name: `20230514000001_dropTableImage.${Config.MIGRATIONS_EXTENSION}`,
+      directory: Config.MIGRATIONS_DIRECTORY,
+    });
+
+    const updatedMediaItem = await Database.knex('mediaItem')
+      .where('id', mediaItem.id)
+      .first();
+
+    const updatedSeason = await Database.knex('season')
+      .where('id', season.id)
+      .first();
+
+    expect(updatedMediaItem.posterId).toEqual('poster-1');
+    expect(updatedMediaItem.backdropId).toEqual('backdrop-1');
+    expect(updatedSeason.posterId).toEqual('poster-2');
   });
 
   afterAll(clearDatabase);

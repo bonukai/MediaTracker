@@ -93,9 +93,10 @@ const movieDetailsResult = {
   source: 'tmdb',
   mediaType: 'movie',
   title: "Harry Potter and the Philosopher's Stone",
-  backdrop:
+  externalBackdropUrl:
     'https://image.tmdb.org/t/p/original/5jkE2SzR5uR2egEb1rRhF22JyWN.jpg',
-  poster: 'https://image.tmdb.org/t/p/original/wuMc08IPKEatf9rnMNXvIDxqP4W.jpg',
+  externalPosterUrl:
+    'https://image.tmdb.org/t/p/original/wuMc08IPKEatf9rnMNXvIDxqP4W.jpg',
   tmdbId: 671,
   overview:
     "Harry Potter has lived under the stairs at his aunt and uncle's house his whole life. But on his 11th birthday, he learns he's a powerful wizard—with a place waiting for him at the Hogwarts School of Witchcraft and Wizardry. As he learns to harness his newfound powers with the help of the school's kindly headmaster, Harry uncovers the truth about his parents' deaths—and about the villain who's to blame.",
@@ -115,9 +116,9 @@ const movieSearchResult = [
     source: 'tmdb',
     mediaType: 'movie',
     title: "Harry Potter and the Philosopher's Stone",
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/5jkE2SzR5uR2egEb1rRhF22JyWN.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/wuMc08IPKEatf9rnMNXvIDxqP4W.jpg',
     tmdbId: 671,
     overview:
@@ -136,9 +137,9 @@ const movieSearchResult = [
     source: 'tmdb',
     mediaType: 'movie',
     title: 'Harry Potter and the Half-Blood Prince',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/urDWNffjwmNi5IQaezw9GwqkUXa.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/o2j49x3HYJC2VH689rYxmswtSgS.jpg',
     tmdbId: 767,
     overview:
@@ -157,9 +158,9 @@ const movieSearchResult = [
     source: 'tmdb',
     mediaType: 'movie',
     title: 'Harry Potter and the Goblet of Fire',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/5rrGVmRUuCKVbqUu41XIWTXJmNA.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/fECBtHlr0RB3foNHDiCBXeg9Bv9.jpg',
     tmdbId: 674,
     overview:
@@ -178,9 +179,9 @@ const movieSearchResult = [
     source: 'tmdb',
     mediaType: 'movie',
     title: 'Harry Potter and the Chamber of Secrets',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/1stUIsjawROZxjiCMtqqXqgfZWC.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/sdEOH0992YZ0QSxgXNIGLq1ToUi.jpg',
     tmdbId: 672,
     overview:
@@ -199,9 +200,9 @@ const movieSearchResult = [
     source: 'tmdb',
     mediaType: 'movie',
     title: 'Harry Potter and the Prisoner of Azkaban',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/vbk5CfaAHOjQPSAcYm6AoRRz2Af.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/aWxwnYoe8p2d2fcxOqtvAtJ72Rw.jpg',
     tmdbId: 673,
     overview:
@@ -223,9 +224,9 @@ const tvSearchResult = [
     source: 'tmdb',
     mediaType: 'tv',
     title: 'Lost',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/12NEw3eBUQxK9qdgtegZRsz4Yp8.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/og6S0aTZU6YUJAbqxeKjCa3kY1E.jpg',
     tmdbId: 4607,
     overview:
@@ -248,9 +249,9 @@ const tvSearchResult = [
     source: 'tmdb',
     mediaType: 'tv',
     title: "Dan Brown's The Lost Symbol",
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/hZ9MlxA80rLGh5OExoJEeIEBByD.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/rc99fLHeOH4QBROUzAyPeKCvt6T.jpg',
     tmdbId: 120452,
     overview:
@@ -273,9 +274,9 @@ const tvSearchResult = [
     source: 'tmdb',
     mediaType: 'tv',
     title: 'Lost Girl',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/9jlwGGx9zTkEV5mnuyQXDTUMCw3.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/jE6sqorxIyVU55VhDbz7NbqxZlV.jpg',
     tmdbId: 33852,
     overview:
@@ -298,9 +299,9 @@ const tvSearchResult = [
     source: 'tmdb',
     mediaType: 'tv',
     title: 'Lost in Space',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/nB8Z2lDOOSpZgTRLUVYSJ74RPof.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/y8NJnTXzb4rio9uvVYFVrXEMofU.jpg',
     tmdbId: 75758,
     overview:
@@ -323,9 +324,9 @@ const tvSearchResult = [
     source: 'tmdb',
     mediaType: 'tv',
     title: 'Lost in Space',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/fyrAObqU9IBWTu6CwRx7fwA7pFV.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/dGhtCpYZutuso2P3GKWnQnqwhSi.jpg',
     tmdbId: 3051,
     overview:
@@ -350,9 +351,10 @@ const tvDetailsResult = {
   source: 'tmdb',
   mediaType: 'tv',
   title: 'Lost',
-  backdrop:
+  externalBackdropUrl:
     'https://image.tmdb.org/t/p/original/12NEw3eBUQxK9qdgtegZRsz4Yp8.jpg',
-  poster: 'https://image.tmdb.org/t/p/original/og6S0aTZU6YUJAbqxeKjCa3kY1E.jpg',
+  externalPosterUrl:
+    'https://image.tmdb.org/t/p/original/og6S0aTZU6YUJAbqxeKjCa3kY1E.jpg',
   tmdbId: 4607,
   overview:
     'Stripped of everything, the survivors of a horrific plane crash  must work together to stay alive. But the island holds many secrets.',
@@ -372,7 +374,7 @@ const tvDetailsResult = {
       tmdbId: 14047,
       title: 'Specials',
       description: null,
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/u1hvfXTqebq6Na5zhzHiJYZT0YK.jpg',
       seasonNumber: 0,
       numberOfEpisodes: 33,
@@ -712,7 +714,7 @@ const tvDetailsResult = {
       title: 'Season 1',
       description:
         'Mysteries abound on the first season of LOST as the survivors of Oceanic Air flight 815 find themselves stranded on an unidentified island with little hope of rescue.',
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/fc9f4ERC09U1GziCgDWilWWgjKx.jpg',
       seasonNumber: 1,
       numberOfEpisodes: 24,
@@ -967,7 +969,7 @@ const tvDetailsResult = {
       title: 'Season 2',
       description:
         'The second season of the American serial drama television series Lost commenced airing in the United States and Canada on September 21, 2005 and concluded on May 24, 2006. The second season continues the stories of a group of over forty people who have been stranded on a remote island in the south Pacific, after their airplane crashed forty-four days prior to the beginning of the season. The producers have stated that as the first season is about introducing the survivors, the second season is about a 1970s scientific Dharma Initiative research station which the survivors discovered on the island and refer to as "the hatch". The second season aired Wednesdays at 9:00 pm in the United States. In addition to the regular twenty-four episodes, three clip-shows recapped previous events on the show. "Destination Lost" aired before the premiere, "Lost: Revelation" aired before the tenth episode and "Lost: Reckoning" aired before the twentieth episode. The season was released on DVD as a seven disc boxed set under the title of Lost: The Complete Second Season – The Extended Experience on September 5, 2006 by Buena Vista Home Entertainment.',
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/vGLddXoXJhKPsAWeDYbAsE4wW1z.jpg',
       seasonNumber: 2,
       numberOfEpisodes: 24,
@@ -1222,7 +1224,7 @@ const tvDetailsResult = {
       title: 'Season 3',
       description:
         'The third season of the American serial drama television series Lost commenced airing in the United States and Canada on October 4, 2006 and concluded on May 23, 2007. The third season continues the stories of a group of over 40 people who have been stranded on a remote island in the South Pacific, after their airplane crashed 68 days prior to the beginning of the season. In the Lost universe, the season takes place from November 28 to December 21, 2004. The producers have stated that as the first season is about introducing the survivors and the second season is about the hatch, the third season is about the Others, a group of mysterious island inhabitants.\n\nIn response to fan complaints about scheduling in the previous seasons, ABC decided to air the episodes without reruns, albeit in two separate blocks. In the United States, the first block consisted of six episodes aired on Wednesdays at 9:00 pm and after a twelve week break, the season continued with the remaining 16 episodes at 10:00 pm. In addition, three clip-shows recapped previous events on the show. "Lost: A Tale of Survival" aired a week before the season premiere, "Lost Survivor Guide" aired before the seventh episode and "Lost: The Answers" aired before the season finale Buena Vista Home Entertainment released the season under the title Lost: The Complete Third Season – The Unexplored Experience on December 11, 2007 in Region 1 on DVD and Blu-ray Disc.',
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/zLnuh6DVyrz5iaNVO6KNKubtffo.jpg',
       seasonNumber: 3,
       numberOfEpisodes: 23,
@@ -1467,7 +1469,7 @@ const tvDetailsResult = {
       title: 'Season 4',
       description:
         'The fourth season of the American serial drama television series Lost commenced airing on the American Broadcasting Company Network in the United States, and on CTV in Canada on January 31, 2008 and concluded on May 29, 2008. The season continues the stories of a group of over 40 people who have been stranded on a remote island in the South Pacific, after their airplane crashed there more than 90 days prior to the beginning of the season. According to Lost\'s executive producers/writers/showrunners Damon Lindelof and Carlton Cuse, there are two main themes in fourth season: "the castaways\' relationship to the freighter folk" and "who gets off the island and the fact that they need to get back". Lost came under scrutiny from critics in its third season, but the fourth season was acclaimed for its flash-forwards, pace and new characters.\n\nThe season was originally planned to contain 16 episodes; eight were filmed before the start of the 2007–2008 Writers Guild of America strike. Following the strike\'s resolution, it was announced that only five more episodes would be produced to complete the season; however, the season finale\'s script was so long that network executives approved the production of a 14th episode as part of a three-hour season finale split over two nights. The fourth season aired Tuesdays at 9:00 pm from January 31 to March 20, 2008 and at 10:00 pm from April 24 to May 15, 2008. The two-hour finale aired at 9:00 pm on May 29, 2008. Buena Vista Home Entertainment released the season on DVD and Blu-ray Disc under the title Lost: The Complete Fourth Season – The Expanded Experience on December 9, 2008 in Region 1; however, it was released earlier—on October 20, 2008—in Region 2.',
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/TOfSxtW76sWrPn3YSm5GooaR3Y.jpg',
       seasonNumber: 4,
       numberOfEpisodes: 14,
@@ -1622,7 +1624,7 @@ const tvDetailsResult = {
       title: 'Season 5',
       description:
         'The fifth season of the American serial drama television series Lost commenced airing on the ABC network in the United States and on A in Canada in January 2009, and concluded with a two-hour season finale on May 13, 2009. The season continues the stories of the survivors of the fictional crash of Oceanic Airlines Flight 815, after some of them are rescued and those still stranded seemingly disappear to an unknown location and time with the island that they inhabit.\n\nAccording to Lost\'s co-creator/executive producer/writer/show runner Damon Lindelof, the season "is about why [the people who have left the island] need to get back". Lost returned on January 21, 2009 on ABC with a three-hour premiere consisting of a clip-show and two back-to-back new episodes. The remainder of the season aired on Wednesdays at 9:00 pm EST. The season began in the UK and Ireland on January 25, 2009 on Sky1 and RTÉ Two, respectively. The season was released on DVD and Blu-ray Disc under the title Lost: The Complete Fifth Season – The Journey Back, Expanded Edition on December 8, 2009.',
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/2OYKA6UIC56loPxgL4IMshg4mVr.jpg',
       seasonNumber: 5,
       numberOfEpisodes: 17,
@@ -1806,7 +1808,7 @@ const tvDetailsResult = {
       title: 'Season 6',
       description:
         'After Season 5’s explosive finish, everything is up in the air for the survivors of flight 815. No one knows what — or who — the future will hold. Will Juliet’s sacrifice to save her friends work? Can Kate choose, once and for all, between Jack and Sawyer? Will Sun and Jin be reunited? Is it too late to save Claire? Whatever awaits everyone on the island, one thing is for certain — the moment of truth has arrived.',
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/xUb57GiEwg6pJpU4F3e01PKRVlc.jpg',
       seasonNumber: 6,
       numberOfEpisodes: 18,

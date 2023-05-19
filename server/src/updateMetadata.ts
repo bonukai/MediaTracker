@@ -114,22 +114,23 @@ const downloadNewAssets = async (
   oldMediaItem: MediaItemBaseWithSeasons,
   newMediaItem: MediaItemBaseWithSeasons
 ) => {
-  if (newMediaItem.poster && newMediaItem.poster !== oldMediaItem.poster) {
+  if (
+    newMediaItem.externalPosterUrl &&
+    newMediaItem.externalPosterUrl !== oldMediaItem.externalPosterUrl
+  ) {
     await updateAsset({
       type: 'poster',
-      mediaItemId: oldMediaItem.id,
-      url: newMediaItem.poster,
+      mediaItem: oldMediaItem,
     });
   }
 
   if (
-    newMediaItem.backdrop &&
-    newMediaItem.backdrop !== oldMediaItem.backdrop
+    newMediaItem.externalBackdropUrl &&
+    newMediaItem.externalBackdropUrl !== oldMediaItem.externalBackdropUrl
   ) {
     await updateAsset({
       type: 'backdrop',
-      mediaItemId: oldMediaItem.id,
-      url: newMediaItem.backdrop,
+      mediaItem: oldMediaItem,
     });
   }
 
@@ -140,17 +141,17 @@ const downloadNewAssets = async (
 
   await Promise.all(
     newMediaItem.seasons
-      ?.filter((season) => season.poster)
+      ?.filter((season) => season.externalPosterUrl)
       ?.filter(
         (season) =>
-          season.id && season.poster !== newSeasonsMap[season.id]?.poster
+          season.id &&
+          season.externalPosterUrl !==
+            newSeasonsMap[season.id]?.externalPosterUrl
       )
       .map((season) =>
         updateAsset({
           type: 'poster',
-          mediaItemId: oldMediaItem.id,
-          seasonId: season.id,
-          url: season.poster,
+          season: season,
         })
       ) || []
   );
@@ -523,8 +524,6 @@ const margeTvShow = async (
             await trx('userRating')
               .whereIn('seasonId', seasonsIdsToDelete)
               .delete();
-
-            await trx('image').whereIn('seasonId', seasonsIdsToDelete).delete();
 
             await trx('season').whereIn('id', seasonsIdsToDelete).delete();
           }

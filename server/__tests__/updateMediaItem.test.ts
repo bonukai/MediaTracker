@@ -233,12 +233,6 @@ describe('updateMediaItem', () => {
       sendDate: Date.now(),
     });
 
-    await Database.knex('image').insert({
-      mediaItemId: tvShow.id,
-      seasonId: season.id,
-      type: 'poster',
-    });
-
     const updatedMediaItem = await updateMediaItem(mediaItem);
 
     expect(updatedMediaItem.seasons?.length).toEqual(1);
