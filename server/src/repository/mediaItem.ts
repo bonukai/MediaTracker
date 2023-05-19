@@ -19,12 +19,11 @@ import {
   MediaItemItemsResponse,
   MediaType,
 } from 'src/entity/mediaItem';
-import { imageRepository } from 'src/repository/image';
-import { getImageId, Image } from 'src/entity/image';
 import { isValid, parseISO, subDays, subMinutes } from 'date-fns';
 import { TvSeason } from 'src/entity/tvseason';
 import { ListItem } from 'src/entity/list';
 import { logger } from 'src/logger';
+import { getImageId } from 'src/utils';
 
 export type MediaItemOrderBy =
   | 'title'
@@ -136,7 +135,6 @@ class MediaItemRepository extends repository<MediaItemBase>({
     const mediaItemId = where.id;
 
     return await Database.knex.transaction(async (trx) => {
-      await trx<Image>('image').delete().where('mediaItemId', mediaItemId);
       await trx<NotificationsHistory>('notificationsHistory')
         .delete()
         .where('mediaItemId', mediaItemId);
@@ -155,7 +153,23 @@ class MediaItemRepository extends repository<MediaItemBase>({
       throw new Error('mediaItem.id filed is required');
     }
 
+    if (!mediaItem.externalPosterUrl) {
+      mediaItem.posterId = null;
+    }
+
+    if (!mediaItem.externalBackdropUrl) {
+      mediaItem.backdropId = null;
+    }
+
     return await Database.knex.transaction(async (trx) => {
+      if (mediaItem.externalPosterUrl && !mediaItem.posterId) {
+        mediaItem.posterId = getImageId();
+      }
+
+      if (mediaItem.externalBackdropUrl && !mediaItem.backdropId) {
+        mediaItem.backdropId = getImageId();
+      }
+
       const result = {
         ..._.cloneDeep(mediaItem),
         lastTimeUpdated: mediaItem.lastTimeUpdated
@@ -169,63 +183,21 @@ class MediaItemRepository extends repository<MediaItemBase>({
           id: mediaItem.id,
         });
 
-      if (!mediaItem.poster) {
-        await trx(imageRepository.tableName).delete().where({
-          mediaItemId: mediaItem.id,
-          seasonId: null,
-          type: 'poster',
-        });
-      } else {
-        const res = await trx(imageRepository.tableName).where({
-          mediaItemId: mediaItem.id,
-          seasonId: null,
-          type: 'poster',
-        });
-
-        if (res.length === 0) {
-          const posterId = getImageId();
-
-          await trx(imageRepository.tableName).insert({
-            id: getImageId(),
-            mediaItemId: mediaItem.id,
-            seasonId: null,
-            type: 'poster',
-          });
-
-          result.poster = `/img/${posterId}`;
-        }
-      }
-
-      if (!mediaItem.backdrop) {
-        await trx(imageRepository.tableName).delete().where({
-          mediaItemId: mediaItem.id,
-          seasonId: null,
-          type: 'backdrop',
-        });
-      } else {
-        const res = await trx(imageRepository.tableName).where({
-          mediaItemId: mediaItem.id,
-          seasonId: null,
-          type: 'backdrop',
-        });
-
-        if (res.length === 0) {
-          await trx(imageRepository.tableName).insert({
-            id: getImageId(),
-            mediaItemId: mediaItem.id,
-            seasonId: null,
-            type: 'backdrop',
-          });
-        }
-      }
-
-      if (result.seasons) {
-        for (const season of result.seasons) {
+      await Promise.all(
+        result.seasons.map(async (season) => {
           let updated = false;
 
           season.numberOfEpisodes =
             season.numberOfEpisodes || season.episodes?.length || 0;
           season.tvShowId = mediaItem.id;
+
+          if (!season.externalPosterUrl) {
+            season.posterId = null;
+          }
+
+          if (season.externalPosterUrl && !season.posterId) {
+            season.posterId = getImageId();
+          }
 
           const newSeason = omitUndefinedValues(
             tvSeasonRepository.stripValue(tvSeasonRepository.serialize(season))
@@ -243,29 +215,6 @@ class MediaItemRepository extends repository<MediaItemBase>({
             season.id = (
               await trx('season').insert(newSeason).returning('id')
             ).at(0).id;
-          }
-
-          if (!season.poster) {
-            await trx(imageRepository.tableName).delete().where({
-              mediaItemId: mediaItem.id,
-              seasonId: season.id,
-              type: 'poster',
-            });
-          } else {
-            const res = await trx(imageRepository.tableName).where({
-              mediaItemId: mediaItem.id,
-              seasonId: season.id,
-              type: 'poster',
-            });
-
-            if (res.length === 0) {
-              await trx(imageRepository.tableName).insert({
-                id: getImageId(),
-                mediaItemId: mediaItem.id,
-                seasonId: season.id,
-                type: 'poster',
-              });
-            }
           }
 
           if (season.episodes) {
@@ -297,8 +246,8 @@ class MediaItemRepository extends repository<MediaItemBase>({
               }
             }
           }
-        }
-      }
+        })
+      );
 
       return result;
     });
@@ -308,6 +257,14 @@ class MediaItemRepository extends repository<MediaItemBase>({
     if (mediaItem.releaseDate && !isValid(parseISO(mediaItem.releaseDate))) {
       logger.error(`Invalid date format for ${mediaItem.id}`);
       mediaItem.releaseDate = undefined;
+    }
+
+    if (mediaItem.externalPosterUrl) {
+      mediaItem.posterId = getImageId();
+    }
+
+    if (mediaItem.externalBackdropUrl) {
+      mediaItem.backdropId = getImageId();
     }
 
     return await Database.knex.transaction(async (trx) => {
@@ -324,35 +281,12 @@ class MediaItemRepository extends repository<MediaItemBase>({
 
       result.id = res.at(0)[this.primaryColumnName];
 
-      if (result.poster) {
-        const imageId = getImageId();
-
-        await trx(imageRepository.tableName).insert({
-          id: imageId,
-          mediaItemId: result.id,
-          type: 'poster',
-        });
-
-        result.poster = `/img/${imageId}`;
-      }
-
-      if (result.backdrop) {
-        const imageId = getImageId();
-
-        await trx(imageRepository.tableName).insert({
-          id: imageId,
-          mediaItemId: result.id,
-          type: 'backdrop',
-        });
-
-        result.backdrop = `/img/${imageId}`;
-      }
-
       result.seasons = result.seasons?.map((season) => ({
         ...season,
         numberOfEpisodes:
           season.numberOfEpisodes || season.episodes?.length || 0,
         tvShowId: result.id,
+        posterId: season.externalPosterUrl ? getImageId() : null,
       }));
 
       result.seasons?.forEach((season) => {
@@ -373,25 +307,6 @@ class MediaItemRepository extends repository<MediaItemBase>({
           .returning('id');
 
         result.seasons = _.merge(result.seasons, seasonsId);
-
-        const seasonsWithPosters = result.seasons.filter(
-          (season) => season.poster
-        );
-
-        if (seasonsWithPosters.length > 0) {
-          await Database.knex
-            .batchInsert(
-              imageRepository.tableName,
-              seasonsWithPosters.map((season) => ({
-                id: getImageId(),
-                mediaItemId: result.id,
-                seasonId: season.id,
-                type: 'poster',
-              })),
-              30
-            )
-            .transacting(trx);
-        }
 
         for (const season of result.seasons) {
           if (season.episodes?.length > 0) {
@@ -733,224 +648,50 @@ class MediaItemRepository extends repository<MediaItemBase>({
       .where('id', mediaItemId);
   }
 
-  public async mediaItemsWithMissingPosters(mediaItemIdsWithPoster: number[]) {
-    return await Database.knex<MediaItemBase>(this.tableName)
-      .whereNotIn('id', mediaItemIdsWithPoster)
-      .whereNotNull('poster')
-      .whereNot('poster', '');
-  }
-
-  public async mediaItemsWithMissingBackdrop(
-    mediaItemIdsWithBackdrop: number[]
-  ) {
-    return await Database.knex<MediaItemBase>(this.tableName)
-      .whereNotIn('id', mediaItemIdsWithBackdrop)
-      .whereNotNull('backdrop')
-      .whereNot('backdrop', '');
-  }
-
   public async mergeSearchResultWithExistingItems(
     searchResult: MediaItemForProvider[],
     mediaType: MediaType
   ) {
-    const searchResultWithId = _.cloneDeep(searchResult).map((item, index) => ({
-      ...item,
-      searchResultId: index,
-    }));
-
-    const externalIds = _(externalIdColumnNames)
-      .keyBy((id) => id)
-      .mapValues((id) =>
-        searchResultWithId.map((mediaItem) => mediaItem[id]).filter(Boolean)
-      )
-      .value();
-
-    const searchResultsByExternalId = groupByExternalId(searchResultWithId);
-
-    return await Database.knex.transaction(async (trx) => {
-      const existingItems = (
-        await trx<MediaItemBase>(this.tableName)
-          .where({ mediaType: mediaType })
-          .andWhere((qb) => {
-            if (externalIds.tmdbId) {
-              qb.orWhereIn('tmdbId', externalIds.tmdbId);
-            }
-            if (externalIds.imdbId) {
-              qb.orWhereIn('imdbId', externalIds.imdbId);
-            }
-            if (externalIds.tvmazeId) {
-              qb.orWhereIn('tvmazeId', externalIds.tvmazeId);
-            }
-            if (externalIds.igdbId) {
-              qb.orWhereIn('igdbId', externalIds.igdbId);
-            }
-            if (externalIds.openlibraryId) {
-              qb.orWhereIn('openlibraryId', externalIds.openlibraryId);
-            }
-            if (externalIds.audibleId) {
-              qb.orWhereIn('audibleId', externalIds.audibleId);
-            }
-            if (externalIds.goodreadsId) {
-              qb.orWhereIn('goodreadsId', externalIds.goodreadsId);
-            }
-            if (externalIds.traktId) {
-              qb.orWhereIn('traktId', externalIds.traktId);
-            }
-            if (externalIds.tvdbId) {
-              qb.orWhereIn('tvdbId', externalIds.tvdbId);
-            }
-          })
-      ).map((item) => this.deserialize(item));
-
-      const existingSearchResults: (MediaItemItemsResponse & {
-        searchResultId: number;
-      })[] = [];
-
-      existingItems.forEach((item) => {
-        externalIdColumnNames.forEach((value) => {
-          const res = searchResultsByExternalId[value][item[value]];
-
-          if (res?.length > 0) {
-            existingSearchResults.push(
-              ...res.map((value) => ({
-                ...value,
-                id: item.id,
-              }))
-            );
-
-            return;
-          }
-        });
-      });
-
-      const existingImages = _(
-        await trx<Image>(imageRepository.tableName)
-          .where({
-            seasonId: null,
-          })
-          .whereIn(
-            'mediaItemId',
-            existingSearchResults.map((value) => value.id)
-          )
-      )
-        .groupBy('type')
-        .mapValues((value) => _.keyBy(value, 'mediaItemId'))
-        .value();
-
-      for (const item of existingSearchResults) {
-        await trx<MediaItemBase>(this.tableName)
-          .update(this.serialize(this.stripValue(item)))
-          .where({ id: item.id });
-      }
-
-      existingSearchResults.forEach((value) => {
-        const posterId =
-          existingImages.poster && existingImages.poster[value.id]?.id;
-        const backdropId =
-          existingImages.backdrop && existingImages.backdrop[value.id]?.id;
-
-        value.poster = posterId ? `/img/${posterId}` : null;
-        value.posterSmall = posterId ? `/img/${posterId}?size=small` : null;
-        value.backdrop = backdropId ? `/img/${backdropId}` : null;
-      });
-
-      const newItems: (MediaItemBase & { searchResultId: number })[] =
-        _.differenceBy(
-          searchResultWithId,
-          existingSearchResults,
-          'searchResultId'
-        );
-
-      newItems.forEach((item) => (item.lastTimeUpdated = new Date().getTime()));
-
-      const uniqueNewItems = _.uniqWith(newItems, (a, b) =>
-        externalIdColumnNames.some(
-          (externalIdColumnName) =>
-            a[externalIdColumnName] !== undefined &&
-            b[externalIdColumnName] !== undefined &&
-            a[externalIdColumnName] === b[externalIdColumnName]
+    return await Promise.all(
+      searchResult
+        .filter(
+          (item) =>
+            externalIdColumnNames
+              .map((columnName) => item[columnName])
+              .filter(Boolean).length > 0
         )
-      );
+        .map(async (item) => {
+          return await Database.knex.transaction(async (trx) => {
+            const existingItem = await trx<MediaItemBase>('mediaItem')
+              .where({ mediaType: mediaType })
+              .andWhere((qb) => {
+                externalIdColumnNames.map((columnName) => {
+                  if (item[columnName]) {
+                    qb.orWhere(columnName, item[columnName]);
+                  }
+                });
+              })
+              .first();
 
-      for (const newItem of uniqueNewItems) {
-        const [res] = await trx<MediaItemBase>(this.tableName)
-          .insert(this.serialize(this.stripValue(newItem)))
-          .returning<{ id: number }[]>('id');
+            if (existingItem) {
+              return existingItem;
+            }
 
-        newItem.id = res.id;
-      }
+            const [res] = await trx<MediaItemBase>('mediaItem')
+              .insert({
+                ...this.serialize(omitUndefinedValues(this.stripValue(item))),
+                posterId: item.externalPosterUrl ? getImageId() : null,
+                backdropId: item.externalBackdropUrl
+                  ? getImageId()
+                  : null,
+                lastTimeUpdated: Date.now(),
+              })
+              .returning('*');
 
-      const searchResultIdToMediaItemId = _(uniqueNewItems)
-        .keyBy('searchResultId')
-        .mapValues((mediaItem) => mediaItem.id)
-        .value();
-
-      const newItemsWithId = newItems.map((mediaItem) => ({
-        ...mediaItem,
-        id: searchResultIdToMediaItemId[mediaItem.searchResultId],
-      })) as (MediaItemItemsResponse & { searchResultId: number })[];
-
-      await Database.knex
-        .batchInsert(
-          imageRepository.tableName,
-          newItemsWithId
-            .filter((item) => item.poster)
-            .map((item) => {
-              const posterId = getImageId();
-              item.poster = `/img/${posterId}`;
-              item.posterSmall = `/img/${posterId}?size=small`;
-
-              return {
-                id: posterId,
-                mediaItemId: item.id,
-                seasonId: null,
-                type: 'poster',
-              };
-            }),
-          30
-        )
-        .transacting(trx)
-        .returning('id');
-
-      await Database.knex
-        .batchInsert(
-          imageRepository.tableName,
-          newItemsWithId
-            .filter((item) => item.backdrop)
-            .map((item) => {
-              const backdropId = getImageId();
-              item.backdrop = `/img/${backdropId}`;
-
-              return {
-                id: backdropId,
-                mediaItemId: item.id,
-                seasonId: null,
-                type: 'backdrop',
-              };
-            }),
-          30
-        )
-        .transacting(trx)
-        .returning('id');
-
-      return {
-        newItems: _.sortBy(newItemsWithId, 'searchResultId'),
-        existingItems: _.sortBy(existingSearchResults, 'searchResultId'),
-        mergeWithSearchResult: (
-          existingItems?: (MediaItemItemsResponse & {
-            searchResultId: number;
-          })[]
-        ) =>
-          _(
-            _.cloneDeep(
-              _.concat(newItemsWithId, existingItems || existingSearchResults)
-            )
-          )
-            .sortBy('searchResultId')
-            .forEach((item) => delete item.searchResultId)
-            .valueOf(),
-      };
-    });
+            return res;
+          });
+        })
+    );
   }
 
   public async unlockLockedMediaItems() {

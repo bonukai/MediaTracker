@@ -3,10 +3,8 @@ import fs from 'fs-extra';
 
 import { createExpressRoute } from 'typescript-routes-to-openapi-server';
 import { downloadAsset } from 'src/utils';
-import { mediaItemRepository } from 'src/repository/mediaItem';
-import { tvSeasonRepository } from 'src/repository/season';
-import { imageRepository } from 'src/repository/image';
 import { Config } from 'src/config';
+import { Database } from 'src/dbconfig';
 
 type ImgSize = 'small' | 'original';
 
@@ -42,45 +40,17 @@ export class ImgController {
     );
 
     if (!(await fs.pathExists(imagePath))) {
-      const image = await imageRepository.findOne({ id: id });
+      const imageUrl = await findImageUrlFromInternalId(id);
 
-      if (!image) {
+      if (!imageUrl) {
         res.sendStatus(404);
         return;
       }
 
-      if (image.seasonId) {
-        const season = await tvSeasonRepository.findOne({
-          id: image.seasonId,
-        });
-
-        if (!season.poster) {
-          res.sendStatus(404);
-          return;
-        }
-
-        await downloadAsset({
-          imageId: image.id,
-          url: season.poster,
-        });
-      } else {
-        const mediaItem = await mediaItemRepository.findOne({
-          id: image.mediaItemId,
-        });
-
-        const url =
-          image.type === 'poster' ? mediaItem.poster : mediaItem.backdrop;
-
-        if (!url) {
-          res.sendStatus(404);
-          return;
-        }
-
-        await downloadAsset({
-          imageId: image.id,
-          url: url,
-        });
-      }
+      await downloadAsset({
+        imageId: id,
+        url: imageUrl,
+      });
     }
 
     if (!(await fs.pathExists(imagePath))) {
@@ -93,3 +63,29 @@ export class ImgController {
     res.sendFile(imagePath);
   });
 }
+
+export const findImageUrlFromInternalId = async (imageId: string) => {
+  const mediaItemWithPoster = await Database.knex('mediaItem')
+    .where('posterId', imageId)
+    .first();
+
+  if (mediaItemWithPoster) {
+    return mediaItemWithPoster.externalPosterUrl;
+  }
+
+  const mediaItemWithBackdrop = await Database.knex('mediaItem')
+    .where('backdropId', imageId)
+    .first();
+
+  if (mediaItemWithBackdrop) {
+    return mediaItemWithBackdrop.externalBackdropUrl;
+  }
+
+  const seasonWithPoster = await Database.knex('season')
+    .where('posterId', imageId)
+    .first();
+
+  if (seasonWithPoster) {
+    return seasonWithPoster.externalPosterUrl;
+  }
+};

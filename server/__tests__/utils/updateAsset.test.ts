@@ -5,11 +5,13 @@ import { downloadAsset, updateAsset } from 'src/utils';
 
 import { clearDatabase, runMigrations } from '__tests__/__utils__/utils';
 import { Database } from 'src/dbconfig';
+import { MediaItemBase } from 'src/entity/mediaItem';
 
-const mediaItem = {
+const mediaItem: MediaItemBase = {
   id: 1,
   title: 'title',
   source: 'user',
+  mediaType: 'tv',
 };
 
 const season = {
@@ -59,64 +61,58 @@ describe('updateAsset', () => {
 
     expect(ensureDirSpy).toBeCalled();
 
-    const newUrl = 'http://example2.com';
-
     await updateAsset({
       type: 'poster',
-      mediaItemId: mediaItem.id,
-      url: url,
+      mediaItem: mediaItem,
     });
 
     await updateAsset({
       type: 'poster',
-      mediaItemId: mediaItem.id,
-      seasonId: season.id,
-      url: url,
+      mediaItem: mediaItem,
+      season: season,
     });
 
-    const mediaItemImage = await Database.knex('image')
-      .where('seasonId', null)
-      .where('mediaItemId', mediaItem.id)
+    const mediaItemWithImage = await Database.knex('mediaItem')
+      .where('id', mediaItem.id)
       .first();
 
-    const seasonImage = await Database.knex('image')
-      .where('seasonId', season.id)
-      .where('mediaItemId', mediaItem.id)
+    const seasonWithImage = await Database.knex('season')
+      .where('id', season.id)
       .first();
 
-    expect(mediaItemImage.id).toBeDefined();
-    expect(seasonImage.id).toBeDefined();
+    expect(mediaItemWithImage.posterId).toBeDefined();
+    expect(seasonWithImage.posterId).toBeDefined();
     expect(rmSpy).toBeCalledTimes(0);
 
     jest.spyOn(fs, 'pathExists').mockImplementation(() => true);
 
     await updateAsset({
       type: 'poster',
-      mediaItemId: mediaItem.id,
-      url: newUrl,
+      mediaItem: {
+        ...mediaItem,
+        posterId: 'abc',
+      },
     });
 
     await updateAsset({
       type: 'poster',
-      mediaItemId: mediaItem.id,
-      seasonId: season.id,
-      url: url,
+      mediaItem: mediaItem,
+      season: season,
     });
 
-    const updatedMediaItemImage = await Database.knex('image')
-      .where('seasonId', null)
-      .where('mediaItemId', mediaItem.id)
+    const updatedMediaItem = await Database.knex('mediaItem')
+      .where('id', mediaItem.id)
       .first();
 
-    const updatedSeasonImage = await Database.knex('image')
-      .where('seasonId', season.id)
-      .where('mediaItemId', mediaItem.id)
+    const updatedSeason = await Database.knex('season')
+      .where('id', season.id)
       .first();
 
-    expect(updatedMediaItemImage.id).toBeDefined();
-    expect(updatedSeasonImage.id).toBeDefined();
-    expect(updatedMediaItemImage.id).not.toBe(mediaItemImage.id);
-    expect(updatedSeasonImage.id).not.toBe(seasonImage.id);
+    expect(updatedMediaItem.posterId).toBeDefined();
+    expect(updatedSeason.posterId).toBeDefined();
+    expect(updatedSeason.posterId).not.toBe(
+      seasonWithImage.posterId
+    );
     expect(rmSpy).toBeCalled();
 
     rmSpy.mockReset();
@@ -124,15 +120,13 @@ describe('updateAsset', () => {
 
     await updateAsset({
       type: 'poster',
-      mediaItemId: mediaItem.id,
-      url: newUrl,
+      mediaItem: mediaItem,
     });
 
     await updateAsset({
       type: 'poster',
-      mediaItemId: mediaItem.id,
-      seasonId: season.id,
-      url: url,
+      mediaItem: mediaItem,
+      season: season,
     });
 
     expect(rmSpy).not.toBeCalled();

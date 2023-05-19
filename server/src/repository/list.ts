@@ -1,6 +1,5 @@
 import { Knex } from 'knex';
 import { Database } from 'src/dbconfig';
-import { Image } from 'src/entity/image';
 import {
   List,
   ListItem,
@@ -302,7 +301,8 @@ class ListRepository extends repository<List>({
         'listItem.mediaItemId': 'listItem.mediaItemId',
         'listItem.seasonId': 'listItem.seasonId',
         'mediaItem.airedEpisodesCount': 'mediaItemAiredEpisodes.count',
-        'mediaItem.backdrop.id': 'mediaItemBackdrop.id',
+        'mediaItem.posterId': 'mediaItem.posterId',
+        'mediaItem.backdropId': 'mediaItem.backdropId',
         'mediaItem.firstUnwatchedEpisode.description':
           'mediaItemFirstUnwatchedEpisode.description',
         'mediaItem.firstUnwatchedEpisode.episodeNumber':
@@ -382,7 +382,6 @@ class ListRepository extends repository<List>({
         'mediaItem.mediaType': 'mediaItem.mediaType',
         'mediaItem.network': 'mediaItem.network',
         'mediaItem.overview': 'mediaItem.overview',
-        'mediaItem.poster.id': 'mediaItemPoster.id',
         'mediaItem.progress': 'mediaItemProgress.progress',
         'mediaItem.releaseDate': 'mediaItem.releaseDate',
         'mediaItem.runtime': 'mediaItem.runtime',
@@ -607,28 +606,6 @@ class ListRepository extends repository<List>({
             .as('seasonAiredEpisodes'),
         'seasonAiredEpisodes.seasonId',
         'listItem.seasonId'
-      )
-      // MediaItem: posterId
-      .leftJoin<Image>(
-        (qb) =>
-          qb
-            .from('image')
-            .where('type', 'poster')
-            .whereNull('seasonId')
-            .as('mediaItemPoster'),
-        'mediaItemPoster.mediaItemId',
-        'listItem.mediaItemId'
-      )
-      // MediaItem: backdropId
-      .leftJoin<Image>(
-        (qb) =>
-          qb
-            .from('image')
-            .where('type', 'backdrop')
-            .whereNull('seasonId')
-            .as('mediaItemBackdrop'),
-        'mediaItemBackdrop.mediaItemId',
-        'listItem.mediaItemId'
       )
       // MediaItem: user rating
       .leftJoin<UserRating>(
@@ -900,8 +877,8 @@ class ListRepository extends repository<List>({
         : listItem['mediaItem.mediaType'],
       mediaItem: {
         airedEpisodesCount: listItem['mediaItem.airedEpisodesCount'],
-        backdrop: listItem['mediaItem.backdrop.id']
-          ? `/img/${listItem['mediaItem.backdrop.id']}`
+        backdrop: listItem['mediaItem.backdropId']
+          ? `/img/${listItem['mediaItem.backdropId']}`
           : undefined,
         genres: listItem['mediaItem.genres']?.split(',')?.sort(),
         id: listItem['listItem.mediaItemId'],
@@ -910,11 +887,11 @@ class ListRepository extends repository<List>({
         mediaType: listItem['mediaItem.mediaType'],
         network: listItem['mediaItem.network'],
         overview: listItem['mediaItem.overview'],
-        poster: listItem['mediaItem.poster.id']
-          ? `/img/${listItem['mediaItem.poster.id']}`
+        poster: listItem['mediaItem.posterId']
+          ? `/img/${listItem['mediaItem.posterId']}`
           : undefined,
-        posterSmall: listItem['mediaItem.poster.id']
-          ? `/img/${listItem['mediaItem.poster.id']}?size=small`
+        posterSmall: listItem['mediaItem.posterId']
+          ? `/img/${listItem['mediaItem.posterId']}?size=small`
           : undefined,
         releaseDate: listItem['mediaItem.releaseDate'],
         runtime: listItem['mediaItem.runtime'] || null,

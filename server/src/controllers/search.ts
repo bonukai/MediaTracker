@@ -43,18 +43,9 @@ export class SearchController {
 
     const existingItemsDetails = await mediaItemRepository.items({
       userId: userId,
-      mediaItemIds: result.existingItems.map((item) => item.id),
+      mediaItemIds: result.map((item) => item.id),
     });
 
-    const existingItemsById = _.keyBy(result.existingItems, 'id');
-
-    const existingItemsDetailsWithSearchId = existingItemsDetails.map(
-      (item) => ({
-        ...item,
-        searchResultId: existingItemsById[item.id].searchResultId,
-      })
-    );
-
-    res.send(result.mergeWithSearchResult(existingItemsDetailsWithSearchId));
+    res.send(existingItemsDetails);
   });
 }

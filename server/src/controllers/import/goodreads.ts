@@ -63,7 +63,7 @@ export const importFromGoodreadsRss = async (
       source: 'goodreads',
       goodreadsId: item.book_id,
       overview: item.book_description,
-      poster: item.book_large_image_url,
+      externalPosterUrl: item.book_large_image_url,
       authors: [item.author_name],
       releaseDate: item.book_published?.toString(),
       numberOfPages:
@@ -79,10 +79,7 @@ export const importFromGoodreadsRss = async (
       'book'
     );
 
-  const mediaItemByGoodreadsIdMap = _.keyBy(
-    addedItems.mergeWithSearchResult(),
-    'goodreadsId'
-  );
+  const mediaItemByGoodreadsIdMap = _.keyBy(addedItems, 'goodreadsId');
 
   const toRead = items
     ?.filter((item) => item.user_shelves === 'to-read')

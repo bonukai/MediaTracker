@@ -96,26 +96,6 @@ describe('foreign keys', () => {
     ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
   });
 
-  test('image', async () => {
-    await expect(async () =>
-      Database.knex('image').insert({
-        id: 999,
-        type: 'poster',
-        mediaItemId: 999,
-        seasonId: season.id,
-      })
-    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
-
-    await expect(async () =>
-      Database.knex('image').insert({
-        id: 999,
-        type: 'poster',
-        mediaItemId: mediaItem.id,
-        seasonId: 999,
-      })
-    ).rejects.toMatchObject({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
-  });
-
   test('list', async () => {
     await expect(async () =>
       Database.knex('list').insert({

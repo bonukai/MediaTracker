@@ -10,7 +10,6 @@ import { Seen } from 'src/entity/seen';
 import { UserRating, userRatingColumns } from 'src/entity/userRating';
 import { GetItemsArgs } from 'src/repository/mediaItem';
 import { TvEpisode, tvEpisodeColumns } from 'src/entity/tvepisode';
-import { Image } from 'src/entity/image';
 import { Knex } from 'knex';
 import { List, listItemColumns } from 'src/entity/list';
 import { Progress } from 'src/entity/progress';
@@ -101,8 +100,6 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
       numberOfEpisodes: 'numberOfEpisodes',
       unseenEpisodesCount: 'unseenEpisodesCount',
       seenEpisodesCount: 'seenEpisodesCount',
-      poster: 'poster.id',
-      backdrop: 'backdrop.id',
       progress: 'progress.progress',
     })
     .from<MediaItemBase>('mediaItem')
@@ -276,28 +273,6 @@ const getItemsKnexSql = async (args: GetItemsArgs) => {
           .andOnVal('userRating.userId', userId)
           .andOnNull('userRating.episodeId')
           .andOnNull('userRating.seasonId')
-    )
-    // Poster
-    .leftJoin<Image>(
-      (qb) =>
-        qb
-          .from('image')
-          .where('type', 'poster')
-          .whereNull('seasonId')
-          .as('poster'),
-      'poster.mediaItemId',
-      'mediaItem.id'
-    )
-    // Backdrop
-    .leftJoin<Image>(
-      (qb) =>
-        qb
-          .from('image')
-          .where('type', 'backdrop')
-          .whereNull('seasonId')
-          .as('backdrop'),
-      'backdrop.mediaItemId',
-      'mediaItem.id'
     )
     // Progress
     .leftJoin<Progress>(
@@ -558,9 +533,15 @@ const mapRawResult = (row: any): MediaItemItemsResponse => {
     developer: row['mediaItem.developer'],
     lastSeenAt: row['lastSeenAt'],
     progress: row['progress'],
-    poster: row['poster'] ? `/img/${row['poster']}` : null,
-    posterSmall: row['poster'] ? `/img/${row['poster']}?size=small` : null,
-    backdrop: row['backdrop'] ? `/img/${row['backdrop']}` : null,
+    poster: row['mediaItem.posterId']
+      ? `/img/${row['mediaItem.posterId']}`
+      : null,
+    posterSmall: row['mediaItem.posterId']
+      ? `/img/${row['mediaItem.posterId']}?size=small`
+      : null,
+    backdrop: row['mediaItem.backdropId']
+      ? `/img/${row['mediaItem.backdropId']}`
+      : null,
     hasDetails: false,
     seen:
       row['mediaItem.mediaType'] === 'tv'

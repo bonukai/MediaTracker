@@ -133,7 +133,7 @@ export class Audible extends MetadataProvider {
       audibleId: item.asin,
       authors: item.authors?.map((author) => author.name),
       narrators: item.narrators?.map((narrator) => narrator.name),
-      poster: item.product_images?.[2400],
+      externalPosterUrl: item.product_images?.[2400],
       language: item.language,
       releaseDate: item.release_date,
       runtime: item.runtime_length_min,
