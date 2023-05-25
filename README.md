@@ -173,5 +173,5 @@ docker run -p 7481:7481 mediatracker
 - https://github.com/devfake/flox
 - https://github.com/leepeuker/movary
 - https://github.com/IgnisDa/ryot
-
+- https://github.com/krateng/maloja
 
