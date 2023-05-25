@@ -168,3 +168,10 @@ docker run -p 7481:7481 mediatracker
 # Contributors
 
 - [URBANsUNITED](https://github.com/URBANsUNITED) (German translation)
+
+# Similar projects
+- https://github.com/devfake/flox
+- https://github.com/leepeuker/movary
+- https://github.com/IgnisDa/ryot
+
+
