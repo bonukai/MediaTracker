@@ -183,71 +183,75 @@ class MediaItemRepository extends repository<MediaItemBase>({
           id: mediaItem.id,
         });
 
-      await Promise.all(
-        result.seasons.map(async (season) => {
-          let updated = false;
+      if (result.seasons) {
+        await Promise.all(
+          result.seasons.map(async (season) => {
+            let updated = false;
 
-          season.numberOfEpisodes =
-            season.numberOfEpisodes || season.episodes?.length || 0;
-          season.tvShowId = mediaItem.id;
+            season.numberOfEpisodes =
+              season.numberOfEpisodes || season.episodes?.length || 0;
+            season.tvShowId = mediaItem.id;
 
-          if (!season.externalPosterUrl) {
-            season.posterId = null;
-          }
+            if (!season.externalPosterUrl) {
+              season.posterId = null;
+            }
 
-          if (season.externalPosterUrl && !season.posterId) {
-            season.posterId = getImageId();
-          }
+            if (season.externalPosterUrl && !season.posterId) {
+              season.posterId = getImageId();
+            }
 
-          const newSeason = omitUndefinedValues(
-            tvSeasonRepository.stripValue(tvSeasonRepository.serialize(season))
-          );
+            const newSeason = omitUndefinedValues(
+              tvSeasonRepository.stripValue(
+                tvSeasonRepository.serialize(season)
+              )
+            );
 
-          if (season.id) {
-            const res = await trx('season')
-              .update(newSeason)
-              .where({ id: season.id });
+            if (season.id) {
+              const res = await trx('season')
+                .update(newSeason)
+                .where({ id: season.id });
 
-            updated = res === 1;
-          }
+              updated = res === 1;
+            }
 
-          if (!updated) {
-            season.id = (
-              await trx('season').insert(newSeason).returning('id')
-            ).at(0).id;
-          }
+            if (!updated) {
+              season.id = (
+                await trx('season').insert(newSeason).returning('id')
+              ).at(0).id;
+            }
 
-          if (season.episodes) {
-            for (const episode of season.episodes) {
-              let updated = false;
+            if (season.episodes) {
+              for (const episode of season.episodes) {
+                let updated = false;
 
-              episode.seasonAndEpisodeNumber =
-                episode.seasonNumber * 1000 + episode.episodeNumber;
-              episode.seasonId = season.id;
-              episode.tvShowId = mediaItem.id;
+                episode.seasonAndEpisodeNumber =
+                  episode.seasonNumber * 1000 + episode.episodeNumber;
+                episode.seasonId = season.id;
+                episode.tvShowId = mediaItem.id;
 
-              const newEpisode = omitUndefinedValues(
-                tvEpisodeRepository.stripValue(
-                  tvEpisodeRepository.serialize(episode)
-                )
-              );
+                const newEpisode = omitUndefinedValues(
+                  tvEpisodeRepository.stripValue(
+                    tvEpisodeRepository.serialize(episode)
+                  )
+                );
 
-              if (episode.id) {
-                const res = await trx<TvEpisode>('episode')
-                  .update(newEpisode)
-                  .where({ id: episode.id });
+                if (episode.id) {
+                  const res = await trx<TvEpisode>('episode')
+                    .update(newEpisode)
+                    .where({ id: episode.id });
 
-                updated = res === 1;
-              }
-              if (!updated) {
-                episode.id = (
-                  await trx('episode').insert(newEpisode).returning('id')
-                ).at(0).id;
+                  updated = res === 1;
+                }
+                if (!updated) {
+                  episode.id = (
+                    await trx('episode').insert(newEpisode).returning('id')
+                  ).at(0).id;
+                }
               }
             }
-          }
-        })
-      );
+          })
+        );
+      }
 
       return result;
     });
@@ -681,9 +685,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
               .insert({
                 ...this.serialize(omitUndefinedValues(this.stripValue(item))),
                 posterId: item.externalPosterUrl ? getImageId() : null,
-                backdropId: item.externalBackdropUrl
-                  ? getImageId()
-                  : null,
+                backdropId: item.externalBackdropUrl ? getImageId() : null,
                 lastTimeUpdated: Date.now(),
               })
               .returning('*');
