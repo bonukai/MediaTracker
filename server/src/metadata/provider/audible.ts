@@ -49,8 +49,7 @@ export class Audible extends MetadataProvider {
       {
         params: {
           title: query,
-          num_results: 25,
-          products_sort_by: 'Relevance',
+          num_results: 50,
           ...this.queryParams,
         },
       }
