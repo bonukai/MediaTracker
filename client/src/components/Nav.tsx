@@ -94,6 +94,9 @@ export const NavComponent: FunctionComponent = () => {
                       className="border-none" 
                       type="button">
                       Library
+                      <i className=" ml-2 text-sm select-none material-icons">
+                        expand_more
+                      </i>
                     </button>
                     <nav className="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
                         <ul className="py-2 flex flex-col flex-grow" aria-labelledby="dropdownDefaultButton">
@@ -128,7 +131,7 @@ export const NavComponent: FunctionComponent = () => {
                 <DropDown className="ml-auto flex items-center">
                   <a href="#/settings">
                     {user.name}
-                    <i className=" ml-2 select-none material-icons">
+                    <i className=" ml-2 text-sm select-none material-icons">
                       expand_more
                     </i>
                   </a>
