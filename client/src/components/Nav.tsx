@@ -83,13 +83,13 @@ export const NavComponent: FunctionComponent = () => {
                         expand_more
                       </i>
                     </button>
-                    <nav className="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                    <nav className="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-neutral-700 dark:text-white">
                         <ul className="py-2 flex flex-col flex-grow" aria-labelledby="dropdownDefaultButton">
                         {libraryRoutes.map((route) =>
                           <li key={route.path}>
-                            <a href={route.path} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                            <NavLink to={route.path} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-neutral-800 dark:hover:text-white">
                               {route.name}
-                            </a>
+                            </NavLink>
                           </li>
                         )}
                         </ul>
@@ -120,9 +120,9 @@ export const NavComponent: FunctionComponent = () => {
                       expand_more
                     </i>
                   </a>
-                  <nav className="absolute top-6 right-0 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700">
+                  <nav className="absolute top-6 right-0 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-neutral-700 dark:text-white">
                       <ul className="py-2 flex flex-col flex-grow text-right" aria-labelledby="dropdownDefaultButton">
-                        <li className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                        <li className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-neutral-800 dark:hover:text-white">
                           <span
                             onClick={() => setDarkMode(!darkMode)}
                             className="cursor-pointer select-none"
@@ -135,17 +135,17 @@ export const NavComponent: FunctionComponent = () => {
                         </li>
                         {userRoutes.map((route) =>
                           <li key={route.path}>
-                            <a href={route.path} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                            <NavLink to={route.path} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-neutral-800 dark:hover:text-white">
                               {route.name}
                               <i className=" ml-2 select-none material-icons">
                                 {route.icon}
                               </i>
-                            </a>
+                            </NavLink>
                           </li>
                         )}
                         <li>
                           <a
-                            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-neutral-800 dark:hover:text-white"
                             href="/logout"
                             onClick={(e) => {
                               e.preventDefault();
