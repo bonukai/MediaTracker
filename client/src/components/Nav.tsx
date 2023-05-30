@@ -62,24 +62,9 @@ export const NavComponent: FunctionComponent = () => {
         <>
           <nav className="border-b-2">
             <div className="container mx-auto py-3 py-3">
-              <div className="flex">
-                <div className="lg:hidden">
-                  <div className="flex flex-col lg:flex-row">
-                  hi
-                    {routes
-                      .filter((route) => route.path === location.pathname)
-                      .map((route) => (
-                        <span
-                          key={route.path}
-                          className="m-1 mr-2 text-xl whitespace-nowrap"
-                        >
-                          {route.name}
-                        </span>
-                      ))}
-                  </div>
-                </div>
-
-                <div className="hidden lg:flex text-l">
+              <div className="hidden lg:flex flex-row text-l">
+              { /* Start desktop nav */ }
+                <div className="flex flex-row">
                   <NavLink
                     to='/'
                     className={({ isActive }) =>
@@ -177,6 +162,26 @@ export const NavComponent: FunctionComponent = () => {
                   </nav>
                 </DropDown>
               </div>
+              { /* End desktop nav */ }
+
+              { /* Start mobile nav */ }
+              <div className="flex flex-row lg:hidden">
+                <NavLink
+                  to='/'
+                  className={({ isActive }) =>
+                    clsx(isActive && 'underline')
+                  }
+                >
+                  {t`Home`}
+                </NavLink>
+                <button className="px-4 ml-auto"
+                  onClick={() => setShowSidebar(true)}>
+                  <i className="text-sm select-none material-icons">
+                    menu
+                  </i>
+                </button>
+              </div>
+              { /* End mobile nav */ }
             </div>
           </nav>
 
