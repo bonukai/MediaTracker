@@ -37,68 +37,69 @@ export const NavComponent: FunctionComponent = () => {
     <>
       {user ? (
         <>
-          <nav className="flex items-center">
-            <div className="hidden md:block">
-              <div className="flex flex-col md:flex-row">
-                {routes.map((route) => (
-                  <span
-                    key={route.path}
-                    className="m-1 mr-2 text-xl whitespace-nowrap"
-                  >
-                    <NavLink
-                      to={route.path}
-                      className={({ isActive }) =>
-                        clsx(isActive && 'underline')
-                      }
-                    >
-                      {route.name}
-                    </NavLink>
-                  </span>
-                ))}
-              </div>
-            </div>
+          <nav className="border-b-2">
+            <div className="container mx-auto py-3 py-3">
+              <div className="flex">
+                <div className="lg:hidden">
+                  <div className="flex flex-col lg:flex-row">
+                    {routes
+                      .filter((route) => route.path === location.pathname)
+                      .map((route) => (
+                        <span
+                          key={route.path}
+                          className="m-1 mr-2 text-xl whitespace-nowrap"
+                        >
+                          {route.name}
+                        </span>
+                      ))}
+                  </div>
+                </div>
 
-            <div className="md:hidden">
-              <div className="flex flex-col md:flex-row">
-                {routes
-                  .filter((route) => route.path === location.pathname)
-                  .map((route) => (
+                <div className="hidden lg:flex">
+                  {routes.map((route) => (
                     <span
                       key={route.path}
-                      className="m-1 mr-2 text-xl whitespace-nowrap"
+                      className="mr-3 text-xl whitespace-nowrap"
                     >
-                      {route.name}
+                      <NavLink
+                        to={route.path}
+                        className={({ isActive }) =>
+                          clsx(isActive && 'underline')
+                        }
+                      >
+                        {route.name}
+                      </NavLink>
                     </span>
                   ))}
+                </div>
+
+                <div className="ml-auto flex">
+                  <span
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="pr-2 cursor-pointer select-none material-icons"
+                  >
+                    {darkMode ? <>light_mode</> : <>mode_night</>}
+                  </span>
+                  <a href="#/settings">{user.name}</a>
+                  <span className="px-1">|</span>
+                  <a
+                    href="/logout"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      logout();
+                    }}
+                  >
+                    <Trans>Logout</Trans>
+                  </a>
+                  <span
+                    className="flex px-2 cursor-pointer lg:hidden material-icons"
+                    onClick={() => setShowSidebar(!showSidebar)}
+                  >
+                    {showSidebar ? 'menu_open' : 'menu'}
+                  </span>
+                </div>
               </div>
             </div>
-
-            <div className="inline-flex ml-auto mr-2 whitespace-nowrap">
-              <span
-                onClick={() => setDarkMode(!darkMode)}
-                className="pr-2 cursor-pointer select-none material-icons"
-              >
-                {darkMode ? <>light_mode</> : <>mode_night</>}
-              </span>
-              <a href="#/settings">{user.name}</a>
-              <span className="px-1">|</span>
-              <a
-                href="/logout"
-                onClick={(e) => {
-                  e.preventDefault();
-                  logout();
-                }}
-              >
-                <Trans>Logout</Trans>
-              </a>
-            </div>
-
-            <span
-              className="flex px-2 cursor-pointer md:hidden material-icons"
-              onClick={() => setShowSidebar(!showSidebar)}
-            >
-              {showSidebar ? 'menu_open' : 'menu'}
-            </span>
           </nav>
 
           <SideBar
