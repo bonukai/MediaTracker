@@ -62,7 +62,7 @@ export const NavComponent: FunctionComponent = () => {
         <>
           <nav className="border-b-2">
             <div className="container mx-auto py-3 py-3">
-              <div className="hidden lg:flex flex-row text-l">
+              <div className="hidden md:flex flex-row text-l">
               { /* Start desktop nav */ }
                 <div className="flex flex-row">
                   <NavLink
@@ -165,7 +165,7 @@ export const NavComponent: FunctionComponent = () => {
               { /* End desktop nav */ }
 
               { /* Start mobile nav */ }
-              <div className="flex flex-row lg:hidden">
+              <div className="flex flex-row md:hidden">
                 <NavLink
                   to='/'
                   className={({ isActive }) =>
