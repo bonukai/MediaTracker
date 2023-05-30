@@ -212,6 +212,7 @@ const SideBar: FunctionComponent<{
 }> = (props) => {
   const { showSidebar, hideSidebar } = props;
   const routes = useRouteNames();
+  const { logout } = useUser();
 
   return (
     <Transition
@@ -263,6 +264,18 @@ const SideBar: FunctionComponent<{
                       </NavLink>
                     </span>
                   ))}
+                  <span className="my-2 ml-1 mr-3 text-xl">
+                    <a
+                      className=""
+                      href="/logout"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        logout();
+                      }}
+                    >
+                      <Trans>Logout</Trans>
+                    </a>
+                  </span>
                 </div>
               </animated.div>
             </>
