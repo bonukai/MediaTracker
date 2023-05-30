@@ -3,26 +3,49 @@ import clsx from 'clsx';
 import { t, Trans } from '@lingui/macro';
 import { NavLink, useLocation } from 'react-router-dom';
 import { animated, Transition, Spring } from '@react-spring/web';
+import styled from 'styled-components';
 
 import { useUser } from 'src/api/user';
 import { useDarkMode } from 'src/hooks/darkMode';
 
+const libraryRoutes = [
+  { path: '/tv', name: t`Tv` },
+  { path: '/movies', name: t`Movies` },
+  { path: '/games', name: t`Games` },
+  { path: '/books', name: t`Books` },
+  { path: '/audiobooks', name: t`Audiobooks` },
+];
+const extraRoutes = [
+  { path: '/in-progress', name: t`In progress` },
+  { path: '/watchlist', name: t`Watchlist` },
+];
+const userRoutes = [
+    { path: '/upcoming', name: t`Upcoming`, icon: 'event' },
+    { path: '/calendar', name: t`Calendar`, icon: 'calendar_month' },
+    { path: '/import', name: t`Import`, icon: 'file_upload' },
+    { path: '/lists', name: t`Lists`, icon: 'list' },
+    { path: '/settings', name: t`Settings`, icon: 'settings' },
+];
+
 export const useRouteNames = () => {
   return [
     { path: '/', name: t`Home` },
-    { path: '/tv', name: t`Tv` },
-    { path: '/movies', name: t`Movies` },
-    { path: '/games', name: t`Games` },
-    { path: '/books', name: t`Books` },
-    { path: '/audiobooks', name: t`Audiobooks` },
-    { path: '/upcoming', name: t`Upcoming` },
-    { path: '/in-progress', name: t`In progress` },
-    { path: '/watchlist', name: t`Watchlist` },
-    { path: '/calendar', name: t`Calendar` },
-    { path: '/import', name: t`Import` },
-    { path: '/lists', name: t`Lists` },
+    ...libraryRoutes,
+    ...userRoutes,
   ];
 };
+
+const DropDown = styled.div`
+  position: relative;
+  nav {
+    display: none;
+  }
+  &:hover {
+    nav {
+      display: flex;
+    }
+  }
+`;
 
 export const NavComponent: FunctionComponent = () => {
   const { user, logout } = useUser();
@@ -42,6 +65,7 @@ export const NavComponent: FunctionComponent = () => {
               <div className="flex">
                 <div className="lg:hidden">
                   <div className="flex flex-col lg:flex-row">
+                  hi
                     {routes
                       .filter((route) => route.path === location.pathname)
                       .map((route) => (
@@ -55,11 +79,39 @@ export const NavComponent: FunctionComponent = () => {
                   </div>
                 </div>
 
-                <div className="hidden lg:flex">
-                  {routes.map((route) => (
+                <div className="hidden lg:flex text-l">
+                  <NavLink
+                    to='/'
+                    className={({ isActive }) =>
+                      clsx(isActive && 'underline')
+                    }
+                  >
+                    {t`Home`}
+                  </NavLink>
+
+                  <DropDown className="ml-4">
+                    <button
+                      className="border-none" 
+                      type="button">
+                      Library
+                    </button>
+                    <nav className="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                        <ul className="py-2 flex flex-col flex-grow" aria-labelledby="dropdownDefaultButton">
+                        {libraryRoutes.map((route) =>
+                          <li key={route.path}>
+                            <a href={route.path} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                              {route.name}
+                            </a>
+                          </li>
+                        )}
+                        </ul>
+                    </nav>
+                  </DropDown>
+
+                  {extraRoutes.map((route) => (
                     <span
                       key={route.path}
-                      className="mr-3 text-xl whitespace-nowrap"
+                      className="ml-4 whitespace-nowrap"
                     >
                       <NavLink
                         to={route.path}
@@ -73,31 +125,54 @@ export const NavComponent: FunctionComponent = () => {
                   ))}
                 </div>
 
-                <div className="ml-auto flex">
-                  <span
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="pr-2 cursor-pointer select-none material-icons"
-                  >
-                    {darkMode ? <>light_mode</> : <>mode_night</>}
-                  </span>
-                  <a href="#/settings">{user.name}</a>
-                  <span className="px-1">|</span>
-                  <a
-                    href="/logout"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      logout();
-                    }}
-                  >
-                    <Trans>Logout</Trans>
+                <DropDown className="ml-auto flex items-center">
+                  <a href="#/settings">
+                    {user.name}
+                    <i className=" ml-2 select-none material-icons">
+                      expand_more
+                    </i>
                   </a>
-                  <span
-                    className="flex px-2 cursor-pointer lg:hidden material-icons"
-                    onClick={() => setShowSidebar(!showSidebar)}
-                  >
-                    {showSidebar ? 'menu_open' : 'menu'}
-                  </span>
-                </div>
+                  <nav className="absolute top-6 right-0 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700">
+                      <ul className="py-2 flex flex-col flex-grow text-right" aria-labelledby="dropdownDefaultButton">
+                        <li className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                          <span
+                            onClick={() => setDarkMode(!darkMode)}
+                            className="cursor-pointer select-none"
+                          >
+                            {darkMode ? <>Light</> : <>Dark</>} mode
+                            <i className=" ml-2 select-none material-icons">
+                              {darkMode ? <>light_mode</> : <>mode_night</>}
+                            </i>
+                          </span>
+                        </li>
+                        {userRoutes.map((route) =>
+                          <li key={route.path}>
+                            <a href={route.path} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                              {route.name}
+                              <i className=" ml-2 select-none material-icons">
+                                {route.icon}
+                              </i>
+                            </a>
+                          </li>
+                        )}
+                        <li>
+                          <a
+                            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                            href="/logout"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              logout();
+                            }}
+                          >
+                            <Trans>Logout</Trans>
+                            <i className=" ml-2 select-none material-icons">
+                              logout
+                            </i>
+                          </a>
+                        </li>
+                      </ul>
+                  </nav>
+                </DropDown>
               </div>
             </div>
           </nav>
