@@ -94,7 +94,7 @@ volumes:
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | TMDB_LANG          | ISO 639-1 country code, one of: `om`, `ab`, `aa`, `af`, `sq`, `am`, `ar`, `hy`, `as`, `ay`, `az`, `ba`, `eu`, `bn`, `dz`, `bh`, `bi`, `br`, `bg`, `my`, `be`, `km`, `ca`, `zh`, `co`, `hr`, `cs`, `da`, `nl`, `en`, `eo`, `et`, `fo`, `fj`, `fi`, `fr`, `fy`, `gl`, `ka`, `de`, `el`, `kl`, `gn`, `gu`, `ha`, `he`, `hi`, `hu`, `is`, `id`, `ia`, `ie`, `ik`, `iu`, `ga`, `it`, `ja`, `jw`, `kn`, `ks`, `kk`, `rw`, `ky`, `rn`, `ko`, `ku`, `lo`, `la`, `lv`, `ln`, `lt`, `mk`, `mg`, `ms`, `ml`, `mt`, `mi`, `mr`, `mo`, `mn`, `na`, `ne`, `no`, `oc`, `or`, `ps`, `fa`, `pl`, `pt`, `pa`, `qu`, `rm`, `ro`, `ru`, `sm`, `sg`, `sa`, `gd`, `sr`, `sh`, `st`, `tn`, `sn`, `sd`, `si`, `ss`, `sk`, `sl`, `so`, `es`, `su`, `sw`, `sv`, `tl`, `tg`, `ta`, `tt`, `te`, `th`, `bo`, `ti`, `to`, `ts`, `tr`, `tk`, `tw`, `ug`, `uk`, `ur`, `uz`, `vi`, `vo`, `cy`, `wo`, `xh`, `yi`, `yo`, `za`, `zu` |
 | AUDIBLE_LANG       | ISO 639-1 country code, one of: `au`, `ca`, `de`, `es`, `fr`, `in`, `it`, `jp`, `gb`, `us`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| SERVER_LANG        | ISO 639-1 country code, one of: `da`, `de`, `en`, `es`, `fr`, `ko`, `pt`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| SERVER_LANG        | ISO 639-1 country code, one of: `da`, `de`, `en`, `es`, `fr`, `ko`, `pt`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | DATABASE_CLIENT    | Database client: `better-sqlite3` or `pg`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | DATABASE_PATH      | Only for sqlite, path to database                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | DATABASE_URL       | Connection string                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
@@ -108,6 +108,8 @@ volumes:
 | PUID               | UserID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | PGID               | GroupID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | TZ                 | Timezone, for example `Europe/London`, see [full list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ASSETS_PATH        | Directory for posters and backdrops, defaults to '$HOME/.mediatracker/img'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| LOGS_PATH          | Directory for logs, defaults to '$HOME/.mediatracker/logs'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
 ## Heroku
 
@@ -122,14 +124,14 @@ docker run -p 7481:7481 mediatracker
 
 # Features
 
-- notifications
-- calendar
-- multiple users
-- REST API
-- watchlist
-- docker image
-- import from [Trakt](https://trakt.tv)
-- import from [goodreads](https://www.goodreads.com)
+-   notifications
+-   calendar
+-   multiple users
+-   REST API
+-   watchlist
+-   docker image
+-   import from [Trakt](https://trakt.tv)
+-   import from [goodreads](https://www.goodreads.com)
 
 # Import
 
@@ -151,27 +153,26 @@ docker run -p 7481:7481 mediatracker
 
 # Notification platforms
 
-- [gotify](https://gotify.net)
-- [ntfy](https://ntfy.sh)
-- [Pushbullet](https://www.pushbullet.com)
-- [Discord](https://discord.com)
-- [Pushover](https://pushover.net)
-- [Pushsafer](https://www.pushsafer.com)
+-   [gotify](https://gotify.net)
+-   [ntfy](https://ntfy.sh)
+-   [Pushbullet](https://www.pushbullet.com)
+-   [Discord](https://discord.com)
+-   [Pushover](https://pushover.net)
+-   [Pushsafer](https://www.pushsafer.com)
 
 # Integrations
 
-- [Jellyfin](https://jellyfin.org/) - [Plugin](https://github.com/bonukai/jellyfin-plugin-mediatracker), minimum MediaTracker version: `0.1.0`
-- [Plex](https://www.plex.tv/) - Generate Application token in your MediaTracker instance, and add a [webhook](https://app.plex.tv/desktop/#!/settings/webhooks) in plex `[your MediaTracker url]/api/plex?token=[MediaTracker Application Token]`
-- [Kodi](https://kodi.tv/) - [Plugin](https://github.com/bonukai/script.mediatracker), minimum MediaTracker version: `0.1.0`
-  
+-   [Jellyfin](https://jellyfin.org/) - [Plugin](https://github.com/bonukai/jellyfin-plugin-mediatracker), minimum MediaTracker version: `0.1.0`
+-   [Plex](https://www.plex.tv/) - Generate Application token in your MediaTracker instance, and add a [webhook](https://app.plex.tv/desktop/#!/settings/webhooks) in plex `[your MediaTracker url]/api/plex?token=[MediaTracker Application Token]`
+-   [Kodi](https://kodi.tv/) - [Plugin](https://github.com/bonukai/script.mediatracker), minimum MediaTracker version: `0.1.0`
 
 # Contributors
 
-- [URBANsUNITED](https://github.com/URBANsUNITED) (German translation)
+-   [URBANsUNITED](https://github.com/URBANsUNITED) (German translation)
 
 # Similar projects
-- https://github.com/devfake/flox
-- https://github.com/leepeuker/movary
-- https://github.com/IgnisDa/ryot
-- https://github.com/krateng/maloja
 
+-   https://github.com/devfake/flox
+-   https://github.com/leepeuker/movary
+-   https://github.com/IgnisDa/ryot
+-   https://github.com/krateng/maloja
