@@ -38,7 +38,7 @@
   "{0} has been released": "{0}이(가) 출시되었습니다",
   "{count, plural, one {# episode for **{title}** has been released} other {# episodes for **{title}** has been released}}": "{count, plural, one {**{title}**의 # 에피소드가 출시되었습니다.} other {**{title}**의 # 에피소드가 출시되었습니다.}}",
   "{count, plural, one {# episode of **{title}** has been released} other {# episodes of **{title}** has been released}}": "{count, plural, one {**{title}**의 # 에피소드가 출시되었습니다.} other {**{title}**의 # 에피소드가 출시되었습니다.}}",
-  "{count, plural, one {# episode of {0} has been released} other {# episodes of {1} has been released}}": "{count, plural, one {# episode of {0} has been released} other {# episodes of {1} has been released}}",
+  "{count, plural, one {# episode of {0} has been released} other {# episodes of {1} has been released}}": "{count, plural, one {{0}의 # 에피소드가 출시되었습니다.} other {{1}의 # 에피소드가 출시되었습니다.}}",
   "{count, plural, one {Failed to update 1 item} other {Failed to update # items}}": "{count, plural, one {1 항목을 업데이트 하는 데 실패했습니다.} other {# 항목을 업데이트 하는 데 실패했습니다.}}",
   "{count, plural, one {Sending notification for new episodes of {title} to # user} other {Sending notification for new episodes of {title} to # users}}": "{count, plural, one {{title}의 새로운 에피소드에 대한 알림을 # 사용자에게 보내는 중} other {{title}의 새로운 에피소드에 대한 알림을 # 사용자에게 보내는 중}}",
   "{count, plural, one {Sending notification for {title} to # user} other {Sending notification for {title} to # users}}": "{count, plural, one {{title}에 대한 알림을 # 사용자에게 보내는 중} other {{title}에 대한 알림을 # 사용자에게 보내는 중}}",
