@@ -78,7 +78,7 @@ export const MyRouter: FunctionComponent = () => {
 
               <Route
                 path="/upcoming"
-                element={<UpcomingPage key="/audiobooks" />}
+                element={<UpcomingPage key="/upcoming" />}
               />
               <Route
                 path="/watchlist"
