@@ -1,6 +1,6 @@
 # MediaTracker &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/bonukai/MediaTracker/blob/main/LICENSE.md) [![Join the chat at https://gitter.im/bonukai/MediaTracker](https://badges.gitter.im/bonukai/MediaTracker.svg)](https://gitter.im/bonukai/MediaTracker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Crowdin](https://badges.crowdin.net/mediatracker/localized.svg)](https://crowdin.com/project/mediatracker) [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/bonukai/mediatracker)](https://hub.docker.com/r/bonukai/mediatracker) [![Docker Pulls](https://img.shields.io/docker/pulls/bonukai/mediatracker)](https://hub.docker.com/r/bonukai/mediatracker) [![CodeFactor](https://www.codefactor.io/repository/github/bonukai/mediatracker/badge)](https://www.codefactor.io/repository/github/bonukai/mediatracker) [![codecov](https://codecov.io/gh/bonukai/MediaTracker/branch/main/graph/badge.svg?token=CPMW6R7M1Z)](https://codecov.io/gh/bonukai/MediaTracker)
 
-Self hosted platform for tracking movies, tv shows, video games, books and audiobooks, highly inspired by [flox](https://github.com/devfake/flox)
+Self hosted platform for tracking movies, tv shows, video games, books, audiobooks and music albums, highly inspired by [flox](https://github.com/devfake/flox)
 
 # Demo
 
@@ -150,6 +150,8 @@ docker run -p 7481:7481 mediatracker
 | [IGDB](https://www.igdb.com/)\*                                                | video game     |      ✗       |
 | [Audible API](https://audible.readthedocs.io/en/latest/misc/external_api.html) | audiobooks     |      ✓       |
 | [Open Library](https://openlibrary.org/)                                       | books          |      ✗       |
+| [MusicBrainz](https://musicbrainz.org/)                                        | music          |      ✗       |
+
 
 \* IGDB has a limit of 4 requests per second. Because of that IGDB API key is not provided with MediaTracker, it can be acquired [here](https://api-docs.igdb.com/#account-creation) and set in [http://localhost:7481/#/settings/configuration](http://localhost:7481/#/settings/configuration)
 

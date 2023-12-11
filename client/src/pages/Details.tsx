@@ -23,6 +23,7 @@ import {
   isAudiobook,
   isBook,
   isMovie,
+  isMusic,
   isOnWatchlist,
   isTvShow,
   isVideoGame,
@@ -184,7 +185,7 @@ const ExternalLinks: FunctionComponent<{
         />
       )}
 
-      {mediaItem.audibleId && (
+      {mediaItem.audibleId && ( // TODO add music logo
         <IconWithLink
           href={`https://audible.${audibleDomain}/pd/${mediaItem.audibleId}?overrideBaseCountry=true&ipRedirectOverride=true`}
           src="logo/audible.png"
@@ -466,7 +467,8 @@ export const DetailsPage: FunctionComponent = () => {
               >
                 {isMovie(mediaItem) && <Trans>I am watching it</Trans>}
                 {isBook(mediaItem) && <Trans>I am reading it</Trans>}
-                {isAudiobook(mediaItem) && <Trans>I am listening it</Trans>}
+                {isAudiobook(mediaItem) && <Trans>I am listening to it</Trans>}
+                {isMusic(mediaItem) && <Trans>I am listening to it</Trans>}
                 {isVideoGame(mediaItem) && <Trans>I am playing it</Trans>}
               </div>
             )}
@@ -485,6 +487,9 @@ export const DetailsPage: FunctionComponent = () => {
                   {isMovie(mediaItem) && <Trans>I finished watching it</Trans>}
                   {isBook(mediaItem) && <Trans>I finished reading it</Trans>}
                   {isAudiobook(mediaItem) && (
+                    <Trans>I finished listening it</Trans>
+                  )}
+                  {isMusic(mediaItem) && (
                     <Trans>I finished listening it</Trans>
                   )}
                   {isVideoGame(mediaItem) && (
@@ -529,7 +534,7 @@ export const DetailsPage: FunctionComponent = () => {
       )}
       {mediaItem.lastSeenAt > 0 && (
         <div className="mt-3">
-          {isAudiobook(mediaItem) && (
+          {(isAudiobook(mediaItem) || isMusic(mediaItem)) && (
             <Trans>
               Last listened at {new Date(mediaItem.lastSeenAt).toLocaleString()}
             </Trans>
@@ -557,7 +562,7 @@ export const DetailsPage: FunctionComponent = () => {
       {mediaItem.seenHistory?.length > 0 && (
         <div className="mt-3">
           <div>
-            {isAudiobook(mediaItem) && (
+            {(isAudiobook(mediaItem) || isMusic(mediaItem)) && (
               <Plural
                 value={mediaItem.seenHistory.length}
                 one="Listened 1 time"
@@ -590,7 +595,9 @@ export const DetailsPage: FunctionComponent = () => {
             )}
           </div>
           <Link to={`/seen-history/${mediaItem.id}`} className="underline">
-            {isAudiobook(mediaItem) && <Trans>Listened history</Trans>}
+            {(isAudiobook(mediaItem) || isMusic(mediaItem)) && (
+              <Trans>Listened history</Trans>
+            )}
 
             {isBook(mediaItem) && <Trans>Read history</Trans>}
 

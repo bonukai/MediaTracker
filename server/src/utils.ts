@@ -144,6 +144,12 @@ export const generateExternalUrl = (mediaItem: MediaItemBase) => {
       return `https://audible.${audibleDomain}/pd/${mediaItem.audibleId}?overrideBaseCountry=true&ipRedirectOverride=true`;
     }
   }
+
+  if (mediaItem.mediaType === 'music') {
+    if (mediaItem.musicBrainzId) {
+      return `https://musicbrainz.org/release-group/${mediaItem.musicBrainzId}`;
+    }
+  }
 };
 
 export const getImageId = customAlphabet('1234567890abcdef', 32);

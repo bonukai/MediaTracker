@@ -420,7 +420,7 @@ router.get(
         },
         SortOrder: { enum: ['asc', 'desc'], type: 'string' },
         MediaType: {
-          enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
+          enum: ['audiobook', 'book', 'movie', 'music', 'tv', 'video_game'],
           type: 'string',
         },
       },
@@ -436,7 +436,7 @@ router.get(
       $schema: 'http://json-schema.org/draft-07/schema#',
       definitions: {
         MediaType: {
-          enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
+          enum: ['audiobook', 'book', 'movie', 'music', 'tv', 'video_game'],
           type: 'string',
         },
         MediaItemOrderBy: {
@@ -707,7 +707,7 @@ router.put(
       $schema: 'http://json-schema.org/draft-07/schema#',
       definitions: {
         MediaType: {
-          enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
+          enum: ['audiobook', 'book', 'movie', 'music', 'tv', 'video_game'],
           type: 'string',
         },
       },
@@ -770,7 +770,7 @@ router.get(
       $schema: 'http://json-schema.org/draft-07/schema#',
       definitions: {
         MediaType: {
-          enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
+          enum: ['audiobook', 'book', 'movie', 'music', 'tv', 'video_game'],
           type: 'string',
         },
       },
@@ -819,7 +819,7 @@ router.put(
       $schema: 'http://json-schema.org/draft-07/schema#',
       definitions: {
         MediaType: {
-          enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
+          enum: ['audiobook', 'book', 'movie', 'music', 'tv', 'video_game'],
           type: 'string',
         },
       },

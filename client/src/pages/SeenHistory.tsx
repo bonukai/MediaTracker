@@ -9,6 +9,7 @@ import {
   isAudiobook,
   isBook,
   isMovie,
+  isMusic,
   isTvShow,
   isVideoGame,
 } from 'src/utils';
@@ -39,7 +40,7 @@ export const SeenHistoryPage: FunctionComponent = () => {
       {mediaItem.seenHistory?.length > 0 && (
         <div className="mt-3">
           <div>
-            {isAudiobook(mediaItem) && (
+            {(isAudiobook(mediaItem) || isMusic(mediaItem)) && (
               <Plural
                 value={mediaItem.seenHistory.length}
                 one="Listened 1 time"
@@ -85,7 +86,7 @@ export const SeenHistoryPage: FunctionComponent = () => {
                 <li key={seenEntry.id}>
                   {seenEntry.date ? (
                     <>
-                      {isAudiobook(mediaItem) && (
+                      {(isAudiobook(mediaItem) || isMusic(mediaItem)) && (
                         <Trans>Listened at {seenEntry.dateStr}</Trans>
                       )}
 

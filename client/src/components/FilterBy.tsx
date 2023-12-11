@@ -2,7 +2,7 @@ import React from 'react';
 import { t } from '@lingui/macro';
 
 import { MediaType } from 'mediatracker-api';
-import { isAudiobook, isBook, isVideoGame, reverseMap } from 'src/utils';
+import { isAudiobook, isBook, isMusic, isVideoGame, reverseMap } from 'src/utils';
 import { useMenuComponent } from 'src/hooks/menu';
 
 const useFilterTextMap = (mediaType: MediaType) => {
@@ -11,7 +11,7 @@ const useFilterTextMap = (mediaType: MediaType) => {
     onlyWithUserRating: t`Rated`,
     onlyWithoutUserRating: t`Unrated`,
     onlyOnWatchlist: t`On watchlist`,
-    onlySeenItems: isAudiobook(mediaType)
+    onlySeenItems: isAudiobook(mediaType) || isMusic(mediaType)
       ? t`Listened`
       : isBook(mediaType)
       ? t`Read`

@@ -75,6 +75,10 @@ export const MyRouter: FunctionComponent = () => {
                 path="/audiobooks"
                 element={<ItemsPage key="/audiobooks" mediaType="audiobook" />}
               />
+              <Route
+                path="/music"
+                element={<ItemsPage key="/music" mediaType="music" />}
+              />
 
               <Route
                 path="/upcoming"

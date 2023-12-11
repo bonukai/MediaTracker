@@ -1,6 +1,6 @@
 {
   "name": "MediaTracker",
-  "description": "Self hosted media tracker for movies, tv shows, video games, books and audiobooks",
+  "description": "Self hosted media tracker for movies, tv shows, video games, books, audiobooks, and music albums",
   "repository": "https://github.com/bonukai/MediaTracker",
   "stack": "container",
   "env": {

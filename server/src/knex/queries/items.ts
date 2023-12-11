@@ -510,6 +510,7 @@ const mapRawResult = (row: any): MediaItemItemsResponse => {
     traktId: row['mediaItem.traktId'],
     imdbId: row['mediaItem.imdbId'],
     audibleId: row['mediaItem.audibleId'],
+    musicBrainzId: row['mediaItem.musicBrainzId'],
     mediaType: row['mediaItem.mediaType'],
     numberOfSeasons: row['mediaItem.numberOfSeasons'],
     status: row['mediaItem.status'],

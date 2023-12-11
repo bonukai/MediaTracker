@@ -5,7 +5,7 @@ import { TvSeason } from 'src/entity/tvseason';
 import { AudibleCountryCode } from 'src/entity/configuration';
 import { List } from 'src/entity/list';
 
-export type MediaType = 'tv' | 'movie' | 'book' | 'video_game' | 'audiobook';
+export type MediaType = 'tv' | 'movie' | 'book' | 'video_game' | 'audiobook' | 'music';
 
 export type ExternalIds = {
   tmdbId?: number;
@@ -17,6 +17,7 @@ export type ExternalIds = {
   audibleId?: string;
   traktId?: number;
   goodreadsId?: number;
+  musicBrainzId?: string;
 };
 
 export type MediaItemBase = ExternalIds & {
@@ -160,6 +161,7 @@ export const mediaItemColumns = <const>[
   'externalBackdropUrl',
   'posterId',
   'backdropId',
+  'musicBrainzId',
 ];
 
 export const mediaItemPosterPath = (

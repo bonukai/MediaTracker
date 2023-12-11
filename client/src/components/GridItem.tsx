@@ -81,6 +81,7 @@ export const GridItem: FunctionComponent<{
     movie: t`Movie`,
     tv: t`Tv`,
     video_game: t`Video game`,
+    music: t`Music`,
   };
 
   if (season && episode) {

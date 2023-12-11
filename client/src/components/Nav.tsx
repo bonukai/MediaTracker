@@ -15,6 +15,7 @@ export const useRouteNames = () => {
     { path: '/games', name: t`Games` },
     { path: '/books', name: t`Books` },
     { path: '/audiobooks', name: t`Audiobooks` },
+    { path: '/music', name: t`Music` },
     { path: '/upcoming', name: t`Upcoming` },
     { path: '/in-progress', name: t`In progress` },
     { path: '/watchlist', name: t`Watchlist` },
