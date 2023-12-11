@@ -157,6 +157,31 @@ export const StatisticsSummary: FunctionComponent = () => {
               </div>
             </div>
           )}
+          {data.music?.plays > 0 && (
+            <div className="mb-6 mr-6">
+              <div className="text-lg font-bold">
+                <Trans>Music</Trans>
+              </div>
+              {data.music.duration > 0 && (
+                <div className="whitespace-nowrap">
+                  <Trans>
+                    <b>
+                      <FormatDuration
+                        milliseconds={data.music.duration * 60 * 1000}
+                      />{' '}
+                    </b>
+                    listening
+                  </Trans>
+                </div>
+              )}
+              <div>
+                <Trans>
+                  <b>{data.music.items}</b> albums (
+                  <b>{data.music.plays}</b> plays)
+                </Trans>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </>

@@ -2558,6 +2558,7 @@
           "audiobook",
           "book",
           "movie",
+          "music",
           "tv",
           "video_game"
         ],
@@ -2796,6 +2797,10 @@
               },
               "goodreadsId": {
                 "type": "number",
+                "nullable": true
+              },
+              "musicBrainzId": {
+                "type": "string",
                 "nullable": true
               },
               "numberOfSeasons": {
@@ -3359,6 +3364,10 @@
                 "type": "number",
                 "nullable": true
               },
+              "musicBrainzId": {
+                "type": "string",
+                "nullable": true
+              },
               "numberOfSeasons": {
                 "type": "number",
                 "nullable": true
@@ -3874,6 +3883,7 @@
                 "book",
                 "episode",
                 "movie",
+                "music",
                 "season",
                 "tv",
                 "video_game"
@@ -4354,12 +4364,40 @@
               "items",
               "plays"
             ]
+          },
+          "music": {
+            "type": "object",
+            "properties": {
+              "numberOfPages": {
+                "type": "number",
+                "nullable": true
+              },
+              "duration": {
+                "type": "number"
+              },
+              "episodes": {
+                "type": "number"
+              },
+              "items": {
+                "type": "number"
+              },
+              "plays": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "duration",
+              "episodes",
+              "items",
+              "plays"
+            ]
           }
         },
         "required": [
           "audiobook",
           "book",
           "movie",
+          "music",
           "tv",
           "video_game"
         ]

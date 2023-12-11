@@ -3,7 +3,7 @@ import { Plural, Trans } from '@lingui/macro';
 
 import { MediaItemItemsResponse, MediaType } from 'mediatracker-api';
 import { addToProgress } from 'src/api/details';
-import { isAudiobook, isBook, isMovie, isVideoGame } from 'src/utils';
+import { isAudiobook, isBook, isMovie, isMusic, isVideoGame } from 'src/utils';
 
 const InputComponent: FunctionComponent<{
   max: number;
@@ -38,7 +38,7 @@ const InputComponent: FunctionComponent<{
           }}
         />{' '}
         {isBook(mediaType) && <Plural value={value} one="page" other="pages" />}
-        {(isAudiobook(mediaType) || isMovie(mediaType)) && (
+        {(isAudiobook(mediaType) || isMovie(mediaType) || isMusic(mediaType)) && (
           <Plural value={value} one="minute" other="minutes" />
         )}
       </label>
@@ -80,7 +80,7 @@ export const SetProgressComponent: FunctionComponent<{
           />
         )}
 
-        {(isAudiobook(mediaItem) || isMovie(mediaItem)) &&
+        {(isAudiobook(mediaItem) || isMovie(mediaItem) || isMusic(mediaItem)) &&
           mediaItem.runtime && (
             <InputComponent
               max={mediaItem.runtime}

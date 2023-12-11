@@ -1,7 +1,7 @@
 {
   "name": "mediatracker",
   "version": "0.2.3",
-  "description": "Self hosted media tracker for movies, tv shows, video games, books and audiobooks",
+  "description": "Self hosted media tracker for movies, tv shows, video games, books, audiobooks and music albums",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bonukai/MediaTracker.git"

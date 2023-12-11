@@ -17,6 +17,7 @@ import {
   isAudiobook,
   isBook,
   isMovie,
+  isMusic,
   isTvShow,
   isVideoGame,
 } from 'src/utils';
@@ -79,6 +80,10 @@ export const SelectSeenDateComponent: FunctionComponent<{
 
         {isBook(mediaItem) && (
           <Trans>When did you read &quot;{mediaItem.title}&quot;?</Trans>
+        )}
+
+        {isMusic(mediaItem) && (
+          <Trans>When did you listen to &quot;{mediaItem.title}&quot;?</Trans>
         )}
 
         {isMovie(mediaItem) && (

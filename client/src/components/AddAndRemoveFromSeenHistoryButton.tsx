@@ -13,6 +13,7 @@ import {
   isAudiobook,
   isBook,
   isMovie,
+  isMusic,
   isTvShow,
   isVideoGame,
 } from 'src/utils';
@@ -39,6 +40,7 @@ export const AddToSeenHistoryButton: FunctionComponent<{
           <div className="text-sm btn-blue bg" onClick={openModal}>
             {isAudiobook(mediaItem) && <Trans>Add to listened history</Trans>}
             {isBook(mediaItem) && <Trans>Add to read history</Trans>}
+            {isMusic(mediaItem) && <Trans>Add to listened history</Trans>}
             {isVideoGame(mediaItem) && <Trans>Add to played history</Trans>}
             {isMovie(mediaItem) && <Trans>Add to seen history</Trans>}
             {isTvShow(mediaItem) &&
@@ -122,6 +124,7 @@ export const RemoveFromSeenHistoryButton: FunctionComponent<{
     >
       {isAudiobook(mediaItem) && <Trans>Remove from listened history</Trans>}
       {isBook(mediaItem) && <Trans>Remove from read history</Trans>}
+      {isMusic(mediaItem) && <Trans>Remove from listened history</Trans>}
       {isVideoGame(mediaItem) && <Trans>Remove from played history</Trans>}
       {isMovie(mediaItem) && <Trans>Remove from seen history</Trans>}
       {isTvShow(mediaItem) &&

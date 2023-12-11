@@ -5,6 +5,7 @@ import { OpenLibrary } from 'src/metadata/provider/openlibrary';
 import { TMDbMovie, TMDbTv } from 'src/metadata/provider/tmdb';
 import _ from 'lodash';
 import { MetadataProvider } from 'src/metadata/metadataProvider';
+import { MusicBrainz } from './provider/musicbrainz';
 
 const providers = <const>[
   new IGDB(),
@@ -12,6 +13,7 @@ const providers = <const>[
   new OpenLibrary(),
   new TMDbMovie(),
   new TMDbTv(),
+  new MusicBrainz(),
 ];
 
 class MetadataProviders {

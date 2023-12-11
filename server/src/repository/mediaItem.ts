@@ -378,6 +378,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
     goodreadsId?: number[];
     traktId?: number[];
     tvdbId?: number[];
+    musicBrainzId?: string[];
     mediaType: MediaType;
   }) {
     const totalNumberOfIds = externalIdColumnNames.reduce(
@@ -456,9 +457,11 @@ class MediaItemRepository extends repository<MediaItemBase>({
         if (params.traktId) {
           qb.orWhere('traktId', params.traktId);
         }
-
         if (params.tvdbId) {
           qb.orWhere('tvdbId', params.tvdbId);
+        }
+        if (params.musicBrainzId) {
+          qb.orWhere('musicBrainzId', params.musicBrainzId);
         }
       })
       .first();
@@ -656,6 +659,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
     searchResult: MediaItemForProvider[],
     mediaType: MediaType
   ) {
+
     return await Promise.all(
       searchResult
         .filter(
@@ -715,16 +719,5 @@ const externalIdColumnNames = <const>[
   'traktId',
   'goodreadsId',
   'tvdbId',
+  'musicBrainzId'
 ];
-
-const groupByExternalId = <T extends MediaItemForProvider>(items: T[]) => {
-  return _(externalIdColumnNames)
-    .keyBy()
-    .mapValues((externalIdColumnName) =>
-      _(items)
-        .filter((item) => Boolean(item[externalIdColumnName]))
-        .groupBy(externalIdColumnName)
-        .value()
-    )
-    .value();
-};

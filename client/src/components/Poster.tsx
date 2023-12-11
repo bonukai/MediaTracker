@@ -209,7 +209,7 @@ const PosterSpring: FunctionComponent<{
 };
 
 const tailwindcssAspectRatioForMediaType = (mediaType?: MediaType) => {
-  if (mediaType === 'audiobook') {
+  if (mediaType === 'audiobook' || mediaType === 'music') {
     return 'aspect-[1/1]';
   }
 
@@ -218,18 +218,6 @@ const tailwindcssAspectRatioForMediaType = (mediaType?: MediaType) => {
   }
 
   return 'aspect-[2/3]';
-};
-
-const aspectRatioForMediaType = (mediaType?: MediaType) => {
-  if (mediaType === 'audiobook') {
-    return 1 / 1;
-  }
-
-  if (mediaType === 'video_game') {
-    return 3 / 4;
-  }
-
-  return 2 / 3;
 };
 
 export { PosterSpring as Poster };

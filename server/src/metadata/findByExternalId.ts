@@ -7,6 +7,7 @@ import { TMDbMovie, TMDbTv } from 'src/metadata/provider/tmdb';
 import { tvEpisodeRepository } from 'src/repository/episode';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { updateMediaItem } from 'src/updateMetadata';
+import { MusicBrainz } from './provider/musicbrainz';
 
 export const findEpisodeByExternalId = async (args: {
   imdbId?: string;
@@ -252,6 +253,22 @@ const searchMediaItem = async (args: {
       } catch (error) {}
       logger.error(
         `unable to find book with openlibraryId: ${id.openlibraryId}`
+      );
+    }
+  }
+  else if (mediaType === 'music') {
+    if (id.musicBrainzId) {
+      try {
+        const res = await new MusicBrainz().details({
+          musicBrainzId: id.musicBrainzId,
+        });
+        if (res) {
+          return res;
+        }
+        // eslint-disable-next-line no-empty
+      } catch (error) {}
+      logger.error(
+        `unable to find music release with musicBrainzId: ${id.musicBrainzId}`
       );
     }
   }

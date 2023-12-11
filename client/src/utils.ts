@@ -114,6 +114,12 @@ export const isVideoGame = (mediaItem?: MediaItemItemsResponse | MediaType) => {
     : mediaItem?.mediaType === 'video_game';
 };
 
+export const isMusic = (mediaItem?: MediaItemItemsResponse | MediaType) => {
+  return typeof mediaItem === 'string'
+    ? mediaItem === 'music'
+    : mediaItem?.mediaType === 'music';
+};
+
 export const hasPoster = (mediaItem: MediaItemItemsResponse) => {
   return mediaItem.posterSmall != undefined;
 };
@@ -139,7 +145,7 @@ export const reverseMap = <Keys extends string, Values extends string>(
 };
 
 export const canMetadataBeUpdated = (mediaItem: MediaItemItemsResponse) => {
-  return ['igdb', 'tmdb', 'openlibrary', 'audible'].includes(
+  return ['igdb', 'tmdb', 'openlibrary', 'audible', 'musicbrainz'].includes(
     mediaItem.source?.toLowerCase()
   );
 };
@@ -149,7 +155,7 @@ export const listDescription = (list?: {
   isWatchlist: boolean;
 }) => {
   return list?.isWatchlist
-    ? t`Movies, shows, seasons, episodes, books, audiobooks and video games I plan to watch/read/listen/play`
+    ? t`Movies, shows, seasons, episodes, books, audiobooks and video games I plan to watch/read/listen/play` // TODO update existing translations
     : list?.description;
 };
 
