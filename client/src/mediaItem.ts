@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 import {
   MediaItemDetailsResponse,
+  MediaItemItemsResponse,
   TvEpisode,
   TvSeason,
 } from 'mediatracker-api';
@@ -70,4 +71,10 @@ export const hasBeenSeenAtLeastOnce = (
     ? value.episodes?.filter((episode) => episode.seenHistory?.length > 0)
         ?.length > 0
     : value.seenHistory?.length > 0;
+};
+
+export const originalAndTranslatedTitle = (mediaItem: MediaItemDetailsResponse | MediaItemItemsResponse) => {
+  return (mediaItem.originalTitle && mediaItem.originalTitle !== mediaItem.title)
+  ? `${mediaItem.originalTitle} (${mediaItem.title})`
+  : mediaItem.title;
 };
