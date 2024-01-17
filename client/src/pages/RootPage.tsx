@@ -25,7 +25,6 @@ export const RootPage: FC = () => {
     if (userLocale) {
       i18n.activate(userLocale);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userLocale]);
 
   if (user.isLoading || (isAdmin ? configuration.isLoading : false)) {

@@ -37,7 +37,6 @@ const CopyApiUrlAction = dialogActionFactory<{
     if (!tokenMutation.isLoading) {
       tokenMutation.mutate();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

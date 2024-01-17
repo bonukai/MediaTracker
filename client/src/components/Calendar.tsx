@@ -33,7 +33,6 @@ export const Calendar = <T extends object>(props: {
     if (onDateChange) {
       onDateChange(startOfMonth(currentDate), endOfMonth(currentDate));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateDate = (newDate: Date) => {
