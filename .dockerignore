@@ -1,0 +1,6 @@
+.vscode
+build
+node_modules
+Dockerfile
+client/node_modules
+client/dist

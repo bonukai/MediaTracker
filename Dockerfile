@@ -1,5 +1,8 @@
+FROM alpine:3.18 as alpine
+FROM node:21-alpine3.18 as node
+
 # Build libvips
-FROM node:16-alpine3.16 as node-libvips-dev
+FROM node as node-libvips-dev
 
 RUN apk add --no-cache meson gobject-introspection-dev wget g++ make expat-dev glib-dev python3 libwebp-dev jpeg-dev fftw-dev orc-dev libpng-dev tiff-dev lcms2-dev
 
@@ -17,22 +20,16 @@ RUN meson compile
 RUN meson install
 
 # Copy libvips and install dependencies
-FROM alpine:3.16 as alpine-libvips
+FROM alpine as alpine-libvips
+RUN apk add --no-cache expat glib libwebp jpeg fftw orc libpng tiff lcms2
 COPY --from=node-libvips-dev /usr/local/lib/pkgconfig/vips* /usr/local/lib/pkgconfig/
 COPY --from=node-libvips-dev /usr/local/lib/libvips* /usr/local/lib/
 COPY --from=node-libvips-dev /usr/local/lib/girepository-1.0/Vips-8.0.typelib /usr/local/lib/girepository-1.0/Vips-8.0.typelib
 COPY --from=node-libvips-dev /usr/local/share/gir-1.0/Vips-8.0.gir /usr/local/share/gir-1.0/Vips-8.0.gir
 COPY --from=node-libvips-dev /usr/local/bin/vips* /usr/local/bin/
 COPY --from=node-libvips-dev /usr/local/include/vips /usr/local/include/vips
-COPY --from=node-libvips-dev /usr/local/bin/light_correct /usr/local/bin/light_correct
-COPY --from=node-libvips-dev /usr/local/bin/shrink_width /usr/local/bin/shrink_width
-COPY --from=node-libvips-dev /usr/local/bin/batch_image_convert /usr/local/bin/batch_image_convert
-COPY --from=node-libvips-dev /usr/local/bin/batch_rubber_sheet /usr/local/bin/batch_rubber_sheet
-COPY --from=node-libvips-dev /usr/local/bin/batch_crop /usr/local/bin/batch_crop
 COPY --from=node-libvips-dev /usr/local/share/locale/de/LC_MESSAGES/vips* /usr/local/share/locale/de/LC_MESSAGES/
 COPY --from=node-libvips-dev /usr/local/share/locale/en_GB/LC_MESSAGES/vips* /usr/local/share/locale/en_GB/LC_MESSAGES/
-RUN apk add --no-cache expat glib libwebp jpeg fftw orc libpng tiff lcms2
-
 
 # Build server and client
 FROM node-libvips-dev as build
@@ -41,63 +38,59 @@ WORKDIR /app/
 
 COPY ./ /app
 
-# COPY ["package.json", "package-lock.json*", "./"]
-
-RUN apk add --no-cache python3 g++ make
-RUN npm install
-RUN npm run build
-
-CMD sh
+RUN npm install && npm run build
+RUN cd client && npm install && npm run build
 
 # Build server for production
-# FROM node-libvips-dev as server-build-production
+FROM node-libvips-dev as server-build-production
 
-# WORKDIR /server
-# COPY ["server/package.json", "server/package-lock.json*", "./"]
-# RUN apk add --no-cache python3 g++ make
-# RUN npm install --production
+WORKDIR /app/
 
-# FROM node:16-alpine3.16 as node
-# FROM alpine-libvips
+COPY ["package.json", "package-lock.json*", "./"]
 
-# RUN apk add --no-cache curl shadow
+RUN npm install --omit=dev
 
-# WORKDIR /storage
-# VOLUME /storage
 
-# WORKDIR /assets
-# VOLUME /assets
+FROM alpine-libvips
 
-# WORKDIR /logs
-# VOLUME /logs
+WORKDIR /app
+COPY ["package.json", "package-lock.json*", "./"]
+RUN apk add --no-cache curl shadow
 
-# WORKDIR /app
+WORKDIR /storage
+VOLUME /storage
 
-# COPY --from=node /usr/local/bin/node /usr/local/bin/
-# COPY --from=node /usr/lib/ /usr/lib/
+WORKDIR /assets
+VOLUME /assets
 
-# COPY --from=build /app/server/public public
-# COPY --from=build /app/server/build build
+WORKDIR /logs
+VOLUME /logs
 
-# COPY --from=server-build-production /server/node_modules node_modules
+WORKDIR /app
 
-# COPY server/package.json ./
-# COPY docker/entrypoint.sh /docker/entrypoint.sh
+COPY --from=node /usr/local/bin/node /usr/local/bin/
+COPY --from=node /usr/lib/ /usr/lib/
 
-# ENV PORT=7481
-# EXPOSE $PORT
+COPY --from=build /app/client/dist  /app/client/dist
+COPY --from=build /app/build /app/build
 
-# ENV PUID=1000
-# ENV PGID=1000
+COPY --from=server-build-production /app/node_modules /app/node_modules
 
-# RUN groupadd --non-unique --gid 1000 abc
-# RUN useradd --non-unique --create-home --uid 1000 --gid abc abc
+COPY package.json ./
+COPY docker/entrypoint.sh /docker/entrypoint.sh
 
-# HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl ${HOSTNAME}:${PORT}
+ENV PORT=7481
+EXPOSE $PORT
 
-# ENV DATABASE_PATH="/storage/data.db"
-# ENV ASSETS_PATH="/assets"
-# ENV LOGS_PATH="/logs"
-# ENV NODE_ENV=production
+ENV PUID=1000
+ENV PGID=1000
 
-# ENTRYPOINT  ["sh", "/docker/entrypoint.sh"]
+RUN groupadd --non-unique --gid 1000 abc
+RUN useradd --non-unique --create-home --uid 1000 --gid abc abc
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl ${HOSTNAME}:${PORT}
+
+
+ENV NODE_ENV=production
+
+ENTRYPOINT  ["sh", "/docker/entrypoint.sh"]
