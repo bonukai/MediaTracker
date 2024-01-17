@@ -1,21 +1,64 @@
 {
   "name": "mediatracker",
-  "private": true,
+  "version": "1.0.0",
+  "bin": "build/index.js",
+  "type": "module",
   "scripts": {
-    "postinstall": "cd server && npm install && cd ../client && npm install",
-    "build": "npm run build --prefix server && npm run build --prefix client",
-    "start": "npm run start --prefix server",
-    "format": "prettier --list-different --write .",
-    "lint": "npm run lint --prefix client && npm run lint --prefix server",
-    "test": "npm run test --prefix server",
-    "test:coverage": "npm run test:coverage --prefix server"
+    "test": "jest",
+    "dev": "node --enable-source-maps esbuild.js --watch",
+    "build": "node esbuild.js",
+    "start": "node --enable-source-maps build/index.js start-server",
+    "lint": "tsc --noEmit"
+  },
+  "description": "Self hosted media tracker for movies, tv shows, video games, books and audiobooks",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bonukai/MediaTracker.git"
+  },
+  "keywords": [
+    "self hosted"
+  ],
+  "author": {
+    "name": "bonukai",
+    "url": "https://github.com/bonukai"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@trpc/client": "^10.44.1",
+    "@trpc/server": "^10.44.1",
+    "argon2": "^0.31.2",
+    "better-sqlite3": "^9.1.1",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "csv-parse": "^5.5.2",
+    "csv-stringify": "^6.4.4",
+    "date-fns": "^2.30.0",
+    "express": "^4.18.2",
+    "knex": "^3.0.1",
+    "lodash": "^4.17.21",
+    "loglevel": "^1.8.1",
+    "nanoid": "^5.0.3",
+    "pg": "^8.11.3",
+    "sharp": "^0.32.6",
+    "sqlite3": "^5.1.6",
+    "zod": "^3.22.4",
+    "zod-to-json-schema": "^3.22.1"
   },
   "devDependencies": {
-    "@types/jest": "^28.1.1",
-    "prettier": "^2.6.2"
+    "@types/compression": "^1.7.5",
+    "@types/cookie-parser": "^1.4.6",
+    "@types/express": "^4.17.21",
+    "@types/lodash": "^4.14.202",
+    "@types/sharp": "^0.32.0",
+    "esbuild": "^0.19.8",
+    "glob": "^10.3.10",
+    "openapi-types": "^12.1.3",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.3"
   },
-  "dependencies": {
-    "@types/passport": "^1.0.7",
-    "url-join": "^4.0.1"
+  "engines": {
+    "node": ">=18"
   }
 }

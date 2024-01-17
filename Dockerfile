@@ -1,13 +1,13 @@
 # Build libvips
 FROM node:16-alpine3.16 as node-libvips-dev
 
-ENV VIPS_VERSION=8.13.1
-
 RUN apk add --no-cache meson gobject-introspection-dev wget g++ make expat-dev glib-dev python3 libwebp-dev jpeg-dev fftw-dev orc-dev libpng-dev tiff-dev lcms2-dev
 
+ENV VIPS_VERSION=8.15.1
+
 WORKDIR /libvips
-RUN wget --quiet https://github.com/libvips/libvips/releases/download/v${VIPS_VERSION}/vips-${VIPS_VERSION}.tar.gz
-RUN tar xf vips-${VIPS_VERSION}.tar.gz
+RUN wget --quiet https://github.com/libvips/libvips/releases/download/v${VIPS_VERSION}/vips-${VIPS_VERSION}.tar.xz
+RUN tar xf vips-${VIPS_VERSION}.tar.xz
 
 WORKDIR /libvips/vips-${VIPS_VERSION}
 RUN meson setup build-dir --buildtype=release
@@ -37,66 +37,67 @@ RUN apk add --no-cache expat glib libwebp jpeg fftw orc libpng tiff lcms2
 # Build server and client
 FROM node-libvips-dev as build
 
-WORKDIR /app
+WORKDIR /app/
 
-COPY server/ /app/server
-COPY client/ /app/client
-COPY rest-api/ /app/rest-api
-COPY ["package.json", "package-lock.json*", "./"]
+COPY ./ /app
+
+# COPY ["package.json", "package-lock.json*", "./"]
 
 RUN apk add --no-cache python3 g++ make
 RUN npm install
 RUN npm run build
 
+CMD sh
+
 # Build server for production
-FROM node-libvips-dev as server-build-production
+# FROM node-libvips-dev as server-build-production
 
-WORKDIR /server
-COPY ["server/package.json", "server/package-lock.json*", "./"]
-RUN apk add --no-cache python3 g++ make
-RUN npm install --production
+# WORKDIR /server
+# COPY ["server/package.json", "server/package-lock.json*", "./"]
+# RUN apk add --no-cache python3 g++ make
+# RUN npm install --production
 
-FROM node:16-alpine3.16 as node
-FROM alpine-libvips
+# FROM node:16-alpine3.16 as node
+# FROM alpine-libvips
 
-RUN apk add --no-cache curl shadow
+# RUN apk add --no-cache curl shadow
 
-WORKDIR /storage
-VOLUME /storage
+# WORKDIR /storage
+# VOLUME /storage
 
-WORKDIR /assets
-VOLUME /assets
+# WORKDIR /assets
+# VOLUME /assets
 
-WORKDIR /logs
-VOLUME /logs
+# WORKDIR /logs
+# VOLUME /logs
 
-WORKDIR /app
+# WORKDIR /app
 
-COPY --from=node /usr/local/bin/node /usr/local/bin/
-COPY --from=node /usr/lib/ /usr/lib/
+# COPY --from=node /usr/local/bin/node /usr/local/bin/
+# COPY --from=node /usr/lib/ /usr/lib/
 
-COPY --from=build /app/server/public public
-COPY --from=build /app/server/build build
+# COPY --from=build /app/server/public public
+# COPY --from=build /app/server/build build
 
-COPY --from=server-build-production /server/node_modules node_modules
+# COPY --from=server-build-production /server/node_modules node_modules
 
-COPY server/package.json ./
-COPY docker/entrypoint.sh /docker/entrypoint.sh
+# COPY server/package.json ./
+# COPY docker/entrypoint.sh /docker/entrypoint.sh
 
-ENV PORT=7481
-EXPOSE $PORT
+# ENV PORT=7481
+# EXPOSE $PORT
 
-ENV PUID=1000
-ENV PGID=1000
+# ENV PUID=1000
+# ENV PGID=1000
 
-RUN groupadd --non-unique --gid 1000 abc
-RUN useradd --non-unique --create-home --uid 1000 --gid abc abc
+# RUN groupadd --non-unique --gid 1000 abc
+# RUN useradd --non-unique --create-home --uid 1000 --gid abc abc
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl ${HOSTNAME}:${PORT}
+# HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl ${HOSTNAME}:${PORT}
 
-ENV DATABASE_PATH="/storage/data.db"
-ENV ASSETS_PATH="/assets"
-ENV LOGS_PATH="/logs"
-ENV NODE_ENV=production
+# ENV DATABASE_PATH="/storage/data.db"
+# ENV ASSETS_PATH="/assets"
+# ENV LOGS_PATH="/logs"
+# ENV NODE_ENV=production
 
-ENTRYPOINT  ["sh", "/docker/entrypoint.sh"]
+# ENTRYPOINT  ["sh", "/docker/entrypoint.sh"]
