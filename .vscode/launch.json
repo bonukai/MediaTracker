@@ -5,99 +5,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "server:watch [SQLite]",
+      "name": "server:dev [SQLite]",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "cwd": "${workspaceRoot}/server",
-      "outFiles": ["${workspaceFolder}/server/build/**/*.js"],
-      "program": "${workspaceFolder}/server/build/index.js",
+      "cwd": "${workspaceRoot}/",
+      "outFiles": ["${workspaceFolder}/build/**/*.js"],
+      "program": "${workspaceFolder}/build/index.js start-server",
       "request": "launch",
       "restart": true,
       "runtimeExecutable": "nodemon",
       "skipFiles": [
         "<node_internals>/**",
-        "${workspaceFolder}/server/node_modules/**"
+        "${workspaceFolder}/node_modules/**"
       ],
       "type": "node"
-    },
-    {
-      "name": "server:watch [PostgreSQL]",
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "cwd": "${workspaceRoot}/server",
-      "outFiles": ["${workspaceFolder}/server/build/**/*.js"],
-      "program": "${workspaceFolder}/server/build/index.js",
-      "request": "launch",
-      "restart": true,
-      "runtimeExecutable": "nodemon",
-      "skipFiles": [
-        "<node_internals>/**",
-        "${workspaceFolder}/server/node_modules/**"
-      ],
-      "type": "node",
-      "env": {
-        "DATABASE_CLIENT": "pg",
-        "DATABASE_HOST": "localhost",
-        "DATABASE_USER": "postgres",
-        "DATABASE_PASSWORD": "postgres",
-        "DATABASE_DATABASE": "postgres"
-      }
-    },
-    {
-      "name": "Run test [SQLite]",
-      "type": "node",
-      "request": "launch",
-      "runtimeExecutable": "${workspaceRoot}/server/node_modules/.bin/jest",
-      "cwd": "${workspaceRoot}/server",
-      "env": {
-        "DATABASE_PATH": ":memory:"
-      },
-      "args": [
-        "--i",
-        "--config",
-        "--runTestsByPath",
-        "${workspaceRoot}/server/jest.config.js",
-        "../${relativeFile}"
-      ],
-      "windows": {
-        "program": "${workspaceFolder}/server/node_modules/jest/bin/jest"
-      },
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "skipFiles": [
-        "<node_internals>/**",
-        "${workspaceFolder}/server/node_modules/**"
-      ]
-    },
-    {
-      "name": "Run test [PostgreSQL]",
-      "type": "node",
-      "request": "launch",
-      "runtimeExecutable": "${workspaceRoot}/server/node_modules/.bin/jest",
-      "cwd": "${workspaceRoot}/server",
-      "env": {
-        "DATABASE_CLIENT": "pg",
-        "DATABASE_HOST": "localhost",
-        "DATABASE_USER": "postgres",
-        "DATABASE_PASSWORD": "postgres",
-        "DATABASE_DATABASE": "postgres"
-      },
-      "args": [
-        "--i",
-        "--config",
-        "--runTestsByPath",
-        "${workspaceRoot}/server/jest.config.js",
-        "../${relativeFile}"
-      ],
-      "windows": {
-        "program": "${workspaceFolder}/server/node_modules/jest/bin/jest"
-      },
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "skipFiles": [
-        "<node_internals>/**",
-        "${workspaceFolder}/server/node_modules/**"
-      ]
     }
   ]
 }

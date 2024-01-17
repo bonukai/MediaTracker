@@ -10,41 +10,28 @@
     },
     {
       "type": "npm",
-      "script": "watch:start",
-      "path": "server/",
+      "script": "dev",
+      "path": "client/",
       "problemMatcher": [],
-      "label": "server:watch:start"
+      "label": "client:build"
     },
     {
       "type": "npm",
-      "script": "watch:routes",
-      "path": "server/",
+      "script": "dev",
+      "path": "/",
       "problemMatcher": [],
-      "label": "server:watch:routes"
+      "label": "server:dev"
     },
     {
       "type": "npm",
-      "script": "watch:build:server",
-      "path": "server/",
+      "script": "build",
+      "path": "/",
       "problemMatcher": [],
-      "label": "server:watch:build"
-    },
-    {
-      "type": "npm",
-      "script": "watch:lint",
-      "path": "server/",
-      "problemMatcher": [],
-      "label": "server:watch:lint"
+      "label": "server:build"
     },
     {
       "label": "dev",
-      "dependsOn": [
-        "client:dev",
-        "server:watch:routes",
-        "server:watch:build",
-        "server:watch:lint",
-        "server:watch:start"
-      ],
+      "dependsOn": ["server:dev", "client:dev"],
       "problemMatcher": []
     }
   ]
