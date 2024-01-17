@@ -112,133 +112,135 @@ const AddOrEditListPopupAction = dialogActionFactory<{ listId?: number }>(
 
     return (
       <>
-        <Form<{
-          name: string;
-          description: string;
-          privacy: ListPrivacy;
-          sortOrder: ListSortOrder;
-          sortBy: ListSortBy;
-        }>
-          className="flex flex-col md:w-96"
-          initialValues={
-            isEditing
-              ? {
-                  description: list!.description || '',
-                  name: list!.name,
-                  privacy: list!.privacy,
-                  sortBy: list!.sortBy,
-                  sortOrder: list!.sortOrder,
-                }
-              : {}
-          }
-          onSubmit={async ({ data }) => {
-            if (isEditing) {
-              await updateListMutation.mutateAsync({
-                id: list!.id,
-                list: data,
-              });
-            } else {
-              await createListMutation.mutateAsync(data);
+        {list && (
+          <Form<{
+            name: string;
+            description: string;
+            privacy: ListPrivacy;
+            sortOrder: ListSortOrder;
+            sortBy: ListSortBy;
+          }>
+            className="flex flex-col md:w-96"
+            initialValues={
+              isEditing
+                ? {
+                    description: list.description || '',
+                    name: list.name,
+                    privacy: list.privacy,
+                    sortBy: list.sortBy,
+                    sortOrder: list.sortOrder,
+                  }
+                : {}
             }
-            closeDialog();
-          }}
-        >
-          {({ TextInput, SelectInput }) => (
-            <>
-              <h1 className="mb-8 text-xl font-bold">
-                {isEditing ? (
-                  <Trans>
-                    Edit list <Accent>{list!.name}</Accent>
-                  </Trans>
-                ) : (
-                  <Trans>Add new list</Trans>
-                )}
-              </h1>
+            onSubmit={async ({ data }) => {
+              if (isEditing) {
+                await updateListMutation.mutateAsync({
+                  id: list.id,
+                  list: data,
+                });
+              } else {
+                await createListMutation.mutateAsync(data);
+              }
+              closeDialog();
+            }}
+          >
+            {({ TextInput, SelectInput }) => (
+              <>
+                <h1 className="mb-8 text-xl font-bold">
+                  {isEditing ? (
+                    <Trans>
+                      Edit list <Accent>{list.name}</Accent>
+                    </Trans>
+                  ) : (
+                    <Trans>Add new list</Trans>
+                  )}
+                </h1>
 
-              <TextInput
-                inputName="name"
-                title={<Trans>Name</Trans>}
-                required
-                minLength={3}
-                disabled={list?.isWatchlist === true}
-              />
-
-              <TextInput
-                inputName="description"
-                title={<Trans>Description</Trans>}
-                rows={4}
-              />
-
-              <SelectInput
-                inputName="privacy"
-                title={<Trans>Visibility</Trans>}
-                options={[
-                  {
-                    value: 'public',
-                    name: <Trans>Public</Trans>,
-                  },
-                  {
-                    value: 'private',
-                    name: <Trans>Private</Trans>,
-                  },
-                ]}
-              />
-
-              <SelectInput
-                inputName="sortBy"
-                title={<Trans>Sort by</Trans>}
-                options={listSortByElements.map((item) => ({
-                  value: item,
-                  name: <TranslatedListSortBy sortBy={item} />,
-                }))}
-              />
-
-              <SelectInput
-                inputName="sortOrder"
-                title={<Trans>Sort order</Trans>}
-                options={[
-                  {
-                    value: 'asc',
-                    name: <Trans>Ascending</Trans>,
-                  },
-                  {
-                    value: 'desc',
-                    name: <Trans>Descending</Trans>,
-                  },
-                ]}
-              />
-
-              {createListMutation.isError && (
-                <div>{createListMutation.error.message}</div>
-              )}
-              {updateListMutation.isError && (
-                <div>{updateListMutation.error.message}</div>
-              )}
-              <div className="flex justify-between mt-4">
-                {isEditing ? (
-                  <Button
-                    actionType="submit"
-                    text={<Trans>Save list</Trans>}
-                    icon={<SaveIcon />}
-                    isLoading={updateListMutation.isLoading}
-                  />
-                ) : (
-                  <Button
-                    actionType="submit"
-                    text={<Trans>Add list</Trans>}
-                    icon={<AddIcon />}
-                    isLoading={createListMutation.isLoading}
-                  />
-                )}
-                <Button
-                  preventDefault
-                  onClick={closeDialog}
-                  text={<Trans>Close</Trans>}
+                <TextInput
+                  inputName="name"
+                  title={<Trans>Name</Trans>}
+                  required
+                  minLength={3}
+                  disabled={list?.isWatchlist === true}
                 />
-              </div>
-            </>
-          )}
-        </Form>
+
+                <TextInput
+                  inputName="description"
+                  title={<Trans>Description</Trans>}
+                  rows={4}
+                />
+
+                <SelectInput
+                  inputName="privacy"
+                  title={<Trans>Visibility</Trans>}
+                  options={[
+                    {
+                      value: 'public',
+                      name: <Trans>Public</Trans>,
+                    },
+                    {
+                      value: 'private',
+                      name: <Trans>Private</Trans>,
+                    },
+                  ]}
+                />
+
+                <SelectInput
+                  inputName="sortBy"
+                  title={<Trans>Sort by</Trans>}
+                  options={listSortByElements.map((item) => ({
+                    value: item,
+                    name: <TranslatedListSortBy sortBy={item} />,
+                  }))}
+                />
+
+                <SelectInput
+                  inputName="sortOrder"
+                  title={<Trans>Sort order</Trans>}
+                  options={[
+                    {
+                      value: 'asc',
+                      name: <Trans>Ascending</Trans>,
+                    },
+                    {
+                      value: 'desc',
+                      name: <Trans>Descending</Trans>,
+                    },
+                  ]}
+                />
+
+                {createListMutation.isError && (
+                  <div>{createListMutation.error.message}</div>
+                )}
+                {updateListMutation.isError && (
+                  <div>{updateListMutation.error.message}</div>
+                )}
+                <div className="flex justify-between mt-4">
+                  {isEditing ? (
+                    <Button
+                      actionType="submit"
+                      text={<Trans>Save list</Trans>}
+                      icon={<SaveIcon />}
+                      isLoading={updateListMutation.isLoading}
+                    />
+                  ) : (
+                    <Button
+                      actionType="submit"
+                      text={<Trans>Add list</Trans>}
+                      icon={<AddIcon />}
+                      isLoading={createListMutation.isLoading}
+                    />
+                  )}
+                  <Button
+                    preventDefault
+                    onClick={closeDialog}
+                    text={<Trans>Close</Trans>}
+                  />
+                </div>
+              </>
+            )}
+          </Form>
+        )}
       </>
     );
   }
