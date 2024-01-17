@@ -23,7 +23,7 @@
   "devDependencies": {
     "@lingui/cli": "^4.5.0",
     "@lingui/format-json": "^4.5.0",
-    "@lingui/vite-plugin": "^4.5.0",
+    "@lingui/vite-plugin": "^4.7.0",
     "@types/react": "^18.2.39",
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
