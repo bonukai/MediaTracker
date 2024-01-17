@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "dev": "node --enable-source-maps esbuild.js --watch",
-    "build": "node esbuild.js",
+    "build": "node --enable-source-maps esbuild.js",
     "start": "node --enable-source-maps build/index.js start-server",
     "lint": "tsc --noEmit"
   },
