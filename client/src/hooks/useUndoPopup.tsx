@@ -102,7 +102,6 @@ const UndoComponent: FC<{
 }> = ({ popup, dismiss }) => {
   const { action, content } = popup;
   const [isLoading, setIsLoading] = useState(false);
-  const [hasBeenUsed, setHasBeenUsed] = useState(false);
 
   return (
     <div className="flex flex-row items-center gap-2 p-2 mr-auto rounded bg-slate-400 w-fit">
@@ -113,7 +112,6 @@ const UndoComponent: FC<{
           setIsLoading(true);
           await action();
           setIsLoading(false);
-          setHasBeenUsed(true);
           dismiss();
         }}
         isLoading={isLoading}
