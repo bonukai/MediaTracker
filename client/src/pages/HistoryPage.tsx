@@ -117,10 +117,10 @@ export const HistoryComponent: FC<{
                       <MediaTypePill mediaItem={item.mediaItem} />
                     </td>
                     <td className="px-4 py-2">
-                      {isTvShow(item.mediaItem) ? (
+                      {isTvShow(item.mediaItem) && item.episode ? (
                         <div>
                           {item.mediaItem.title}{' '}
-                          {formatEpisodeNumber(item.episode!)}
+                          {formatEpisodeNumber(item.episode)}
                         </div>
                       ) : (
                         <div>{item.mediaItem.title}</div>
