@@ -1,5 +1,4 @@
 import { Knex } from 'knex';
-import _ from 'lodash';
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('homeSection', (table) => {
