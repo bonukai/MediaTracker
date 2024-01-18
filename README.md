@@ -27,3 +27,8 @@ npm run dev
 - [krateng/maloja](https://github.com/krateng/maloja)
 - [sbondCo/Watcharr](https://github.com/sbondCo/Watcharr)
 - [MaarifaMaarifa/series-troxide](https://github.com/MaarifaMaarifa/series-troxide)
+
+#
+
+![TMDB logo](./tmdb_logo.png)
+This product uses the TMDB API but is not endorsed or certified by TMDB.
