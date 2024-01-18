@@ -86,7 +86,7 @@ const updateMetadataAndStartWatchingForChanges = async (args: {
     await updateMediaItemsAndLog(mediaItemsToUpdate);
   };
 
-  const shouldSkipUpdate = (previousUpdateTime: Date): Boolean => {
+  const shouldSkipUpdate = (previousUpdateTime: Date): boolean => {
     switch (updateTimeResolution) {
       case 'day':
         if (isSameDay(previousUpdateTime, new Date())) {
