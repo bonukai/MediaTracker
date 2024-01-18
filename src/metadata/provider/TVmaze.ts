@@ -1,33 +1,28 @@
+import _ from 'lodash';
 import { z } from 'zod';
+
+import { MediaItemMetadata } from '../../entity/mediaItemModel.js';
+import { logger } from '../../logger.js';
+import { requestQueueFactory } from '../../requestQueue.js';
+import { dumpFetchResponse, h } from '../../utils.js';
 import { metadataProviderFactory } from '../metadataProvider.js';
-import { dumpFetchResponse } from '../../utils.js';
 
 export const TVmaze = metadataProviderFactory({
   name: 'TVmaze',
   mediaType: 'tv',
   async search(args) {
-    const res = await fetch(
+    const res = await makeApiRequest(
       `https://api.tvmaze.com/search/shows?q=${args.query}`
     );
+
+    if (res.status !== 200) {
+      throw new Error(await dumpFetchResponse(res));
+    }
 
     const data = tvSearchResponseSchema.parse(await res.json());
 
     return data.map((item) => ({
-      mediaType: 'tv',
-      source: this.name,
-      title: item.show.name,
-      imdbId: item.show.externals.imdb,
-      tvdbId: item.show.externals.thetvdb,
-      tvmazeId: item.show.id,
-      overview: item.show.summary,
-      language: item.show.language,
-      genres: item.show.genres,
-      releaseDate: item.show.premiered,
-      status: item.show.status,
-      url: item.show.officialSite,
-      network: item.show.network?.name,
-      externalPosterUrl: item.show.image?.medium,
-      runtime: item.show.averageRuntime,
+      ...mapTvShowResponse(item.show),
       needsDetails: true,
     }));
   },
@@ -38,8 +33,8 @@ export const TVmaze = metadataProviderFactory({
       );
     }
 
-    const res = await fetch(
-      ` https://api.tvmaze.com/shows/${tvmazeId}?embed=episodes`
+    const res = await makeApiRequest(
+      ` https://api.tvmaze.com/shows/${tvmazeId}?embed[]=seasons&embed[]=episodes`
     );
 
     if (res.status === 404) {
@@ -51,150 +46,262 @@ export const TVmaze = metadataProviderFactory({
     }
 
     const data = tvShowDetailsResponseSchema.parse(await res.json());
-    console.log(data._embedded.episodes);
-    // return data;
+
+    return {
+      mediaType: 'tv',
+      source: this.name,
+      title: data.name,
+      imdbId: data.externals.imdb,
+      tvdbId: data.externals.thetvdb,
+      tvmazeId: data.id,
+      overview: data.summary,
+      language: data.language,
+      genres: data.genres,
+      releaseDate: data.premiered,
+      status: data.status,
+      url: data.officialSite,
+      network: data.network?.name,
+      externalPosterUrl: data.image?.medium,
+      runtime: data.averageRuntime,
+      seasons: data._embedded.seasons.map((season) => ({
+        isSpecialSeason: season.number === 0,
+        seasonNumber: season.number,
+        title: season.name || `Season ${season.number}`,
+        description: season.summary,
+        externalPosterUrl: season.image?.medium,
+        releaseDate: season.premiereDate,
+        episodes: data._embedded.episodes
+          .filter((episode) => episode.season === season.number)
+          .map((episode) => ({
+            title: episode.name,
+            description: episode.summary,
+            episodeNumber: episode.number,
+            seasonNumber: episode.season,
+            releaseDate: episode.airstamp,
+            isSpecialEpisode: episode.type === 'insignificant_special',
+            runtime: episode.runtime,
+          })),
+      })),
+    };
   },
 
   async findByImdbId(imdbId) {
-    // https://api.tvmaze.com/lookup/shows?imdb=tt0944947
+    const res = await makeApiRequest(
+      ` https://api.tvmaze.com/lookup/shows?imdb=${imdbId}`
+    );
+
+    if (res.status === 404) {
+      return;
+    }
+
+    if (res.status !== 200) {
+      throw new Error(await dumpFetchResponse(res));
+    }
+
+    return mapTvShowResponse(tvShowResponseSchema.parse(await res.json()));
   },
   async findByTvdbId(tvdbId) {
-    // https://api.tvmaze.com/lookup/shows?thetvdb=81189
+    const res = await makeApiRequest(
+      ` https://api.tvmaze.com/lookup/shows?thetvdb=${tvdbId}`
+    );
+
+    if (res.status === 404) {
+      return;
+    }
+
+    if (res.status !== 200) {
+      throw new Error(await dumpFetchResponse(res));
+    }
+
+    return mapTvShowResponse(tvShowResponseSchema.parse(await res.json()));
   },
+  async addEpisodeReleaseDates(
+    mediaItem: MediaItemMetadata
+  ): Promise<MediaItemMetadata> {
+    logger.debug(
+      h`adding episode release dates from TvMaze to "${mediaItem.title}"`
+    );
+
+    const tvShow = await (async () => {
+      if (mediaItem.tvmazeId) {
+        return await this.details({ tvmazeId: mediaItem.tvmazeId });
+      }
+
+      if (mediaItem.imdbId) {
+        const show = await this.findByImdbId(mediaItem.imdbId);
+
+        if (show) {
+          return await this.details({ tvmazeId: show.tvmazeId });
+        }
+      }
+
+      if (mediaItem.tvdbId) {
+        const show = await this.findByTvdbId(mediaItem.tvdbId);
+
+        if (show) {
+          return await this.details({ tvmazeId: show.tvmazeId });
+        }
+      }
+    })();
+
+    if (!tvShow) {
+      logger.error(h`unable to find mediaItem "${mediaItem.title}" in TvMaze`);
+
+      return mediaItem;
+    }
+
+    const episodeMap = _(tvShow?.seasons.flatMap((season) => season.episodes))
+      .groupBy((episode) =>
+        [episode.seasonNumber, episode.episodeNumber].toString()
+      )
+      .mapValues((episodes) => episodes[0].releaseDate)
+      .value();
+
+    const episodeReleaseDates = (args: {
+      seasonNumber: number;
+      episodeNumber: number;
+    }) => {
+      const { seasonNumber, episodeNumber } = args;
+      return episodeMap[[seasonNumber, episodeNumber].toString()];
+    };
+
+    return {
+      ...mediaItem,
+      tvmazeId: tvShow?.tvmazeId,
+      seasons: mediaItem.seasons?.map((season) => ({
+        ...season,
+        episodes: season.episodes?.map((episode) => ({
+          ...episode,
+          releaseDate: episodeReleaseDates(episode) || episode.releaseDate,
+        })),
+      })),
+    };
+  },
+});
+
+const requestQueue = requestQueueFactory({ timeBetweenRequests: 500 });
+
+const makeApiRequest = async (url: string) => {
+  return await requestQueue(() => fetch(url));
+};
+
+const mapTvShowResponse = (
+  show: z.infer<typeof tvShowResponseSchema>
+): MediaItemMetadata => {
+  return {
+    mediaType: 'tv',
+    source: 'TVmaze',
+    title: show.name,
+    imdbId: show.externals.imdb,
+    tvdbId: show.externals.thetvdb,
+    tvmazeId: show.id,
+    overview: show.summary,
+    language: show.language,
+    genres: show.genres,
+    releaseDate: show.premiered,
+    status: show.status,
+    url: show.officialSite,
+    network: show.network?.name,
+    externalPosterUrl: show.image?.medium,
+    runtime: show.averageRuntime,
+  };
+};
+
+const tvShowResponseSchema = z.object({
+  id: z.number(),
+  url: z.string(),
+  name: z.string(),
+  type: z.string(),
+  language: z.string().nullable(),
+  genres: z.array(z.string()),
+  status: z.string(),
+  runtime: z.number().nullable(),
+  averageRuntime: z.number().nullable(),
+  premiered: z.string().nullable(),
+  officialSite: z.string().nullable(),
+  schedule: z.object({ time: z.string(), days: z.array(z.string()) }),
+  rating: z.object({ average: z.number().nullable() }),
+  externals: z.object({
+    tvrage: z.number().nullable(),
+    thetvdb: z.number().nullable(),
+    imdb: z.string().nullable(),
+  }),
+  image: z.object({ medium: z.string(), original: z.string() }).nullish(),
+  network: z
+    .object({
+      id: z.number(),
+      name: z.string(),
+      country: z.object({
+        name: z.string(),
+        code: z.string(),
+        timezone: z.string(),
+      }),
+      officialSite: z.string().nullish(),
+    })
+    .nullish(),
+  summary: z.string().nullish(),
+  updated: z.number(),
 });
 
 const tvSearchResponseSchema = z.array(
   z.object({
     score: z.number(),
-    show: z.object({
-      id: z.number(),
-      url: z.string(),
-      name: z.string(),
-      type: z.string(),
-      language: z.string().nullish(),
-      genres: z.array(z.string()),
-      status: z.string(),
-      runtime: z.number().nullish(),
-      averageRuntime: z.number().nullish(),
-      premiered: z.string().nullish(),
-      ended: z.string().nullish(),
-      officialSite: z.string().nullish(),
-      schedule: z
-        .object({ time: z.string(), days: z.array(z.string()) })
-        .nullish(),
-      rating: z
-        .object({
-          average: z.number().nullish(),
-        })
-        .nullish(),
-      network: z
-        .object({
-          id: z.number(),
-          name: z.string(),
-          country: z.object({
-            name: z.string(),
-            code: z.string(),
-            timezone: z.string(),
-          }),
-          officialSite: z.string().nullish(),
-        })
-        .nullish(),
-
-      externals: z.object({
-        tvrage: z.number().nullish(),
-        thetvdb: z.number().nullish(),
-        imdb: z.string().nullish(),
-      }),
-      image: z.object({ medium: z.string(), original: z.string() }).nullish(),
-      summary: z.string().nullish(),
-      updated: z.number(),
-    }),
+    show: tvShowResponseSchema,
   })
 );
 
 const tvShowDetailsResponseSchema = z.object({
-  id: z.number(),
-  url: z.string(),
-  name: z.string(),
-  type: z.string(),
-  language: z.string(),
-  genres: z.array(z.string()),
-  status: z.string(),
-  runtime: z.null(),
-  averageRuntime: z.number(),
-  premiered: z.string(),
-  officialSite: z.string(),
-  schedule: z.object({ time: z.string(), days: z.array(z.string()) }),
-  rating: z.object({ average: z.number() }),
-  externals: z.object({
-    tvrage: z.null(),
-    thetvdb: z.number(),
-    imdb: z.string(),
-  }),
-  image: z.object({ medium: z.string(), original: z.string() }),
-  summary: z.string(),
-  updated: z.number(),
+  ...tvShowResponseSchema.shape,
   _embedded: z.object({
+    seasons: z.array(
+      z.object({
+        id: z.number(),
+        url: z.string(),
+        number: z.number(),
+        name: z.string(),
+        premiereDate: z.string().nullable(),
+        endDate: z.string().nullable(),
+        network: z
+          .object({
+            id: z.number(),
+            name: z.string(),
+            country: z.object({
+              name: z.string(),
+              code: z.string(),
+              timezone: z.string(),
+            }),
+            officialSite: z.string().nullable(),
+          })
+          .nullable(),
+        image: z
+          .object({ medium: z.string(), original: z.string() })
+          .nullable(),
+        summary: z.string().nullable(),
+        _links: z.object({ self: z.object({ href: z.string() }) }),
+      })
+    ),
     episodes: z.array(
-      z.union([
-        z.object({
-          id: z.number(),
-          url: z.string(),
-          name: z.string(),
-          season: z.number(),
-          number: z.number(),
-          type: z.string(),
-          airdate: z.string(),
-          airtime: z.string(),
-          airstamp: z.string(),
-          runtime: z.number(),
-          rating: z.object({ average: z.number() }),
-          image: z.object({ medium: z.string(), original: z.string() }),
-          summary: z.string(),
-          _links: z.object({
-            self: z.object({ href: z.string() }),
-            show: z.object({ href: z.string() }),
-          }),
+      z.object({
+        id: z.number(),
+        url: z.string().nullable(),
+        name: z.string(),
+        season: z.number(),
+        number: z.number(),
+        type: z.enum(['regular', 'insignificant_special']),
+        airdate: z.string().nullable(),
+        airtime: z.string().nullable(),
+        airstamp: z.string().nullable(),
+        runtime: z.number().nullable(),
+        rating: z.object({ average: z.number().nullable() }),
+        image: z
+          .object({ medium: z.string(), original: z.string() })
+          .nullable(),
+        summary: z.string().nullable(),
+        _links: z.object({
+          self: z.object({ href: z.string() }),
+          show: z.object({ href: z.string() }),
         }),
-        z.object({
-          id: z.number(),
-          url: z.string(),
-          name: z.string(),
-          season: z.number(),
-          number: z.number(),
-          type: z.string(),
-          airdate: z.string(),
-          airtime: z.string(),
-          airstamp: z.string(),
-          runtime: z.number(),
-          rating: z.object({ average: z.null() }),
-          image: z.object({ medium: z.string(), original: z.string() }),
-          summary: z.string(),
-          _links: z.object({
-            self: z.object({ href: z.string() }),
-            show: z.object({ href: z.string() }),
-          }),
-        }),
-        z.object({
-          id: z.number(),
-          url: z.string(),
-          name: z.string(),
-          season: z.number(),
-          number: z.number(),
-          type: z.string(),
-          airdate: z.string(),
-          airtime: z.string(),
-          airstamp: z.string(),
-          runtime: z.null(),
-          rating: z.object({ average: z.null() }),
-          image: z.null(),
-          summary: z.null(),
-          _links: z.object({
-            self: z.object({ href: z.string() }),
-            show: z.object({ href: z.string() }),
-          }),
-        }),
-      ])
+      })
     ),
   }),
 });

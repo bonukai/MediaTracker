@@ -64,10 +64,13 @@ export const ConfigurationPage: FC = () => {
                 title={<Trans>Public URL</Trans>}
                 required
               />
-
               <CheckboxInput
                 inputName="enableRegistration"
                 title={<Trans>Enable registration</Trans>}
+              />
+              <CheckboxInput
+                inputName="useTvMazeForEpisodeReleaseDates"
+                title={<Trans>Use TvMaze API for episode release dates</Trans>}
               />
 
               <SelectInput
@@ -86,7 +89,6 @@ export const ConfigurationPage: FC = () => {
                   { value: 'jp', name: '日本 (日本語)' },
                 ]}
               />
-
               <SelectInput
                 inputName="tmdbLang"
                 title={<Trans>TMDB language</Trans>}
@@ -95,17 +97,14 @@ export const ConfigurationPage: FC = () => {
                   name: item.name,
                 }))}
               />
-
               <TextInput
                 inputName="igdbClientId"
                 title={<Trans>IGDB Client ID</Trans>}
               />
-
               <TextInput
                 inputName="igdbClientSecret"
                 title={<Trans>IGDB Client Secret</Trans>}
               />
-
               <SelectInput
                 inputName="justWatchCountryCode"
                 title={<Trans>JustWatch country</Trans>}
@@ -114,31 +113,26 @@ export const ConfigurationPage: FC = () => {
                   value: item.code,
                 }))}
               />
-
               <SelectInput
                 inputName="digitalReleaseCountryCode"
                 title={<Trans>Digital release country</Trans>}
                 options={foo}
               />
-
               <SelectInput
                 inputName="theatricalReleaseCountryCode"
                 title={<Trans>Theatrical release country</Trans>}
                 options={foo}
               />
-
               <SelectInput
                 inputName="physicalReleaseCountryCode"
                 title={<Trans>Physical release country</Trans>}
                 options={foo}
               />
-
               <SelectInput
                 inputName="tvReleaseCountryCode"
                 title={<Trans>TV release country</Trans>}
                 options={foo}
               />
-
               <Button
                 actionType="submit"
                 text={<Trans>Save</Trans>}

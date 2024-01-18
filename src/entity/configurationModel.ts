@@ -529,6 +529,7 @@ export const configurationJsonSchema = z.object({
   digitalReleaseCountryCode: ISO_3166_1_schema.nullish(),
   physicalReleaseCountryCode: ISO_3166_1_schema.nullish(),
   tvReleaseCountryCode: ISO_3166_1_schema.nullish(),
+  useTvMazeForEpisodeReleaseDates: z.boolean().default(false),
   // metadataUpdatePolicy: z.record(
   //   mediaTypeSchema,
   //   z.object({
@@ -550,6 +551,7 @@ export const defaultConfiguration: ConfigurationJson = {
   tmdbLang: 'en',
   audibleLang: 'us',
   justWatchCountryCode: 'US',
+  useTvMazeForEpisodeReleaseDates: false,
   // metadataUpdatePolicy: {
   //   audiobook: {
   //     frequencyForReleasedItems: null,

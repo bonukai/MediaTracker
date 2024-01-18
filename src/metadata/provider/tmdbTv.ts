@@ -14,6 +14,7 @@ import {
   tmdbChanges,
   tmdbJustWatchSchema,
 } from './tmdb.js';
+import { TVmaze } from './TVmaze.js';
 
 export const TmdbTv = metadataProviderFactory({
   name: 'tmdb',
@@ -84,7 +85,7 @@ export const TmdbTv = metadataProviderFactory({
       configuration,
     });
 
-    return {
+    const details: MediaItemMetadata = {
       ...mapTvShow(tvShow),
       genres: tvShow.genres?.map((genre) => genre.name) || null,
       imdbId: tvShow.external_ids?.imdb_id || null,
@@ -96,6 +97,12 @@ export const TmdbTv = metadataProviderFactory({
       justWatch: parseJustWatchResult(configuration, tvShow['watch/providers']),
       needsDetails: false,
     };
+
+    if (configuration.useTvMazeForEpisodeReleaseDates) {
+      return TVmaze.addEpisodeReleaseDates(details);
+    }
+
+    return details;
   },
   async findByImdbId(imdbId: string): Promise<MediaItemMetadata | undefined> {
     const res = await fetch(
