@@ -134,6 +134,15 @@ const getRanges = (args: {
 }): PageRanges => {
   const { pageNumber, numberOfPages } = args;
 
+  if (numberOfPages <= 7) {
+    return [
+      {
+        from: 1,
+        to: numberOfPages,
+      },
+    ];
+  }
+
   const ranges = [
     {
       from: 1,
