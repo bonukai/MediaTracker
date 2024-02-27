@@ -10,7 +10,7 @@
     },
     {
       "type": "npm",
-      "script": "dev",
+      "script": "build",
       "path": "client/",
       "problemMatcher": [],
       "label": "client:build"
