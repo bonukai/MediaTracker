@@ -45,6 +45,7 @@ export const applicationTokenRouter = router({
           id: true,
           lastUsedAt: true,
           scope: true,
+          prefix: true,
         })
       )
     )

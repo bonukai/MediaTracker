@@ -17,7 +17,7 @@ export const accessTokenRepository = {
     const { userId, name, scope, createdBy } = args;
     const token = SHA256(nanoid(256)).substring(0, 32);
 
-    await Database.knex.transaction(async (trx) => {
+    await Database.knex.transaction(async (trx): Promise<void> => {
       const user = await trx('user').where('id', userId).first();
 
       if (!user) {
@@ -27,6 +27,7 @@ export const accessTokenRepository = {
       await trx('accessToken').insert({
         description: name,
         token: SHA256(token),
+        prefix: token.substring(0, 6),
         userId: userId,
         scope: scope || null,
         createdAt: Date.now(),
@@ -77,6 +78,13 @@ export const accessTokenRepository = {
 
     return await Database.knex('accessToken')
       .where('userId', userId)
-      .select('createdAt', 'description', 'id', 'lastUsedAt', 'scope');
+      .select(
+        'createdAt',
+        'description',
+        'id',
+        'lastUsedAt',
+        'scope',
+        'prefix'
+      );
   },
 } as const;

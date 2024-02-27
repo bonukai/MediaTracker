@@ -55,14 +55,34 @@ export const ApplicationTokens: FC = () => {
       </div>
 
       <table className="mt-8">
+        <thead>
+          <tr>
+            <th className="px-4 py-2">
+              <Trans>Description</Trans>
+            </th>
+            <th className="px-4 py-2">
+              <Trans>Prefix</Trans>
+            </th>
+            <th className="px-4 py-2">
+              <Trans>Created at</Trans>
+            </th>
+            <th className="px-4 py-2">
+              <Trans>Last used at</Trans>
+            </th>
+            <th className="px-4 py-2">
+              <Trans>Actions</Trans>
+            </th>
+          </tr>
+        </thead>
         <tbody>
           {tokensQuery.data?.map((token) => (
             <tr key={token.id} className="">
-              <td className="p-2">{token.description}</td>
-              <td className="p-2">
+              <td className="px-4 py-2">{token.description}</td>
+              <td className="px-4 py-2">{token.prefix}</td>
+              <td className="px-4 py-2">
                 {new Date(token.createdAt).toLocaleString()}
               </td>
-              <td className="p-2">
+              <td className="px-4 py-2">
                 {token.lastUsedAt ? (
                   <>
                     <RelativeTime to={new Date(token.lastUsedAt)} />
@@ -71,7 +91,7 @@ export const ApplicationTokens: FC = () => {
                   <Trans>Never used</Trans>
                 )}
               </td>
-              <td className="p-2">
+              <td className="px-4 py-2">
                 <ConfirmDialog
                   content={
                     <Trans>

@@ -11,6 +11,7 @@ export const accessTokenModelSchema = z.object({
   id: z.number(),
   userId: z.number(),
   token: z.string(),
+  prefix: z.string().nullable(),
   description: z.string(),
   scope: accessTokenScopeSchema.nullable(),
   createdAt: z.number(),
