@@ -6,8 +6,8 @@ export const gotify = createNotificationPlatform({
   name: 'gotify',
   credentialsSchema: z.object({
     url: z.string().url(),
-    token: z.string().nonempty(),
-    priority: z.coerce.number().min(0).max(10).default(5).nullable(),
+    token: z.string().min(1),
+    priority: z.coerce.number().min(0).max(10).default(5).nullish(),
   }),
   async sendNotification(args) {
     const { credentials, content } = args;

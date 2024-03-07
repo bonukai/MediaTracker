@@ -5,7 +5,7 @@ import { createNotificationPlatform } from '../notificationPlatform.js';
 export const Pushbullet = createNotificationPlatform({
   name: 'Pushbullet',
   credentialsSchema: z.object({
-    token: z.string().nonempty(),
+    token: z.string().min(1),
   }),
   async sendNotification(args) {
     const { credentials, content } = args;

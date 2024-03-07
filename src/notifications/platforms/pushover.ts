@@ -7,7 +7,7 @@ export const APP_TOKEN = 'ax32fzevhit7iwkm3fk18uw1i2ooyv';
 export const Pushover = createNotificationPlatform({
   name: 'Pushover',
   credentialsSchema: z.object({
-    key: z.string().nonempty(),
+    key: z.string().min(1),
   }),
   async sendNotification(args) {
     const { credentials, content } = args;

@@ -5,7 +5,7 @@ import { createNotificationPlatform } from '../notificationPlatform.js';
 export const Pushsafer = createNotificationPlatform({
   name: 'Pushsafer',
   credentialsSchema: z.object({
-    key: z.string().nonempty(),
+    key: z.string().min(1),
   }),
   async sendNotification(args) {
     const { credentials, content } = args;

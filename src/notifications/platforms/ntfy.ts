@@ -5,9 +5,9 @@ import { createNotificationPlatform } from '../notificationPlatform.js';
 export const ntfy = createNotificationPlatform({
   name: 'ntfy',
   credentialsSchema: z.object({
-    url: z.string().url().nullable(),
-    topic: z.string().nonempty(),
-    priority: z.number().min(1).max(5).nullable(),
+    url: z.string().url().nullish(),
+    topic: z.string().min(1),
+    priority: z.number().min(1).max(5).nullish(),
   }),
   async sendNotification(args) {
     const { credentials, content } = args;
