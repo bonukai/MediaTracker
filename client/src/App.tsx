@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { router } from './router';
+import { router } from './Router';
 import { TrpcProvider } from './utils/trpcProvider';
 
 import { i18n } from '@lingui/core';
