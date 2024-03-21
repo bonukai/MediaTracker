@@ -116,22 +116,22 @@ export const ConfigurationPage: FC = () => {
               <SelectInput
                 inputName="digitalReleaseCountryCode"
                 title={<Trans>Digital release country</Trans>}
-                options={foo}
+                options={countryOptions}
               />
               <SelectInput
                 inputName="theatricalReleaseCountryCode"
                 title={<Trans>Theatrical release country</Trans>}
-                options={foo}
+                options={countryOptions}
               />
               <SelectInput
                 inputName="physicalReleaseCountryCode"
                 title={<Trans>Physical release country</Trans>}
-                options={foo}
+                options={countryOptions}
               />
               <SelectInput
                 inputName="tvReleaseCountryCode"
                 title={<Trans>TV release country</Trans>}
-                options={foo}
+                options={countryOptions}
               />
               <Button
                 actionType="submit"
@@ -640,7 +640,7 @@ const iso = [
   { code: 'ZW', country: 'Zimbabwe' },
 ] as const;
 
-const foo = [
+const countryOptions = [
   {
     value: '',
     name: (
