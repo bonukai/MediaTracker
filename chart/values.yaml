@@ -69,6 +69,16 @@ readinessProbe:
     path: /
     port: http
 
+environment:
+  - name: SERVER_LANG
+    value: en
+  - name: TMDB_LANG
+    value: en
+  - name: AUDIBLE_LANG
+    value: us
+  - name: TZ
+    value: Europe/London
+
 autoscaling:
   enabled: false
   minReplicas: 1
