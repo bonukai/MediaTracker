@@ -19,6 +19,65 @@ npm install
 npm run dev
 ```
 
+# Installation
+
+## With docker
+
+### Version Tags
+
+| Tag      | Description     |
+| -------- | --------------- |
+| latest   | stable releases |
+| unstable | pre-releases    |
+
+```bash
+docker volume create assets
+docker run \
+    -d \
+    --name mediatracker \
+    -p 7481:7481 \
+    -v /home/YOUR_HOME_DIRECTORY/.config/mediatracker/data:/storage \
+    -v assets:/assets \
+    -e TZ=Europe/London \
+    bonukai/mediatracker:latest
+```
+
+### Parameters
+
+| Parameter   | Function                |
+| ----------- | ----------------------- |
+| -p 7481     | Port web API            |
+| -v /storage | Directory with database |
+| -v /assets  | Posters directory       |
+| -v /logs    | Logs directory          |
+
+## With docker-compose
+
+```bash
+version: "3"
+services:
+  mediatracker:
+    container_name: mediatracker
+    ports:
+      - 7481:7481
+    volumes:
+      - /home/YOUR_HOME_DIRECTORY/.config/mediatracker/data:/storage
+      - assetsVolume:/assets
+    environment:
+      TZ: Europe/London
+    image: bonukai/mediatracker:latest
+
+volumes:
+  assetsVolume: null
+```
+
+### Environment variables
+
+| Name                       | Description                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------- |
+| DATABASE_CLIENT            | Database client: `SQLite` (default) or `PostgreSQL`                                      |
+| DATABASE_CONNECTION_STRING | Database connection string, `postgres://someuser:somepassword@somehost:381/somedatabase` |
+
 # Similar projects
 
 - [devfake/flox](https://github.com/devfake/flox)
