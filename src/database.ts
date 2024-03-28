@@ -60,7 +60,7 @@ export class Database {
 
   static async runMigrations(verbose = true): Promise<void> {
     if (verbose) {
-      logger.info(`Running migrations`);
+      logger.info(`running migrations`);
     }
 
     const [batchNo, log] = await Database.#knex.migrate.latest({
@@ -73,13 +73,15 @@ export class Database {
 
       if (verbose) {
         logger.info(
-          `Batch ${name} run: ${count} ${
+          `batch ${name} run: ${count} ${
             count == 1 ? 'migration' : 'migrations'
           }`
         );
 
         log.map((value: string) => logger.info(value));
       }
+    } else {
+      logger.info(`migrations are up to date`);
     }
   }
 
