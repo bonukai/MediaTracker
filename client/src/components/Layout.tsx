@@ -130,8 +130,8 @@ const Sidebar: FC = () => {
             displayName={<Trans>Application tokens</Trans>}
           />
           <SidebarLink
-            to="/settings/configuration"
-            displayName={<Trans>Configuration</Trans>}
+            to="/settings/server-configuration"
+            displayName={<Trans>Server configuration</Trans>}
           />
           {isAdmin && (
             <SidebarLink

@@ -25,7 +25,7 @@ import { RegisterPage } from './pages/RegisterPage';
 import { RootPage } from './pages/RootPage';
 import { SearchPage } from './pages/SearchPage';
 import { ApplicationTokens } from './pages/settings/ApplicationTokens';
-import { ConfigurationPage } from './pages/settings/ConfigurationPage';
+import { ServerConfigurationPage } from './pages/settings/ServerConfigurationPage';
 import { HomePageSettingsPage } from './pages/settings/HomePageSettingsPage';
 import { LogPage, LogsPage } from './pages/settings/LogsPage';
 import { NotificationsSettingsPage } from './pages/settings/NotificationsSettingsPage';
@@ -160,8 +160,8 @@ export const router = createBrowserRouter([
             element: <ApplicationTokens />,
           },
           {
-            path: '/settings/configuration',
-            element: <ConfigurationPage />,
+            path: '/settings/server-configuration',
+            element: <ServerConfigurationPage />,
           },
           {
             path: '/list/:listId',
