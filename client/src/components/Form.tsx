@@ -63,6 +63,7 @@ export const Form = <
       required?: true;
       minLength?: number;
       maxLength?: number;
+      disabled?: boolean;
       inputName: keyof T;
     }>;
     NumberInput: FC<{
@@ -216,10 +217,11 @@ export const Form = <
     description?: ReactNode;
     inputName: keyof T;
     required?: true;
+    disabled?: boolean;
     minLength?: number;
     maxLength?: number;
   }> = useCallback((props) => {
-    const { inputName, required, minLength, maxLength } = props;
+    const { inputName, required, minLength, maxLength, disabled } = props;
 
     return (
       <GenericInput {...props}>
@@ -231,6 +233,7 @@ export const Form = <
           required={required}
           minLength={minLength}
           maxLength={maxLength}
+          disabled={disabled}
         />
       </GenericInput>
     );
