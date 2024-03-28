@@ -7,7 +7,7 @@ import { Form } from '../../components/Form';
 import { MainTitle } from '../../components/MainTitle';
 import { RouterInput, trpc } from '../../utils/trpc';
 
-export const ConfigurationPage: FC = () => {
+export const ServerConfigurationPage: FC = () => {
   const utils = trpc.useUtils();
   const configuration = trpc.configuration.get.useQuery();
   const updateConfiguration = trpc.configuration.update.useMutation({
@@ -23,7 +23,10 @@ export const ConfigurationPage: FC = () => {
   return (
     <>
       <MainTitle
-        elements={[<Trans>Settings</Trans>, <Trans>Configuration</Trans>]}
+        elements={[
+          <Trans>Settings</Trans>,
+          <Trans>Server configuration</Trans>,
+        ]}
       />
       <div className="flex pt-8 ">
         <Form<RouterInput['configuration']['update']>
