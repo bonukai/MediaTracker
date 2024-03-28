@@ -1,9 +1,0 @@
-server/dist
-server/public
-server/build
-server/docs/dist
-server/coverage
-docs/dist
-
-**/locales/*/translation.json
-!**/locales/en/translation.json
