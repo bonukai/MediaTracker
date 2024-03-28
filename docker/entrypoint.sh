@@ -31,4 +31,8 @@ else
     args="${args} --db-filepath /storage/data.db"
 fi
 
+if [ -n "${DEMO}" ]; then
+    args="${args} --demo"
+fi
+
 su -c "node /app/build/index.js start-server --logs-dir /logs --assets-dir /assets ${args}" abc

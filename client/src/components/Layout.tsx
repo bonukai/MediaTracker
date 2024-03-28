@@ -45,8 +45,9 @@ export const Layout: FC = () => {
 const Sidebar: FC = () => {
   const { user, logout } = useUser();
   const { data: version } = trpc.serverVersion.get.useQuery();
+  const configurationQuery = trpc.configuration.getPublic.useQuery();
 
-  if (user.isLoading) {
+  if (user.isLoading || configurationQuery.isLoading) {
     return <Trans>Loading</Trans>;
   }
 
@@ -114,10 +115,12 @@ const Sidebar: FC = () => {
             to="/settings/notifications"
             displayName={<Trans>Notifications</Trans>}
           />
-          <SidebarLink
-            to="/settings/password"
-            displayName={<Trans>Password</Trans>}
-          />
+          {!configurationQuery.data?.demoMode && (
+            <SidebarLink
+              to="/settings/password"
+              displayName={<Trans>Password</Trans>}
+            />
+          )}
           <SidebarLink
             to="/settings/preferences"
             displayName={<Trans>Preferences</Trans>}
