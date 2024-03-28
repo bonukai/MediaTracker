@@ -59,6 +59,10 @@ export class Database {
   }
 
   static async runMigrations(verbose = true): Promise<void> {
+    if (verbose) {
+      logger.info(`Running migrations`);
+    }
+
     const [batchNo, log] = await Database.#knex.migrate.latest({
       directory: resolve(__dirname, 'migrations'),
     });
@@ -68,8 +72,6 @@ export class Database {
       const count = log.length;
 
       if (verbose) {
-        logger.info(`Running migrations`);
-
         logger.info(
           `Batch ${name} run: ${count} ${
             count == 1 ? 'migration' : 'migrations'
