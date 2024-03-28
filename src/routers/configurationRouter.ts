@@ -7,6 +7,7 @@ import {
   publicProcedure,
   router,
 } from '../router.js';
+import { StaticConfiguration } from '../staticConfiguration.js';
 
 export const configurationRouter = router({
   get: protectedProcedure.query(async () => {
@@ -15,6 +16,7 @@ export const configurationRouter = router({
   getPublic: publicProcedure
     .output(
       z.object({
+        demoMode: z.boolean(),
         enableRegistration: z.boolean(),
         hasIgdbCredentials: z.boolean(),
         publicAddress: z.string().nullable(),
@@ -24,6 +26,7 @@ export const configurationRouter = router({
       const configuration = await configurationRepository.get();
 
       return {
+        demoMode: StaticConfiguration.demoMode,
         enableRegistration: configuration.enableRegistration,
         hasIgdbCredentials:
           typeof configuration.igdbClientId === 'string' &&

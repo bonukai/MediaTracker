@@ -26,6 +26,7 @@ export const Button: FC<{
   color?: 'green' | 'red';
   preventDefault?: true;
   multiline?: boolean;
+  disabled?: boolean;
 }> = (props) => {
   const {
     actionType,
@@ -37,6 +38,7 @@ export const Button: FC<{
     children,
     preventDefault,
     multiline,
+    disabled,
   } = props;
 
   const color = props.color || 'green';
@@ -48,6 +50,7 @@ export const Button: FC<{
   return (
     <button
       type={actionType}
+      disabled={disabled}
       className={cx(
         className,
         isLoading && '!bg-opacity-40 !text-opacity-20 !cursor-progress',

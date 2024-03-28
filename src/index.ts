@@ -72,7 +72,8 @@ program
     new Option('--assets-dir <path>', 'assets (posters/backdrops) directory')
       .default(path.resolve(os.homedir(), '.mediatracker', 'img'))
       .argParser(createDirectories)
-  );
+  )
+  .addOption(new Option('--demo', 'demo mode'));
 
 const commands: Command[] = [];
 
@@ -172,14 +173,16 @@ const optsSchema = z.object({
   dbConnectionString: z.string().optional(),
   logsDir: z.string(),
   assetsDir: z.string(),
+  demo: z.coerce.boolean(),
 });
 
-const { dbClient, dbFilepath, dbConnectionString, assetsDir, logsDir } =
+const { dbClient, dbFilepath, dbConnectionString, assetsDir, logsDir, demo } =
   optsSchema.parse(opts);
 
 StaticConfiguration.init({
   assetsDir,
   logsDir,
+  demoMode: demo,
 });
 
 const validateDatabaseConfig = (): DatabaseConfig => {
