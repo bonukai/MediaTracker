@@ -4,6 +4,7 @@ import { MainTitle } from '../../components/MainTitle';
 import { Trans, t } from '@lingui/macro';
 import { Button } from '../../components/Button';
 import { Form } from '../../components/Form';
+import { trpc } from '../../utils/trpc';
 
 export const PasswordSettingsPage: FC = () => {
   return (
@@ -19,10 +20,13 @@ export const PasswordSettingsPage: FC = () => {
 
 const PasswordChangeFrom: FC = () => {
   const { user, changePassword } = useUser();
+  const configurationQuery = trpc.configuration.getPublic.useQuery();
 
   if (!user.data) {
     return <></>;
   }
+
+  const demoMode = configurationQuery.data?.demoMode === true;
 
   return (
     <Form<{
@@ -49,10 +53,17 @@ const PasswordChangeFrom: FC = () => {
     >
       {({ PasswordInput }) => (
         <>
+          {demoMode && (
+            <div className="mb-6 italic text-slate-700">
+              Password cannot be changed in DEMO mode
+            </div>
+          )}
+
           <PasswordInput
             inputName="currentPassword"
             title={<Trans>Current password</Trans>}
             required
+            disabled={demoMode}
           />
 
           <PasswordInput
@@ -61,12 +72,14 @@ const PasswordChangeFrom: FC = () => {
             required
             minLength={8}
             maxLength={1024}
+            disabled={demoMode}
           />
 
           <PasswordInput
             inputName="confirmNewPassword"
             title={<Trans>Confirm new password</Trans>}
             required
+            disabled={demoMode}
           />
 
           {changePassword.isError && changePassword.error?.message && (
@@ -78,7 +91,7 @@ const PasswordChangeFrom: FC = () => {
             </div>
           )}
 
-          <Button isLoading={changePassword.isLoading}>
+          <Button isLoading={changePassword.isLoading} disabled={demoMode}>
             <Trans>Change password</Trans>
           </Button>
         </>
