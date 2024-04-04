@@ -302,15 +302,17 @@ export const Form = <
 
     return (
       <div className="pb-6">
-        <input
-          type="checkbox"
-          ref={(node) => node && (refs.current[inputName] = node)}
-          name={inputName.toString()}
-        />
+        <label>
+          <input
+            type="checkbox"
+            ref={(node) => node && (refs.current[inputName] = node)}
+            name={inputName.toString()}
+          />
 
-        <span className="inline ml-1 font-semibold text-slate-800">
-          {title}
-        </span>
+          <span className="inline ml-1 font-semibold select-none text-slate-800">
+            {title}
+          </span>
+        </label>
 
         {description && (
           <div className="mt-1 text-slate-600">{description}</div>
@@ -339,7 +341,9 @@ export const Form = <
               name={inputName.toString()}
             />
 
-            <span className="inline ml-1 text-slate-600 ">{name}</span>
+            <span className="inline ml-1 select-none text-slate-600">
+              {name}
+            </span>
           </label>
         ))}
       </GenericInput>
