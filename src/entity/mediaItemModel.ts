@@ -211,7 +211,7 @@ export const mediaItemResponseSchema = z.object({
   authors: z.array(z.string()).nullable(),
   narrators: z.array(z.string()).nullable(),
   language: z.string().nullable(),
-  numberOfPages: z.number().nullable(),
+  numberOfPages: z.coerce.number().nullable(),
   lastTimeUpdated: z.number().nullable(),
   poster: z.string().nullable(),
   backdrop: z.string().nullable(),
