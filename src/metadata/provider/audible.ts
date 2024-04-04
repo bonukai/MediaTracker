@@ -114,7 +114,7 @@ const mapItemResponse = (
     mediaType: Audible.mediaType,
     source: Audible.name,
     audibleCountryCode: countryCode,
-    title: item.title!,
+    title: item.title,
     audibleId: item.asin,
     authors: item.authors?.map((author) => author.name),
     narrators: item.narrators?.map((narrator) => narrator.name),
@@ -171,7 +171,7 @@ const productSchema = z.object({
     .nullish(),
   sku: z.string().nullish(),
   sku_lite: z.string().nullish(),
-  title: z.string().nullish(),
+  title: z.string(),
   subtitle: z.string().nullish(),
   voice_description: z.string().nullish(),
 });
