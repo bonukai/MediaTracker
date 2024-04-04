@@ -14,7 +14,7 @@ import { StaticConfiguration } from './staticConfiguration.js';
 import { h } from './utils.js';
 
 const inputValidator = (zodSchema: ZodSchema) => {
-  return (value: any) => {
+  return (value: string) => {
     const parsedValue = zodSchema.safeParse(value);
 
     if (parsedValue.success) {
@@ -27,7 +27,7 @@ const inputValidator = (zodSchema: ZodSchema) => {
   };
 };
 
-const requireFileToExist = (value: any) => {
+const requireFileToExist = (value: string) => {
   const filePath = path.resolve(value);
 
   if (fs.existsSync(filePath)) {
@@ -37,7 +37,7 @@ const requireFileToExist = (value: any) => {
   throw new InvalidArgumentError(h`file ${filePath} does not exists`);
 };
 
-const createDirectories = (value: any) => {
+const createDirectories = (value: string) => {
   const p = path.resolve(value);
   fs.mkdirSync(p, { recursive: true });
   return p;
@@ -80,8 +80,8 @@ const commands: Command[] = [];
 const addCommand = (args: {
   command: Command;
   action: (args: {
-    args: any[];
-    opts: Record<string, any>;
+    args: string[];
+    opts: Record<string, string>;
   }) => void | Promise<void>;
 }) => {
   const command = args.command
@@ -154,7 +154,7 @@ addCommand({
     }
 
     await startServer({
-      port,
+      port: Number(port),
       address,
       protocol: https ? 'https' : 'http',
       key: keyContent,
