@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 import _ from 'lodash';
 import log from 'loglevel';
 import path from 'path';
+
 import { StaticConfiguration } from './staticConfiguration.js';
 
 const originalFactory = log.methodFactory;
@@ -71,12 +72,12 @@ log.methodFactory = (methodName, logLevel, loggerName) => {
       methodName === 'info'
         ? chalk.green
         : methodName === 'error'
-        ? chalk.red
-        : methodName === 'debug'
-        ? chalk.blue
-        : methodName === 'warn'
-        ? chalk.yellow
-        : (value: string) => value;
+          ? chalk.red
+          : methodName === 'debug'
+            ? chalk.blue
+            : methodName === 'warn'
+              ? chalk.yellow
+              : (value: string) => value;
 
     const padding = ' '.repeat(5 - methodName.length);
     const log = `${colorFunction(
