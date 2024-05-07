@@ -11,11 +11,7 @@ import _ from 'lodash';
 
 export const TMDB_API_KEY = '779734046efc1e6127485c54d3b29627';
 
-export const createTmdbFullImageUrl = (id?: string | null) => {
-  if (!id) {
-    return null;
-  }
-
+export const createTmdbFullImageUrl = (id: string): string => {
   return `https://image.tmdb.org/t/p/original${
     id.startsWith('/') ? '' : '/'
   }${id}`;
@@ -47,7 +43,7 @@ export const parseJustWatchResult = (
       displayPriority: record.display_priority,
       type: type,
       provider: {
-        externalLogoUrl: createTmdbFullImageUrl(record.logo_path)!,
+        externalLogoUrl: createTmdbFullImageUrl(record.logo_path),
         id: record.provider_id,
         name: record.provider_name,
       },
@@ -105,6 +101,7 @@ export const tmdbChanges = async (args: {
   let page = 1;
   const tmdbIdsToUpdate: number[] = [];
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     const res = await fetch(
       `https://api.themoviedb.org/3/${category}/changes?` +

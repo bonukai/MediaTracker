@@ -5,14 +5,14 @@ import {
   ImportDataType,
   ImportSeenHistoryItem,
 } from '../repository/importRepository.js';
+import { withDefinedPropertyFactory } from '../utils.js';
 
 export const floxImport = {
   map(json: string): ImportDataType {
     const res = floxExportSchema.parse(JSON.parse(json));
 
     const tmdbTitleMap = _(res.items)
-      .filter((item) => typeof item.tmdb_id === 'number')
-      .keyBy((item) => item.tmdb_id!)
+      .filter(withDefinedPropertyFactory('tmdb_id'))
       .map((item) => item.title);
 
     return {
@@ -35,7 +35,7 @@ export const floxImport = {
         })),
       seenHistory: [
         ...res.items
-          .filter((item) => typeof item.last_seen_at === 'string')
+          .filter(withDefinedPropertyFactory('last_seen_at'))
           .filter((item) => item.media_type === 'movie')
           .map(
             (item): ImportSeenHistoryItem => ({
@@ -43,7 +43,7 @@ export const floxImport = {
               title: item.title,
               tmdbId: item.tmdb_id,
               imdbId: item.imdb_id,
-              seenAt: new Date(item.last_seen_at!),
+              seenAt: new Date(item.last_seen_at),
             })
           ),
         ...res.episodes

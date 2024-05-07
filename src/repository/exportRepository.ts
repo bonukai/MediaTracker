@@ -268,19 +268,19 @@ const mediaItemBasicInfo = <
   value: T
 ) => {
   return {
-    title: value.mediaItem!.title,
-    releaseYear: value.mediaItem!.releaseDate
-      ? new Date(value.mediaItem!.releaseDate).getFullYear()
+    title: value.mediaItem.title,
+    releaseYear: value.mediaItem.releaseDate
+      ? new Date(value.mediaItem.releaseDate).getFullYear()
       : null,
-    imdbId: value.mediaItem!.imdbId,
-    tmdbId: value.mediaItem!.tmdbId,
-    tvdbId: value.mediaItem!.tvdbId,
-    tvmazeId: value.mediaItem!.tvmazeId,
-    igdbId: value.mediaItem!.igdbId,
-    openlibraryId: value.mediaItem!.openlibraryId,
-    audibleId: value.mediaItem!.audibleId,
-    traktId: value.mediaItem!.traktId,
-    goodreadsId: value.mediaItem!.goodreadsId,
+    imdbId: value.mediaItem.imdbId,
+    tmdbId: value.mediaItem.tmdbId,
+    tvdbId: value.mediaItem.tvdbId,
+    tvmazeId: value.mediaItem.tvmazeId,
+    igdbId: value.mediaItem.igdbId,
+    openlibraryId: value.mediaItem.openlibraryId,
+    audibleId: value.mediaItem.audibleId,
+    traktId: value.mediaItem.traktId,
+    goodreadsId: value.mediaItem.goodreadsId,
     ...(value.episode
       ? {
           episode: {

@@ -17,11 +17,7 @@ import { SeasonModel } from '../entity/seasonModel.js';
 import { logger } from '../logger.js';
 import { metadataProviders } from '../metadata/metadataProviders.js';
 import { updateMetadata } from '../updateMetadata.js';
-import {
-  isDefined,
-  splitWhereInQuery,
-  withDefinedPropertyFactory,
-} from '../utils.js';
+import { is, splitWhereInQuery, withDefinedPropertyFactory } from '../utils.js';
 import {
   itemWithAtLeastOneExternalId,
   mediaItemRepository,
@@ -179,7 +175,7 @@ export const importRepository = {
             .flatMap((columnName) =>
               _(mediaItems)
                 .map((item) => _.get(item, columnName))
-                .filter(isDefined)
+                .filter(is)
                 .chunk(100)
                 .map((ids) => trx('mediaItem').whereIn(columnName, ids))
                 .value()
@@ -194,7 +190,7 @@ export const importRepository = {
         .map((columnName) => ({
           columnName: columnName,
           map: _(existingMediaItems)
-            .filter((item) => isDefined(item[columnName]))
+            .filter((item) => is(item[columnName]))
             .keyBy((item) => item[columnName]!)
             .value(),
         }))
@@ -216,7 +212,7 @@ export const importRepository = {
           for (const item of maps) {
             const value = ids[item.columnName];
 
-            if (isDefined(value) && item.map[value]) {
+            if (is(value) && item.map[value]) {
               return item.map[value];
             }
           }
@@ -273,13 +269,13 @@ export const importRepository = {
         (item) => item.itemType === 'episode' || item.itemType === 'season'
       )
       .map(findMediaItem)
-      .filter(isDefined)
+      .filter(is)
       .filter((item) => item.needsDetails === true)
       .uniqBy((item) => item.id)
       .value();
 
     for (const item of itemsToUpdate) {
-      await updateMetadata(item!);
+      await updateMetadata(item);
     }
 
     const neededSeasonsEndEpisodes = _(mediaItems)
@@ -287,7 +283,7 @@ export const importRepository = {
         (item) => item.itemType === 'episode' || item.itemType === 'season'
       )
       .map(findMediaItem)
-      .filter(isDefined)
+      .filter(is)
       .map((item) => item.id)
       .uniq()
       .value();
@@ -408,12 +404,12 @@ export const importRepository = {
                 .map(addEpisode)
                 .filter(withEpisode)
             : itemType === 'season'
-            ? itemsWithCurrentMediaType
-                .map(addMediaItem)
-                .filter(withMediaItem)
-                .map(addSeason)
-                .filter(withSeason)
-            : itemsWithCurrentMediaType.filter(findMediaItem);
+              ? itemsWithCurrentMediaType
+                  .map(addMediaItem)
+                  .filter(withMediaItem)
+                  .map(addSeason)
+                  .filter(withSeason)
+              : itemsWithCurrentMediaType.filter(findMediaItem);
 
         const total = itemsWithCurrentMediaType.length;
         const found = foundItems.length;
@@ -711,13 +707,13 @@ export const importRepository = {
 const withEpisode = <T extends { itemType: ItemType; episode?: EpisodeModel }>(
   item: T
 ) => {
-  return item.itemType === 'episode' ? isDefined(item.episode) : true;
+  return item.itemType === 'episode' ? is(item.episode) : true;
 };
 
 const withSeason = <T extends { itemType: ItemType; season?: SeasonModel }>(
   item: T
 ) => {
-  return item.itemType === 'season' ? isDefined(item.season) : true;
+  return item.itemType === 'season' ? is(item.season) : true;
 };
 
 const withMediaItem = withDefinedPropertyFactory('mediaItem');

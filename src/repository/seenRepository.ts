@@ -1,11 +1,7 @@
 import _ from 'lodash';
 
 import { Database } from '../database.js';
-import {
-  isDefined,
-  splitDeleteWhereInQuery,
-  splitWhereInQuery,
-} from '../utils.js';
+import { is, splitDeleteWhereInQuery, splitWhereInQuery } from '../utils.js';
 import { mediaItemRepository } from './mediaItemRepository.js';
 import { seenEpisodesCountRepository } from './seenEpisodesCountRepository.js';
 
@@ -241,7 +237,7 @@ export const seenRepository = {
         userId,
         trx,
         mediaItemIds: seen.map((item) => item.mediaItemId),
-        episodeIds: seen.map((item) => item.episodeId).filter(isDefined),
+        episodeIds: seen.map((item) => item.episodeId).filter(is),
       });
 
       return { seen, details, count };
@@ -282,7 +278,7 @@ export const seenRepository = {
         userId,
         trx,
         mediaItemIds: seen.map((item) => item.mediaItemId),
-        episodeIds: seen.map((item) => item.episodeId).filter(isDefined),
+        episodeIds: seen.map((item) => item.episodeId).filter(is),
       });
 
       return { seen: seen, details };

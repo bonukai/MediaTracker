@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 
 import { EpisodeResponse, MediaItemModel } from './entity/mediaItemModel.js';
 import chalk from 'chalk';
+import { EpisodeModel } from './entity/episodeModel.js';
 
 export const getImageId = () => customAlphabet('1234567890abcdef', 32)();
 
@@ -65,7 +66,7 @@ export const generateExternalUrl = (mediaItem: MediaItemModel) => {
   // }
 };
 
-export const isDefined = <T>(item?: T | undefined | null): item is T => {
+export const is = <T>(item?: T | undefined | null): item is T => {
   return item !== undefined && item !== null;
 };
 
@@ -97,7 +98,9 @@ export const measure = async <T>(
   return res;
 };
 
-export const formatEpisodeNumber = (episode: EpisodeResponse): string => {
+export const formatEpisodeNumber = (
+  episode: EpisodeResponse | EpisodeModel
+): string => {
   return `S${episode.seasonNumber
     .toString()
     .padStart(2, '0')}E${episode.episodeNumber.toString().padStart(2, '0')}`;

@@ -38,8 +38,12 @@ export async function down(knex: Knex): Promise<void> {
     })
     .dropTable('serverInternalSettings');
 
+  if (!serverInternalSettings) {
+    return;
+  }
+
   await knex<{ id: number; key: string }>('sessionKey').insert({
     id: 1,
-    key: JSON.parse(serverInternalSettings!.settingsJson).sessionKey,
+    key: JSON.parse(serverInternalSettings.settingsJson).sessionKey,
   });
 }

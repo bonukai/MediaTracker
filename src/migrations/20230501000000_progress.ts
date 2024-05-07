@@ -1,7 +1,6 @@
 import { Knex } from 'knex';
 import _ from 'lodash';
-
-import { isDefined } from '../utils.js';
+import { is } from '../utils.js';
 
 export async function up(knex: Knex): Promise<void> {
   const progressEntries = await knex<{
@@ -58,7 +57,7 @@ export async function up(knex: Knex): Promise<void> {
     await knex.batchInsert(
       'progress',
       latestProgress
-        .filter(isDefined)
+        .filter(is)
         .map((item) => ({
           date: item.date,
           mediaItemId: item.mediaItemId,

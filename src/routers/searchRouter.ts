@@ -15,7 +15,7 @@ import { protectedProcedure, router } from '../router.js';
 import { h } from '../utils.js';
 import { Database } from '../database.js';
 
-const toString = (object: Object) => {
+const toString = (object: object) => {
   return JSON.stringify(
     _(object).omitBy(_.isUndefined).omitBy(_.isNull).value()
   );

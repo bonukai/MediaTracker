@@ -144,8 +144,12 @@ const mapMovie = (movie: {
   tmdbId: movie.id,
   tmdbRating: movie.vote_average || null,
   language: movie.original_language || null,
-  externalPosterUrl: createTmdbFullImageUrl(movie.poster_path),
-  externalBackdropUrl: createTmdbFullImageUrl(movie.backdrop_path),
+  externalPosterUrl: movie.poster_path
+    ? createTmdbFullImageUrl(movie.poster_path)
+    : null,
+  externalBackdropUrl: movie.backdrop_path
+    ? createTmdbFullImageUrl(movie.backdrop_path)
+    : null,
   needsDetails: true,
 });
 
@@ -268,14 +272,14 @@ const movieDetailsToMediaItemMetadata = async (
     [ReleaseType.Physical]: physicalReleaseDate,
     [ReleaseType.Tv]: tvReleaseDate,
   } = _(movie.release_dates?.results)
-    ?.flatMap((item) =>
+    .flatMap((item) =>
       item.release_dates.map((subItem) => ({
         ...subItem,
         iso_3166_1: item.iso_3166_1,
       }))
     )
-    ?.groupBy((item) => item.type)
-    ?.mapValues(
+    .groupBy((item) => item.type)
+    .mapValues(
       (items) =>
         _.minBy(
           items.filter((item) => {
@@ -290,7 +294,7 @@ const movieDetailsToMediaItemMetadata = async (
           (item) => item.release_date
         )?.release_date
     )
-    ?.value();
+    .value();
 
   return {
     ...mapMovie(movie),

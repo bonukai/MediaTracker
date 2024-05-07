@@ -1,5 +1,4 @@
 import { Database } from '../database.js';
-import { isDefined } from '../utils.js';
 
 export const ratingRepository = {
   async rate(args: {

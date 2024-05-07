@@ -16,7 +16,7 @@ import {
 } from '../entity/listModel.js';
 import { Knex } from 'knex';
 
-import { toReleaseDateFormat } from '../utils.js';
+import { is, toReleaseDateFormat } from '../utils.js';
 import { mediaItemRepository } from './mediaItemRepository.js';
 import { TRPCError } from '@trpc/server';
 
@@ -76,7 +76,11 @@ export const listRepository = {
 
       const updatedList = await trx('list').where('id', id).first();
 
-      return updatedList!;
+      if (!updatedList) {
+        throw new Error(`failed to fetch updated list with id ${id}`);
+      }
+
+      return updatedList;
     });
   },
 
@@ -291,7 +295,13 @@ export const listRepository = {
       res.mediaItemDetails;
 
     const listItems = res.listItems.map((item): ListItemResponse => {
-      const mediaItem = getMediaItemById(item.mediaItemId)!;
+      const mediaItem = getMediaItemById(item.mediaItemId);
+
+      if (!mediaItem) {
+        throw new Error(
+          `mediaItem with id ${item.mediaItemId} does not exists`
+        );
+      }
 
       return {
         id: item.id,
@@ -299,8 +309,8 @@ export const listRepository = {
         type: item.episodeId
           ? 'episode'
           : item.seasonId
-          ? 'season'
-          : 'mediaItem',
+            ? 'season'
+            : 'mediaItem',
         mediaItem: mediaItem,
         season: getSeasonById(item.seasonId),
         episode: getEpisodeById(item.episodeId),
@@ -389,8 +399,8 @@ export const listRepository = {
       const data = await mediaItemRepository.userDetails({
         trx,
         mediaItemIds: uniqMediaItemIds,
-        seasonIds: listItems.map((item) => item.seasonId!).filter(Boolean),
-        episodeIds: listItems.map((item) => item.episodeId!).filter(Boolean),
+        seasonIds: listItems.map((item) => item.seasonId).filter(is),
+        episodeIds: listItems.map((item) => item.episodeId).filter(is),
         userId,
       });
 
@@ -401,8 +411,8 @@ export const listRepository = {
           type: item.episodeId
             ? 'episode'
             : item.seasonId
-            ? 'season'
-            : 'mediaItem',
+              ? 'season'
+              : 'mediaItem',
           episode: data.getEpisodeById(item.episodeId),
           season: data.getSeasonById(item.seasonId),
           mediaItem: data.getMediaItemById(item.mediaItemId),

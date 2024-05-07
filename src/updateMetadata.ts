@@ -18,7 +18,8 @@ import { justWatchRepository } from './repository/justWatchRepository.js';
 import { mediaItemRepository } from './repository/mediaItemRepository.js';
 import { seenEpisodesCountRepository } from './repository/seenEpisodesCountRepository.js';
 import { StaticConfiguration } from './staticConfiguration.js';
-import { getImageId, h } from './utils.js';
+import { getImageId, h, withDefinedPropertyFactory } from './utils.js';
+import { sendAndScheduledNotificationsForReleases } from './releaseNotifications.js';
 
 export const updateMetadata = async (
   mediaItemToUpdate: MediaItemModel
@@ -157,12 +158,12 @@ export const updateMetadata = async (
         await deleteSeason(seasonToDelete, trx);
       }
 
-      const seasonsToUpdate = existingSeasons.filter((item) =>
-        searchNewSeasons(item)
-      );
+      for (const seasonToUpdate of existingSeasons) {
+        const seasonMetadata = searchNewSeasons(seasonToUpdate);
 
-      for (const seasonToUpdate of seasonsToUpdate) {
-        const seasonMetadata = searchNewSeasons(seasonToUpdate)!;
+        if (!seasonMetadata) {
+          continue;
+        }
 
         const searchNewEpisodes = episodeSearchFunctionFactory(
           seasonMetadata.episodes
@@ -203,9 +204,9 @@ export const updateMetadata = async (
               old: episode,
               new: searchNewEpisodes(episode),
             }))
-            .filter((item) => item.new)
+            .filter(withDefinedPropertyFactory('new'))
             .filter(
-              (item) => item.old.episodeNumber !== item.new?.episodeNumber
+              (item) => item.old.episodeNumber !== item.new.episodeNumber
             );
 
           for (const episode of episodesWithDifferentNumbers) {
@@ -213,8 +214,8 @@ export const updateMetadata = async (
               h`changing episode number of episode ${formatEpisodeNumber(
                 episode.old
               )} "${episode.old.title}" to ${formatEpisodeNumber(
-                episode.new!
-              )} "${episode.new!.title}"`
+                episode.new
+              )} "${episode.new.title}"`
             );
 
             await trx('episode')
@@ -224,10 +225,10 @@ export const updateMetadata = async (
 
           for (const episode of episodesWithDifferentNumbers) {
             await trx('episode')
-              .update('episodeNumber', episode.new!.episodeNumber)
+              .update('episodeNumber', episode.new.episodeNumber)
               .update(
                 'seasonAndEpisodeNumber',
-                episode.new!.seasonNumber * 1000 + episode.new!.episodeNumber
+                episode.new.seasonNumber * 1000 + episode.new.episodeNumber
               )
               .where('id', episode.old.id);
           }

@@ -9,7 +9,6 @@ import {
   mediaItemResponseSchema,
   mediaTypeSchema,
 } from '../entity/mediaItemModel.js';
-import { isDefined } from '../utils.js';
 import {
   paginatedInputSchema,
   paginatedOutputSchema,
