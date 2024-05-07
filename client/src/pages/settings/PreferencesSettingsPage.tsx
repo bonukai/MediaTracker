@@ -50,14 +50,14 @@ export const PreferencesSettingsPage: FC = () => {
         elements={[<Trans>Settings</Trans>, <Trans>Preferences</Trans>]}
       />
 
-      <Form<UserPreferences>
+      <Form<Omit<UserPreferences, 'notificationPlatforms'>>
         initialValues={user.data.preferences}
         onSubmit={({ data }) => {
           updatePreferences.mutate(data);
         }}
         className=""
       >
-        {({ SelectInput, MultiCheckboxInput }) => (
+        {({ SelectInput, MultiCheckboxInput, CheckboxInput }) => (
           <>
             <SelectInput
               inputName="language"
@@ -71,6 +71,11 @@ export const PreferencesSettingsPage: FC = () => {
                 { value: 'ko', name: '한국어' },
                 { value: 'pt', name: 'Português' },
               ]}
+            />
+
+            <CheckboxInput
+              inputName="sendNotificationForReleases"
+              title={<Trans>Send notifications for releases</Trans>}
             />
 
             <SelectInput

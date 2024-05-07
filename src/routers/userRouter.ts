@@ -13,7 +13,10 @@ import {
   router,
   SetCookieFunction,
 } from '../router.js';
-import { userPreferencesSchema } from '../entity/userModel.js';
+import {
+  notificationPlatformSchema,
+  userPreferencesSchema,
+} from '../entity/userModel.js';
 import { h } from '../utils.js';
 
 const usernameSchema = z.string().min(2).max(100);
@@ -123,6 +126,30 @@ export const userRouter = router({
     )
     .query(async () => {
       return await userRepository.getAllUsers();
+    }),
+  addReleaseNotificationPlatform: protectedProcedure
+    .input(notificationPlatformSchema)
+    .mutation(async ({ input, ctx }) => {
+      await userRepository.addReleaseNotificationPlatform({
+        userId: ctx.userId,
+        notificationPlatform: input,
+      });
+
+      logger.debug(
+        h`user ${ctx.userId} added notification platform ${input.name}`
+      );
+    }),
+  removeReleaseNotificationPlatform: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      await userRepository.removeReleaseNotificationPlatform({
+        userId: ctx.userId,
+        id: input.id,
+      });
+
+      logger.debug(
+        h`user ${ctx.userId} removed notification platform ${input.id}`
+      );
     }),
 });
 

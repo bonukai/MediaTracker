@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 import { UserResponse } from '../entity/userModel.js';
 import { logger } from '../logger.js';
+import { h } from '../utils.js';
 import { FormattedNotification } from './formatNotification.js';
 import { Discord } from './platforms/discord.js';
 import { gotify } from './platforms/gotify.js';
@@ -19,11 +20,6 @@ const platforms = <const>[
   ntfy,
 ];
 
-export const notificationPlatformsSchemas = platforms.map((item) => ({
-  platformName: item.name,
-  credentialSchema: item.credentialsSchema,
-}));
-
 const platformsByName = _.keyBy(
   platforms.map((platform) => platform),
   (item) => item.name
@@ -39,19 +35,17 @@ export const notificationPlatforms = {
   }) {
     const { user, content } = args;
 
-    logger.debug(
-      `sending notification to user ${user.name}: "${content.body.plainText}"`
-    );
-
     await Promise.all(
-      Object.entries(user.preferences.notificationPlatforms)
-        .filter(([_, item]) => item?.enabled && item.credentials)
-        .map(([name, item]) =>
-          platformsByName[name].sendNotification({
-            content: content,
-            credentials: item?.credentials as any,
-          })
-        )
+      user.notificationPlatforms.map(({ name, credentials }) => {
+        logger.debug(
+          h`sending notification to user ${user.name}: "${content.body.plainText}" with ${name}`
+        );
+
+        platformsByName[name].sendNotification({
+          content: content,
+          credentials: credentials as never,
+        });
+      })
     );
   },
 } as const;

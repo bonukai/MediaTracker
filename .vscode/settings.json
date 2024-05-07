@@ -26,5 +26,6 @@
     "**/package-lock.json": true,
     "build": true,
     "client/dist": true
-  }
+  },
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

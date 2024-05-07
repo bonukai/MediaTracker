@@ -52,6 +52,20 @@ export const useUser = () => {
     },
   });
 
+  const addReleaseNotificationPlatform =
+    trpc.user.addReleaseNotificationPlatform.useMutation({
+      onSuccess: () => {
+        utils.user.invalidate();
+      },
+    });
+
+  const removeReleaseNotificationPlatform =
+    trpc.user.removeReleaseNotificationPlatform.useMutation({
+      onSuccess: () => {
+        utils.user.invalidate();
+      },
+    });
+
   return {
     user: {
       data: query.data,
@@ -63,5 +77,7 @@ export const useUser = () => {
     changePassword,
     setPassword,
     updatePreferences,
+    addReleaseNotificationPlatform,
+    removeReleaseNotificationPlatform,
   };
 };

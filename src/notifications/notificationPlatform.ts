@@ -2,9 +2,9 @@ import { z } from 'zod';
 
 import { FormattedNotification } from './formatNotification.js';
 
-type NotificationPlatform<T> = {
+type NotificationPlatform<T, U extends string> = {
   readonly credentialsSchema: z.Schema<T>;
-  readonly name: string;
+  readonly name: U;
   readonly sendNotification: (args: {
     content: {
       title: string;
@@ -14,9 +14,9 @@ type NotificationPlatform<T> = {
   }) => Promise<void>;
 };
 
-export const createNotificationPlatform = <T>(
-  impl: NotificationPlatform<T>
-): NotificationPlatform<T> => {
+export const createNotificationPlatform = <T, U extends string>(
+  impl: NotificationPlatform<T, U>
+): NotificationPlatform<T, U> => {
   return {
     ...impl,
     async sendNotification(args: {

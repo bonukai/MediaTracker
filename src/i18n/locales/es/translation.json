@@ -1,0 +1,6 @@
+{
+  "Mid season finale of {title} has been released": "",
+  "Season finale of {title} has been released": "",
+  "{count, plural, one {{title} {episode} has been released} other {# episodes of {title} has been released}}": "",
+  "{title} has been released": ""
+}
