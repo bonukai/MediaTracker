@@ -219,8 +219,12 @@ const mapTvShow = (tvShow: {
   originalTitle: tvShow.original_name || null,
   overview: tvShow.overview || null,
   releaseDate: tvShow.first_air_date || null,
-  externalPosterUrl: createTmdbFullImageUrl(tvShow.poster_path),
-  externalBackdropUrl: createTmdbFullImageUrl(tvShow.backdrop_path),
+  externalPosterUrl: tvShow.poster_path
+    ? createTmdbFullImageUrl(tvShow.poster_path)
+    : null,
+  externalBackdropUrl: tvShow.backdrop_path
+    ? createTmdbFullImageUrl(tvShow.backdrop_path)
+    : null,
   tmdbRating: tvShow.vote_average || null,
   language: tvShow.original_language || null,
   tmdbId: tvShow.id,
@@ -296,7 +300,9 @@ const getSeasonsDetails = async (args: {
       title: seasonDetails.name,
       tmdbId: seasonDetails.id,
       description: seasonDetails.overview || null,
-      externalPosterUrl: createTmdbFullImageUrl(seasonDetails.poster_path),
+      externalPosterUrl: seasonDetails.poster_path
+        ? createTmdbFullImageUrl(seasonDetails.poster_path)
+        : null,
       releaseDate: seasonDetails.air_date || null,
       isSpecialSeason: seasonDetails.season_number === 0,
       episodes: seasonDetails.episodes?.map((episode) => ({

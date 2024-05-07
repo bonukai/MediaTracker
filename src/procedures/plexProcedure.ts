@@ -1,6 +1,6 @@
 import { protectedProcedure, router } from '../router.js';
 import { z } from 'zod';
-import { h, isDefined } from '../utils.js';
+import { h, is } from '../utils.js';
 import { logger } from '../logger.js';
 
 const plexPayloadSchema = z.object({
@@ -85,7 +85,7 @@ const extractExternalIds = (data: z.infer<typeof plexPayloadSchema>) => {
     (item) =>
       item.id.match(/^(?<provider>imdb|tmdb|tvdb):\/\/(?<id>\w+)$/)?.groups
   )
-    .filter(isDefined)
+    .filter(is)
     .map((match) => ({
       [match.provider]: match.id,
     }))

@@ -39,7 +39,7 @@ export const goodreadsImport = {
         .filter((item) => item['My Rating'] > 0)
         .map((item) => ({
           itemType: 'book',
-          rating: item['My Rating']!,
+          rating: item['My Rating'],
           title: item.Title,
           goodreadsId: item['Book Id'],
           ISBN10: item.ISBN,

@@ -94,8 +94,8 @@ export type OpenApiMeta = {
   deprecated?: boolean;
   alternativePath?: string;
   example?: {
-    request?: Record<string, any>;
-    response?: Record<string, any> | string | number;
+    request?: Record<string, unknown>;
+    response?: Record<string, unknown> | string | number;
   };
 };
 

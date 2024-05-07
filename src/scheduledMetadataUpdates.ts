@@ -18,7 +18,7 @@ import { MetadataProvider } from './metadata/metadataProvider.js';
 import { serverInternalSettingsRepository } from './repository/serverInternalSettingsRepository.js';
 import { scheduleJob } from './scheduler.js';
 import { updateMetadata } from './updateMetadata.js';
-import { h, sequentialPromise, isDefined, splitWhereInQuery } from './utils.js';
+import { h, is, sequentialPromise, splitWhereInQuery } from './utils.js';
 import { Database } from './database.js';
 import { TmdbTv } from './metadata/provider/tmdbTv.js';
 import { TmdbMovie } from './metadata/provider/tmdbMovie.js';
@@ -39,7 +39,7 @@ const updateMediaItemsAndLog = async (mediaItems: MediaItemModel[]) => {
     }
   );
 
-  const failedUpdates = updatedResult.filter(isDefined);
+  const failedUpdates = updatedResult.filter(is);
   const failedUpdatesCount = failedUpdates.length;
 
   if (failedUpdatesCount === 0) {

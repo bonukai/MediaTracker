@@ -6,7 +6,7 @@ import {
   ImportSeenHistoryItem,
   ImportWatchlistItem,
 } from '../repository/importRepository.js';
-import { isDefined } from '../utils.js';
+import { is } from '../utils.js';
 
 export const simklImport = {
   map: (json: string): ImportDataType => {
@@ -15,7 +15,7 @@ export const simklImport = {
     const withUserRating = <T extends { user_rating?: number | null }>(
       item: T
     ): item is T & { user_rating: number } => {
-      return isDefined(item.user_rating);
+      return is(item.user_rating);
     };
 
     return {
@@ -78,7 +78,7 @@ export const simklImport = {
                   )
               )
           )
-          .filter(isDefined),
+          .filter(is),
       ],
       watchlist: [
         ...simklExport.shows
