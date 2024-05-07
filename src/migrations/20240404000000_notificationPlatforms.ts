@@ -20,6 +20,8 @@ export async function up(knex: Knex): Promise<void> {
             ([platformName, value]: [string, unknown]) => ({
               id: nanoid(),
               name: platformName,
+              addedAt: null,
+              description: null,
               credentials:
                 value && typeof value === 'object' && 'credentials' in value
                   ? value.credentials
