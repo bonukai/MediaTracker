@@ -35,7 +35,7 @@ import { updateMetadata } from '../updateMetadata.js';
 import {
   getImageId,
   h,
-  isDefined,
+  is,
   splitWhereInQuery,
   toReleaseDateFormat,
   withDefinedPropertyFactory,
@@ -49,14 +49,14 @@ export const mediaItemRepository = {
   }): Promise<MediaItemModel | undefined> {
     const { mediaType, ids } = args;
 
-    if (Object.values(ids).filter(isDefined).length === 0) {
+    if (Object.values(ids).filter(is).length === 0) {
       return;
     }
 
     const res = await Database.knex('mediaItem')
       .where((qb) => {
         Object.entries(ids)
-          .filter(([_, value]) => isDefined(value))
+          .filter(([_, value]) => is(value))
           .forEach(([key, value]) => {
             qb.orWhere(key, value);
           });
@@ -325,14 +325,13 @@ export const mediaItemRepository = {
         .at(0) || null;
 
     const episodeUserRatingMap = _(res.userRating)
-      .filter((item) => typeof item.episodeId === 'number')
-      .keyBy((episode) => episode.episodeId!)
+      .filter(withDefinedPropertyFactory('episodeId'))
+      .keyBy((episode) => episode.episodeId)
       .value();
 
     const seenByEpisodeId = _(res.seen)
-      .filter((item) => typeof item.episodeId === 'number')
-      .sortBy((item) => item.date)
-      .keyBy((item) => item.episodeId!)
+      .filter(withDefinedPropertyFactory('episodeId'))
+      .keyBy((item) => item.episodeId)
       .value();
 
     const episodesWithSeen = _(res.episodes)
@@ -748,7 +747,7 @@ export const mediaItemRepository = {
 
     const items = res.items
       .map((item) => res.details.getMediaItemById(item.id))
-      .filter(isDefined);
+      .filter(is);
 
     const totalNumberOfItems = res.count;
     const totalNumberOfPages = Math.ceil(
@@ -1130,8 +1129,6 @@ const combineMediaItemsWithUserData = (args: {
     unseenEpisodesCount: number | null;
   }[];
 }) => {
-  const {} = args;
-
   const justWatchProvidersByProviderId = _.keyBy(
     args.justWatchProviders,
     (item) => item.id
@@ -1208,8 +1205,8 @@ const combineMediaItemsWithUserData = (args: {
     .value();
 
   const lastSeenByMediaItemId = _(args.lastSeenMediaItem)
-    .filter((item) => typeof item.mediaItemId === 'number')
-    .keyBy((item) => item.mediaItemId!)
+    .filter(withDefinedPropertyFactory('mediaItemId'))
+    .keyBy((item) => item.mediaItemId)
     .mapValues((item) => item.date)
     .value();
 
@@ -1223,9 +1220,9 @@ const combineMediaItemsWithUserData = (args: {
   const firstUnwatchedEpisodeIdByMediaItemId = _(
     args.firstUnwatchedEpisodesAndUnseenEpisodesCount
   )
-    .filter((item) => typeof item.firstUnwatchedEpisodeId === 'number')
+    .filter(withDefinedPropertyFactory('firstUnwatchedEpisodeId'))
     .keyBy((item) => item.mediaItemId)
-    .mapValues((item) => episodeByEpisodeId[item.firstUnwatchedEpisodeId!])
+    .mapValues((item) => episodeByEpisodeId[item.firstUnwatchedEpisodeId])
     .value();
 
   const mediaItemById = _(args.mediaItems)
