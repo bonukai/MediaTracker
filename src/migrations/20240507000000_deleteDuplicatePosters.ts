@@ -23,6 +23,14 @@ export async function up(knex: Knex): Promise<void> {
       .map((posterId) => `${posterId}.webp`)
   );
 
+  if (imageIds.size === 0) {
+    return;
+  }
+
+  if (fs.existsSync(StaticConfiguration.assetsDir) === false) {
+    return;
+  }
+
   for (const posterDirs of fs.readdirSync(StaticConfiguration.assetsDir)) {
     const subDirPath = path.join(StaticConfiguration.assetsDir, posterDirs);
 
