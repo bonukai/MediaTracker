@@ -24,13 +24,15 @@ export async function up(knex: Knex): Promise<void> {
   );
 
   for (const posterDirs of fs.readdirSync(StaticConfiguration.assetsDir)) {
-    const fullPath = path.join(StaticConfiguration.assetsDir, posterDirs);
+    const subDirPath = path.join(StaticConfiguration.assetsDir, posterDirs);
 
-    if (fs.statSync(fullPath).isDirectory()) {
-      for (const image of fs.readdirSync(fullPath)) {
+    if (fs.statSync(subDirPath).isDirectory()) {
+      for (const image of fs.readdirSync(subDirPath)) {
         if (!imageIds.has(image)) {
-          if (fs.statSync(fullPath).isFile()) {
-            fs.unlinkSync(fullPath);
+          const imageFilePath = path.join(subDirPath, image);
+
+          if (fs.statSync(imageFilePath).isFile()) {
+            fs.unlinkSync(imageFilePath);
           }
         }
       }
