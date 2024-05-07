@@ -19,6 +19,13 @@ export const itemTypeSchema = z.enum([
   'season',
 ]);
 
+export const movieReleaseType = z.enum([
+  'theatrical',
+  'physical',
+  'tv',
+  'digital',
+]);
+
 export const externalIdsSchema = z.object({
   tmdbId: z.number().nullish(),
   imdbId: z.string().nullish(),
@@ -281,6 +288,7 @@ export type MediaItemMetadata = z.infer<typeof mediaItemMetadataSchema>;
 export type MediaItemResponse = z.infer<typeof mediaItemResponseSchema>;
 export type SeasonResponse = z.infer<typeof seasonResponseSchema>;
 export type EpisodeResponse = z.infer<typeof episodeResponseSchema>;
+export type MovieReleaseType = z.infer<typeof movieReleaseType>;
 
 export const externalIdColumnNames = Object.keys(
   externalIdsSchema.shape
@@ -293,5 +301,5 @@ export type CalendarItemsResponse = {
   mediaItem: MediaItemResponse;
   episode?: EpisodeResponse;
   releaseDate: string;
-  releaseType?: 'theatrical' | 'physical' | 'tv' | 'digital';
+  releaseType?: MovieReleaseType;
 }[];

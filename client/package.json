@@ -34,7 +34,7 @@
     "mediatracker": "file:..",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
-    "typescript": "5.4",
+    "typescript": "^5.5.0-beta",
     "vite": "^5.1.5",
     "vite-plugin-svgr": "^4.2.0"
   }

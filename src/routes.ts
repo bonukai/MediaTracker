@@ -5,6 +5,7 @@ import { ProcedureRouterRecord } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 
 import { logger } from './logger.js';
+import { plexProcedure } from './procedures/plexProcedure.js';
 import {
   createContext,
   OpenApiMeta,
@@ -24,6 +25,7 @@ import { listRouter } from './routers/listRouter.js';
 import { logsRouter } from './routers/logsRouter.js';
 import { mediaItemRouter } from './routers/mediaItemRouter.js';
 import { messageRouter } from './routers/messageRouter.js';
+import { progressRouter } from './routers/progressRouter.js';
 import { ratingRouter } from './routers/ratingRouter.js';
 import { searchRouter } from './routers/searchRouter.js';
 import { seenRouter } from './routers/seenRouter.js';
@@ -31,8 +33,6 @@ import { serverVersionRouter } from './routers/serverVersionRouter.js';
 import { userRouter } from './routers/userRouter.js';
 import { watchlistRouter } from './routers/watchlistRouter.js';
 import { h } from './utils.js';
-import { plexProcedure } from './procedures/plexProcedure.js';
-import { progressRouter } from './routers/progressRouter.js';
 
 const appRouter = router({
   applicationToken: applicationTokenRouter,

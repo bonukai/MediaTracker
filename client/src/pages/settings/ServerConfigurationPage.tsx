@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { Trans, t } from '@lingui/macro';
 
 import { Button } from '../../components/Button';
-import { Form } from '../../components/Form';
+import { Form, urlFormValidation } from '../../components/Form';
 import { MainTitle } from '../../components/MainTitle';
 import { RouterInput, trpc } from '../../utils/trpc';
 
@@ -37,24 +37,7 @@ export const ServerConfigurationPage: FC = () => {
           }}
           convertEmptyStringsToNull={true}
           validation={{
-            publicAddress: (value) => {
-              if (!value) {
-                return {
-                  required: true,
-                };
-              }
-              try {
-                if (new URL(value).origin === 'null') {
-                  return {
-                    message: t`invalid URL`,
-                  };
-                }
-              } catch (error) {
-                return {
-                  message: t`invalid URL`,
-                };
-              }
-            },
+            publicAddress: urlFormValidation,
           }}
           onSubmit={({ data }) => {
             updateConfiguration.mutate(data);

@@ -329,6 +329,8 @@ export const updateMetadata = async (
     mediaItemId: mediaItemToUpdate.id,
     justWatchAvailability: updatedMetadata.justWatch,
   });
+
+  await sendAndScheduledNotificationsForReleases();
 };
 
 const deleteImages = async (args: {

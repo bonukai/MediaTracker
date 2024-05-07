@@ -112,8 +112,8 @@ const Sidebar: FC = () => {
             displayName={<Trans>Home screen</Trans>}
           />
           <SidebarLink
-            to="/settings/notifications"
-            displayName={<Trans>Notifications</Trans>}
+            to="/settings/notification-platforms"
+            displayName={<Trans>Notification platforms</Trans>}
           />
           {!configurationQuery.data?.demoMode && (
             <SidebarLink

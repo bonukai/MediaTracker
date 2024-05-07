@@ -22,6 +22,9 @@ import { startUpdaterForAllMediaItems } from './scheduledMetadataUpdates.js';
 import { h } from './utils.js';
 import { MediaTrackerVersion } from './version.js';
 
+import { sendAndScheduledNotificationsForReleases } from './releaseNotifications.js';
+import { setupI18n } from './i18n/i18n.js';
+
 export const startServer = async (args: {
   port: number;
   address?: string;
@@ -39,6 +42,7 @@ export const startServer = async (args: {
 
   await mediaItemRepository.updateLastAndUpcomingEpisodeAirings();
 
+  setupI18n();
   printRestApiRoutes();
 
   logger.info(h`MediaTracker ${`v${MediaTrackerVersion}`}`);
@@ -124,6 +128,7 @@ export const startServer = async (args: {
     process.once('SIGKILL ', onCloseHandler);
 
     try {
+      await sendAndScheduledNotificationsForReleases();
       await startUpdaterForAllMediaItems();
     } catch (error) {
       logger.error(error);

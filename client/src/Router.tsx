@@ -28,7 +28,7 @@ import { ApplicationTokens } from './pages/settings/ApplicationTokens';
 import { ServerConfigurationPage } from './pages/settings/ServerConfigurationPage';
 import { HomePageSettingsPage } from './pages/settings/HomePageSettingsPage';
 import { LogPage, LogsPage } from './pages/settings/LogsPage';
-import { NotificationsSettingsPage } from './pages/settings/NotificationsSettingsPage';
+import { NotificationPlatformsSettingsPage } from './pages/settings/NotificationPlatformsSettingsPage';
 import { PasswordSettingsPage } from './pages/settings/PasswordSettingsPage';
 import { PreferencesSettingsPage } from './pages/settings/PreferencesSettingsPage';
 import { UnratedPage } from './pages/UnratedPage';
@@ -140,8 +140,8 @@ export const router = createBrowserRouter([
             element: <PasswordSettingsPage />,
           },
           {
-            path: '/settings/notifications',
-            element: <NotificationsSettingsPage />,
+            path: '/settings/notification-platforms',
+            element: <NotificationPlatformsSettingsPage />,
           },
           {
             path: '/settings/preferences',

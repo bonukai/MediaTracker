@@ -1,5 +1,6 @@
 import { ReactNode, useRef, useEffect, FC, useCallback } from 'react';
 import { cx } from '../utils';
+import { t } from '@lingui/macro';
 
 type ValidationResponseType =
   | {
@@ -471,4 +472,25 @@ const handleValidation = (args: {
   };
 
   node.addEventListener('input', onChangeHandler);
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const urlFormValidation = (
+  value?: string | null
+): ValidationResponseType | undefined => {
+  if (!value) {
+    return;
+  }
+
+  try {
+    if (new URL(value).origin === 'null') {
+      return {
+        message: t`invalid URL`,
+      };
+    }
+  } catch (error) {
+    return {
+      message: t`invalid URL`,
+    };
+  }
 };

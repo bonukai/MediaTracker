@@ -4,11 +4,14 @@ import _ from 'lodash';
 import { TRPCError } from '@trpc/server';
 
 import {
+  NotificationPlatform,
   UserPreferences,
+  notificationPlatformsSchema,
   userPreferencesSchema,
   userResponseSchema,
 } from '../entity/userModel.js';
 import { Database } from '../database.js';
+import { nanoid } from 'nanoid';
 
 export const userRepository = {
   async get(args: { userId: number }) {
@@ -23,6 +26,9 @@ export const userRepository = {
     return userResponseSchema.parse({
       ..._.omit(user, 'password'),
       preferences: user.preferencesJson ? JSON.parse(user.preferencesJson) : {},
+      notificationPlatforms: user.notificationPlatformsJson
+        ? JSON.parse(user.notificationPlatformsJson)
+        : [],
     });
   },
   async updatePreferences(args: {
@@ -53,6 +59,63 @@ export const userRepository = {
       await trx('user')
         .where('id', userId)
         .update('preferencesJson', JSON.stringify(mergedPreferences));
+    });
+  },
+  async addReleaseNotificationPlatform(args: {
+    userId: number;
+    notificationPlatform: NotificationPlatform;
+  }) {
+    const { userId, notificationPlatform } = args;
+
+    await Database.knex.transaction(async (trx) => {
+      const user = await trx('user').where('id', userId).first();
+
+      if (!user) {
+        throw new Error(`no user ${userId}`);
+      }
+
+      const currentPlatforms = notificationPlatformsSchema.parse(
+        JSON.parse(user.notificationPlatformsJson || '[]')
+      );
+
+      currentPlatforms.push({
+        addedAt: Date.now(),
+        id: nanoid(),
+        ...notificationPlatform,
+        description: null,
+      });
+
+      await trx('user')
+        .where('id', userId)
+        .update(
+          'notificationPlatformsJson',
+          JSON.stringify([...currentPlatforms])
+        );
+    });
+  },
+  async removeReleaseNotificationPlatform(args: {
+    userId: number;
+    id: string;
+  }) {
+    const { userId, id } = args;
+
+    await Database.knex.transaction(async (trx) => {
+      const user = await trx('user').where('id', userId).first();
+
+      if (!user) {
+        throw new Error(`no user ${userId}`);
+      }
+
+      const currentPlatforms = notificationPlatformsSchema.parse(
+        JSON.parse(user.notificationPlatformsJson || '[]')
+      );
+
+      await trx('user')
+        .where('id', userId)
+        .update(
+          'notificationPlatformsJson',
+          JSON.stringify(currentPlatforms.filter((item) => item.id !== id))
+        );
     });
   },
   async create(args: { username: string; password: string }) {
