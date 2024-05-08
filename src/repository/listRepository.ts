@@ -174,62 +174,6 @@ export const listRepository = {
         numberOfItems: Database.knex('listItem')
           .where('listId', listId)
           .count(),
-        totalRuntime: Database.knex('list')
-          .leftJoin('listItem', 'listItem.listId', 'list.id')
-          .leftJoin('mediaItem', 'mediaItem.id', 'listItem.mediaItemId')
-          .leftJoin('episode', 'episode.id', 'listItem.episodeId')
-          .leftJoin(
-            (qb) =>
-              qb
-                .select('seasonId')
-                .sum({
-                  runtime: Database.knex.raw(`
-                CASE
-                  WHEN "episode"."runtime" IS NOT NULL THEN "episode"."runtime"
-                  ELSE "mediaItem"."runtime"
-                END`),
-                })
-                .from('season')
-                .leftJoin('mediaItem', 'mediaItem.id', 'season.tvShowId')
-                .leftJoin('episode', 'episode.seasonId', 'season.id')
-                .groupBy('seasonId')
-                .as('seasonRuntime'),
-            'seasonRuntime.seasonId',
-            'listItem.seasonId'
-          )
-          .leftJoin(
-            (qb) =>
-              qb
-                .select('tvShowId')
-                .sum({
-                  runtime: Database.knex.raw(`
-                CASE
-                  WHEN "episode"."runtime" IS NOT NULL THEN "episode"."runtime"
-                  ELSE "mediaItem"."runtime"
-                END`),
-                })
-                .from('episode')
-                .leftJoin('mediaItem', 'mediaItem.id', 'episode.tvShowId')
-                .groupBy('tvShowId')
-                .as('showRuntime'),
-            'showRuntime.tvShowId',
-            'listItem.mediaItemId'
-          )
-          .sum({
-            totalRuntime: Database.knex.raw(`
-                CASE
-                    WHEN "listItem"."episodeId" IS NOT NULL THEN CASE
-                        WHEN "episode"."runtime" IS NOT NULL THEN "episode"."runtime"
-                        ELSE "mediaItem"."runtime"
-                    END
-                    WHEN "listItem"."seasonId" IS NOT NULL THEN "seasonRuntime"."runtime"
-                    ELSE CASE
-                        WHEN "mediaItem"."mediaType" = 'tv' THEN "showRuntime"."runtime"
-                        ELSE "mediaItem"."runtime"
-                    END
-                END`),
-          })
-          .where('list.id', listId),
       })
       .leftJoin('user', 'user.id', 'list.userId')
       .first();
@@ -377,16 +321,17 @@ export const listRepository = {
     const { listId, userId, page, numberOfItemsPerPage } = args;
 
     const res = await Database.knex.transaction(async (trx) => {
-      const query = trx('listItem')
+      const countRes = await trx('listItem')
         .where('listId', listId)
         .leftJoin('mediaItem', 'listItem.mediaItemId', 'mediaItem.id')
         .modify((qb) => filterQuery(qb, args))
-        .modify((qb) => sortQuery(qb, args));
+        .count({ count: '*' });
 
-      const countRes = await query.clone().count({ count: '*' });
-      const clonedQuery = query.clone();
-
-      const listItems: ListItemModel[] = await clonedQuery
+      const listItems: ListItemModel[] = await trx('listItem')
+        .where('listId', listId)
+        .leftJoin('mediaItem', 'listItem.mediaItemId', 'mediaItem.id')
+        .modify((qb) => filterQuery(qb, args))
+        .modify((qb) => sortQuery(qb, args))
         .select('listItem.*')
         .offset(numberOfItemsPerPage * (page - 1))
         .limit(numberOfItemsPerPage);
