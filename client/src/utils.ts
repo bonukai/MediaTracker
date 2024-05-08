@@ -1,158 +1,142 @@
-import { t } from '@lingui/macro';
-import { parseISO } from 'date-fns';
-import {
-  MediaItemDetailsResponse,
-  MediaItemItemsResponse,
+import type { ListSortBy } from '@server/entity/listModel';
+import type {
+  EpisodeResponse,
+  MediaItemResponse,
   MediaType,
-  TvEpisode,
-  TvSeason,
-  UserResponse,
-} from 'mediatracker-api';
+  SeasonResponse,
+} from '@server/entity/mediaItemModel';
 
-export const formatEpisodeNumber = (tvEpisode: TvEpisode): string => {
-  return t`S${tvEpisode.seasonNumber
-    .toString()
-    .padStart(2, '0')}E${tvEpisode.episodeNumber.toString().padStart(2, '0')}`;
+export const cx = (
+  ...classNames: Array<
+    | string
+    | null
+    | undefined
+    | number
+    | boolean
+    | Record<string | number, string | undefined | number | boolean | null>
+  >
+): string => {
+  return classNames
+    .filter((item) => !!item)
+    .map((item) =>
+      item !== null && typeof item === 'object'
+        ? Object.entries(item)
+            .filter(([_, value]) => !!value)
+            .map(([key]) => key)
+            .join(' ')
+            .trim()
+        : item
+    )
+    .join(' ')
+    .trim();
 };
 
-export const formatSeasonNumber = (season: TvSeason): string => {
-  return t`S${season.seasonNumber.toString().padStart(2, '0')}`;
+export const randomId = (): string => {
+  return Array.from(window.crypto.getRandomValues(new Uint32Array(4)))
+    .map((item) => item.toString())
+    .join('');
 };
 
-export const findEpisodeBeId = (
-  mediaItem: MediaItemDetailsResponse,
-  episodeId: number
+export const getListItemKey = (listItem: {
+  mediaItem: MediaItemResponse;
+  season?: SeasonResponse | null;
+  episode?: EpisodeResponse | null;
+}): string => {
+  return [
+    listItem.mediaItem.id,
+    listItem.season?.id,
+    listItem.episode?.id,
+  ].toString();
+};
+
+export const minBy = <T, U extends number | string | null | undefined>(
+  data: T[],
+  fn: (item: T) => U
 ) => {
-  if (!mediaItem.seasons) {
-    return null;
-  }
+  const min = data.reduce<{ index?: number; min?: U }>(
+    (previous, current, index) => {
+      const min = fn(current);
 
-  for (const season of mediaItem.seasons) {
-    if (!season.episodes) {
-      continue;
-    }
-
-    const ep = season.episodes.find((episode) => episode.id === episodeId);
-
-    if (ep) {
-      return ep;
-    }
-  }
-};
-
-export const getPosterHeight = (args: {
-  mediaType?: MediaType;
-  posterWidth: number;
-}) => {
-  const { mediaType, posterWidth } = args;
-
-  switch (mediaType) {
-    case 'video_game':
-      return posterWidth / 0.75;
-
-    case 'audiobook':
-      return posterWidth;
-
-    case 'book':
-    case 'tv':
-    case 'movie':
-    default:
-      return posterWidth * 1.5;
-  }
-};
-
-export const hasBeenReleased = (
-  value: MediaItemItemsResponse | TvEpisode | TvSeason
-) => {
-  const releaseDate = value.releaseDate;
-  return releaseDate && parseISO(releaseDate) <= new Date();
-};
-
-export const hasReleaseDate = (
-  value: MediaItemItemsResponse | TvEpisode | TvSeason
-) => {
-  return Boolean(value.releaseDate);
-};
-
-export const isOnWatchlist = (mediaItem: MediaItemItemsResponse) => {
-  return mediaItem.onWatchlist === true;
-};
-
-export const isSeason = (
-  value: MediaItemItemsResponse | TvEpisode | TvSeason
-): value is TvSeason => {
-  return !('episodeNumber' in value) && 'seasonNumber' in value;
-};
-
-export const isAudiobook = (mediaItem?: MediaItemItemsResponse | MediaType) => {
-  return typeof mediaItem === 'string'
-    ? mediaItem === 'audiobook'
-    : mediaItem?.mediaType === 'audiobook';
-};
-
-export const isBook = (mediaItem?: MediaItemItemsResponse | MediaType) => {
-  return typeof mediaItem === 'string'
-    ? mediaItem === 'book'
-    : mediaItem?.mediaType === 'book';
-};
-
-export const isMovie = (mediaItem?: MediaItemItemsResponse | MediaType) => {
-  return typeof mediaItem === 'string'
-    ? mediaItem === 'movie'
-    : mediaItem?.mediaType === 'movie';
-};
-
-export const isTvShow = (mediaItem?: MediaItemItemsResponse | MediaType) => {
-  return typeof mediaItem === 'string'
-    ? mediaItem === 'tv'
-    : mediaItem?.mediaType === 'tv';
-};
-
-export const isVideoGame = (mediaItem?: MediaItemItemsResponse | MediaType) => {
-  return typeof mediaItem === 'string'
-    ? mediaItem === 'video_game'
-    : mediaItem?.mediaType === 'video_game';
-};
-
-export const hasPoster = (mediaItem: MediaItemItemsResponse) => {
-  return mediaItem.posterSmall != undefined;
-};
-
-export const hideEpisodeTitle = (user: UserResponse) => {
-  return user.hideEpisodeTitleForUnseenEpisodes;
-};
-
-export const hideSeasonOverview = (user: UserResponse) => {
-  return user.hideOverviewForUnseenSeasons;
-};
-
-export const hasProgress = (mediaItem: MediaItemItemsResponse) => {
-  return mediaItem.progress !== null && mediaItem.progress !== undefined;
-};
-
-export const reverseMap = <Keys extends string, Values extends string>(
-  map: Record<Keys, Values>
-): Record<Values, Keys> => {
-  return Object.fromEntries(
-    Object.entries(map).map(([key, value]) => [value, key])
+      return previous.min && min && previous.min < min
+        ? previous
+        : { index, min };
+    },
+    { index: undefined, min: undefined }
   );
+
+  if (min.index !== undefined) {
+    return data[min.index];
+  }
 };
 
-export const canMetadataBeUpdated = (mediaItem: MediaItemItemsResponse) => {
-  return ['igdb', 'tmdb', 'openlibrary', 'audible'].includes(
-    mediaItem.source?.toLowerCase()
-  );
+export const openUrl = (url: string) => {
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = url;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 };
 
-export const listDescription = (list?: {
-  description?: string;
-  isWatchlist: boolean;
-}) => {
-  return list?.isWatchlist
-    ? t`Movies, shows, seasons, episodes, books, audiobooks and video games I plan to watch/read/listen/play`
-    : list?.description;
+export const downloadFile = (args: { blob: Blob; filename: string }) => {
+  const url = window.URL.createObjectURL(args.blob);
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = url;
+  a.download = args.filename;
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
 };
 
-export const listName = (list?: { name: string; isWatchlist: boolean }) => {
-  return list?.isWatchlist ? t`Watchlist` : list?.name;
+export const listSortByElements: ListSortBy[] = [
+  'last-airing',
+  'last-seen',
+  'listed',
+  'media-type',
+  'next-airing',
+  'progress',
+  'recently-added',
+  'recently-aired',
+  'recently-watched',
+  'release-date',
+  'runtime',
+  'status',
+  'title',
+  'unseen-episodes-count',
+  'user-rating',
+];
+
+export const mediaTypesElements: MediaType[] = [
+  'tv',
+  'movie',
+  'video_game',
+  'book',
+  'audiobook',
+];
+
+export const booleanToYesNoAll = (value?: boolean) => {
+  if (value === true) {
+    return 'yes';
+  } else if (value === false) {
+    return 'no';
+  }
+  return 'all';
+};
+
+export const stringToYesNoUndefined = (value?: string) => {
+  if (value === 'yes') {
+    return true;
+  } else if (value === 'no') {
+    return false;
+  }
+  return undefined;
+};
+
+export const canCopyToClipboard = () => {
+  return navigator.clipboard !== null && navigator.clipboard !== undefined;
+};
+
+export const copyTextToClipboard = (value: string) => {
+  navigator.clipboard.writeText(value);
 };

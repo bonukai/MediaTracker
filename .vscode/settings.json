@@ -23,8 +23,9 @@
   "search.exclude": {
     "**/.git": true,
     "**/node_modules": true,
-    "server/build": true,
-    "server/public": true,
-    "**/package-lock.json": true
-  }
+    "**/package-lock.json": true,
+    "build": true,
+    "client/dist": true
+  },
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

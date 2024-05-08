@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  transition: 50ms border-color;
+
+  @apply p-1 rounded-sm focus:outline-none focus:border-[#fb8500] focus:shadow-sm;
+}
+
+.link {
+  @apply text-blue-500 underline;
+}

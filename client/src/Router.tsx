@@ -1,177 +1,190 @@
-import React, { FunctionComponent } from 'react';
-import { Navigate, Routes, Route, Outlet } from 'react-router-dom';
+import React from 'react';
+import { createBrowserRouter, Params, useParams } from 'react-router-dom';
 
-import { DetailsPage } from 'src/pages/Details';
-import { HomePage } from 'src/pages/Home';
-import { LoginPage } from 'src/pages/Login';
-import { ItemsPage } from 'src/pages/ItemsPage';
-import { useUser } from 'src/api/user';
-import { NavComponent } from 'src/components/Nav';
-import { UpcomingPage } from 'src/pages/Upcoming';
-import { InProgressPage } from 'src/pages/InProgress';
-import { SettingsPage } from 'src/pages/Settings';
-import { SeasonsPage } from 'src/pages/SeasonsPage';
-import { CalendarPage } from 'src/pages/Calendar';
-import { RegisterPage } from 'src/pages/Register';
-import { useConfiguration } from 'src/api/configuration';
-import { NotFound } from 'src/pages/NotFound';
-import { SeenHistoryPage } from 'src/pages/SeenHistory';
-import { ImportPage } from 'src/pages/Import';
-import { TraktTvImportPage } from 'src/pages/import/TraktTv';
-import { WatchlistPage } from 'src/pages/WatchlistPage';
-import { GoodreadsImportPage } from 'src/pages/import/Goodreads';
-import { ListPage } from 'src/pages/ListPage';
-import { EpisodePage } from 'src/pages/EpisodePage';
-import { ListsPage } from 'src/pages/ListsPage';
+import { Layout } from './components/Layout';
+import { CalendarPage } from './pages/CalendarPage';
+import { DetailsPage } from './pages/DetailsPage';
+import { ExportPage } from './pages/ExportPage';
+import { HistoryPage } from './pages/HistoryPage';
+import { HomePage } from './pages/HomePage';
+import { ImportFormMediaTrackerPage } from './pages/import/ImportFormMediaTrackerPage';
+import { ImportFromFloxPage } from './pages/import/ImportFromFloxPage';
+import { ImportFromGoodreadsPage } from './pages/import/ImportFromGoodreadsPage';
+import { ImportFromSimklPage } from './pages/import/ImportFromSimklPage';
+import { ImportFromTraktPage } from './pages/import/ImportFromTraktPage';
+import { ImportPage } from './pages/ImportPage';
+import { JellyfinIntegrationPage } from './pages/integrations/JellyfinIntegrationPage';
+import { KodiIntegrationPage } from './pages/integrations/KodiIntegrationPage';
+import { PLexIntegrationsPage } from './pages/integrations/PlexIntegrationPage';
+import { IntegrationsPage } from './pages/IntegrationsPage';
+import { ListItemsPage } from './pages/ListItemsPage';
+import { ListsPage } from './pages/ListsPage';
+import { LoginPage } from './pages/LoginPage';
+import { ProgressPage } from './pages/ProgressPage';
+import { RegisterPage } from './pages/RegisterPage';
+import { RootPage } from './pages/RootPage';
+import { SearchPage } from './pages/SearchPage';
+import { ApplicationTokens } from './pages/settings/ApplicationTokens';
+import { ServerConfigurationPage } from './pages/settings/ServerConfigurationPage';
+import { HomePageSettingsPage } from './pages/settings/HomePageSettingsPage';
+import { LogPage, LogsPage } from './pages/settings/LogsPage';
+import { NotificationPlatformsSettingsPage } from './pages/settings/NotificationPlatformsSettingsPage';
+import { PasswordSettingsPage } from './pages/settings/PasswordSettingsPage';
+import { PreferencesSettingsPage } from './pages/settings/PreferencesSettingsPage';
+import { UnratedPage } from './pages/UnratedPage';
+import { UpcomingPage } from './pages/UpcomingPage';
 
-export const MyRouter: FunctionComponent = () => {
-  const { isLoading, user } = useUser();
-  const { configuration, isLoading: isLoadingConfiguration } =
-    useConfiguration();
-
-  if (isLoading || isLoadingConfiguration) return <>{'Loading...'}</>;
-
-  return (
-    <>
-      <Routes>
-        <Route element={<PageLayout />}>
-          {user ? (
-            <>
-              <Route
-                path="/login"
-                element={<Navigate to="/" replace={true} />}
-              />
-
-              {configuration.enableRegistration && (
-                <Route
-                  path="/register"
-                  element={<Navigate to="/" replace={true} />}
-                />
-              )}
-
-              <Route path="/" element={<HomePage />} />
-
-              <Route
-                path="/settings/*"
-                element={<SettingsPage key="settings" />}
-              />
-              <Route
-                path="/tv"
-                element={<ItemsPage key="/tv" mediaType="tv" />}
-              />
-              <Route
-                path="/movies"
-                element={<ItemsPage key="/movies" mediaType="movie" />}
-              />
-              <Route
-                path="/games"
-                element={<ItemsPage key="/games" mediaType="video_game" />}
-              />
-              <Route
-                path="/books"
-                element={<ItemsPage key="/books" mediaType="book" />}
-              />
-              <Route
-                path="/audiobooks"
-                element={<ItemsPage key="/audiobooks" mediaType="audiobook" />}
-              />
-
-              <Route
-                path="/upcoming"
-                element={<UpcomingPage key="/audiobooks" />}
-              />
-              <Route
-                path="/watchlist"
-                element={<WatchlistPage key="/watchlist" />}
-              />
-
-              <Route
-                path="/in-progress"
-                element={<InProgressPage key="/in-progress" />}
-              />
-              <Route
-                path="/calendar"
-                element={<CalendarPage key="/calendar" />}
-              />
-              <Route
-                path="/details/:mediaItemId"
-                element={<DetailsPage key="/details" />}
-              />
-              <Route
-                path="/seasons/:mediaItemId/"
-                element={<SeasonsPage key="/seasons" />}
-              />
-              <Route
-                path="/seasons/:mediaItemId/:seasonNumber"
-                element={<SeasonsPage key="/seasons" />}
-              />
-              <Route
-                path="/episode/:mediaItemId/:seasonNumber/:episodeNumber"
-                element={<EpisodePage key="/episode" />}
-              />
-              <Route
-                path="/seen-history/:mediaItemId"
-                element={<SeenHistoryPage key="/seen-history" />}
-              />
-
-              <Route path="/lists" element={<ListsPage key="/lists" />} />
-
-              <Route path="/list/:listId" element={<ListPage key="/list" />} />
-
-              <Route path="/import" element={<ImportPage key="/import" />} />
-              <Route
-                path="/import/trakttv"
-                element={<TraktTvImportPage key="/import/trakttv" />}
-              />
-              <Route
-                path="/import/goodreads"
-                element={<GoodreadsImportPage key="/import/goodreads" />}
-              />
-            </>
-          ) : (
-            <>
-              {!configuration.noUsers && (
-                <Route path="/login" element={<LoginPage key="/login" />} />
-              )}
-
-              {configuration.enableRegistration && (
-                <Route
-                  path="/register"
-                  element={<RegisterPage key="/register" />}
-                />
-              )}
-            </>
-          )}
-        </Route>
-
-        <Route
-          path="*"
-          element={
-            user ? (
-              <NotFound />
-            ) : (
-              <Navigate
-                to={configuration.noUsers ? '/register' : '/login'}
-                replace={true}
-              />
-            )
-          }
-        />
-      </Routes>
-    </>
-  );
+const elementWithParamsFactory = (
+  fn: (params: Readonly<Params<string>>) => React.JSX.Element
+) => {
+  return React.createElement(() => {
+    const params = useParams();
+    return fn(params);
+  });
 };
 
-const PageLayout: FunctionComponent = () => {
-  return (
-    <>
-      <NavComponent />
+export const router = createBrowserRouter([
+  {
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
+    path: '/register',
+    element: <RegisterPage />,
+  },
 
-      <div className="flex flex-col items-center max-w-5xl m-auto">
-        <div className="w-full p-2" key={location.pathname}>
-          <Outlet />
-        </div>
-      </div>
-    </>
-  );
-};
+  {
+    element: <RootPage />,
+    children: [
+      {
+        element: <Layout />,
+        children: [
+          {
+            path: '/',
+            element: <HomePage />,
+          },
+          {
+            path: '/upcoming',
+            element: <UpcomingPage />,
+          },
+          {
+            path: '/calendar',
+            element: <CalendarPage />,
+          },
+          {
+            path: '/history',
+            element: <HistoryPage />,
+          },
+          {
+            path: '/progress',
+            element: <ProgressPage />,
+          },
+          {
+            path: '/lists',
+            element: <ListsPage />,
+          },
+          {
+            path: '/unrated',
+            element: <UnratedPage />,
+          },
+          {
+            path: '/export',
+            element: <ExportPage />,
+          },
+          {
+            path: '/import',
+            element: <ImportPage />,
+          },
+          {
+            path: '/import/flox',
+            element: <ImportFromFloxPage />,
+          },
+          {
+            path: '/import/goodreads',
+            element: <ImportFromGoodreadsPage />,
+          },
+          {
+            path: '/import/simkl',
+            element: <ImportFromSimklPage />,
+          },
+          {
+            path: '/import/trakt',
+            element: <ImportFromTraktPage />,
+          },
+          {
+            path: '/import/mediatracker',
+            element: <ImportFormMediaTrackerPage />,
+          },
+          {
+            path: '/integrations',
+            element: <IntegrationsPage />,
+          },
+          {
+            path: '/integrations/kodi',
+            element: <KodiIntegrationPage />,
+          },
+          {
+            path: '/integrations/jellyfin',
+            element: <JellyfinIntegrationPage />,
+          },
+          {
+            path: '/integrations/plex',
+            element: <PLexIntegrationsPage />,
+          },
+          {
+            path: '/settings/home-screen',
+            element: <HomePageSettingsPage />,
+          },
+          {
+            path: '/settings/password',
+            element: <PasswordSettingsPage />,
+          },
+          {
+            path: '/settings/notification-platforms',
+            element: <NotificationPlatformsSettingsPage />,
+          },
+          {
+            path: '/settings/preferences',
+            element: <PreferencesSettingsPage />,
+          },
+          {
+            path: '/settings/logs',
+            element: <LogsPage />,
+          },
+          {
+            path: '/settings/logs/details',
+            element: <LogPage />,
+          },
+          {
+            path: '/settings/application-tokens',
+            element: <ApplicationTokens />,
+          },
+          {
+            path: '/settings/server-configuration',
+            element: <ServerConfigurationPage />,
+          },
+          {
+            path: '/list/:listId',
+            element: elementWithParamsFactory((params) => (
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              <ListItemsPage listId={parseInt(params.listId!)} />
+            )),
+          },
+          {
+            path: '/details/:mediaItemId',
+            element: elementWithParamsFactory((params) => (
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              <DetailsPage mediaItemId={parseInt(params.mediaItemId!)} />
+            )),
+          },
+          ...(['tv', 'movie', 'video_game', 'book', 'audiobook'] as const).map(
+            (item) => ({
+              path: `/search/${item}`,
+              element: <SearchPage key={item} mediaType={item} />,
+            })
+          ),
+        ],
+      },
+    ],
+  },
+]);
