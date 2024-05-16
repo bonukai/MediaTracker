@@ -16,7 +16,7 @@ import {
 } from '../entity/listModel.js';
 import { Knex } from 'knex';
 
-import { is, toReleaseDateFormat } from '../utils.js';
+import { is } from '../utils.js';
 import { mediaItemRepository } from './mediaItemRepository.js';
 import { TRPCError } from '@trpc/server';
 
@@ -325,6 +325,7 @@ export const listRepository = {
         .where('listId', listId)
         .leftJoin('mediaItem', 'listItem.mediaItemId', 'mediaItem.id')
         .modify((qb) => filterQuery(qb, args))
+        .modify((qb) => sortQuery(qb, args))
         .count({ count: '*' });
 
       const listItems: ListItemModel[] = await trx('listItem')
@@ -595,7 +596,7 @@ const sortQuery = <T extends object>(
   const sortOrder = args.sortOrder || 'asc';
   const orderBy = args.orderBy || 'listed';
 
-  const currentDateString = toReleaseDateFormat(new Date());
+  const currentDateString = new Date().toISOString();
 
   if (orderBy === 'listed') {
     query.orderBy('addedAt', sortOrder);

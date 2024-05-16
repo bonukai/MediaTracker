@@ -1,4 +1,3 @@
-import { parseISO } from 'date-fns';
 import { z } from 'zod';
 
 export const episodeModelSchema = z.object({
@@ -32,7 +31,7 @@ export class TvEpisodeFilters {
     return (
       typeof episode.releaseDate === 'string' &&
       episode.releaseDate.trim() != '' &&
-      parseISO(episode.releaseDate) <= new Date()
+      new Date(episode.releaseDate) <= new Date()
     );
   };
 
@@ -40,7 +39,7 @@ export class TvEpisodeFilters {
     return (
       typeof episode.releaseDate !== 'string' ||
       episode.releaseDate.trim() == '' ||
-      parseISO(episode.releaseDate) > new Date()
+      new Date(episode.releaseDate) > new Date()
     );
   };
 }

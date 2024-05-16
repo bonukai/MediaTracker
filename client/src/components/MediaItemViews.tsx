@@ -1,4 +1,4 @@
-import { isSameDay, parseISO } from 'date-fns';
+import { isSameDay } from 'date-fns';
 import { minBy } from 'lodash';
 import { FC, Fragment } from 'react';
 import { Link } from 'react-router-dom';
@@ -74,7 +74,7 @@ const MovieReleaseType: FC<{ mediaItem: MediaItemResponse }> = (props) => {
     firstReleaseDate.date &&
     releaseDates.filter((item) => item.date === firstReleaseDate.date)
       .length === 1 &&
-    isSameDay(parseISO(mediaItem.releaseDate), parseISO(firstReleaseDate.date))
+    isSameDay(new Date(mediaItem.releaseDate), new Date(firstReleaseDate.date))
   ) {
     return firstReleaseDate.type;
   }
@@ -96,7 +96,7 @@ const MediaItemNextAiringText: FC<{ mediaItem: MediaItemResponse }> = (
             <span> </span>
             <span className="font-semibold">
               <RelativeTime
-                to={parseISO(mediaItem.upcomingEpisode.releaseDate)}
+                to={new Date(mediaItem.upcomingEpisode.releaseDate)}
               />
             </span>
           </Trans>
@@ -107,7 +107,7 @@ const MediaItemNextAiringText: FC<{ mediaItem: MediaItemResponse }> = (
           <Trans>
             <MovieReleaseType mediaItem={mediaItem} />{' '}
             <span className="font-semibold">
-              <RelativeTime to={parseISO(mediaItem.releaseDate)} />
+              <RelativeTime to={new Date(mediaItem.releaseDate)} />
             </span>
           </Trans>
         </div>
@@ -130,7 +130,7 @@ const MediaItemLastAiringText: FC<{ mediaItem: MediaItemResponse }> = (
             released{' '}
             <span className="font-semibold">
               <RelativeTime
-                to={parseISO(mediaItem.lastAiredEpisode.releaseDate)}
+                to={new Date(mediaItem.lastAiredEpisode.releaseDate)}
               />
             </span>
           </Trans>
@@ -142,7 +142,7 @@ const MediaItemLastAiringText: FC<{ mediaItem: MediaItemResponse }> = (
           <Trans>
             released{' '}
             <span className="font-semibold">
-              <RelativeTime to={parseISO(mediaItem.releaseDate)} />
+              <RelativeTime to={new Date(mediaItem.releaseDate)} />
             </span>
           </Trans>
         </div>

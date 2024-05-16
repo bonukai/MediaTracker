@@ -1,4 +1,4 @@
-import { addMonths, parseISO, subMonths } from 'date-fns';
+import { addMonths, subMonths } from 'date-fns';
 import { FC, ReactNode, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -76,7 +76,7 @@ const JsonIconButton: FC = () => {
   return (
     <CopyApiUrlAction
       dialogTitle={<Trans>JSON url</Trans>}
-      tokenMutationArgs={{ type: 'calendar-rss' }}
+      tokenMutationArgs={{ type: 'calendar-json' }}
     >
       <Button text={<Trans>JSON url</Trans>} />
     </CopyApiUrlAction>
@@ -115,7 +115,7 @@ export const CalendarPage: FC = () => {
       <Calendar
         onDateChange={(from, to) => setCurrentDate({ from, to })}
         items={calendarItems?.data?.map((item) => ({
-          date: parseISO(item.releaseDate),
+          date: new Date(item.releaseDate),
           item: item,
           key: [
             item.mediaItem.id,

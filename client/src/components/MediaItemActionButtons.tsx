@@ -1,4 +1,3 @@
-import { parseISO } from 'date-fns';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 
 import { Plural, Trans } from '@lingui/macro';
@@ -51,7 +50,7 @@ const AddEpisodeToSeenHistoryAction = dialogActionFactory<{
               date:
                 date === 'release_date'
                   ? episode.releaseDate
-                    ? parseISO(episode.releaseDate).getTime()
+                    ? new Date(episode.releaseDate).getTime()
                     : null
                   : date?.getTime(),
             },
@@ -109,7 +108,7 @@ const AddRegularMediaItemToSeenHistoryAction = dialogActionFactory<{
           date:
             date === 'release_date'
               ? mediaItem.releaseDate
-                ? parseISO(mediaItem.releaseDate).getTime()
+                ? new Date(mediaItem.releaseDate).getTime()
                 : null
               : date?.getTime(),
         });
@@ -357,7 +356,7 @@ export const AddTvShowToSeenHistoryAction = dialogActionFactory<{
                                   date:
                                     date === 'release_date'
                                       ? episode.releaseDate
-                                        ? parseISO(
+                                        ? new Date(
                                             episode.releaseDate
                                           ).getTime()
                                         : null
@@ -494,7 +493,7 @@ export const AddSingleEpisodeToSeenHistoryAction = dialogActionFactory<{
                                   date:
                                     date === 'release_date'
                                       ? selectedEpisode.releaseDate
-                                        ? parseISO(
+                                        ? new Date(
                                             selectedEpisode.releaseDate
                                           ).getTime()
                                         : null
@@ -570,8 +569,10 @@ const EpisodeSelector: FC<{
   useEffect(() => {
     setSelectedSeasonId(seasons?.at(-1)?.id);
 
-    const episodeId = seasons?.at(-1)?.episodes?.filter(hasBeenReleased)?.at(-1)
-      ?.id;
+    const episodeId = seasons
+      ?.at(-1)
+      ?.episodes?.filter(hasBeenReleased)
+      ?.at(-1)?.id;
 
     if (typeof episodeId === 'number') {
       setSelectedEpisodeId(episodeId);

@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 import { TRPCError } from '@trpc/server';
 
-import { parseISO, startOfYear } from 'date-fns';
 import { Database } from '../database.js';
 import {
   EpisodeModel,
@@ -37,7 +36,6 @@ import {
   h,
   is,
   splitWhereInQuery,
-  toReleaseDateFormat,
   withDefinedPropertyFactory,
 } from '../utils.js';
 import { logger } from '../logger.js';
@@ -652,40 +650,40 @@ export const mediaItemRepository = {
           mediaItemModelToMediaItemResponse(mediaItemById[episode.tvShowId])
         ),
         episode: episodeResponseSchema.parse(episode),
-        releaseDate: parseISO(episode.releaseDate!).toISOString(),
+        releaseDate: new Date(episode.releaseDate!).toISOString(),
       })),
       ...mediaItemReleases.map((mediaItem) => ({
         mediaItem: mediaItemResponseSchema.parse(
           mediaItemModelToMediaItemResponse(mediaItem)
         ),
-        releaseDate: parseISO(mediaItem.releaseDate!).toISOString(),
+        releaseDate: new Date(mediaItem.releaseDate!).toISOString(),
       })),
       ...digitalReleases.map((mediaItem) => ({
         mediaItem: mediaItemResponseSchema.parse(
           mediaItemModelToMediaItemResponse(mediaItem)
         ),
-        releaseDate: parseISO(mediaItem.digitalReleaseDate!).toISOString(),
+        releaseDate: new Date(mediaItem.digitalReleaseDate!).toISOString(),
         releaseType: 'digital',
       })),
       ...theatricalReleases.map((mediaItem) => ({
         mediaItem: mediaItemResponseSchema.parse(
           mediaItemModelToMediaItemResponse(mediaItem)
         ),
-        releaseDate: parseISO(mediaItem.theatricalReleaseDate!).toISOString(),
+        releaseDate: new Date(mediaItem.theatricalReleaseDate!).toISOString(),
         releaseType: 'theatrical',
       })),
       ...physicalReleases.map((mediaItem) => ({
         mediaItem: mediaItemResponseSchema.parse(
           mediaItemModelToMediaItemResponse(mediaItem)
         ),
-        releaseDate: parseISO(mediaItem.physicalReleaseDate!).toISOString(),
+        releaseDate: new Date(mediaItem.physicalReleaseDate!).toISOString(),
         releaseType: 'physical',
       })),
       ...tvReleases.map((mediaItem) => ({
         mediaItem: mediaItemResponseSchema.parse(
           mediaItemModelToMediaItemResponse(mediaItem)
         ),
-        releaseDate: parseISO(mediaItem.tvReleaseDate!).toISOString(),
+        releaseDate: new Date(mediaItem.tvReleaseDate!).toISOString(),
         releaseType: 'tv',
       })),
     ])
@@ -772,7 +770,7 @@ export const mediaItemRepository = {
     );
 
     const knex = args?.trx ? args.trx : Database.knex;
-    const currentDateString = toReleaseDateFormat(new Date());
+    const currentDateString = new Date().toISOString();
 
     // Upcoming episode
     await knex('mediaItem')
@@ -919,7 +917,7 @@ const _getMediaItemsWithUserProperties = async (args: {
 }) => {
   const { trx, mediaItemIds, userId, episodeIds, seasonIds } = args;
 
-  const currentDateString = toReleaseDateFormat(new Date());
+  const currentDateString = new Date().toISOString();
 
   const uniqMediaItemIds = _.uniq(mediaItemIds);
   const uniqEpisodeIds = _.uniq(episodeIds || []);

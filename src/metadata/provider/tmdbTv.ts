@@ -5,7 +5,11 @@ import { ConfigurationJson } from '../../entity/configurationModel.js';
 import { MediaItemMetadata } from '../../entity/mediaItemModel.js';
 import { logger } from '../../logger.js';
 import { getConfiguration } from '../../repository/configurationRepository.js';
-import { dumpFetchResponse, sequentialPromise } from '../../utils.js';
+import {
+  dumpFetchResponse,
+  sequentialPromise,
+  tryParseDate,
+} from '../../utils.js';
 import { metadataProviderFactory } from '../metadataProvider.js';
 import {
   createTmdbFullImageUrl,
@@ -218,7 +222,7 @@ const mapTvShow = (tvShow: {
   title: tvShow.name,
   originalTitle: tvShow.original_name || null,
   overview: tvShow.overview || null,
-  releaseDate: tvShow.first_air_date || null,
+  releaseDate: tryParseDate(tvShow.first_air_date)?.toISOString(),
   externalPosterUrl: tvShow.poster_path
     ? createTmdbFullImageUrl(tvShow.poster_path)
     : null,
@@ -240,18 +244,6 @@ const findTvInfoByMultipleIds = async (args: {
   const res = await fetchTvInfo(tmdbId);
 
   if (res.status === 404) {
-    if (typeof imdbId === 'string') {
-      logger.debug(
-        `tv show with tmdbId ${tmdbId} does not exists, attempting to find it by imdbId ${imdbId}`
-      );
-
-      const imdbSearchRes = await TmdbTv.findByImdbId(imdbId);
-
-      if (typeof imdbSearchRes?.tmdbId === 'number') {
-        return await fetchTvInfo(imdbSearchRes.tmdbId);
-      }
-    }
-
     if (typeof tvdbId === 'number') {
       logger.debug(
         `tv show with tmdbId ${tmdbId} does not exists, attempting to find it by tvdbId ${tvdbId}`
@@ -261,6 +253,18 @@ const findTvInfoByMultipleIds = async (args: {
 
       if (typeof tvdbSearchRes?.tmdbId === 'number') {
         return await fetchTvInfo(tvdbSearchRes.tmdbId);
+      }
+    }
+
+    if (typeof imdbId === 'string') {
+      logger.debug(
+        `tv show with tmdbId ${tmdbId} does not exists, attempting to find it by imdbId ${imdbId}`
+      );
+
+      const imdbSearchRes = await TmdbTv.findByImdbId(imdbId);
+
+      if (typeof imdbSearchRes?.tmdbId === 'number') {
+        return await fetchTvInfo(imdbSearchRes.tmdbId);
       }
     }
   }
@@ -303,14 +307,14 @@ const getSeasonsDetails = async (args: {
       externalPosterUrl: seasonDetails.poster_path
         ? createTmdbFullImageUrl(seasonDetails.poster_path)
         : null,
-      releaseDate: seasonDetails.air_date || null,
+      releaseDate: tryParseDate(seasonDetails.air_date)?.toISOString(),
       isSpecialSeason: seasonDetails.season_number === 0,
       episodes: seasonDetails.episodes?.map((episode) => ({
         title: episode.name,
         description: episode.overview || null,
         episodeNumber: episode.episode_number,
         seasonNumber: episode.season_number,
-        releaseDate: episode.air_date || null,
+        releaseDate: tryParseDate(episode.air_date)?.toISOString() || null,
         isSpecialEpisode: episode.season_number === 0,
         seasonFinale: episode.episode_type === 'finale',
         midSeasonFinale: episode.episode_type === 'mid_season',

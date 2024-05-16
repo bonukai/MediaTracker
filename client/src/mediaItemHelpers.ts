@@ -1,5 +1,3 @@
-import { parseISO } from 'date-fns';
-
 import { t } from '@lingui/macro';
 
 import type {
@@ -23,7 +21,7 @@ export const hasBeenReleased = (value: {
 }): boolean => {
   return (
     typeof value.releaseDate === 'string' &&
-    parseISO(value.releaseDate) <= new Date()
+    new Date(value.releaseDate) <= new Date()
   );
 };
 
@@ -156,7 +154,7 @@ export const releaseYear = (
     return;
   }
 
-  return parseISO(mediaItem.releaseDate).getFullYear();
+  return new Date(mediaItem.releaseDate).getFullYear();
 };
 
 export const posterAspectRatio = (mediaItem: MediaItemResponse) => {
