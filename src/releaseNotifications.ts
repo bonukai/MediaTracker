@@ -1,4 +1,4 @@
-import { addHours, formatISO, min, parseISO, subHours } from 'date-fns';
+import { addHours, formatISO, min, subHours } from 'date-fns';
 import _ from 'lodash';
 
 import { i18n } from '@lingui/core';
@@ -33,7 +33,7 @@ export const sendAndScheduledNotificationsForReleases = async () => {
     .first();
 
   const nextTvUpdate = firstNextEpisode?.releaseDate
-    ? parseISO(firstNextEpisode.releaseDate)
+    ? new Date(firstNextEpisode.releaseDate)
     : nextDay;
 
   const firstNonTv = await Database.knex('mediaItem')
@@ -42,7 +42,7 @@ export const sendAndScheduledNotificationsForReleases = async () => {
     .first();
 
   const nextNonTvUpdate = firstNonTv?.releaseDate
-    ? parseISO(firstNonTv.releaseDate)
+    ? new Date(firstNonTv.releaseDate)
     : nextDay;
 
   const nextScheduleDate = min([nextTvUpdate, nextNonTvUpdate]);
@@ -329,7 +329,7 @@ const sendNotificationsForTvShows = async () => {
       _(episodes)
         .groupBy((episode) => episode.tvShowId)
         .mapValues((episodes) => ({
-          releaseDate: parseISO(episodes[0].releaseDate),
+          releaseDate: new Date(episodes[0].releaseDate),
           mediaItem: getTvShow(episodes[0].tvShowId),
           episodes,
           usersToSend: (mediaItemUserMap[episodes[0].tvShowId] || []).filter(

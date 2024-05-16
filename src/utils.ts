@@ -25,10 +25,6 @@ export const splitDeleteWhereInQuery = async <T, U>(
   return _.sum(await Promise.all(_.chunk(data, 500).map((chunk) => fn(chunk))));
 };
 
-export const toReleaseDateFormat = (date: Date) => {
-  return subMinutes(date, date.getTimezoneOffset()).toISOString();
-};
-
 export const generateExternalUrl = (mediaItem: MediaItemModel) => {
   if (mediaItem.mediaType === 'tv' || mediaItem.mediaType === 'movie') {
     if (mediaItem.imdbId) {
@@ -146,4 +142,18 @@ export const dumpFetchResponse = async (
       .join('\n')}`,
     `Response: ${await response.text()}`,
   ].join('\n\n');
+};
+
+export const tryParseDate = (dateStr?: string | null) => {
+  if (!dateStr) {
+    return;
+  }
+
+  const res = new Date(dateStr);
+
+  if (isNaN(res.getTime())) {
+    return;
+  }
+
+  return res;
 };

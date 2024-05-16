@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
 import _ from 'lodash';
 
-import { h, toReleaseDateFormat } from '../utils.js';
+import { h } from '../utils.js';
 import { logger } from '../logger.js';
 
 export const seenEpisodesCountRepository = {
@@ -47,7 +47,7 @@ export const seenEpisodesCountRepository = {
       .where('isSpecialEpisode', false)
       .whereNotNull('releaseDate')
       .whereNot('releaseDate', '')
-      .where('releaseDate', '<=', toReleaseDateFormat(new Date()));
+      .where('releaseDate', '<=', new Date().toISOString());
 
     const seenEpisodesCounts = _(seenHistory)
       .uniqBy((item) => [item.userId, item.episodeId].toString())

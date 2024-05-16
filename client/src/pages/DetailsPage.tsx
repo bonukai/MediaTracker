@@ -1,4 +1,3 @@
-import { parseISO } from 'date-fns';
 import { FC, ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 
@@ -192,7 +191,7 @@ const InfoSection: FC<{ mediaItem: MediaItemResponse }> = (props) => {
       {hasReleaseDate(mediaItem) && (
         <div>
           <Trans>
-            Release date: {parseISO(mediaItem.releaseDate).toLocaleDateString()}
+            Release date: {new Date(mediaItem.releaseDate).toLocaleDateString()}
           </Trans>
         </div>
       )}

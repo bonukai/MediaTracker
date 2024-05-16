@@ -1,4 +1,4 @@
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { FC } from 'react';
 
 import { Trans } from '@lingui/macro';
@@ -179,10 +179,10 @@ const getItemReleaseDate = (args: {
       return;
     }
 
-    return parseISO(episode.releaseDate);
+    return new Date(episode.releaseDate);
   }
 
   if (hasReleaseDate(mediaItem)) {
-    return parseISO(mediaItem.releaseDate);
+    return new Date(mediaItem.releaseDate);
   }
 };

@@ -4,7 +4,6 @@ import { TRPCError } from '@trpc/server';
 
 import { listRepository } from '../repository/listRepository.js';
 import { protectedProcedure, router } from '../router.js';
-import { parseISO } from 'date-fns';
 import { itemTypeSchema } from '../entity/mediaItemModel.js';
 import { rssBuilder } from '../rssBuilder.js';
 import { getConfiguration } from '../repository/configurationRepository.js';
@@ -225,7 +224,7 @@ export const listRouter = router({
             guid: item.id.toString(),
             pubDate:
               typeof item.mediaItem.releaseDate === 'string'
-                ? parseISO(item.mediaItem.releaseDate)
+                ? new Date(item.mediaItem.releaseDate)
                 : undefined,
             enclosure:
               item.mediaItem.poster && configuration.publicAddress

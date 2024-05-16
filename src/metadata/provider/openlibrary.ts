@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { z } from 'zod';
 
 import { metadataProviderFactory } from '../metadataProvider.js';
-import { dumpFetchResponse } from '../../utils.js';
+import { dumpFetchResponse, tryParseDate } from '../../utils.js';
 
 export const OpenLibrary = metadataProviderFactory({
   name: 'openlibrary',
@@ -47,7 +47,9 @@ export const OpenLibrary = metadataProviderFactory({
       externalPosterUrl: item.cover_i
         ? `https://covers.openlibrary.org/b/id/${item.cover_i}.jpg`
         : undefined,
-      releaseDate: item.first_publish_year?.toString(),
+      releaseDate: tryParseDate(
+        item.first_publish_year?.toString()
+      )?.toISOString(),
       numberOfPages: item.number_of_pages_median,
       authors: item.author_name,
       openlibraryId: item.key,
@@ -81,7 +83,7 @@ export const OpenLibrary = metadataProviderFactory({
         typeof data.description === 'string'
           ? data.description
           : data.description?.value || null,
-      releaseDate: parseDate(data?.first_publish_date),
+      releaseDate: parseDate(data?.first_publish_date)?.toISOString(),
       externalPosterUrl: data.covers?.at(0)
         ? `https://covers.openlibrary.org/b/id/${data.covers.at(0)}.jpg`
         : mediaItem.externalPosterUrl,
@@ -110,62 +112,21 @@ export const OpenLibrary = metadataProviderFactory({
     // https://openlibrary.org/api/books?bibkeys=ISBN:0385472579&format=json&jscmd=details
     // https://openlibrary.org/api/books?bibkeys=ISBN:0385472579&format=json&jscmd=data
   },
-  async findByOpenLibraryId(openlibraryId: string) {
-    const res = await fetch(
-      `https://openlibrary.org${openlibraryId}/editions.json`
-    );
-
-    if (res.status !== 200) {
-      throw new Error(await dumpFetchResponse(res));
-    }
-
-    const data = editionsResponseSchema.parse(await res.json());
-
-    console.log(data);
-
-    // if (!data.title) {
-    //   throw new Error(`no details on OpenLibrary for ${openlibraryId}`);
-    // }
-
-    console.log(data.entries.map((item) => item.authors));
-
-    // return {
-    //   mediaType: this.mediaType,
-    //   source: this.name,
-    //   title: data.title,
-    //   overview:
-    //     typeof data.description === 'string'
-    //       ? data.description
-    //       : data.description?.value || null,
-    //   releaseDate: parseDate(data?.first_publish_date),
-    //   // externalPosterUrl: data.covers?.at(0)
-    //   //   ? `https://covers.openlibrary.org/b/id/${data.covers.at(0)}.jpg`
-    //   //   : mediaItem.externalPosterUrl,
-    //   // numberOfPages: mediaItem.numberOfPages || null,
-    //   authors:
-    //     data.authors
-    //       ?.map((item) =>
-    //         typeof item.author === 'string' ? item.author : item.author?.key
-    //       )
-    //       .filter(_.isString) || null,
-    // };
-  },
 });
 
-const parseDate = (dateStr?: string | null): string | undefined => {
+const parseDate = (dateStr?: string | null) => {
   if (!dateStr) {
     return;
   }
 
   if (dateStr?.length === 4 && !Number.isNaN(dateStr)) {
-    return dateStr;
+    return new Date(dateStr);
   }
 
   const timestamp = Date.parse(dateStr);
 
   if (!Number.isNaN(timestamp)) {
-    const date = new Date(timestamp);
-    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    return new Date(timestamp);
   }
 };
 

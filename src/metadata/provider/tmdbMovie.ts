@@ -1,10 +1,9 @@
-import { parseISO } from 'date-fns';
 import _ from 'lodash';
 import { z } from 'zod';
 
 import { MediaItemMetadata } from '../../entity/mediaItemModel.js';
 import { getConfiguration } from '../../repository/configurationRepository.js';
-import { dumpFetchResponse } from '../../utils.js';
+import { dumpFetchResponse, tryParseDate } from '../../utils.js';
 import { metadataProviderFactory } from '../metadataProvider.js';
 import {
   createTmdbFullImageUrl,
@@ -140,7 +139,7 @@ const mapMovie = (movie: {
   title: movie.title,
   originalTitle: movie.original_title || null,
   overview: movie.overview || null,
-  releaseDate: movie.release_date || null,
+  releaseDate: tryParseDate(movie.release_date)?.toISOString(),
   tmdbId: movie.id,
   tmdbRating: movie.vote_average || null,
   language: movie.original_language || null,
@@ -303,16 +302,10 @@ const movieDetailsToMediaItemMetadata = async (
     runtime: movie.runtime || null,
     status: movie.status || null,
     url: movie.homepage || null,
-    theatricalReleaseDate: theatricalReleaseDate
-      ? parseISO(theatricalReleaseDate)
-      : null,
-    physicalReleaseDate: digitalReleaseDate
-      ? parseISO(digitalReleaseDate)
-      : null,
-    digitalReleaseDate: physicalReleaseDate
-      ? parseISO(physicalReleaseDate)
-      : null,
-    tvReleaseDate: tvReleaseDate ? parseISO(tvReleaseDate) : null,
+    theatricalReleaseDate: tryParseDate(theatricalReleaseDate),
+    physicalReleaseDate: tryParseDate(digitalReleaseDate),
+    digitalReleaseDate: tryParseDate(physicalReleaseDate),
+    tvReleaseDate: tryParseDate(tvReleaseDate),
     justWatch: parseJustWatchResult(configuration, movie['watch/providers']),
     needsDetails: false,
   };

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { mediaTypeSchema } from '../entity/mediaItemModel.js';
 import { mediaItemRepository } from '../repository/mediaItemRepository.js';
 import { protectedProcedure, router } from '../router.js';
-import { addMonths, parseISO, subMonths } from 'date-fns';
+import { addMonths, subMonths } from 'date-fns';
 import { SHA256, formatEpisodeNumber } from '../utils.js';
 import { iCalBuilder } from '../iCalBuilder.js';
 import { rssBuilder } from '../rssBuilder.js';
@@ -52,7 +52,7 @@ export const calendarRouter = router({
           title: item.episode
             ? `${item.mediaItem.title} ${formatEpisodeNumber(item.episode)}`
             : item.mediaItem.title,
-          pubDate: parseISO(item.releaseDate),
+          pubDate: new Date(item.releaseDate),
           guid: SHA256(
             `${item.mediaItem.id}${item.episode?.id}${item.releaseType}`
           ),
@@ -76,7 +76,7 @@ export const calendarRouter = router({
           uid: SHA256(
             `${item.mediaItem.id}${item.episode?.id}${item.releaseType}`
           ),
-          start: parseISO(item.releaseDate),
+          start: new Date(item.releaseDate),
           allDay: true,
           summary: item.episode
             ? `${item.mediaItem.title} ${formatEpisodeNumber(item.episode)}`
