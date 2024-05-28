@@ -60,6 +60,10 @@ export const updateMetadata = async (
   }): string | null => {
     const { oldImageId, oldExternalUrl, newExternalUrl } = args;
 
+    if (!newExternalUrl) {
+      return null;
+    }
+
     if (newExternalUrl && newExternalUrl !== oldExternalUrl) {
       if (oldImageId) {
         imagesToDelete.push(oldImageId);

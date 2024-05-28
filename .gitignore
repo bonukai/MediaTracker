@@ -12,6 +12,9 @@ build
 dist
 *.local
 
+# Database files
+*.db
+
 # Editor directories and files
 .idea
 .DS_Store
