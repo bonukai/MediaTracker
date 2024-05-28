@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import _ from 'lodash';
 
-import { ProcedureRouterRecord } from '@trpc/server';
+import { ProcedureRouterRecord, TRPCError } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 
 import { logger } from './logger.js';
@@ -184,6 +184,45 @@ export const openApiMiddleware: RequestHandler = async (req, res, next) => {
       next();
     }
   } catch (error) {
-    next(error);
+    if (error instanceof TRPCError) {
+      res.sendStatus(trpcErrorCodeToStatusCode(error));
+    } else {
+      next(error);
+    }
+  }
+};
+
+const trpcErrorCodeToStatusCode = (error: TRPCError) => {
+  switch (error.code) {
+    case 'PARSE_ERROR':
+      return 400;
+    case 'BAD_REQUEST':
+      return 400;
+    case 'UNAUTHORIZED':
+      return 401;
+    case 'NOT_FOUND':
+      return 404;
+    case 'FORBIDDEN':
+      return 403;
+    case 'METHOD_NOT_SUPPORTED':
+      return 405;
+    case 'TIMEOUT':
+      return 408;
+    case 'CONFLICT':
+      return 409;
+    case 'PRECONDITION_FAILED':
+      return 412;
+    case 'PAYLOAD_TOO_LARGE':
+      return 413;
+    case 'UNPROCESSABLE_CONTENT':
+      return 422;
+    case 'TOO_MANY_REQUESTS':
+      return 429;
+    case 'CLIENT_CLOSED_REQUEST':
+      return 499;
+    case 'INTERNAL_SERVER_ERROR':
+      return 500;
+    case 'NOT_IMPLEMENTED':
+      return 501;
   }
 };
