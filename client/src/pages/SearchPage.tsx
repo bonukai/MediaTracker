@@ -329,8 +329,8 @@ const SearchResultsComponent: FC<{
         {source === 'metadata-provider' && (
           <Plural
             value={data.length}
-            one="found 1 item in eternal sources"
-            other="found # items in eternal sources"
+            one="found 1 item in external sources"
+            other="found # items in external sources"
           />
         )}
       </div>
