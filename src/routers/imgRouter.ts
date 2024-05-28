@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
 import { existsSync } from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 import sharp from 'sharp';
 import { z } from 'zod';
@@ -10,6 +10,7 @@ import { Database } from '../database.js';
 import { logger } from '../logger.js';
 import { protectedProcedure, router } from '../router.js';
 import { StaticConfiguration } from '../staticConfiguration.js';
+import { is } from '../utils.js';
 
 const MAX_POSTER_WIDTH = 800;
 
@@ -30,98 +31,159 @@ export const imgRouter = router({
     .query(async ({ ctx, input }) => {
       const { width, id } = input;
 
-      const sendImage = async (imagePath: string) => {
-        if (!existsSync(imagePath)) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-          });
-        }
+      const imagePath = imageManager.getImage(id, width);
 
-        ctx.setHeader('Cache-Control', 'max-age=31536000');
-        ctx.setHeader('Content-Type', 'image/webp');
-        await ctx.sendFile(imagePath);
-      };
-
-      const imageOriginalPath = path.resolve(
-        StaticConfiguration.assetsDir,
-        'original',
-        `${id}.webp`
-      );
-
-      if (!existsSync(imageOriginalPath)) {
-        const imageUrl = await findImageUrlFromInternalId(id);
-
-        if (!imageUrl) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-          });
-        }
-
-        logger.debug(`downloading image ${id} from ${imageUrl}`);
-
-        const downloadedImageReq = await fetch(imageUrl);
-
-        if (!downloadedImageReq.ok) {
-          if (downloadedImageReq.status === 400) {
-            throw new TRPCError({
-              code: 'NOT_FOUND',
-            });
-          } else {
-            throw new TRPCError({
-              code: 'INTERNAL_SERVER_ERROR',
-              message: downloadedImageReq.statusText,
-            });
-          }
-        }
-
-        const downloadedImage = await downloadedImageReq.arrayBuffer();
-
-        await fs.mkdir(path.dirname(imageOriginalPath), { recursive: true });
-
-        await sharp(downloadedImage)
-          .resize({ width: MAX_POSTER_WIDTH })
-          .webp({ quality: 80 })
-          .toFile(imageOriginalPath);
-
-        if (typeof width === 'number' && width < MAX_POSTER_WIDTH) {
-          const imageSizePath = path.resolve(
-            StaticConfiguration.assetsDir,
-            width.toString(),
-            `${id}.webp`
-          );
-
-          await fs.mkdir(path.dirname(imageSizePath), { recursive: true });
-          await sharp(downloadedImage)
-            .resize({ width })
-            .webp({ quality: 80 })
-            .toFile(imageSizePath);
-
-          await sendImage(imageSizePath);
-          return;
-        }
+      if (!imagePath) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+        });
       }
 
-      if (typeof width === 'number' && width < MAX_POSTER_WIDTH) {
-        const imageSizePath = path.resolve(
-          StaticConfiguration.assetsDir,
-          width.toString(),
-          `${id}.webp`
-        );
-
-        const originalImage = await fs.readFile(imageOriginalPath);
-
-        await fs.mkdir(path.dirname(imageSizePath), { recursive: true });
-        await sharp(originalImage)
-          .resize({ width })
-          .webp({ quality: 80 })
-          .toFile(imageSizePath);
-
-        await sendImage(imageSizePath);
-      } else {
-        await sendImage(imageOriginalPath);
-      }
+      ctx.setHeader('Cache-Control', 'max-age=31536000');
+      ctx.setHeader('Content-Type', 'image/webp');
+      await ctx.sendFile(imagePath);
     }),
 });
+
+class ImageManager {
+  private inProgress = new Set<string>();
+
+  getImage(id: string, width?: number | null) {
+    if (this.isRunningJob(id, width)) {
+      return;
+    }
+
+    const imagePath = this.getImagePath(id, width);
+
+    if (existsSync(imagePath)) {
+      return imagePath;
+    }
+
+    if (!this.isRunningJob(id, width)) {
+      this.startJob(id, width);
+    }
+  }
+
+  private async startJob(id: string, width?: number | null) {
+    const key = [id, width].toString();
+
+    this.inProgress.add(key);
+
+    try {
+      const imageOriginalPath = this.getImagePath(id);
+
+      if (existsSync(imageOriginalPath)) {
+        if (!is(width)) {
+          return;
+        }
+
+        await this.resizeAlreadyDownloadImage(id, width);
+        return;
+      }
+
+      const image = await this.downloadImage(id);
+
+      if (image) {
+        await this.saveAndResizeImage({
+          image,
+          id,
+          width,
+        });
+      }
+    } catch (e) {
+      logger.error(e);
+    } finally {
+      this.inProgress.delete(key);
+    }
+  }
+
+  private async downloadImage(id: string) {
+    const imageUrl = await findImageUrlFromInternalId(id);
+
+    if (!imageUrl) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+      });
+    }
+
+    logger.debug(`downloading image ${id} from ${imageUrl}`);
+
+    const downloadedImageReq = await fetch(imageUrl);
+
+    if (!downloadedImageReq.ok) {
+      if (downloadedImageReq.status === 400) {
+        logger.error(`image ${imageUrl} not found`);
+        // TODO: remove url from DB
+      } else {
+        logger.error(
+          `failed to download ${imageUrl} :${downloadedImageReq.statusText}`
+        );
+      }
+
+      return;
+    }
+
+    return await downloadedImageReq.arrayBuffer();
+  }
+
+  private async saveAndResizeImage(args: {
+    image: ArrayBuffer;
+    id: string;
+    width?: number | null;
+  }) {
+    const { image, id, width } = args;
+    const imageOriginalPath = this.getImagePath(id);
+
+    await fs.mkdir(path.dirname(imageOriginalPath), { recursive: true });
+
+    await sharp(image)
+      .resize({ width: MAX_POSTER_WIDTH })
+      .webp({ quality: 80 })
+      .toFile(imageOriginalPath);
+
+    if (is(width) && width < MAX_POSTER_WIDTH) {
+      const imageSizePath = this.getImagePath(id, width);
+      await fs.mkdir(path.dirname(imageSizePath), { recursive: true });
+      await sharp(image)
+        .resize({ width })
+        .webp({ quality: 80 })
+        .toFile(imageSizePath);
+
+      return imageSizePath;
+    }
+  }
+
+  private isRunningJob(id: string, width?: number | null) {
+    const key = [id, width].toString();
+
+    return this.inProgress.has(key);
+  }
+
+  private getImagePath(id: string, width?: number | null) {
+    return path.resolve(
+      StaticConfiguration.assetsDir,
+      is(width) ? width.toString() : 'original',
+      `${id}.webp`
+    );
+  }
+
+  private async resizeAlreadyDownloadImage(id: string, width: number) {
+    const imageSizePath = this.getImagePath(id, width);
+
+    const originalImage = await fs.readFile(this.getImagePath(id));
+
+    await fs.mkdir(path.dirname(imageSizePath), { recursive: true });
+
+    await sharp(originalImage)
+      .resize({ width })
+      .webp({ quality: 80 })
+      .toFile(imageSizePath);
+
+    return imageSizePath;
+  }
+}
+
+export const imageManager = new ImageManager();
 
 export const findImageUrlFromInternalId = async (imageId: string) => {
   const mediaItemWithPoster = await Database.knex('mediaItem')

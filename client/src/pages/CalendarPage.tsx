@@ -2,7 +2,7 @@ import { addMonths, subMonths } from 'date-fns';
 import { FC, ReactNode, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { t, Trans } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import type {
   EpisodeResponse,
   MediaItemResponse,
@@ -24,6 +24,7 @@ import {
 } from '../utils';
 import { trpc } from '../utils/trpc';
 import { EmbeddedSingleLineCodeWithCopyButton } from '../components/EmbeddedSingleLineCodeWithCopyButton';
+import { Poster } from '../components/Poster';
 
 const CopyApiUrlAction = dialogActionFactory<{
   tokenMutationArgs: Parameters<typeof useApiTokenUrlMutation>['0'];
@@ -133,19 +134,11 @@ const CalendarItem: FC<{
   mediaItem: MediaItemResponse;
   episode?: EpisodeResponse;
 }> = ({ mediaItem, episode }) => {
-  const poster = posterSrc(mediaItem, 100);
-
   return (
     <div className="flex w-full p-1 mb-2 text-white bg-[#2a1c35] rounded-lg">
-      {poster && (
-        <div className="items-center justify-center hidden w-5 mr-1 lg:flex ">
-          <img
-            className="object-contain rounded"
-            src={poster}
-            alt={t`poster`}
-          />
-        </div>
-      )}
+      <div className="items-center justify-center hidden w-5 mr-1 lg:flex ">
+        <Poster mediaItem={mediaItem} width={100} />
+      </div>
 
       <div className="flex flex-col justify-center w-full overflow-x-clip">
         <div className="text-stone-50 text-[12px] font-bold leading-none tracking-wide  inline-block w-full text-ellipsis whitespace-nowrap overflow-clip">
