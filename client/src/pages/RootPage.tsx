@@ -36,12 +36,12 @@ export const RootPage: FC = () => {
   }
 
   if (
-    location.pathname !== '/settings/configuration' &&
+    location.pathname !== '/settings/server-configuration' &&
     isLoggedIn(user.data) &&
     isAdmin &&
     !hasConfigurationBeenSet(configuration.data)
   ) {
-    return <Navigate to="/settings/configuration" />;
+    return <Navigate to="/settings/server-configuration" />;
   }
 
   return <Outlet />;
