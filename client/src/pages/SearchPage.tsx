@@ -293,8 +293,8 @@ const IgdbInstructions: FC<{ mediaType: MediaType; children: ReactNode }> = (
               here
             </a>{' '}
             and updated in{' '}
-            <Link to="/settings/configuration" className="link">
-              settings/configuration
+            <Link to="/settings/server-configuration" className="link">
+              settings/server-configuration
             </Link>
           </Trans>
         ) : (
