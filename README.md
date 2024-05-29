@@ -175,8 +175,10 @@ docker run -p 7481:7481 mediatracker
 # Similar projects
 
 -   [devfake/flox](https://github.com/devfake/flox)
--   [leepeuker/movary](https://github.com/leepeuker/movary)
+-   [FuzzyGrim/Yamtrack](https://github.com/FuzzyGrim/Yamtrack)
 -   [IgnisDa/ryot](https://github.com/IgnisDa/ryot)
 -   [krateng/maloja](https://github.com/krateng/maloja)
--   [sbondCo/Watcharr](https://github.com/sbondCo/Watcharr)
+-   [leepeuker/movary](https://github.com/leepeuker/movary)
 -   [MaarifaMaarifa/series-troxide](https://github.com/MaarifaMaarifa/series-troxide)
+-   [sbondCo/Watcharr](https://github.com/sbondCo/Watcharr)
+
