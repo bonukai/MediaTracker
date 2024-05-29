@@ -1,5 +1,6 @@
 import * as knexPkg from 'knex';
-import { resolve } from 'path';
+import fs from 'fs';
+import { resolve, basename } from 'path';
 import { z } from 'zod';
 
 import { __dirname } from './dirname.js';
@@ -34,6 +35,12 @@ export class Database {
     const databaseConfiguration = databaseConfigSchema.parse(args);
 
     if (databaseConfiguration.client === 'better-sqlite3') {
+      if (!fs.existsSync(databaseConfiguration.filename)) {
+        fs.mkdirSync(basename(databaseConfiguration.filename), {
+          recursive: true,
+        });
+      }
+
       logger.info(
         h`Connecting to SQLite database at ${databaseConfiguration.filename}`
       );
