@@ -7,7 +7,7 @@ import {
 import { MediaItemMetadata } from '../../entity/mediaItemModel.js';
 import { getConfiguration } from '../../repository/configurationRepository.js';
 import { metadataProviderFactory } from '../metadataProvider.js';
-import { dumpFetchResponse, tryParseDate } from '../../utils.js';
+import { dumpFetchResponse, tryParseISODate } from '../../utils.js';
 
 const languages: Record<AudibleCountryCode, string> = {
   au: 'au',
@@ -120,7 +120,7 @@ const mapItemResponse = (
     narrators: item.narrators?.map((narrator) => narrator.name),
     externalPosterUrl: item.product_images?.[2400],
     language: item.language,
-    releaseDate: tryParseDate(item.release_date)?.toISOString(),
+    releaseDate: tryParseISODate(item.release_date)?.toISOString(),
     runtime: item.runtime_length_min,
     overview: item.merchandising_summary,
   };

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { z } from 'zod';
 
 import { metadataProviderFactory } from '../metadataProvider.js';
-import { dumpFetchResponse, tryParseDate } from '../../utils.js';
+import { dumpFetchResponse, tryParseISODate } from '../../utils.js';
 
 export const OpenLibrary = metadataProviderFactory({
   name: 'openlibrary',
@@ -47,7 +47,7 @@ export const OpenLibrary = metadataProviderFactory({
       externalPosterUrl: item.cover_i
         ? `https://covers.openlibrary.org/b/id/${item.cover_i}.jpg`
         : undefined,
-      releaseDate: tryParseDate(
+      releaseDate: tryParseISODate(
         item.first_publish_year?.toString()
       )?.toISOString(),
       numberOfPages: item.number_of_pages_median,

@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { MediaItemMetadata } from '../../entity/mediaItemModel.js';
 import { logger } from '../../logger.js';
 import { requestQueueFactory } from '../../requestQueue.js';
-import { dumpFetchResponse, h, tryParseDate } from '../../utils.js';
+import { dumpFetchResponse, h, tryParseISODate } from '../../utils.js';
 import { metadataProviderFactory } from '../metadataProvider.js';
 
 export const TVmaze = metadataProviderFactory({
@@ -57,7 +57,7 @@ export const TVmaze = metadataProviderFactory({
       overview: data.summary,
       language: data.language,
       genres: data.genres,
-      releaseDate: tryParseDate(data.premiered)?.toISOString(),
+      releaseDate: tryParseISODate(data.premiered)?.toISOString(),
       status: data.status,
       url: data.officialSite,
       network: data.network?.name,
@@ -69,7 +69,7 @@ export const TVmaze = metadataProviderFactory({
         title: season.name || `Season ${season.number}`,
         description: season.summary,
         externalPosterUrl: season.image?.medium,
-        releaseDate: tryParseDate(season.premiereDate)?.toISOString(),
+        releaseDate: tryParseISODate(season.premiereDate)?.toISOString(),
         episodes: data._embedded.episodes
           .filter((episode) => episode.season === season.number)
           .map((episode) => ({
@@ -77,7 +77,7 @@ export const TVmaze = metadataProviderFactory({
             description: episode.summary,
             episodeNumber: episode.number,
             seasonNumber: episode.season,
-            releaseDate: tryParseDate(episode.airstamp)?.toISOString(),
+            releaseDate: tryParseISODate(episode.airstamp)?.toISOString(),
             isSpecialEpisode: episode.type === 'insignificant_special',
             runtime: episode.runtime,
           })),

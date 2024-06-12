@@ -1,3 +1,4 @@
+import { parseISO } from 'date-fns';
 import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
@@ -7,15 +8,20 @@ export async function up(knex: Knex): Promise<void> {
     await knex('mediaItem').whereNotNull('releaseDate');
 
   for (const mediaItem of mediaItemsWithReleaseDate) {
-    try {
-      await knex('mediaItem')
-        .where('id', mediaItem.id)
-        .update('releaseDate', new Date(mediaItem.releaseDate!).toISOString());
-    } catch {
+    if (!mediaItem.releaseDate) {
+      continue;
+    }
+
+    const newDate = parseISO(mediaItem.releaseDate);
+
+    if (isNaN(newDate.getTime())) {
       await knex('mediaItem')
         .where('id', mediaItem.id)
         .update('releaseDate', null);
     }
+    await knex('mediaItem')
+      .where('id', mediaItem.id)
+      .update('releaseDate', newDate.toISOString());
   }
 }
 
