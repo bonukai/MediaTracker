@@ -159,15 +159,16 @@ export const releaseYear = (
 
 export const posterAspectRatio = (mediaItem: MediaItemResponse) => {
   if (mediaItem.mediaType === 'audiobook') {
-    return 'aspect-[1/1]';
+    return '1/1';
   }
 
   if (mediaItem.mediaType === 'video_game') {
-    return 'aspect-[3/4]';
+    return '3/4';
   }
 
-  return 'aspect-[2/3]';
+  return '2/3';
 };
+
 export const posterSrc = (mediaItem: MediaItemResponse, width?: number) => {
   if (typeof mediaItem.poster !== 'string') {
     return null;

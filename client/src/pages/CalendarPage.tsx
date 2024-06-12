@@ -137,7 +137,7 @@ const CalendarItem: FC<{
   return (
     <div className="flex w-full p-1 mb-2 text-white bg-[#2a1c35] rounded-lg">
       <div className="items-center justify-center hidden w-5 mr-1 lg:flex ">
-        <Poster mediaItem={mediaItem} width={100} />
+        <Poster mediaItem={mediaItem} width={40} />
       </div>
 
       <div className="flex flex-col justify-center w-full overflow-x-clip">

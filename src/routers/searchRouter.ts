@@ -12,8 +12,9 @@ import { TmdbMovie } from '../metadata/provider/tmdbMovie.js';
 import { TmdbTv } from '../metadata/provider/tmdbTv.js';
 import { mediaItemRepository } from '../repository/mediaItemRepository.js';
 import { protectedProcedure, router } from '../router.js';
-import { h } from '../utils.js';
+import { h, is } from '../utils.js';
 import { Database } from '../database.js';
+import { imageManager } from './imgRouter.js';
 
 const toString = (object: object) => {
   return JSON.stringify(
@@ -91,9 +92,16 @@ export const searchRouter = router({
 
       logger.debug(h`found ${searchResult.length} items`);
 
-      return res.map((mediaItem) =>
+      const finalRes = res.map((mediaItem) =>
         mediaItemResponseSchema.parse(getMediaItemById(mediaItem.id))
       );
+
+      finalRes
+        .flatMap((item) => [item.poster, item.backdrop])
+        .filter(is)
+        .forEach(poster => imageManager.startJobFromPath(poster));
+
+      return finalRes;
     }),
   searchLocalDatabase: protectedProcedure
     .input(

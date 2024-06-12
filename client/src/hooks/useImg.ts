@@ -11,6 +11,7 @@ export const useImg = (src?: string | null) => {
     let timeoutId: NodeJS.Timeout;
 
     const maxAttempts = 5;
+
     const fetchImage = async (attempt: number, retryIn: number) => {
       if (attempt > maxAttempts) {
         return;
@@ -42,9 +43,18 @@ export const useImg = (src?: string | null) => {
     };
   }, []);
 
+  const loading = hasImage === undefined ? false : !hasImage;
+  const showPlaceholder =
+    typeof src === 'string'
+      ? hasImage === undefined
+        ? false
+        : !hasImage
+      : true;
+
   return {
     hasImage: typeof src === 'string',
     src: hasImage ? src : undefined,
-    loading: hasImage === undefined ? false : !hasImage,
+    loading,
+    showPlaceholder,
   };
 };

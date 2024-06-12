@@ -13,7 +13,7 @@ import {
   AddMediaItemToSeenHistoryButton,
   WatchlistButton,
 } from '../components/MediaItemViews';
-import { Poster } from '../components/Poster';
+import { Img, Poster } from '../components/Poster';
 import { StarRatingComponent } from '../components/StarRatingComponent';
 import { useInvalidateMediaItem } from '../hooks/mediaItemHooks';
 import {
@@ -29,6 +29,7 @@ import { trpc } from '../utils/trpc';
 import { HistoryComponent } from './HistoryPage';
 
 import type { MediaItemResponse } from '@server/entity/mediaItemModel';
+
 export const DetailsPage: FC<{ mediaItemId: number }> = (props) => {
   const { mediaItemId } = props;
 
@@ -146,11 +147,13 @@ const JustWatchSingleSection: FC<{
       <div className="text-slate-700">{displayName}</div>
       <div className="flex gap-1">
         {providers.map((item) => (
-          <div key={item.providerName} className="inline">
-            <img
+          <div key={item.providerName} className="inline-block h-8 w-8">
+            <Img
               src={item.providerLogo}
               alt={item.providerName}
-              className="object-contain h-8 rounded"
+              className="object-contain"
+              roundedCorners='all'
+              aspectRatio='1/1'
             />
           </div>
         ))}

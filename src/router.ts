@@ -47,7 +47,6 @@ export const createContext = ({
         }
       });
     });
-    // res.send()
   };
 
   const getQueryParams = () => {

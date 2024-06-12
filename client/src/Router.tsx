@@ -33,6 +33,9 @@ import { PasswordSettingsPage } from './pages/settings/PasswordSettingsPage';
 import { PreferencesSettingsPage } from './pages/settings/PreferencesSettingsPage';
 import { UnratedPage } from './pages/UnratedPage';
 import { UpcomingPage } from './pages/UpcomingPage';
+import { trpc } from './utils/trpc';
+import { Trans } from '@lingui/macro';
+import { Img, Poster } from './components/Poster';
 
 const elementWithParamsFactory = (
   fn: (params: Readonly<Params<string>>) => React.JSX.Element
@@ -41,6 +44,30 @@ const elementWithParamsFactory = (
     const params = useParams();
     return fn(params);
   });
+};
+
+const TestPage = () => {
+  const details = trpc.mediaItem.details.useQuery({
+    mediaItemId: 7528,
+  });
+
+  if (details.isLoading) {
+    return <Trans>Loading</Trans>;
+  }
+
+  return (
+    <div className='flex gap-3'>
+      <div className='w-80'>
+        <Poster mediaItem={details.data} width={640} />
+      </div>
+      <div className='w-80'>
+        <Img alt='poster' aspectRatio='2/3' src='/api/v1/img/get?id=c8ea90e8481a78091fe48406aea535a2&width=640'  />
+      </div>
+      <div className='w-80'>
+        <Img alt='poster' aspectRatio='2/3' src='/api/v1/img/get?id=13213&width=640'  />
+      </div>
+    </div>
+  );
 };
 
 export const router = createBrowserRouter([
@@ -59,6 +86,10 @@ export const router = createBrowserRouter([
       {
         element: <Layout />,
         children: [
+          {
+            path: '/test',
+            element: <TestPage />,
+          },
           {
             path: '/',
             element: <HomePage />,

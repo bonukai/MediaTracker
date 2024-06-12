@@ -133,6 +133,7 @@ const FilterListAction = dialogActionFactory<{
               <div className="mb-1 font-semibold">
                 <Trans>JustWatch providers</Trans>
               </div>
+              
               <JustWatchProvidersSelector
                 selectedJustWatchProviders={selectedJustWatchProviders}
                 setSelectedJustWatchProviders={setSelectedJustWatchProviders}

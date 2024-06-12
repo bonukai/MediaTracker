@@ -340,9 +340,11 @@ export const MediaItemViewCard: FC<{
     <div className="border-[#EEEEEE] rounded-lg border-[1px] w-[500px] h-[260px] flex ">
       <div
         className={cx(
-          'h-full rounded-l-lg border-t-[1px] border-r-[1px] border-l-[1px] ',
-          posterAspectRatio(mediaItem)
+          'h-full rounded-l-lg border-t-[1px] border-r-[1px] border-l-[1px] '
         )}
+        style={{
+          aspectRatio: posterAspectRatio(mediaItem),
+        }}
       >
         <Link to={`/details/${mediaItem.id}`} className="w-full">
           <Poster mediaItem={mediaItem} roundedCorners="left" width={500} />
@@ -401,13 +403,13 @@ export const MediaItemViewPoster: FC<{
   const { mediaItem, settings } = props;
 
   return (
-    <div className="w-[240px]">
+    <div className="w-[220px]">
       <div className="md:aspect-[2/3] flex items-end relative">
         <Link to={`/details/${mediaItem.id}`} className="w-full">
           <Poster
             mediaItem={mediaItem}
             roundedCorners="all"
-            width={240 * 1.5}
+            width={220 * 1.5}
           />
         </Link>
 

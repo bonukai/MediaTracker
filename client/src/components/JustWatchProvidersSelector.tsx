@@ -7,6 +7,7 @@ import { Button } from './Button';
 import { dialogActionFactory } from './Dialog';
 import { AddIcon, DeleteIcon } from './Icons';
 import { justWatchLogo } from './Logos';
+import { Img } from './Poster';
 
 export const JustWatchProvidersSelector: FC<{
   selectedJustWatchProviders: number[];
@@ -24,12 +25,17 @@ export const JustWatchProvidersSelector: FC<{
         {selectedJustWatchProviders.map((id) => (
           <span
             key={id}
-            className="flex items-center gap-2 px-1 py-0.5 rounded bg-slate-400 w-fit text-sm text-slate-900"
+            className="flex items-center gap-2 px-1 py-0.5 rounded bg-slate-400 w-fit text-sm text-slate-900 whitespace-nowrap"
           >
-            <img
-              src={justWatchProviderMap.get(id)?.logo}
-              className="h-4 rounded w-fit"
-            />
+            <div className="w-4 h-4">
+              <Img
+                src={justWatchProviderMap.get(id)?.logo}
+                alt={justWatchProviderMap.get(id)?.name || 'JustWatch provider'}
+                roundedCorners='all'
+                aspectRatio='1/1'
+              />
+            </div>
+
             {justWatchProviderMap.get(id)?.name}
             <div
               onClick={() =>
