@@ -11,6 +11,7 @@ import { logger } from '../logger.js';
 import { protectedProcedure, router } from '../router.js';
 import { StaticConfiguration } from '../staticConfiguration.js';
 import { is } from '../utils.js';
+import { promiseWithResolvers } from '../utils/promiseWithResolvers.js';
 
 const MAX_POSTER_WIDTH = 800;
 
@@ -46,7 +47,7 @@ export const imgRouter = router({
 });
 
 class ImageManager {
-  private inProgress = new Set<string>();
+  private inProgress = new Map<string, Promise<void>>();
 
   getImage(id: string, width?: number | null) {
     if (this.isRunningJob(id, width)) {
@@ -64,10 +65,42 @@ class ImageManager {
     }
   }
 
+  async getImageOrWait(id: string, width?: number | null) {
+    const imagePath = this.getImagePath(id, width);
+
+    if (this.isRunningJob(id, width)) {
+      await this.waitForJob(id, width);
+    }
+
+    if (existsSync(imagePath)) {
+      return imagePath;
+    }
+
+    if (!this.isRunningJob(id, width)) {
+      await this.startJob(id, width);
+      return imagePath;
+    }
+  }
+
+  startJobFromPath(path: string) {
+    try {
+      const parsed = new URL(path, 'http://localhost');
+      const id = parsed.searchParams.get('id');
+
+      if (typeof id === 'string') {
+        this.getImage(id);
+      }
+    } catch (error) {
+      logger.error(error);
+    }
+  }
+
   private async startJob(id: string, width?: number | null) {
     const key = [id, width].toString();
 
-    this.inProgress.add(key);
+    const { promise, resolve } = promiseWithResolvers<void>();
+
+    this.inProgress.set(key, promise);
 
     try {
       const imageOriginalPath = this.getImagePath(id);
@@ -94,6 +127,7 @@ class ImageManager {
       logger.error(e);
     } finally {
       this.inProgress.delete(key);
+      resolve();
     }
   }
 
@@ -157,6 +191,12 @@ class ImageManager {
     const key = [id, width].toString();
 
     return this.inProgress.has(key);
+  }
+
+  private async waitForJob(id: string, width?: number | null) {
+    const key = [id, width].toString();
+
+    await this.inProgress.get(key);
   }
 
   private getImagePath(id: string, width?: number | null) {
