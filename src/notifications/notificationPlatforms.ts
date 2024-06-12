@@ -36,15 +36,19 @@ export const notificationPlatforms = {
     const { user, content } = args;
 
     await Promise.all(
-      user.notificationPlatforms.map(({ name, credentials }) => {
+      user.notificationPlatforms.map(async ({ name, credentials }) => {
         logger.debug(
           h`sending notification to user ${user.name}: "${content.body.plainText}" with ${name}`
         );
 
-        platformsByName[name].sendNotification({
-          content: content,
-          credentials: credentials as never,
-        });
+        try {
+          await platformsByName[name].sendNotification({
+            content: content,
+            credentials: credentials as never,
+          });
+        } catch (error) {
+          logger.error(error);
+        }
       })
     );
   },

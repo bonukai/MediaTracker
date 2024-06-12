@@ -26,7 +26,7 @@ export const createNotificationPlatform = <T, U extends string>(
       };
       credentials: T;
     }): Promise<void> {
-      return impl.sendNotification({
+      return await impl.sendNotification({
         content: args.content,
         credentials: impl.credentialsSchema.parse(args.credentials),
       });
