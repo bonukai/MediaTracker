@@ -1,4 +1,4 @@
-import { subMinutes } from 'date-fns';
+import { parseISO, subMinutes } from 'date-fns';
 import _ from 'lodash';
 import { customAlphabet } from 'nanoid';
 import { createHash } from 'node:crypto';
@@ -130,6 +130,7 @@ export const sequentialPromise = async <T, U>(
   return res;
 };
 
+
 export const dumpFetchResponse = async (
   response: Response
 ): Promise<string> => {
@@ -144,12 +145,12 @@ export const dumpFetchResponse = async (
   ].join('\n\n');
 };
 
-export const tryParseDate = (dateStr?: string | null) => {
+export const tryParseISODate = (dateStr?: string | null) => {
   if (!dateStr) {
     return;
   }
 
-  const res = new Date(dateStr);
+  const res = parseISO(dateStr);
 
   if (isNaN(res.getTime())) {
     return;

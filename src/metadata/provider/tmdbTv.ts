@@ -8,7 +8,7 @@ import { getConfiguration } from '../../repository/configurationRepository.js';
 import {
   dumpFetchResponse,
   sequentialPromise,
-  tryParseDate,
+  tryParseISODate,
 } from '../../utils.js';
 import { metadataProviderFactory } from '../metadataProvider.js';
 import {
@@ -222,7 +222,7 @@ const mapTvShow = (tvShow: {
   title: tvShow.name,
   originalTitle: tvShow.original_name || null,
   overview: tvShow.overview || null,
-  releaseDate: tryParseDate(tvShow.first_air_date)?.toISOString(),
+  releaseDate: tryParseISODate(tvShow.first_air_date)?.toISOString(),
   externalPosterUrl: tvShow.poster_path
     ? createTmdbFullImageUrl(tvShow.poster_path)
     : null,
@@ -307,14 +307,14 @@ const getSeasonsDetails = async (args: {
       externalPosterUrl: seasonDetails.poster_path
         ? createTmdbFullImageUrl(seasonDetails.poster_path)
         : null,
-      releaseDate: tryParseDate(seasonDetails.air_date)?.toISOString(),
+      releaseDate: tryParseISODate(seasonDetails.air_date)?.toISOString(),
       isSpecialSeason: seasonDetails.season_number === 0,
       episodes: seasonDetails.episodes?.map((episode) => ({
         title: episode.name,
         description: episode.overview || null,
         episodeNumber: episode.episode_number,
         seasonNumber: episode.season_number,
-        releaseDate: tryParseDate(episode.air_date)?.toISOString() || null,
+        releaseDate: tryParseISODate(episode.air_date)?.toISOString() || null,
         isSpecialEpisode: episode.season_number === 0,
         seasonFinale: episode.episode_type === 'finale',
         midSeasonFinale: episode.episode_type === 'mid_season',
