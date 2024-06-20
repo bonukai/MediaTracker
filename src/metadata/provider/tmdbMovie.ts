@@ -299,7 +299,7 @@ const movieDetailsToMediaItemMetadata = async (
     ...mapMovie(movie),
     genres: movie.genres?.map((genre) => genre.name) || null,
     imdbId: movie.imdb_id || null,
-    runtime: movie.runtime || null,
+    runtime: (movie.runtime || 0) * 60 * 1000 || null,
     status: movie.status || null,
     url: movie.homepage || null,
     theatricalReleaseDate: tryParseISODate(theatricalReleaseDate),

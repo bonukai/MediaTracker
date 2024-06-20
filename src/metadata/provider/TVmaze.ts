@@ -62,7 +62,7 @@ export const TVmaze = metadataProviderFactory({
       url: data.officialSite,
       network: data.network?.name,
       externalPosterUrl: data.image?.medium,
-      runtime: data.averageRuntime,
+      runtime: (data.averageRuntime || 0) * 60 * 1000 || null,
       seasons: data._embedded.seasons.map((season) => ({
         isSpecialSeason: season.number === 0,
         seasonNumber: season.number,
@@ -79,7 +79,7 @@ export const TVmaze = metadataProviderFactory({
             seasonNumber: episode.season,
             releaseDate: tryParseISODate(episode.airstamp)?.toISOString(),
             isSpecialEpisode: episode.type === 'insignificant_special',
-            runtime: episode.runtime,
+            runtime: (episode.runtime || 0) * 60 * 1000 || null,
           })),
       })),
     };

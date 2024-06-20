@@ -121,7 +121,7 @@ const mapItemResponse = (
     externalPosterUrl: item.product_images?.[2400],
     language: item.language,
     releaseDate: tryParseISODate(item.release_date)?.toISOString(),
-    runtime: item.runtime_length_min,
+    runtime: (item.runtime_length_min || 0) * 60 * 1000 || null,
     overview: item.merchandising_summary,
   };
 };
