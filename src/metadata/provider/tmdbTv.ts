@@ -319,6 +319,7 @@ const getSeasonsDetails = async (args: {
         seasonFinale: episode.episode_type === 'finale',
         midSeasonFinale: episode.episode_type === 'mid_season',
         tmdbId: episode.id,
+        runtime: episode.runtime || null,
       })),
     };
   });
@@ -420,6 +421,7 @@ const seasonDetailsResponseSchema = z.object({
       still_path: z.string().nullish(),
       vote_average: z.number().nullish(),
       episode_type: z.enum(['standard', 'finale', 'mid_season']).nullish(),
+      runtime: z.number().nullish(),
     })
   ),
   air_date: z.string().nullish(),
