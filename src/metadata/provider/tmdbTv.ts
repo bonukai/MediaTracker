@@ -94,7 +94,7 @@ export const TmdbTv = metadataProviderFactory({
       genres: tvShow.genres?.map((genre) => genre.name) || null,
       imdbId: tvShow.external_ids?.imdb_id || null,
       tvdbId: tvShow.external_ids?.tvdb_id || null,
-      runtime: tvShow.episode_run_time?.at(0) || null,
+      runtime: (tvShow.episode_run_time?.at(0) || 0) * 60 * 1000 || null,
       seasons: seasons || null,
       status: tvShow.status || null,
       url: tvShow.homepage || null,
@@ -319,7 +319,7 @@ const getSeasonsDetails = async (args: {
         seasonFinale: episode.episode_type === 'finale',
         midSeasonFinale: episode.episode_type === 'mid_season',
         tmdbId: episode.id,
-        runtime: episode.runtime || null,
+        runtime: (episode.runtime || 0) * 60 * 1000 || null,
       })),
     };
   });
