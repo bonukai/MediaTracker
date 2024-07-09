@@ -24,6 +24,7 @@ import { MediaTrackerVersion } from './version.js';
 
 import { sendAndScheduledNotificationsForReleases } from './releaseNotifications.js';
 import { setupI18n } from './i18n/i18n.js';
+import { scheduleLastAndUpcomingEpisodeAiringsUpdate } from './lastAndUpcomingEpisodeAirings.js';
 
 export const startServer = async (args: {
   port: number;
@@ -41,6 +42,7 @@ export const startServer = async (args: {
   const { sessionKey } = await serverInternalSettingsRepository.get();
 
   await mediaItemRepository.updateLastAndUpcomingEpisodeAirings();
+  await scheduleLastAndUpcomingEpisodeAiringsUpdate();
 
   setupI18n();
   printRestApiRoutes();

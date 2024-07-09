@@ -20,6 +20,7 @@ import { seenEpisodesCountRepository } from './repository/seenEpisodesCountRepos
 import { StaticConfiguration } from './staticConfiguration.js';
 import { getImageId, h, withDefinedPropertyFactory } from './utils.js';
 import { sendAndScheduledNotificationsForReleases } from './releaseNotifications.js';
+import { scheduleLastAndUpcomingEpisodeAiringsUpdate } from './lastAndUpcomingEpisodeAirings.js';
 
 export const updateMetadata = async (
   mediaItemToUpdate: MediaItemModel
@@ -335,6 +336,7 @@ export const updateMetadata = async (
   });
 
   await sendAndScheduledNotificationsForReleases();
+  await scheduleLastAndUpcomingEpisodeAiringsUpdate();
 };
 
 const deleteImages = async (args: {
