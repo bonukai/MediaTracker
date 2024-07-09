@@ -810,8 +810,6 @@ export const mediaItemRepository = {
           )
       );
 
-    // console.log(a);
-
     // Last aired episode
     await knex('mediaItem')
       .modify((qb) => {
