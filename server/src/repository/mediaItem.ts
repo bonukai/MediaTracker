@@ -468,6 +468,17 @@ class MediaItemRepository extends repository<MediaItemBase>({
     }
   }
 
+  public async findByAudibleId(audibleId: string): Promise<MediaItemBase | undefined> {
+    const res = await Database.knex<MediaItemBase>(this.tableName)
+      .where({ audibleId: audibleId })
+      .first();
+
+    if (res) {
+      return this.deserialize(res);
+    }
+  }
+    
+    
   public async findByTitle(params: {
     mediaType: MediaType;
     title: string;

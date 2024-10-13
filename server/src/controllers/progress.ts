@@ -146,6 +146,60 @@ export class ProgressController {
   });
 
   /**
+   * @openapi_operationId addByAudibleId
+   */
+   addByAudibleId = createExpressRoute<{
+    method: 'put';
+    path: '/api/progress/by-audible-id/:audibleId';
+    pathParams: {
+      audibleId: string;
+    };
+    requestBody: {
+      action?: 'paused' | 'playing';
+      progress?: number;
+      duration?: number;
+      device?: string;
+    };
+  }>(async (req, res) => {
+    const userId = Number(req.user);
+    const { audibleId } = req.params;
+    const { action, progress, duration, device } = req.body;
+
+      if (progress != undefined && (progress < 0 || progress > 1)) {
+        res.status(400);
+        res.send('Progress should be between 0 and 1');
+        return;
+      }
+
+    const mediaItem = await mediaItemRepository.findByAudibleId(audibleId);
+
+    if (!mediaItem) {
+      res.status(404);
+      res.send('Audiobook not found');
+      return;
+    }
+
+    if (mediaItem.mediaType !== 'audiobook') {
+      res.status(400);
+      res.send('The provided Audible ID is not associated with an audiobook');
+      return;
+    }
+
+    await addItem({
+      userId: userId,
+      action: action,
+      date: Date.now(),
+      duration: duration,
+      mediaItemId: mediaItem.id,
+      progress: progress,
+      device: device,
+    });
+
+    res.send();
+  });
+    
+    
+  /**
    * @openapi_operationId deleteById
    */
   deleteById = createExpressRoute<{
