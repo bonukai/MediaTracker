@@ -6,12 +6,14 @@ import { mediaItemRepository } from 'src/repository/mediaItem';
 import { seenRepository } from 'src/repository/seen';
 import { listItemRepository } from 'src/repository/listItemRepository';
 import { MediaType } from 'src/entity/mediaItem';
-import { findMediaItemOrEpisodeByExternalId } from 'src/metadata/findByExternalId';
+import {
+  findMediaItemByExternalId,
+  findMediaItemOrEpisodeByExternalId,
+} from 'src/metadata/findByExternalId';
 import { logger } from 'src/logger';
 import { Progress } from 'src/entity/progress';
 import { Database } from 'src/dbconfig';
 import { Seen } from 'src/entity/seen';
-
 /**
  * @openapi_tags Progress
  */
