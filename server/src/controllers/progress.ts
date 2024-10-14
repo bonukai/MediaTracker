@@ -165,7 +165,21 @@ export class ProgressController {
     const { audibleId } = req.params;
     const { progress, action, duration, device } = req.body;
 
-    if (progress === undefined || progress < 0 || progress > 1) {
+    // Debug logging
+    logger.debug(`Received request for audibleId: ${audibleId}`);
+    logger.debug(`Request body: ${JSON.stringify(req.body)}`);
+    logger.debug(`Progress value: ${progress}, type: ${typeof progress}`);
+
+    // Check if progress is undefined or not a number
+    if (progress === undefined || isNaN(progress)) {
+      res.status(400).json({ message: 'Invalid or missing progress value' });
+      return;
+    }
+
+    // Convert progress to a number if it's a string
+    const progressNumber = Number(progress);
+
+    if (progressNumber < 0 || progressNumber > 1) {
       res.status(400).json({ message: 'Progress should be between 0 and 1' });
       return;
     }
@@ -183,18 +197,18 @@ export class ProgressController {
     }
 
     try {
-      await this.addItem({
+      await addItem({
         userId,
         action,
         date: Date.now(),
         duration,
         mediaItemId: mediaItem.id,
-        progress,  // Ensure this is being passed correctly
+        progress: progressNumber,
         device,
       });
       res.status(200).json({ message: 'Progress updated successfully' });
     } catch (error) {
-      console.error('Error updating progress:', error);
+      logger.error('Error updating progress:', error);
       res.status(500).json({ message: 'Error updating progress', error: error.message });
     }
   });
