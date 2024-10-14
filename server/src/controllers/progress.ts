@@ -168,7 +168,7 @@ export class ProgressController {
     // Debug logging
     logger.debug(`Received request for audibleId: ${audibleId}`);
     logger.debug(`Request body: ${JSON.stringify(req.body)}`);
-    logger.debug(`Progress value: ${progress}, type: ${typeof progress}`);
+    logger.debug(`Progress value: ${progress}`);
 
     // Check if progress is undefined or not a number
     if (progress === undefined || isNaN(progress)) {
@@ -176,10 +176,7 @@ export class ProgressController {
       return;
     }
 
-    // Convert progress to a number if it's a string
-    const progressNumber = Number(progress);
-
-    if (progressNumber < 0 || progressNumber > 1) {
+    if (progress < 0 || progress > 1) {
       res.status(400).json({ message: 'Progress should be between 0 and 1' });
       return;
     }
@@ -203,7 +200,7 @@ export class ProgressController {
         date: Date.now(),
         duration,
         mediaItemId: mediaItem.id,
-        progress: progressNumber,
+        progress,
         device,
       });
       res.status(200).json({ message: 'Progress updated successfully' });
