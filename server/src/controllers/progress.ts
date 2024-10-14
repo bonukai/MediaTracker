@@ -148,54 +148,55 @@ export class ProgressController {
   /**
    * @openapi_operationId addByAudibleId
    */
-   addByAudibleId = createExpressRoute<{
+  addByAudibleId = createExpressRoute<{
     method: 'put';
     path: '/api/progress/by-audible-id/:audibleId';
     pathParams: {
       audibleId: string;
     };
     requestBody: {
-      action?: 'paused' | 'playing';
       progress?: number;
+      action?: 'paused' | 'playing';
       duration?: number;
       device?: string;
     };
   }>(async (req, res) => {
     const userId = Number(req.user);
     const { audibleId } = req.params;
-    const { action, progress, duration, device } = req.body;
+    const { progress, action, duration, device } = req.body;
 
-      if (progress != undefined && (progress < 0 || progress > 1)) {
-        res.status(400);
-        res.send('Progress should be between 0 and 1');
-        return;
-      }
+    if (progress === undefined || progress < 0 || progress > 1) {
+      res.status(400).json({ message: 'Progress should be between 0 and 1' });
+      return;
+    }
 
     const mediaItem = await mediaItemRepository.findByAudibleId(audibleId);
 
     if (!mediaItem) {
-      res.status(404);
-      res.send('Audiobook not found');
+      res.status(404).json({ message: 'Audiobook not found' });
       return;
     }
 
     if (mediaItem.mediaType !== 'audiobook') {
-      res.status(400);
-      res.send('The provided Audible ID is not associated with an audiobook');
+      res.status(400).json({ message: 'The provided Audible ID is not associated with an audiobook' });
       return;
     }
 
-    await addItem({
-      userId: userId,
-      action: action,
-      date: Date.now(),
-      duration: duration,
-      mediaItemId: mediaItem.id,
-      progress: progress,
-      device: device,
-    });
-
-    res.send();
+    try {
+      await this.addItem({
+        userId,
+        action,
+        date: Date.now(),
+        duration,
+        mediaItemId: mediaItem.id,
+        progress,  // Ensure this is being passed correctly
+        device,
+      });
+      res.status(200).json({ message: 'Progress updated successfully' });
+    } catch (error) {
+      console.error('Error updating progress:', error);
+      res.status(500).json({ message: 'Error updating progress', error: error.message });
+    }
   });
     
     
