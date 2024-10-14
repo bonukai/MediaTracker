@@ -181,7 +181,10 @@ export class ProgressController {
       return;
     }
 
-    const mediaItem = await mediaItemRepository.findByAudibleId(audibleId);
+    const mediaItem = await findMediaItemByExternalId({
+      id: { audibleId },
+      mediaType: 'audiobook',
+    });
 
     if (!mediaItem) {
       res.status(404).json({ message: 'Audiobook not found' });
