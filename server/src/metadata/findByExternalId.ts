@@ -66,6 +66,8 @@ export const findMediaItemOrEpisodeByExternalId = async (args: {
   id: {
     imdbId?: string;
     tmdbId?: number;
+    audibleId?: string;
+    igdbId?: number;
   };
   seasonNumber?: number;
   episodeNumber?: number;
@@ -81,7 +83,7 @@ export const findMediaItemOrEpisodeByExternalId = async (args: {
     };
   }
 
-  if (!id.imdbId && !id.tmdbId) {
+  if (!id.imdbId && !id.tmdbId && !id.audibleId && !id.igdbId) {
     return {
       error: 'At least one external id is required',
     };
