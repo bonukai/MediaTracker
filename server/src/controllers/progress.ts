@@ -6,10 +6,7 @@ import { mediaItemRepository } from 'src/repository/mediaItem';
 import { seenRepository } from 'src/repository/seen';
 import { listItemRepository } from 'src/repository/listItemRepository';
 import { MediaType } from 'src/entity/mediaItem';
-import {
-  findMediaItemByExternalId,
-  findMediaItemOrEpisodeByExternalId,
-} from 'src/metadata/findByExternalId';
+import { findMediaItemOrEpisodeByExternalId } from 'src/metadata/findByExternalId';
 import { logger } from 'src/logger';
 import { Progress } from 'src/entity/progress';
 import { Database } from 'src/dbconfig';
@@ -79,6 +76,8 @@ export class ProgressController {
       id: {
         imdbId?: string;
         tmdbId?: number;
+        audibleId?: string;
+        igdbId?: number;
       };
       seasonNumber?: number;
       episodeNumber?: number;
@@ -147,75 +146,6 @@ export class ProgressController {
     res.send();
   });
 
-  /**
-   * @openapi_operationId addByAudibleId
-   */
-  addByAudibleId = createExpressRoute<{
-    method: 'put';
-    path: '/api/progress/by-audible-id/:audibleId';
-    pathParams: {
-      audibleId: string;
-    };
-    requestBody: {
-      progress?: number;
-      action?: 'paused' | 'playing';
-      duration?: number;
-      device?: string;
-    };
-  }>(async (req, res) => {
-    const userId = Number(req.user);
-    const { audibleId } = req.params;
-    const { progress, action, duration, device } = req.body;
-
-    // Debug logging
-    logger.debug(`Received request for audibleId: ${audibleId}`);
-    logger.debug(`Request body: ${JSON.stringify(req.body)}`);
-    logger.debug(`Progress value: ${progress}`);
-
-    // Check if progress is undefined or not a number
-    if (progress === undefined || isNaN(progress)) {
-      res.status(400).json({ message: 'Invalid or missing progress value' });
-      return;
-    }
-
-    if (progress < 0 || progress > 1) {
-      res.status(400).json({ message: 'Progress should be between 0 and 1' });
-      return;
-    }
-
-    const mediaItem = await findMediaItemByExternalId({
-      id: { audibleId },
-      mediaType: 'audiobook',
-    });
-
-    if (!mediaItem) {
-      res.status(404).json({ message: 'Audiobook not found' });
-      return;
-    }
-
-    if (mediaItem.mediaType !== 'audiobook') {
-      res.status(400).json({ message: 'The provided Audible ID is not associated with an audiobook' });
-      return;
-    }
-
-    try {
-      await addItem({
-        userId,
-        action,
-        date: Date.now(),
-        duration,
-        mediaItemId: mediaItem.id,
-        progress,
-        device,
-      });
-      res.status(200).json({ message: 'Progress updated successfully' });
-    } catch (error) {
-      logger.error('Error updating progress:', error);
-      res.status(500).json({ message: 'Error updating progress', error: error.message });
-    }
-  });
-    
-    
   /**
    * @openapi_operationId deleteById
    */
