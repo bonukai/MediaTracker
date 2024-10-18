@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "MediaTracker",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
@@ -1222,6 +1222,14 @@
                         "nullable": true
                       },
                       "tmdbId": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "audibleId": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "igdbId": {
                         "type": "number",
                         "nullable": true
                       }
