@@ -11,7 +11,6 @@ import { logger } from 'src/logger';
 import { Progress } from 'src/entity/progress';
 import { Database } from 'src/dbconfig';
 import { Seen } from 'src/entity/seen';
-
 /**
  * @openapi_tags Progress
  */
@@ -77,6 +76,8 @@ export class ProgressController {
       id: {
         imdbId?: string;
         tmdbId?: number;
+        audibleId?: string;
+        igdbId?: number;
       };
       seasonNumber?: number;
       episodeNumber?: number;
@@ -219,7 +220,13 @@ const addItem = async (args: Progress) => {
     });
   }
 
-  if (args.progress === 1 && args.episodeId == undefined) {
+  if (args.progress < 1) {
+    await listItemRepository.addItem({
+      userId: args.userId,
+      mediaItemId: args.mediaItemId,
+      watchlist: true,
+    });
+  } else if (args.progress === 1 && args.episodeId == undefined) {
     await listItemRepository.removeItem({
       userId: args.userId,
       mediaItemId: args.mediaItemId,

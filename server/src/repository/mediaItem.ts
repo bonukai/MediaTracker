@@ -467,7 +467,7 @@ class MediaItemRepository extends repository<MediaItemBase>({
       return this.deserialize(res);
     }
   }
-
+    
   public async findByTitle(params: {
     mediaType: MediaType;
     title: string;

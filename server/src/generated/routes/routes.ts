@@ -719,6 +719,8 @@ router.put(
           properties: {
             imdbId: { type: ['string', 'null'] },
             tmdbId: { type: ['number', 'null'] },
+            audibleId: { type: ['string', 'null'] },
+            igdbId: { type: ['number', 'null'] },
           },
         },
         seasonNumber: { type: ['number', 'null'] },
