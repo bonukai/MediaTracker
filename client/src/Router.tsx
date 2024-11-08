@@ -23,6 +23,7 @@ import { GoodreadsImportPage } from 'src/pages/import/Goodreads';
 import { ListPage } from 'src/pages/ListPage';
 import { EpisodePage } from 'src/pages/EpisodePage';
 import { ListsPage } from 'src/pages/ListsPage';
+import { CsvImportPage } from 'src/pages/import/Csv';
 
 export const MyRouter: FunctionComponent = () => {
   const { isLoading, user } = useUser();
@@ -126,6 +127,10 @@ export const MyRouter: FunctionComponent = () => {
               <Route
                 path="/import/goodreads"
                 element={<GoodreadsImportPage key="/import/goodreads" />}
+              />
+              <Route
+                path="/import/csv"
+                element={<CsvImportPage key="/import/csv" />}
               />
             </>
           ) : (

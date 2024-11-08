@@ -2260,6 +2260,44 @@
         }
       }
     },
+    "/api/import-csv": {
+      "post": {
+        "tags": [
+          "CsvImport"
+        ],
+        "operationId": "import",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CsvImport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/import-goodreads": {
       "post": {
         "tags": [
@@ -4628,6 +4666,94 @@
               "platformName"
             ]
           }
+        ]
+      },
+      "CsvImport": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "inputCsvRows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CsvFileRow"
+            }
+          },
+          "importedMediaItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MediaItemDetailsResponse"
+            }
+          },
+          "movie": {
+            "type": "number"
+          },
+          "tv": {
+            "type": "number"
+          },
+          "season": {
+            "type": "number"
+          },
+          "episode": {
+            "type": "number"
+          },
+          "video_game": {
+            "type": "number"
+          },
+          "book": {
+            "type": "number"
+          },
+          "audiobook": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "audiobook",
+          "book",
+          "episode",
+          "file",
+          "importedMediaItems",
+          "inputCsvRows",
+          "movie",
+          "season",
+          "tv",
+          "video_game"
+        ]
+      },
+      "CsvFileRow": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/MediaType"
+          },
+          "externalSrc": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "watched": {
+            "type": "string",
+            "nullable": true
+          },
+          "listId": {
+            "type": "number",
+            "nullable": true
+          },
+          "lastSeenSeason": {
+            "type": "number",
+            "nullable": true
+          },
+          "lastSeenEpisode": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "externalId",
+          "externalSrc",
+          "type"
         ]
       },
       "GoodreadsImport": {

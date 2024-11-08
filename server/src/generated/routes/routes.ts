@@ -79,6 +79,7 @@ import { StatisticsController } from '../../controllers/statisticsController';
 import { TokenController } from '../../controllers/token';
 import { UsersController } from '../../controllers/users';
 import { WatchlistController } from '../../controllers/watchlist';
+import { CsvImportController } from '../../controllers/import/csv';
 import { GoodreadsImportController } from '../../controllers/import/goodreads';
 import { TraktTvImportController } from '../../controllers/import/traktTv';
 
@@ -100,6 +101,7 @@ const _StatisticsController = new StatisticsController();
 const _TokenController = new TokenController();
 const _UsersController = new UsersController();
 const _WatchlistController = new WatchlistController();
+const _CsvImportController = new CsvImportController();
 const _GoodreadsImportController = new GoodreadsImportController();
 const _TraktTvImportController = new TraktTvImportController();
 
@@ -1129,6 +1131,18 @@ router.delete(
     },
   }),
   _WatchlistController.delete
+);
+router.post(
+  '/api/import-csv',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: { file: { type: 'string' } },
+      required: ['file'],
+    },
+  }),
+  _CsvImportController.import
 );
 router.post(
   '/api/import-goodreads',

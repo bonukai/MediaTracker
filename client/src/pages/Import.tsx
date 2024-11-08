@@ -31,6 +31,8 @@ export const ImportPage: FunctionComponent = () => {
       />
 
       <LinkComponent path="goodreads" imgSrc="logo/goodreads.svg" />
+
+      <LinkComponent path="csv" imgSrc="logo/file-csv.svg" />
     </div>
   );
 };

@@ -173,3 +173,93 @@ export const ImportSummaryTableRowComponent: FunctionComponent<{
     </tr>
   );
 };
+
+export const CsvImportSummaryTable: FunctionComponent<{
+  rows: {
+    key?: string;
+    title: string;
+    imported: {
+      movie?: number;
+      tv?: number;
+      season?: number;
+      episode?: number;
+      video_game?: number;
+      book?: number;
+      audiobook?: number;
+    };
+  }[];
+}> = (props) => {
+  const { rows } = props;
+
+  return (
+    <>
+      <div className="my-4 text-2xl font-bold text-center">
+        <Trans>Summary</Trans>
+      </div>
+      <table className="w-full divide-y divide-gray-300 table-auto">
+        <thead>
+          <tr className="divide-x">
+            <th className="w-[1%]"></th>
+            <HeaderCell header={t`Movies`} />
+            <HeaderCell header={t`Shows`} />
+            <HeaderCell header={t`Seasons`} />
+            <HeaderCell header={t`Episodes`} />
+            <HeaderCell header={t`Games`} />
+            <HeaderCell header={t`Books`} />
+            <HeaderCell header={t`Audiobooks`} />
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {rows.map((data) => (
+            <CsvImportSummaryTableRowComponent
+              key={data.key || data.title}
+              imported={data.imported}
+              title={data.title}
+            />
+          ))}
+        </tbody>
+      </table>
+    </>
+  );
+};
+
+export const CsvImportSummaryTableRowComponent: FunctionComponent<{
+  title: string;
+  imported: {
+    movie?: number;
+    tv?: number;
+    season?: number;
+    episode?: number;
+    video_game?: number;
+    book?: number;
+    audiobook?: number;
+  };
+}> = (props) => {
+  const { title, imported } = props;
+
+  return (
+    <tr className="divide-x">
+      <td className="py-2 pr-4 text-md whitespace-nowrap">{title}</td>
+      <td className="text-sm text-center">{imported.movie}</td>
+      <td className="text-sm text-center">{imported.tv}</td>
+      <td className="text-sm text-center">{imported.season}</td>
+      <td className="text-sm text-center">{imported.episode}</td>
+      <td className="text-sm text-center">{imported.video_game}</td>
+      <td className="text-sm text-center">{imported.book}</td>
+      <td className="text-sm text-center">{imported.audiobook}</td>
+    </tr>
+  );
+};
+
+const CsvImportSummaryTableCellComponent: FunctionComponent<{
+  imported?: number;
+}> = (props) => {
+  const { imported } = props;
+  return (
+    <td className="text-sm text-center">
+      <>
+        {imported}
+      </>
+    </td>
+  );
+};
