@@ -4733,19 +4733,19 @@
           "externalId": {
             "type": "string"
           },
-          "watched": {
-            "type": "string",
-            "nullable": true
-          },
           "listId": {
             "type": "number",
             "nullable": true
           },
-          "lastSeenSeason": {
+          "watched": {
+            "type": "string",
+            "nullable": true
+          },
+          "season": {
             "type": "number",
             "nullable": true
           },
-          "lastSeenEpisode": {
+          "episode": {
             "type": "number",
             "nullable": true
           }

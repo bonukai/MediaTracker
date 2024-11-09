@@ -5,18 +5,12 @@ import _ from 'lodash';
 import { logger } from 'src/logger';
 
 import { findMediaItemByExternalId } from 'src/metadata/findByExternalId';
+import { updateMediaItem } from 'src/updateMetadata';
 import { ExternalIds, MediaType, MediaItemDetailsResponse } from 'src/entity/mediaItem';
-import { Seen } from 'src/entity/seen';
-import { UserRating } from 'src/entity/userRating';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { seenRepository } from 'src/repository/seen';
-import { userRatingRepository } from 'src/repository/userRating';
 import { listItemRepository } from 'src/repository/listItemRepository';
-import { listRepository } from 'src/repository/list';
-import { Progress } from 'src/entity/progress';
-import { progressRepository } from 'src/repository/progress';
-import { TvEpisode, TvEpisodeFilters } from 'src/entity/tvepisode';
-import { TvSeason } from 'src/entity/tvseason';
+import { TvEpisodeFilters } from 'src/entity/tvepisode';
 
 /**
  * @openapi_tags CsvImport
@@ -59,10 +53,10 @@ type CsvFileRow = {
   type: MediaType;
   externalSrc: string;
   externalId: string; 
-  watched?: string;
   listId?: number;
-  lastSeenSeason?: number;
-  lastSeenEpisode?: number;
+  watched?: string;
+  season?: number;
+  episode?: number;
 }
 
 export const importFromCsv = async (
@@ -77,7 +71,8 @@ export const importFromCsv = async (
 
   //Read CSV file from a string - need the await to use the parsed rows outside the .on(x)
   await stream
-    .pipe(csv({  // defaults to - separator=, escape=" quote=" headers=firstline newline=\n
+    .pipe(csv({ 
+      // defaults to - separator=, escape=" quote=" headers=firstline newline=\n
       strict: true,   //all rows MUST contain the same number of columns as header
       //lowerCase all headers to simplify identification
       mapHeaders: ({ header, index }) => header.toLowerCase()
@@ -91,10 +86,10 @@ export const importFromCsv = async (
          type: row['type'],
          externalSrc: row['externalsrc'],
          externalId: row['externalid'],
-         watched: row['watched'],
          listId: row['listid'],
-         lastSeenSeason: row['lastseenseason'],
-         lastSeenEpisode: row['lastseenepisode']
+         watched: row['watched'],
+         season: row['season'],
+         episode: row['episode']
       };
       csvResults.inputCsvRows.push(csvRow);
     })
@@ -124,12 +119,15 @@ export const importFromCsv = async (
           externalIds.openlibraryId = csvRow.externalId; break;
       }
 
-      const mediaItem = await findMediaItemByExternalId({
+      let mediaItem = await findMediaItemByExternalId({
         id: externalIds,
         mediaType: csvRow.type,
       });
   
       if (mediaItem) {
+        if (mediaItem.needsDetails)
+          mediaItem = await updateMediaItem(mediaItem);
+
         logger.debug(`found ${mediaItem.mediaType}: ${mediaItem.title} for user ${userId}`);
 
         //increment processing summary counter
@@ -139,6 +137,7 @@ export const importFromCsv = async (
           mediaItemId: mediaItem.id,
           userId: userId,
         });
+
         logger.debug('mediaItemDetails:', details);
 
         //mark item as seen (if not already)
@@ -153,23 +152,19 @@ export const importFromCsv = async (
             let episodes = details.seasons.flatMap(season => season.episodes);
 
             //filter out all episodes <= the season and episode number given
-            if (csvRow.lastSeenSeason >= 0 && csvRow.lastSeenEpisode >= 0) {
+            if (csvRow.season >= 0 && csvRow.episode >= 0) {
               episodes = episodes.filter((episode) =>
-                episode.seasonNumber < csvRow.lastSeenSeason ||
-                (episode.seasonNumber === csvRow.lastSeenSeason &&
-                  episode.episodeNumber <= csvRow.lastSeenEpisode))
+                episode.seasonNumber < csvRow.season ||
+                (episode.seasonNumber === csvRow.season &&
+                  episode.episodeNumber <= csvRow.episode))
             }
-            //filter out watched, unreleased (in future)
+
+            //filter out watched, unreleased (in future) and specials
             episodes = episodes
               .filter(TvEpisodeFilters.unwatchedEpisodes)
-              .filter(TvEpisodeFilters.releasedEpisodes);
+              .filter(TvEpisodeFilters.releasedEpisodes)
+              .filter(TvEpisodeFilters.nonSpecialEpisodes);
             
-            //dont mark specials as seen if lastSeenSeason > 0
-            //ie: to mark specials as seen too, import another row with 
-            // lastSeenSeason = 0 or leave lastSeenSeason = blank
-            if (csvRow.lastSeenSeason > 0)
-              episodes = episodes.filter(TvEpisodeFilters.nonSpecialEpisodes);
-
             //mark remaining episodes as seen
             const seenMany = await seenRepository.createMany(
               episodes.map((episode) => ({
@@ -184,8 +179,12 @@ export const importFromCsv = async (
             
             //sanity check
             seen = seenMany.length == episodes.length;
+            
+            //increment the season and episode counters by the total, not just seen count
+            csvResults.season += details.numberOfSeasons;
+            csvResults.episode += details.numberOfEpisodes;
 
-          } else {
+          } else if (!(details.seen)) {
 
             seen = await seenRepository.create({
               userId: userId,
