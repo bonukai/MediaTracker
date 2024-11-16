@@ -50,7 +50,8 @@ type CsvImport = {
   book: number;
   audiobook: number;
 };
-type CsvFileRow = {
+
+export type CsvFileRow = {
   type: MediaType;
   externalSrc: string;
   externalId: string; 
@@ -86,7 +87,7 @@ export const parseCsv = async (
         // Validate mandatory headers        
         const missingHeaders = requiredHeaders.filter(header => !(header in row));
         if (missingHeaders.length > 0) {
-          throw new Error(`Missing required headers: ${missingHeaders.join(', ')}`);
+          throw new Error(`Missing required headers: "${missingHeaders.join(', ')}"`);
         }
 
         // Validate "type"
