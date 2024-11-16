@@ -82,46 +82,61 @@ export const parseCsv = async (
     }),
     async (source) => {
       for await (const row of source as AsyncIterable<any>) {
-        logger.debug('CsvRow:', row);
 
-        // Validate mandatory headers        
+        // Validate mandatory headers in each row
+        const requiredHeaders = ['type', 'externalsrc', 'externalid'];
         const missingHeaders = requiredHeaders.filter(header => !(header in row));
         if (missingHeaders.length > 0) {
           throw new Error(`Missing required headers: "${missingHeaders.join(', ')}"`);
         }
 
+        // Strip non-alphanumeric characters from string fields,
+        //  and non-numeric characters from integer fields.
+        const sanitizedRow: CsvFileRow = {
+          type: typeof row['type'] === 'string' ? row['type'].replace(/[^a-zA-Z0-9]/g, '') as MediaType: undefined,
+          externalSrc: typeof row['externalsrc'] === 'string' ? row['externalsrc'].replace(/[^a-zA-Z0-9]/g, '') : '',
+          externalId: typeof row['externalid'] === 'string' ? row['externalid'].replace(/[^a-zA-Z0-9]/g, '') : '',
+          listId: row['listid'] ? Number(row['listid'].toString().replace(/[^0-9]/g, '')) : undefined,
+          watched: row['watched'] ? row['watched'].replace(/[^a-zA-Z0-9]/g, '') : undefined,
+          season: row['season'] ? Number(row['season'].toString().replace(/[^0-9]/g, '')) : undefined,
+          episode: row['episode'] ? Number(row['episode'].toString().replace(/[^0-9]/g, '')) : undefined,
+        };
+
+        logger.debug('Sanitized Row:', sanitizedRow);
+
         // Validate "type"
-        if (!validTypes.includes(row['type'])) {
-          throw new Error(`Invalid type value: "${row['type']}"`);
+        const validTypes = ['tv', 'movie', 'game', 'book', 'audiobook'];
+        if (!validTypes.includes(sanitizedRow.type)) {
+          throw new Error(`Invalid type value: "${sanitizedRow.type}"`);
         }
 
         // Validate "externalSrc"
-        if (!validExternalSrcs.includes(row['externalsrc'])) {
-          throw new Error(`Invalid externalSrc value: "${row['externalsrc']}"`);
+        if (!validExternalSrcs.includes(sanitizedRow.externalSrc)) {
+          throw new Error(`Invalid externalSrc value: "${sanitizedRow.externalSrc}"`);
         }
 
         // Validate "type+externalSrc" combination
-        if (!validTypesSrcs.includes(row['type']+'|'+row['externalsrc'])) {
-          throw new Error(`Invalid type and externalSrc combination: "${row['type']}", "${row['externalsrc']}"`);
+        if (!validTypesSrcs.includes(sanitizedRow.type+'|'+sanitizedRow.externalSrc)) {
+          throw new Error(`Invalid type and externalSrc combination: "${sanitizedRow.type}", "${sanitizedRow.externalSrc}"`);
         }
         
         // Validate "externalId"
-        if (typeof row['externalid'] !== 'string' || row['externalid'].trim() === '') {
-          throw new Error(`Invalid externalId value: "${row['externalid']}"`);
+        if (typeof sanitizedRow.externalId !== 'string' || sanitizedRow.externalId.trim() === '') {
+          throw new Error(`Invalid externalId value: "${sanitizedRow.externalId}"`);
         }
 
-        const csvRow: CsvFileRow = {
-          type: row['type'],
-          externalSrc: row['externalsrc'],
-          externalId: row['externalid'],
-          listId: row['listid'] ? Number(row['listid']) : undefined,
-          watched: row['watched'],
-          season: row['season'] ? Number(row['season']) : undefined,
-          episode: row['episode'] ? Number(row['episode']) : undefined,
+        // Validate "watched"
+        if (sanitizedRow.watched !== undefined && !['Y', 'N', 'y', 'n'].includes(sanitizedRow.watched)) {
+          throw new Error(`Invalid watched value: "${sanitizedRow.watched}"`);
+        }
+
+        // Validate "listId"
+        if (sanitizedRow.listId !== undefined && sanitizedRow.listId <= 0) {
+          throw new Error(`Invalid listId value: "${sanitizedRow.listId}"`);
         }
 
         // Add parsed row to results
-        csvRows.push(csvRow);
+        csvRows.push(sanitizedRow);
       }
     }
   ).catch((error) => {

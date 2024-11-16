@@ -5,23 +5,24 @@ describe('CSV import', () => {
   test('01. Should parse valid CSV data successfully', async () => {
     const validResult: CsvFileRow = { type: 'movie', externalSrc: 'imdb', externalId: 'tt1234567', listId: undefined, watched: undefined, season: undefined, episode: undefined };
 
-    //Unix newline terminators:
-    let csvData = "type,externalSrc,externalId\nmovie,imdb,tt1234567\n";
-    let result = await parseCsv(csvData);
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual(validResult);
+    const csvData = [
+      `type,externalSrc,externalId\nmovie,imdb,tt1234567\n`, //Unix newline terminators
+      `type,externalSrc,externalId\r\nmovie,imdb,tt1234567\r\n`, //Windows newline terminators
+      `type,externalSrc,externalId\rmovie,imdb,tt1234567\r`, //Old MacOS newline terminators
+      //parsed as VALID, but invalid chars will be stripped to return clean values:
+      `type,externalSrc,externalId\nmovie,imdb,""tt1234567\n`,
+      `type,externalSrc,externalId\nmovie,imdb,''tt1234567\n`,
+      `type,externalSrc,externalId\nmovie,imdb,"tt1234567'\n`,
+      `type,externalSrc,externalId\nmovie,imdb,*tt1234567\n`,
+      `type,externalSrc,externalId\nmovie,imdb,"tt1234567\n"\n`
+    ];
+    
+    for (const csv of csvData) {
+      const result = await parseCsv(csv);
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual(validResult);
+    }
 
-    //Windows newline terminators:
-    csvData = `type,externalSrc,externalId\r\nmovie,imdb,tt1234567\r\n`;
-    result = await parseCsv(csvData);
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual(validResult);
-
-    //MaxOS newline terminators:
-    csvData = `type,externalSrc,externalId\rmovie,imdb,tt1234567\r`;
-    result = await parseCsv(csvData);
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual(validResult);
   });
   
   test('02. Should throw an error if required headers are missing', async () => {
@@ -139,6 +140,34 @@ describe('CSV import', () => {
     await expect(parseCsv(csvData)).rejects.toThrow(
       'Missing required headers: "type, externalsrc, externalid"'
     );
+  });
+
+  test('12. Improper quoting should fail', async () => {
+    const errMsg = 'Row length does not match headers';
+    const validResult: CsvFileRow = { type: 'movie', externalSrc: 'imdb', externalId: 'tt1234567', listId: undefined, watched: undefined, season: undefined, episode: undefined };
+
+    //double quotes around data columns
+    let csvData = `type,externalSrc,externalId\n"movie,imdb",tt1234567\n`;
+    await expect(parseCsv(csvData)).rejects.toThrow(errMsg);
+    
+    //double quotes around entire row
+    csvData = `type,externalSrc,externalId\n"movie,imdb,tt1234567"\n`;
+    await expect(parseCsv(csvData)).rejects.toThrow(errMsg);
+
+  });
+
+  test('13. Invalid watched values fail', async () => {
+    //watched set to 1 or 0 fails
+    let csvData = `type,externalSrc,externalId,watched\nmovie,imdb,tt1234567,1\n`;
+    await expect(parseCsv(csvData)).rejects.toThrow('Invalid watched value: "1"');
+
+    //watched set to true or false fails
+    csvData = `type,externalSrc,externalId,watched\nmovie,imdb,tt1234567,true\n`;
+    await expect(parseCsv(csvData)).rejects.toThrow('Invalid watched value: "true"');
+
+    //watched set to Yes or No fails
+    csvData = `type,externalSrc,externalId,watched\nmovie,imdb,tt1234567,Yes\n`;
+    await expect(parseCsv(csvData)).rejects.toThrow('Invalid watched value: "Yes"');
   });
 
 });
