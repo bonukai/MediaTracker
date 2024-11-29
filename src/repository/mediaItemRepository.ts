@@ -1043,10 +1043,10 @@ const _getMediaItemsWithUserProperties = async (args: {
 
   const lastSeenMediaItem = await splitWhereInQuery(uniqMediaItemIds, (chunk) =>
     trx('seen')
-      .select('date', 'mediaItemId')
+      .select('mediaItemId')
+      .max({ date: 'date' })
       .where('userId', userId)
       .whereIn('mediaItemId', chunk)
-      .max({ date: 'date' })
       .groupBy('mediaItemId')
   );
 
