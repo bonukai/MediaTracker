@@ -17,10 +17,6 @@ const databaseConfigSchema = z.discriminatedUnion('client', [
     client: z.literal('pg'),
     connectionString: z.string(),
   }),
-  z.object({
-    client: z.literal('mysql'),
-    connectionString: z.string(),
-  }),
 ]);
 
 export type DatabaseConfig = z.infer<typeof databaseConfigSchema>;
