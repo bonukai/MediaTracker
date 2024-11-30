@@ -325,7 +325,8 @@ export const listRepository = {
         .where('listId', listId)
         .leftJoin('mediaItem', 'listItem.mediaItemId', 'mediaItem.id')
         .modify((qb) => filterQuery(qb, args))
-        .modify((qb) => sortQuery(qb, args))
+        //Dont need to sort when just doing a count(*)!
+        //.modify((qb) => sortQuery(qb, args))
         .count({ count: '*' });
 
       const listItems: ListItemModel[] = await trx('listItem')
@@ -527,13 +528,26 @@ const filterQuery = <T extends object>(
     //   );
     // }
 
-    query
+    const unseenEpisodesSubquery = Database.knex
       .select({
         unseenEpisodesCount: Database.knex.raw(
-          '"mediaItem"."numberOfAiredEpisodes" - "seenEpisodesCount"."seenEpisodesCount"'
+          '"mediaItem"."numberOfAiredEpisodes" - COALESCE("seenEpisodesCount"."seenEpisodesCount", 0)'
         ),
-        seenEpisodesCountUserId: 'seenEpisodesCount.userId',
+        mediaItemId: 'listItem.mediaItemId',
       })
+      .from('listItem')
+      .leftJoin('mediaItem', 'listItem.mediaItemId', 'mediaItem.id')  
+      .leftJoin('seenEpisodesCount', (qb) =>
+        qb
+          .on('listItem.mediaItemId', 'seenEpisodesCount.mediaItemId')
+          .onNull('listItem.seasonId')
+          .onNull('listItem.episodeId')
+          .onVal('seenEpisodesCount.userId', userId)
+      )
+      .as('unseenEpisodesSubquery');
+
+    query
+      .leftJoin(unseenEpisodesSubquery, 'listItem.mediaItemId', 'unseenEpisodesSubquery.mediaItemId')
       .leftJoin(
         (qb) =>
           qb
@@ -543,14 +557,8 @@ const filterQuery = <T extends object>(
             .groupBy('mediaItemId')
             .as('lastSeenFilter'),
         (qb) => qb.on('listItem.mediaItemId', 'lastSeenFilter.mediaItemId')
-      )
-      .leftJoin('seenEpisodesCount', (qb) =>
-        qb
-          .on('listItem.mediaItemId', 'seenEpisodesCount.mediaItemId')
-          .onNull('listItem.seasonId')
-          .onNull('listItem.episodeId')
-          .onVal('seenEpisodesCount.userId', userId)
       );
+
 
     if (filters.seen === true) {
       query.where((qb) =>
