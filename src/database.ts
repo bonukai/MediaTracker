@@ -1,5 +1,6 @@
 import * as knexPkg from 'knex';
 import fs from 'fs';
+import pg from 'pg';
 import { resolve, basename } from 'path';
 import { z } from 'zod';
 
@@ -15,7 +16,7 @@ const databaseConfigSchema = z.discriminatedUnion('client', [
   z.object({
     client: z.literal('pg'),
     connectionString: z.string(),
-}),
+  }),
   z.object({
     client: z.literal('mysql'),
     connectionString: z.string(),
@@ -62,34 +63,12 @@ export class Database {
           : databaseConfiguration.connectionString,
 
       useNullAsDefault: true,
-      // Conditionally add postProcessResponse only for PostgreSQL to deal with numerics returned as string
-      ...(databaseConfiguration.client === 'pg' && {
-        postProcessResponse: (result) => {
-          if (Array.isArray(result)) {
-            return result.map((row) => this.#convertNumericColumns(row));
-          } else if (result && typeof result === 'object') {
-            return this.#convertNumericColumns(result);
-          }
-          return result; // Return as is for other cases
-        },
-      }),
     });
+
+    pg.types.setTypeParser(pg.types.builtins.INT8, parseInt);
+    pg.types.setTypeParser(pg.types.builtins.NUMERIC, parseFloat);
   }
 
-  // Helper function to safely convert numeric column values from strings back to numbers.
-  // Javascript doesnt have a 64bit int or decimal, so values all convert to floats.
-  // This potentially returns some incorrect numbers, but ... it should be OK for tmdbRatings.
-  static #convertNumericColumns(row: Record<string, any>): Record<string, any> {
-    const convertedRow = { ...row };
-    for (const key in row) {
-      const value = row[key];
-      if (typeof value === 'string' && !Number.isNaN(Number(value))) {
-        convertedRow[key] = Number(value);
-      }
-    }
-    return convertedRow;
-  }
-  
   static async runMigrations(verbose = true): Promise<void> {
     if (verbose) {
       logger.info(`running migrations`);
