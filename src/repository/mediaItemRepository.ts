@@ -725,7 +725,11 @@ export const mediaItemRepository = {
         )
         .whereNull('userRating.rating');
 
-      const countRes = await query.clone().count({ count: '*' });
+      const countRes = await query
+        .clone() // Copy the query
+        .clearSelect() // Then clear selected columns because it had mediaItem.*
+        .count({ count: '*' }); // Now count the rows
+
       const items: MediaItemModel[] = await query
         .clone()
         .orderBy('seen.date', 'desc')
