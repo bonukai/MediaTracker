@@ -1,7 +1,7 @@
 import * as knexPkg from 'knex';
 import fs from 'fs';
 import pg from 'pg';
-import { resolve, basename } from 'path';
+import { resolve, dirname } from 'path';
 import { z } from 'zod';
 
 import { __dirname } from './dirname.js';
@@ -33,9 +33,13 @@ export class Database {
 
     if (databaseConfiguration.client === 'better-sqlite3') {
       if (!fs.existsSync(databaseConfiguration.filename)) {
-        fs.mkdirSync(basename(databaseConfiguration.filename), {
+        fs.mkdirSync(dirname(databaseConfiguration.filename), {
           recursive: true,
         });
+      } else {
+        if (!fs.lstatSync(databaseConfiguration.filename).isFile()) {
+          throw new Error(`${databaseConfiguration.filename} is not a file)}`);
+        }
       }
 
       logger.info(
