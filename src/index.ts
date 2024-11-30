@@ -12,7 +12,6 @@ import { Database, DatabaseConfig } from './database.js';
 import { startServer } from './server.js';
 import { StaticConfiguration } from './staticConfiguration.js';
 import { h } from './utils.js';
-import { logger } from './logger.js';
 
 const inputValidator = (zodSchema: ZodSchema) => {
   return (value: string) => {
@@ -52,18 +51,21 @@ program
     new Option('--db-client <string>', 'database client')
       .choices(databaseClientSchema.options)
       .default('SQLite')
+      .makeOptionMandatory()
   )
   .addOption(
     new Option('--db-filepath <path>', 'SQLite database path')
-    .conflicts('dbConnectiongString')
-    .implies({dbClient: 'SQLite', dbConnectionString: undefined})
-    .default(path.resolve(os.homedir(), '.mediatracker', 'data.db'))
+      .conflicts('dbConnectionString')
+      .implies({ dbClient: 'SQLite', dbConnectionString: undefined })
+      .default(path.resolve(os.homedir(), '.mediatracker', 'data.db'))
   )
   .addOption(
-    new Option('--db-connection-string <string>', 'PostgreSQL database connection string')
-    .conflicts('dbFilepath')
-    //if dbclient not specifed on command line, but connection-string is, default to postgres
-    .implies({dbClient: 'PostgreSQL', dbFilepath: undefined})
+    new Option(
+      '--db-connection-string <string>',
+      'PostgreSQL database connection string'
+    )
+      .conflicts('dbFilepath')
+      .implies({ dbFilepath: undefined })
   )
   .addOption(
     new Option('--logs-dir <path>', 'logs directory')
@@ -75,30 +77,7 @@ program
       .default(path.resolve(os.homedir(), '.mediatracker', 'img'))
       .argParser(createDirectories)
   )
-  .addOption(new Option('--demo', 'demo mode'))
-  .action((options) => {
-
-    const { dbClient, dbFilepath, dbConnectionString } = options;
-
-    // Apply conditional logic for defaults and validation
-    // If a user supplies just a connection string on the command line, dbclient would default to sqlite
-    if (dbClient === 'SQLite' && dbConnectionString) {
-      logger.warn('--db-connection-string must not be set when --db-client is SQLite');
-      opts.dbConnectionString = undefined;
-    } else if (dbClient === 'PostgreSQL' && dbFilepath) {
-      //since dbFilePath has a default value, need to unset it again when dbClient is PostgreSQL
-      logger.warn('--db-filepath must not be set when --db-client is PostgreSQL');
-      opts.dbFilepath = undefined;
-    } 
-    
-    // Validate correct value combinations
-    if (dbClient === 'SQLite' && !dbFilepath) {
-      throw new Error('--db-filepath must be set when --db-client is SQLite');
-    } else if (dbClient === 'PostgreSQL' && !dbConnectionString) {
-      throw new Error('--db-connection-string must be set when --db-client is PostgreSQL');
-    }
-  }
-);
+  .addOption(new Option('--demo', 'demo mode'));
 
 const commands: Command[] = [];
 
