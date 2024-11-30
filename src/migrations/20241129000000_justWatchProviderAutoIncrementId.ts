@@ -1,6 +1,8 @@
 import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
+  const justWatchAvailabilityData = await knex('justWatchAvailability');
+  const justWatchProviderData = await knex('justWatchProvider');
 
   await knex.schema.dropTable('justWatchAvailability');
   await knex.schema.dropTable('justWatchProvider');
@@ -26,6 +28,13 @@ export async function up(knex: Knex): Promise<void> {
     table.index(['mediaItemId', 'providerId']);
   });
 
+  await knex.batchInsert('justWatchProvider', justWatchProviderData, 100);
+
+  await knex.batchInsert(
+    'justWatchAvailability',
+    justWatchAvailabilityData,
+    100
+  );
 }
 
 export async function down(knex: Knex): Promise<void> {}
