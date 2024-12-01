@@ -776,6 +776,13 @@ export const mediaItemRepository = {
     const knex = args?.trx ? args.trx : Database.knex;
     const currentDateString = new Date().toISOString();
 
+    if (args?.mediaItemIds === undefined) {
+      await knex('mediaItem')
+        .update('upcomingEpisodeId', null)
+        .update('lastAiredEpisodeId', null)
+        .update('numberOfAiredEpisodes', null);
+    }
+
     // Upcoming episode
     await knex('mediaItem')
       .modify((qb) => {
