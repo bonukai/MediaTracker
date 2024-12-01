@@ -812,6 +812,7 @@ export const mediaItemRepository = {
                 'upcomingEpisode.seasonAndEpisodeNumber'
               )
           )
+          .limit(1)
       );
 
     // Last aired episode
@@ -850,6 +851,7 @@ export const mediaItemRepository = {
                 'lastAiredEpisode.seasonAndEpisodeNumber'
               )
           )
+          .limit(1)
       );
 
     // Number of aired episodes
