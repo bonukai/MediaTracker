@@ -325,8 +325,7 @@ export const listRepository = {
         .where('listId', listId)
         .leftJoin('mediaItem', 'listItem.mediaItemId', 'mediaItem.id')
         .modify((qb) => filterQuery(qb, args))
-        //Dont need to sort when just doing a count(*)!
-        //.modify((qb) => sortQuery(qb, args))
+        .modify((qb) => sortQuery(qb, args))
         .count({ count: '*' });
 
       const listItems: ListItemModel[] = await trx('listItem')
@@ -402,7 +401,7 @@ const filterQuery = <T extends object>(
   query: Knex.QueryBuilder<T>,
   args: GetListItemsArgs
 ) => {
-  const { filters, userId } = args;
+  const { filters, userId, listId } = args;
 
   if (filters?.title) {
     query.whereLike('mediaItem.title', `%${filters.title}%`);
@@ -431,14 +430,26 @@ const filterQuery = <T extends object>(
   }
 
   if (filters?.justWatchProviders) {
-    query
-      .leftJoin(
+    const justWatchAvailabilitySubquery = Database.knex
+      .select({
+        mediaItemId: 'listItem.mediaItemId',
+      })
+      .from('listItem')
+      .where('listId', listId)
+      .rightJoin(
         'justWatchAvailability',
         'listItem.mediaItemId',
         'justWatchAvailability.mediaItemId'
       )
       .whereIn('justWatchAvailability.providerId', filters.justWatchProviders)
-      .groupBy(['justWatchAvailability.mediaItemId']);
+      .groupBy(['listItem.mediaItemId'])
+      .as('justWatchAvailabilitySubquery');
+
+    query.rightJoin(
+      justWatchAvailabilitySubquery,
+      'listItem.mediaItemId',
+      'justWatchAvailabilitySubquery.mediaItemId'
+    );
   }
 
   if (typeof filters?.inProgress === 'boolean') {
@@ -536,7 +547,8 @@ const filterQuery = <T extends object>(
         mediaItemId: 'listItem.mediaItemId',
       })
       .from('listItem')
-      .leftJoin('mediaItem', 'listItem.mediaItemId', 'mediaItem.id')  
+      .where('listId', listId)
+      .leftJoin('mediaItem', 'listItem.mediaItemId', 'mediaItem.id')
       .leftJoin('seenEpisodesCount', (qb) =>
         qb
           .on('listItem.mediaItemId', 'seenEpisodesCount.mediaItemId')
@@ -547,7 +559,11 @@ const filterQuery = <T extends object>(
       .as('unseenEpisodesSubquery');
 
     query
-      .leftJoin(unseenEpisodesSubquery, 'listItem.mediaItemId', 'unseenEpisodesSubquery.mediaItemId')
+      .leftJoin(
+        unseenEpisodesSubquery,
+        'listItem.mediaItemId',
+        'unseenEpisodesSubquery.mediaItemId'
+      )
       .leftJoin(
         (qb) =>
           qb
@@ -558,7 +574,6 @@ const filterQuery = <T extends object>(
             .as('lastSeenFilter'),
         (qb) => qb.on('listItem.mediaItemId', 'lastSeenFilter.mediaItemId')
       );
-
 
     if (filters.seen === true) {
       query.where((qb) =>
@@ -644,7 +659,7 @@ const sortQuery = <T extends object>(
       query
         .select({
           unseenEpisodesCount: Database.knex.raw(
-            '"mediaItem"."numberOfAiredEpisodes" - "seenEpisodesCountSortOrder"."seenEpisodesCount"'
+            '"mediaItem"."numberOfAiredEpisodes" - COALESCE("seenEpisodesCountSortOrder"."seenEpisodesCount", 0)'
           ),
           seenEpisodesCountUserId: 'userId',
         })
