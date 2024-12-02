@@ -725,7 +725,11 @@ export const mediaItemRepository = {
         )
         .whereNull('userRating.rating');
 
-      const countRes = await query.clone().count({ count: '*' });
+      const countRes = await query
+        .clone() // Copy the query
+        .clearSelect() // Then clear selected columns because it had mediaItem.*
+        .count({ count: '*' }); // Now count the rows
+
       const items: MediaItemModel[] = await query
         .clone()
         .orderBy('seen.date', 'desc')
@@ -815,6 +819,7 @@ export const mediaItemRepository = {
                 'upcomingEpisode.seasonAndEpisodeNumber'
               )
           )
+          .limit(1)
       );
 
     // Last aired episode
@@ -853,6 +858,7 @@ export const mediaItemRepository = {
                 'lastAiredEpisode.seasonAndEpisodeNumber'
               )
           )
+          .limit(1)
       );
 
     // Number of aired episodes
@@ -1050,10 +1056,10 @@ const _getMediaItemsWithUserProperties = async (args: {
 
   const lastSeenMediaItem = await splitWhereInQuery(uniqMediaItemIds, (chunk) =>
     trx('seen')
-      .select('date', 'mediaItemId')
+      .select('mediaItemId')
+      .max({ date: 'date' })
       .where('userId', userId)
       .whereIn('mediaItemId', chunk)
-      .max({ date: 'date' })
       .groupBy('mediaItemId')
   );
 

@@ -1,5 +1,6 @@
 import * as knexPkg from 'knex';
 import fs from 'fs';
+import pg from 'pg';
 import { resolve, dirname } from 'path';
 import { z } from 'zod';
 
@@ -14,10 +15,6 @@ const databaseConfigSchema = z.discriminatedUnion('client', [
   }),
   z.object({
     client: z.literal('pg'),
-    connectionString: z.string(),
-  }),
-  z.object({
-    client: z.literal('mysql'),
     connectionString: z.string(),
   }),
 ]);
@@ -67,6 +64,9 @@ export class Database {
 
       useNullAsDefault: true,
     });
+
+    pg.types.setTypeParser(pg.types.builtins.INT8, parseInt);
+    pg.types.setTypeParser(pg.types.builtins.NUMERIC, parseFloat);
   }
 
   static async runMigrations(verbose = true): Promise<void> {

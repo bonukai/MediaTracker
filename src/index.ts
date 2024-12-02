@@ -51,17 +51,21 @@ program
     new Option('--db-client <string>', 'database client')
       .choices(databaseClientSchema.options)
       .default('SQLite')
+      .makeOptionMandatory()
   )
   .addOption(
-    new Option('--db-filepath <path>', 'SQLite database path').default(
-      path.resolve(os.homedir(), '.mediatracker', 'data.db')
-    )
+    new Option('--db-filepath <path>', 'SQLite database path')
+      .conflicts('dbConnectionString')
+      .implies({ dbClient: 'SQLite', dbConnectionString: undefined })
+      .default(path.resolve(os.homedir(), '.mediatracker', 'data.db'))
   )
   .addOption(
     new Option(
       '--db-connection-string <string>',
       'PostgreSQL database connection string'
-    ).conflicts('db-filepath')
+    )
+      .conflicts('dbFilepath')
+      .implies({ dbFilepath: undefined })
   )
   .addOption(
     new Option('--logs-dir <path>', 'logs directory')
