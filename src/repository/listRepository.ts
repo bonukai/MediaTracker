@@ -326,6 +326,7 @@ export const listRepository = {
         .leftJoin('mediaItem', 'listItem.mediaItemId', 'mediaItem.id')
         .modify((qb) => filterQuery(qb, args))
         .modify((qb) => sortQuery(qb, args))
+        .clear('order')
         .count({ count: '*' });
 
       const listItems: ListItemModel[] = await trx('listItem')
