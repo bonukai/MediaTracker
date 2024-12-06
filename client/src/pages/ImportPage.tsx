@@ -25,6 +25,7 @@ export const ImportPage: FC = () => {
         <ImportLinkComponent path="flox" imgSrc={floxLogo} />
         <ImportLinkComponent path="simkl" imgSrc={simklLogo} />
         <ImportLinkComponent path="mediatracker" text="backup" />
+        <ImportLinkComponent path="csv" text="CSV" />
       </div>
     </>
   );
