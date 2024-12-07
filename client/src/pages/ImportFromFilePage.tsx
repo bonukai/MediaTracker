@@ -61,7 +61,8 @@ export const ImportFormFilePage: FC<{
                 />
                 {importFromFile.isError && (
                   <div className="text-red-600">
-                    <Trans>Unexpected file format</Trans>
+                    <Trans>Unexpected file format</Trans><br/>
+                    <pre>{ importFromFile.variables?.source == 'CSV' ? importFromFile.error.message : "" }</pre>
                   </div>
                 )}
                 {file && (
