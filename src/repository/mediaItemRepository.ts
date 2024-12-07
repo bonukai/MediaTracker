@@ -763,39 +763,88 @@ export const mediaItemRepository = {
       totalNumberOfPages,
     };
   },
-  async updateLastAndUpcomingEpisodeAirings(args?: {
+  async updateLastAndNextMediaItemAirings(args: {
     mediaItemIds?: number[];
-    trx?: Knex.Transaction;
+    trx: Knex.Transaction;
   }) {
+    const { trx, mediaItemIds } = args;
+
+    logger.debug(
+      h`updating last and next airings for ${
+        mediaItemIds ? mediaItemIds.length : 'all'
+      } media items`
+    );
+
+    const currentDateString = new Date().toISOString();
+
+    const filterMediaItemIds = (qb: Knex.QueryBuilder) => {
+      qb.modify((qb) => {
+        if (mediaItemIds) {
+          qb.whereIn('id', mediaItemIds);
+        }
+      });
+    };
+
+    await trx('mediaItem')
+      .modify(filterMediaItemIds)
+      .where('mediaType', '<>', 'tv')
+      .update('lastAiringDate', null)
+      .update('nextAiringDate', null);
+
+    // Next airing
+    await trx('mediaItem')
+      .modify(filterMediaItemIds)
+      .where('mediaType', '<>', 'tv')
+      .where('releaseDate', '>', currentDateString)
+      .update('nextAiringDate', Database.knex.ref('releaseDate'));
+
+    // Last airing
+    await trx('mediaItem')
+      .modify(filterMediaItemIds)
+      .where('mediaType', '<>', 'tv')
+      .where('releaseDate', '<=', currentDateString)
+      .update('lastAiringDate', Database.knex.ref('releaseDate'));
+  },
+  async updateLastAndUpcomingEpisodeAirings(args: {
+    mediaItemIds?: number[];
+    trx: Knex.Transaction;
+  }) {
+    const { trx, mediaItemIds } = args;
+
     logger.debug(
       h`updating last and upcoming episode airings for ${
         args?.mediaItemIds ? args.mediaItemIds.length : 'all'
       } tv shows`
     );
 
-    const knex = args?.trx ? args.trx : Database.knex;
     const currentDateString = new Date().toISOString();
 
-    if (args?.mediaItemIds === undefined) {
-      await knex('mediaItem')
-        .update('upcomingEpisodeId', null)
-        .update('lastAiredEpisodeId', null)
-        .update('numberOfAiredEpisodes', null);
-    }
+    const filterMediaItemIds = (qb: Knex.QueryBuilder) => {
+      qb.modify((qb) => {
+        if (mediaItemIds) {
+          qb.whereIn('id', mediaItemIds);
+        }
+      });
+    };
+
+    await trx('mediaItem')
+      .modify(filterMediaItemIds)
+      .where('mediaType', 'tv')
+      .update('upcomingEpisodeId', null)
+      .update('lastAiredEpisodeId', null)
+      .update('numberOfAiredEpisodes', null)
+      .update('lastAiringDate', null)
+      .update('nextAiringDate', null);
 
     // Upcoming episode
-    await knex('mediaItem')
-      .modify((qb) => {
-        if (args?.mediaItemIds) {
-          qb.whereIn('id', args.mediaItemIds);
-        }
-      })
+    await trx('mediaItem')
+      .modify(filterMediaItemIds)
       .update(
         'upcomingEpisodeId',
-        knex
+        trx
           .from('episode')
           .select('upcomingEpisode.id')
-          .where('episode.tvShowId', Database.knex.ref('mediaItem.id'))
+          .where('episode.tvShowId', trx.ref('mediaItem.id'))
           .leftJoin(
             (qb) =>
               qb
@@ -811,7 +860,7 @@ export const mediaItemRepository = {
             'abc.tvShowId',
             'mediaItem.id'
           )
-          .leftJoin(Database.knex.ref('episode').as('upcomingEpisode'), (qb) =>
+          .leftJoin(trx.ref('episode').as('upcomingEpisode'), (qb) =>
             qb
               .on('abc.tvShowId', 'upcomingEpisode.tvShowId')
               .on(
@@ -822,19 +871,25 @@ export const mediaItemRepository = {
           .limit(1)
       );
 
+    await trx('mediaItem')
+      .modify(filterMediaItemIds)
+      .where('mediaType', 'tv')
+      .update(
+        'nextAiringDate',
+        trx('episode')
+          .select('releaseDate')
+          .where('episode.id', trx.ref('mediaItem.upcomingEpisodeId'))
+      );
+
     // Last aired episode
-    await knex('mediaItem')
-      .modify((qb) => {
-        if (args?.mediaItemIds) {
-          qb.whereIn('id', args.mediaItemIds);
-        }
-      })
+    await trx('mediaItem')
+      .modify(filterMediaItemIds)
       .update(
         'lastAiredEpisodeId',
-        knex
+        trx
           .from('episode')
           .select('lastAiredEpisode.id')
-          .where('episode.tvShowId', knex.ref('mediaItem.id'))
+          .where('episode.tvShowId', trx.ref('mediaItem.id'))
           .leftJoin(
             (qb) =>
               qb
@@ -850,7 +905,7 @@ export const mediaItemRepository = {
             'abc.tvShowId',
             'mediaItem.id'
           )
-          .leftJoin(knex.ref('episode').as('lastAiredEpisode'), (qb) =>
+          .leftJoin(trx.ref('episode').as('lastAiredEpisode'), (qb) =>
             qb
               .on('abc.tvShowId', 'lastAiredEpisode.tvShowId')
               .on(
@@ -861,22 +916,28 @@ export const mediaItemRepository = {
           .limit(1)
       );
 
+    await trx('mediaItem')
+      .modify(filterMediaItemIds)
+      .where('mediaType', 'tv')
+      .update(
+        'lastAiringDate',
+        trx('episode')
+          .select('releaseDate')
+          .where('episode.id', trx.ref('mediaItem.lastAiredEpisodeId'))
+      );
+
     // Number of aired episodes
-    await knex('mediaItem')
-      .modify((qb) => {
-        if (args?.mediaItemIds) {
-          qb.whereIn('id', args.mediaItemIds);
-        }
-      })
+    await trx('mediaItem')
+      .modify(filterMediaItemIds)
       .update(
         'numberOfAiredEpisodes',
-        knex
+        trx
           .from('episode')
           .count('*')
           .where('releaseDate', '<=', currentDateString)
           .where('isSpecialEpisode', false)
           .whereNotNull('releaseDate')
-          .where('episode.tvShowId', knex.ref('mediaItem.id'))
+          .where('episode.tvShowId', trx.ref('mediaItem.id'))
       );
   },
 } as const;

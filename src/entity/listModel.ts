@@ -44,6 +44,8 @@ export const listItemsFiltersModel = z.object({
   withUserRating: z.boolean().optional(),
   seen: z.boolean().optional(),
   inProgress: z.boolean().optional(),
+  onlyWithNextAiring: z.boolean().optional(),
+  onlyWithLastAiring: z.boolean().optional(),
   justWatchProviders: z
     .array(z.number())
     .min(1, 'justWatchProviders should contain at least one justWatchProvider')
