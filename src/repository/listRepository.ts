@@ -325,7 +325,6 @@ export const listRepository = {
         .where('listId', listId)
         .leftJoin('mediaItem', 'listItem.mediaItemId', 'mediaItem.id')
         .modify((qb) => filterQuery(qb, args))
-        .modify((qb) => sortQuery(qb, args))
         .count({ count: '*' });
 
       const listItems: ListItemModel[] = await trx('listItem')
@@ -609,6 +608,14 @@ const filterQuery = <T extends object>(
       );
     }
   }
+
+  if (filters?.onlyWithNextAiring) {
+    query.whereNotNull('mediaItem.nextAiringDate');
+  }
+
+  if (filters?.onlyWithLastAiring) {
+    query.whereNotNull('mediaItem.lastAiringDate');
+  }
 };
 
 const sortQuery = <T extends object>(
@@ -618,8 +625,6 @@ const sortQuery = <T extends object>(
   const { userId } = args;
   const sortOrder = args.sortOrder || 'asc';
   const orderBy = args.orderBy || 'listed';
-
-  const currentDateString = new Date().toISOString();
 
   if (orderBy === 'listed') {
     query.orderBy('addedAt', sortOrder);
@@ -712,48 +717,8 @@ const sortQuery = <T extends object>(
       )
       .orderBy('lastSeen.date', sortOrder);
   } else if (orderBy === 'next-airing') {
-    query
-      .leftJoin('episode', 'mediaItem.upcomingEpisodeId', 'episode.id')
-      .where((qb) =>
-        qb
-          .orWhere((qb) =>
-            qb
-              .where('mediaItem.mediaType', '<>', 'tv')
-              .where('mediaItem.releaseDate', '>', currentDateString)
-          )
-          .orWhere((qb) =>
-            qb
-              .where('mediaItem.mediaType', '=', 'tv')
-              .where('episode.releaseDate', '>', currentDateString)
-          )
-      )
-      .orderByRaw(
-        `CASE
-          WHEN "mediaItem"."mediaType" = 'tv' THEN "episode"."releaseDate"
-          ELSE "mediaItem"."releaseDate"
-        END ${sortOrder} NULLS LAST`
-      );
+    query.orderBy('nextAiringDate', sortOrder, 'last');
   } else if (orderBy === 'last-airing') {
-    query
-      .leftJoin('episode', 'mediaItem.lastAiredEpisodeId', 'episode.id')
-      .where((qb) =>
-        qb
-          .orWhere((qb) =>
-            qb
-              .where('mediaItem.mediaType', '<>', 'tv')
-              .where('mediaItem.releaseDate', '<=', currentDateString)
-          )
-          .orWhere((qb) =>
-            qb
-              .where('mediaItem.mediaType', '=', 'tv')
-              .where('episode.releaseDate', '<=', currentDateString)
-          )
-      )
-      .orderByRaw(
-        `CASE
-          WHEN "mediaItem"."mediaType" = 'tv' THEN "episode"."releaseDate"
-          ELSE "mediaItem"."releaseDate"
-        END ${sortOrder} NULLS LAST`
-      );
+    query.orderBy('lastAiringDate', sortOrder, 'last');
   }
 };

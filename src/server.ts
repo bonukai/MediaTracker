@@ -24,7 +24,7 @@ import { MediaTrackerVersion } from './version.js';
 
 import { sendAndScheduledNotificationsForReleases } from './releaseNotifications.js';
 import { setupI18n } from './i18n/i18n.js';
-import { scheduleLastAndUpcomingEpisodeAiringsUpdate } from './lastAndUpcomingEpisodeAirings.js';
+import { scheduleLastAndUpcomingAiringsUpdate } from './lastAndUpcomingAirings.js';
 
 export const startServer = async (args: {
   port: number;
@@ -41,8 +41,12 @@ export const startServer = async (args: {
 
   const { sessionKey } = await serverInternalSettingsRepository.get();
 
-  await mediaItemRepository.updateLastAndUpcomingEpisodeAirings();
-  await scheduleLastAndUpcomingEpisodeAiringsUpdate();
+  await Database.knex.transaction(async (trx) => {
+    await mediaItemRepository.updateLastAndNextMediaItemAirings({ trx });
+    await mediaItemRepository.updateLastAndUpcomingEpisodeAirings({ trx });
+  });
+
+  await scheduleLastAndUpcomingAiringsUpdate();
 
   setupI18n();
   printRestApiRoutes();

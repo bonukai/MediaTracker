@@ -54,6 +54,8 @@ const FilterListAction = dialogActionFactory<{
             title: string;
             seen: 'all' | 'yes' | 'no';
             userRating: 'all' | 'yes' | 'no';
+            onlyWithLastAiring: boolean;
+            onlyWithNextAiring: boolean;
           } & {
             [A in `mediaItems_${(typeof mediaTypesElements)[number]}`]: boolean;
           }
@@ -67,6 +69,8 @@ const FilterListAction = dialogActionFactory<{
             seen: booleanToYesNoAll(filters.seen),
             userRating: booleanToYesNoAll(filters.withUserRating),
             title: filters.title,
+            onlyWithLastAiring: filters.onlyWithLastAiring,
+            onlyWithNextAiring: filters.onlyWithNextAiring,
           }}
           onSubmit={async ({ data }) => {
             setFilters({
@@ -80,6 +84,8 @@ const FilterListAction = dialogActionFactory<{
               ].filter((item): item is MediaType => typeof item === 'string'),
               seen: stringToYesNoUndefined(data.seen),
               withUserRating: stringToYesNoUndefined(data.userRating),
+              onlyWithLastAiring: data.onlyWithLastAiring,
+              onlyWithNextAiring: data.onlyWithNextAiring,
               justWatchProviders:
                 selectedJustWatchProviders.length > 0
                   ? selectedJustWatchProviders
@@ -89,7 +95,7 @@ const FilterListAction = dialogActionFactory<{
             closeDialog();
           }}
         >
-          {({ TextInput, SelectInput, MultiCheckboxInput }) => (
+          {({ TextInput, SelectInput, MultiCheckboxInput, CheckboxInput }) => (
             <>
               <h1 className="mb-6 text-xl font-semibold">
                 <Trans>
@@ -122,6 +128,16 @@ const FilterListAction = dialogActionFactory<{
                 ]}
               />
 
+              <CheckboxInput
+                inputName="onlyWithLastAiring"
+                title={<Trans>Only items with a release in the past</Trans>}
+              />
+
+              <CheckboxInput
+                inputName="onlyWithNextAiring"
+                title={<Trans>Only items with a release in the future</Trans>}
+              />
+
               <MultiCheckboxInput
                 title={<Trans>Media types</Trans>}
                 checkboxes={mediaTypesElements.map((mediaType) => ({
@@ -133,7 +149,7 @@ const FilterListAction = dialogActionFactory<{
               <div className="mb-1 font-semibold">
                 <Trans>JustWatch providers</Trans>
               </div>
-              
+
               <JustWatchProvidersSelector
                 selectedJustWatchProviders={selectedJustWatchProviders}
                 setSelectedJustWatchProviders={setSelectedJustWatchProviders}

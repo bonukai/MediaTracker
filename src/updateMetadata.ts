@@ -20,7 +20,7 @@ import { seenEpisodesCountRepository } from './repository/seenEpisodesCountRepos
 import { StaticConfiguration } from './staticConfiguration.js';
 import { getImageId, h, withDefinedPropertyFactory } from './utils.js';
 import { sendAndScheduledNotificationsForReleases } from './releaseNotifications.js';
-import { scheduleLastAndUpcomingEpisodeAiringsUpdate } from './lastAndUpcomingEpisodeAirings.js';
+import { scheduleLastAndUpcomingAiringsUpdate } from './lastAndUpcomingAirings.js';
 
 export const updateMetadata = async (
   mediaItemToUpdate: MediaItemModel
@@ -320,9 +320,16 @@ export const updateMetadata = async (
       });
     });
   } else {
-    await Database.knex('mediaItem')
-      .update(mediaItemModelSchema.parse(updatedMediaItem))
-      .where('id', mediaItemToUpdate.id);
+    await Database.knex.transaction(async (trx) => {
+      await Database.knex('mediaItem')
+        .update(mediaItemModelSchema.parse(updatedMediaItem))
+        .where('id', mediaItemToUpdate.id);
+
+      await mediaItemRepository.updateLastAndNextMediaItemAirings({
+        trx,
+        mediaItemIds: [mediaItemToUpdate.id],
+      });
+    });
   }
 
   await deleteImages({
@@ -336,7 +343,7 @@ export const updateMetadata = async (
   });
 
   await sendAndScheduledNotificationsForReleases();
-  await scheduleLastAndUpcomingEpisodeAiringsUpdate();
+  await scheduleLastAndUpcomingAiringsUpdate();
 };
 
 const deleteImages = async (args: {

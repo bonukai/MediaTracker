@@ -239,6 +239,8 @@ export const AddOrEditHomeScreenSection = dialogActionFactory<{
             listId: number;
             sortOrder?: ListSortOrder;
             sortBy?: ListSortBy;
+            onlyWithNextAiring?: boolean;
+            onlyWithLastAiring?: boolean;
             seen?: 'yes' | 'no' | 'all';
             userRating?: 'yes' | 'no' | 'all';
             numberOfItems: number;
@@ -268,6 +270,10 @@ export const AddOrEditHomeScreenSection = dialogActionFactory<{
                     }),
                     {}
                   ),
+                  onlyWithLastAiring:
+                    homeScreenSection.config.filters?.onlyWithLastAiring,
+                  onlyWithNextAiring:
+                    homeScreenSection.config.filters?.onlyWithNextAiring,
                 }
               : {
                   numberOfItems: 6,
@@ -308,6 +314,8 @@ export const AddOrEditHomeScreenSection = dialogActionFactory<{
                   data.mediaItems_movie && 'movie',
                   data.mediaItems_video_game && 'video_game',
                 ].filter((item): item is MediaType => typeof item === 'string'),
+                onlyWithLastAiring: data.onlyWithLastAiring,
+                onlyWithNextAiring: data.onlyWithNextAiring,
               },
             };
 
@@ -335,7 +343,13 @@ export const AddOrEditHomeScreenSection = dialogActionFactory<{
             closeDialog();
           }}
         >
-          {({ TextInput, SelectInput, MultiCheckboxInput, NumberInput }) => (
+          {({
+            TextInput,
+            SelectInput,
+            MultiCheckboxInput,
+            NumberInput,
+            CheckboxInput,
+          }) => (
             <>
               <TextInput
                 inputName="name"
@@ -369,6 +383,16 @@ export const AddOrEditHomeScreenSection = dialogActionFactory<{
                   value: item,
                   name: <TranslatedListSortBy sortBy={item} />,
                 }))}
+              />
+
+              <CheckboxInput
+                inputName="onlyWithLastAiring"
+                title={<Trans>Only items with a release in the past</Trans>}
+              />
+
+              <CheckboxInput
+                inputName="onlyWithNextAiring"
+                title={<Trans>Only items with a release in the future</Trans>}
               />
 
               <SelectInput
