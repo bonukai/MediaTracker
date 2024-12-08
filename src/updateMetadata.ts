@@ -321,7 +321,7 @@ export const updateMetadata = async (
     });
   } else {
     await Database.knex.transaction(async (trx) => {
-      await Database.knex('mediaItem')
+      await trx('mediaItem')
         .update(mediaItemModelSchema.parse(updatedMediaItem))
         .where('id', mediaItemToUpdate.id);
 
