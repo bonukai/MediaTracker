@@ -203,7 +203,8 @@ const validateDatabaseConfig = (): DatabaseConfig => {
 
     return {
       client: 'better-sqlite3',
-      filename: path.resolve(dbFilepath),
+      filename:
+        dbFilepath === ':memory:' ? dbFilepath : path.resolve(dbFilepath),
     };
   } else if (dbClient === 'PostgreSQL') {
     if (typeof dbConnectionString !== 'string') {

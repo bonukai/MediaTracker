@@ -33,6 +33,22 @@
       "label": "dev",
       "dependsOn": ["server:dev", "client:dev"],
       "problemMatcher": []
+    },
+    {
+      "type": "npm",
+      "script": "watch:build",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: watch:build",
+      "detail": "node --enable-source-maps esbuild.js --watch"
+    },
+    {
+      "type": "npm",
+      "script": "test",
+      "group": "test",
+      "problemMatcher": [],
+      "label": "server: test",
+      "detail": "vitest"
     }
   ]
 }

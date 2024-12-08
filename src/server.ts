@@ -8,7 +8,7 @@ import os from 'os';
 import path from 'path';
 
 import { Database } from './database.js';
-import { logger } from './logger.js';
+import { initLogger, logger } from './logger.js';
 import { multipartFormDataMiddleware } from './middleware/multipartFormDataMiddleware.js';
 import { configurationRepository } from './repository/configurationRepository.js';
 import { mediaItemRepository } from './repository/mediaItemRepository.js';
@@ -34,6 +34,8 @@ export const startServer = async (args: {
   cert?: Buffer;
 }) => {
   const { port, address, protocol, key, cert } = args;
+
+  initLogger();
 
   await Database.runMigrations();
 

@@ -104,9 +104,9 @@ export const mediaItemRepository = {
     }
   },
   async create(mediaItem: MediaItemMetadata) {
-    const res = await Database.knex('mediaItem')
+    return await Database.knex('mediaItem')
       .insert(
-        mediaItemModelSchema.parse({
+        mediaItemModelSchema.partial().parse({
           ...mediaItem,
           genres: mediaItem.genres?.join(',') || null,
           narrators: mediaItem.narrators?.join(',') || null,
@@ -120,8 +120,6 @@ export const mediaItemRepository = {
         })
       )
       .returning('*');
-
-    return mediaItem;
   },
   async findOrCreate(mediaItem: MediaItemMetadata): Promise<MediaItemModel> {
     return await Database.knex.transaction(async (trx) => {

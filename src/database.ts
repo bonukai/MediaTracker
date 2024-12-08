@@ -1,4 +1,4 @@
-import * as knexPkg from 'knex';
+import knexPkg, { Knex } from 'knex';
 import fs from 'fs';
 import pg from 'pg';
 import { resolve, dirname } from 'path';
@@ -22,7 +22,7 @@ const databaseConfigSchema = z.discriminatedUnion('client', [
 export type DatabaseConfig = z.infer<typeof databaseConfigSchema>;
 
 export class Database {
-  static #knex: knexPkg.Knex;
+  static #knex: Knex;
 
   static get knex() {
     return Database.#knex;
@@ -32,13 +32,17 @@ export class Database {
     const databaseConfiguration = databaseConfigSchema.parse(args);
 
     if (databaseConfiguration.client === 'better-sqlite3') {
-      if (!fs.existsSync(databaseConfiguration.filename)) {
-        fs.mkdirSync(dirname(databaseConfiguration.filename), {
-          recursive: true,
-        });
-      } else {
-        if (!fs.lstatSync(databaseConfiguration.filename).isFile()) {
-          throw new Error(`${databaseConfiguration.filename} is not a file)}`);
+      if (databaseConfiguration.filename !== ':memory:') {
+        if (!fs.existsSync(databaseConfiguration.filename)) {
+          fs.mkdirSync(dirname(databaseConfiguration.filename), {
+            recursive: true,
+          });
+        } else {
+          if (!fs.lstatSync(databaseConfiguration.filename).isFile()) {
+            throw new Error(
+              `${databaseConfiguration.filename} is not a file)}`
+            );
+          }
         }
       }
 
@@ -53,7 +57,7 @@ export class Database {
       );
     }
 
-    Database.#knex = knexPkg.default.knex({
+    Database.#knex = knexPkg({
       client: databaseConfiguration.client,
       connection:
         databaseConfiguration.client === 'better-sqlite3'
