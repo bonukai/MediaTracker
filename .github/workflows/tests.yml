@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         node: ['23']
-        os: [ubuntu-22.04]
+        os: [ubuntu-24.04]
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.node }}
       cancel-in-progress: true
