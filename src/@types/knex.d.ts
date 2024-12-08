@@ -21,6 +21,7 @@ import { SeenEpisodesCountModel } from '../entity/seenEpisodesCountModel.ts';
 import { ServerInternalSettingsModel } from '../entity/serverSettingsModel.ts';
 import { MessageModel } from '../entity/messageModel.ts';
 import { HomeSectionModel } from '../entity/homeSectionModel.ts';
+import { HasBeenSeenModel } from '../entity/hasBeenSeenModel.ts';
 
 declare module 'knex/types/tables.js' {
   interface Tables {
@@ -43,5 +44,6 @@ declare module 'knex/types/tables.js' {
     seenEpisodesCount: SeenEpisodesCountModel;
     message: MessageModel;
     homeSection: HomeSectionModel;
+    hasBeenSeen: HasBeenSeenModel;
   }
 }
