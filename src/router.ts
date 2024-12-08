@@ -33,6 +33,10 @@ export const createContext = ({
     res.clearCookie(name);
   };
 
+  const getHeader = (name: string) => {
+    return req.get(name);
+  };
+
   const setHeader = (name: string, value: string) => {
     res.setHeader(name, value);
   };
@@ -77,6 +81,7 @@ export const createContext = ({
     setCookie,
     removeCookie,
     getCookie,
+    getHeader,
     setHeader,
     openServerSideEventsStream,
     getQueryParams,
@@ -97,6 +102,8 @@ export type OpenApiMeta = {
     response?: Record<string, unknown> | string | number;
   };
 };
+
+type ContextType = ReturnType<typeof createContext>;
 
 const t = initTRPC
   .meta<{ openapi?: OpenApiMeta }>()
@@ -149,19 +156,37 @@ const cookieAuthentication = middleware(async (opts) => {
   return opts.next();
 });
 
+const getToken = (ctx: ContextType) => {
+  const queryParams = ctx.getQueryParams();
+
+  if (
+    typeof queryParams === 'object' &&
+    'token' in queryParams &&
+    typeof queryParams.token === 'string'
+  ) {
+    return queryParams.token;
+  }
+
+  const authorizationHeader = ctx.getHeader('Authorization');
+
+  if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
+    return authorizationHeader.substring(7);
+  }
+
+  const accessTokenHeader = ctx.getHeader('Access-Token');
+
+  if (accessTokenHeader) {
+    return accessTokenHeader;
+  }
+};
+
 const scopedTokenAuthentication = (scope?: AccessTokenScope) => {
   return middleware(async (opts) => {
     const { ctx } = opts;
 
-    const queryParams = ctx.getQueryParams();
+    const token = getToken(ctx);
 
-    if (
-      typeof queryParams === 'object' &&
-      'token' in queryParams &&
-      typeof queryParams.token === 'string'
-    ) {
-      const token = queryParams.token;
-
+    if (token) {
       const userId = await accessTokenRepository.find({
         token,
         scope,

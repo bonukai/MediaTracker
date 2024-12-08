@@ -185,7 +185,8 @@ export const openApiMiddleware: RequestHandler = async (req, res, next) => {
     }
   } catch (error) {
     if (error instanceof TRPCError) {
-      res.sendStatus(trpcErrorCodeToStatusCode(error));
+      res.status(trpcErrorCodeToStatusCode(error));
+      res.send(error.message);
     } else {
       next(error);
     }
