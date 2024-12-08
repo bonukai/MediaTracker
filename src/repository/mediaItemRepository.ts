@@ -39,6 +39,7 @@ import {
   withDefinedPropertyFactory,
 } from '../utils.js';
 import { logger } from '../logger.js';
+import { hasBeenSeenRepository } from './hasBeenSeenRepository.js';
 
 export const mediaItemRepository = {
   async findByExternalId(args: {
@@ -937,6 +938,11 @@ export const mediaItemRepository = {
           .whereNotNull('releaseDate')
           .where('episode.tvShowId', trx.ref('mediaItem.id'))
       );
+
+    await hasBeenSeenRepository.recalculate({
+      trx,
+      mediaItemIds: args?.mediaItemIds,
+    });
   },
 } as const;
 
