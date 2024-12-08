@@ -149,6 +149,9 @@ const getListItems = async (args: {
           listId: watchlistId,
           sortOrder: 'asc',
           orderBy: 'next-airing',
+          filters: {
+            onlyWithNextAiring: true,
+          },
         })
       ).items;
     case 'builtin-section-recently-released':
@@ -162,6 +165,7 @@ const getListItems = async (args: {
           orderBy: 'last-airing',
           filters: {
             seen: false,
+            onlyWithLastAiring: true,
           },
         })
       ).items;

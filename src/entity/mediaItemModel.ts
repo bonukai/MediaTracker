@@ -74,6 +74,8 @@ export const mediaItemModelSchema = z.object({
   upcomingEpisodeId: z.number().nullish(),
   lastAiredEpisodeId: z.number().nullish(),
   numberOfAiredEpisodes: z.number().nullish(),
+  nextAiringDate: z.string().nullish(),
+  lastAiringDate: z.string().nullish(),
   ...externalIdsSchema.shape,
 });
 

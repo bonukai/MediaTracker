@@ -4,6 +4,7 @@ import { Database } from '../database.js';
 import { is, splitDeleteWhereInQuery, splitWhereInQuery } from '../utils.js';
 import { mediaItemRepository } from './mediaItemRepository.js';
 import { seenEpisodesCountRepository } from './seenEpisodesCountRepository.js';
+import { hasBeenSeenRepository } from './hasBeenSeenRepository.js';
 
 export const seenRepository = {
   async add(args: {
@@ -49,6 +50,12 @@ export const seenRepository = {
         .delete();
 
       await seenEpisodesCountRepository.recalculate({
+        trx,
+        mediaItemIds: [mediaItemId],
+        userId,
+      });
+
+      await hasBeenSeenRepository.recalculate({
         trx,
         mediaItemIds: [mediaItemId],
         userId,
@@ -123,6 +130,12 @@ export const seenRepository = {
         userId,
       });
 
+      await hasBeenSeenRepository.recalculate({
+        trx,
+        mediaItemIds: [mediaItemId],
+        userId,
+      });
+
       return res;
     });
   },
@@ -152,6 +165,12 @@ export const seenRepository = {
       }
 
       await seenEpisodesCountRepository.recalculate({
+        trx,
+        mediaItemIds: [mediaItem.id],
+        userId,
+      });
+
+      await hasBeenSeenRepository.recalculate({
         trx,
         mediaItemIds: [mediaItem.id],
         userId,
@@ -191,6 +210,12 @@ export const seenRepository = {
         trx,
         userId,
         mediaItemIds: [existingSeenTransactions[0].mediaItemId],
+      });
+
+      await hasBeenSeenRepository.recalculate({
+        trx,
+        mediaItemIds: [existingSeenTransactions[0].mediaItemId],
+        userId,
       });
     });
   },

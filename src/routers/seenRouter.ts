@@ -187,15 +187,17 @@ export const seenRouter = router({
         mediaType: mediaTypeSchema,
         id: z.object({
           imdbId: z.string().nullish(),
-          tmdbId: z.number().nullish(),
+          tmdbId: z.coerce.number().nullish(),
           tvdbId: z.coerce.number().nullish(),
+          igdbId: z.coerce.number().nullish(),
+          audibleId: z.string().nullish(),
         }),
-        seasonNumber: z.number().nullish(),
-        episodeNumber: z.number().nullish(),
+        seasonNumber: z.coerce.number().nullish(),
+        episodeNumber: z.coerce.number().nullish(),
         title: z.string().nullish(),
-        releaseYear: z.number().nullish(),
+        releaseYear: z.coerce.number().nullish(),
         device: z.string().nullish(),
-        duration: z.number().nullish(),
+        duration: z.coerce.number().nullish(),
       })
     )
     .meta({

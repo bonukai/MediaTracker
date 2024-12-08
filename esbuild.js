@@ -5,10 +5,13 @@ import { parseArgs } from 'node:util';
 import { watch } from 'node:fs/promises';
 
 const {
-  values: { watch: watchMode },
+  values: { watch: watchMode, 'start-server': startServer },
 } = parseArgs({
   options: {
     watch: {
+      type: 'boolean',
+    },
+    'start-server': {
       type: 'boolean',
     },
   },
@@ -54,7 +57,7 @@ const rebuild = async (watchMode) => {
       logLevel: 'info',
       target: 'es2022',
       metafile: true,
-      plugins: watchMode ? [startServerPlugin] : [],
+      plugins: startServer ? [startServerPlugin] : [],
     });
 
     await ctx.rebuild();
@@ -64,10 +67,10 @@ const rebuild = async (watchMode) => {
   } catch (error) {}
 };
 
-await rebuild(watchMode);
-
 if (watchMode) {
   const ac = new AbortController();
+
+  await rebuild(true);
 
   try {
     const watcher = watch('src', {

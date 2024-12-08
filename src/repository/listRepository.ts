@@ -325,8 +325,6 @@ export const listRepository = {
         .where('listId', listId)
         .leftJoin('mediaItem', 'listItem.mediaItemId', 'mediaItem.id')
         .modify((qb) => filterQuery(qb, args))
-        .modify((qb) => sortQuery(qb, args))
-        .clear('order')
         .count({ count: '*' });
 
       const listItems: ListItemModel[] = await trx('listItem')
@@ -472,143 +470,31 @@ const filterQuery = <T extends object>(
   }
 
   if (typeof filters?.seen === 'boolean') {
-    // TODO: add support for seasons and episodes
-    // TODO: slowest part, try to optimize it
-    // query
-    //   .leftJoin(
-    //     (qb) =>
-    //       qb
-    //         .select('mediaItemId')
-    //         .from('seen')
-    //         .where('userId', userId)
-    //         .groupBy('mediaItemId')
-    //         .as('lastSeenFilter'),
-    //     (qb) => qb.on('listItem.mediaItemId', 'lastSeenFilter.mediaItemId')
-    //   )
-    //   .leftJoin(
-    //     (qb) =>
-    //       qb
-    //         .count('*', { as: 'unseenEpisodesCount' })
-    //         .select('tvShowId')
-    //         .from('episode')
-    //         .leftJoin(
-    //           (qb) => qb.from('seen').where('userId', userId).as('seen3'),
-    //           'seen3.episodeId',
-    //           'episode.id'
-    //         )
-    //         .where('isSpecialEpisode', false)
-    //         .whereNull('seen3.id')
-    //         .whereNot('episode.releaseDate', '')
-    //         .whereNot('episode.releaseDate', null)
-    //         .where('episode.releaseDate', '<=', currentDateString)
-    //         .groupBy('tvShowId')
-    //         .as('aaa'),
-    //     (qb) => qb.on('listItem.mediaItemId', 'aaa.tvShowId')
-    //   );
-
-    // if (filters.seen === true) {
-    //   query.where((qb) =>
-    //     qb
-    //       .orWhere((qb) =>
-    //         qb
-    //           .where('mediaItem.mediaType', '<>', 'tv')
-    //           .whereNotNull('lastSeenFilter.mediaItemId')
-    //       )
-    //       .orWhere((qb) =>
-    //         qb
-    //           .where('mediaItem.mediaType', '=', 'tv')
-    //           .where((qb) =>
-    //             qb
-    //               .where('aaa.unseenEpisodesCount', '=', 0)
-    //               .orWhereNull('aaa.unseenEpisodesCount')
-    //           )
-    //       )
-    //   );
-    // } else if (filters.seen === false) {
-    //   query.where((qb) =>
-    //     qb
-    //       .orWhere((qb) =>
-    //         qb
-    //           .where('mediaItem.mediaType', '<>', 'tv')
-    //           .whereNull('lastSeenFilter.mediaItemId')
-    //       )
-    //       .orWhere((qb) =>
-    //         qb
-    //           .where('mediaItem.mediaType', '=', 'tv')
-    //           .where('aaa.unseenEpisodesCount', '>', 0)
-    //       )
-    //   );
-    // }
-
-    const unseenEpisodesSubquery = Database.knex
-      .select({
-        unseenEpisodesCount: Database.knex.raw(
-          '"mediaItem"."numberOfAiredEpisodes" - COALESCE("seenEpisodesCount"."seenEpisodesCount", 0)'
-        ),
-        mediaItemId: 'listItem.mediaItemId',
-      })
-      .from('listItem')
-      .where('listId', listId)
-      .leftJoin('mediaItem', 'listItem.mediaItemId', 'mediaItem.id')
-      .leftJoin('seenEpisodesCount', (qb) =>
-        qb
-          .on('listItem.mediaItemId', 'seenEpisodesCount.mediaItemId')
-          .onNull('listItem.seasonId')
-          .onNull('listItem.episodeId')
-          .onVal('seenEpisodesCount.userId', userId)
-      )
-      .as('unseenEpisodesSubquery');
-
-    query
-      .leftJoin(
-        unseenEpisodesSubquery,
-        'listItem.mediaItemId',
-        'unseenEpisodesSubquery.mediaItemId'
-      )
-      .leftJoin(
-        (qb) =>
-          qb
-            .select('mediaItemId')
-            .from('seen')
-            .where('userId', userId)
-            .groupBy('mediaItemId')
-            .as('lastSeenFilter'),
-        (qb) => qb.on('listItem.mediaItemId', 'lastSeenFilter.mediaItemId')
-      );
-
     if (filters.seen === true) {
-      query.where((qb) =>
-        qb
-          .orWhere((qb) =>
-            qb
-              .where('mediaItem.mediaType', '<>', 'tv')
-              .whereNotNull('lastSeenFilter.mediaItemId')
-          )
-          .orWhere((qb) =>
-            qb
-              .where('mediaItem.mediaType', '=', 'tv')
-              .where((qb) => qb.where('unseenEpisodesCount', '=', 0))
-          )
-      );
+      query
+        .leftJoin(
+          'hasBeenSeen',
+          'hasBeenSeen.mediaItemId',
+          'listItem.mediaItemId'
+        )
+        .where('hasBeenSeen.userId', userId);
     } else if (filters.seen === false) {
-      query.where((qb) =>
-        qb
-          .orWhere((qb) =>
-            qb
-              .where('mediaItem.mediaType', '<>', 'tv')
-              .whereNull('lastSeenFilter.mediaItemId')
-          )
-          .orWhere((qb) =>
-            qb
-              .where('mediaItem.mediaType', '=', 'tv')
-              .where((qb) =>
-                qb
-                  .orWhere('unseenEpisodesCount', '>', 0)
-                  .orWhereNull('unseenEpisodesCount')
-              )
-          )
-      );
+      query
+        .leftJoin('hasBeenSeen', (qb) =>
+          qb
+            .on('hasBeenSeen.mediaItemId', 'listItem.mediaItemId')
+            .onVal('hasBeenSeen.userId', userId)
+        )
+        .whereNull('hasBeenSeen.userId');
     }
+  }
+
+  if (filters?.onlyWithNextAiring) {
+    query.whereNotNull('mediaItem.nextAiringDate');
+  }
+
+  if (filters?.onlyWithLastAiring) {
+    query.whereNotNull('mediaItem.lastAiringDate');
   }
 };
 
@@ -619,8 +505,6 @@ const sortQuery = <T extends object>(
   const { userId } = args;
   const sortOrder = args.sortOrder || 'asc';
   const orderBy = args.orderBy || 'listed';
-
-  const currentDateString = new Date().toISOString();
 
   if (orderBy === 'listed') {
     query.orderBy('addedAt', sortOrder);
@@ -656,31 +540,25 @@ const sortQuery = <T extends object>(
     query.orderBy('mediaItem.status', sortOrder);
   } else if (orderBy === 'unseen-episodes-count') {
     // TODO: Add support for seasons
-    if (typeof args.filters?.seen !== 'boolean') {
-      query
-        .select({
-          unseenEpisodesCount: Database.knex.raw(
-            '"mediaItem"."numberOfAiredEpisodes" - COALESCE("seenEpisodesCountSortOrder"."seenEpisodesCount", 0)'
-          ),
-          seenEpisodesCountUserId: 'userId',
-        })
-        .leftJoin(
-          Database.knex
-            .ref('seenEpisodesCount')
-            .as('seenEpisodesCountSortOrder'),
-          (qb) =>
-            qb
-              .on(
-                'listItem.mediaItemId',
-                'seenEpisodesCountSortOrder.mediaItemId'
-              )
-              .onNull('listItem.seasonId')
-              .onNull('listItem.episodeId')
-              .onVal('seenEpisodesCountUserId', userId)
-        );
-    }
-
-    query.orderBy('unseenEpisodesCount', sortOrder);
+    query
+      .select({
+        unseenEpisodesCount: Database.knex.raw(
+          '"mediaItem"."numberOfAiredEpisodes" - COALESCE("seenEpisodesCountSortOrder"."seenEpisodesCount", 0)'
+        ),
+      })
+      .leftJoin(
+        Database.knex.ref('seenEpisodesCount').as('seenEpisodesCountSortOrder'),
+        (qb) =>
+          qb
+            .on(
+              'listItem.mediaItemId',
+              'seenEpisodesCountSortOrder.mediaItemId'
+            )
+            .onNull('listItem.seasonId')
+            .onNull('listItem.episodeId')
+            .onVal('seenEpisodesCountSortOrder.userId', userId)
+      )
+      .orderBy('unseenEpisodesCount', sortOrder);
   } else if (orderBy === 'progress') {
     query
       .leftJoin('progress', (qb) =>
@@ -713,48 +591,8 @@ const sortQuery = <T extends object>(
       )
       .orderBy('lastSeen.date', sortOrder);
   } else if (orderBy === 'next-airing') {
-    query
-      .leftJoin('episode', 'mediaItem.upcomingEpisodeId', 'episode.id')
-      .where((qb) =>
-        qb
-          .orWhere((qb) =>
-            qb
-              .where('mediaItem.mediaType', '<>', 'tv')
-              .where('mediaItem.releaseDate', '>', currentDateString)
-          )
-          .orWhere((qb) =>
-            qb
-              .where('mediaItem.mediaType', '=', 'tv')
-              .where('episode.releaseDate', '>', currentDateString)
-          )
-      )
-      .orderByRaw(
-        `CASE
-          WHEN "mediaItem"."mediaType" = 'tv' THEN "episode"."releaseDate"
-          ELSE "mediaItem"."releaseDate"
-        END ${sortOrder} NULLS LAST`
-      );
+    query.orderBy('nextAiringDate', sortOrder, 'last');
   } else if (orderBy === 'last-airing') {
-    query
-      .leftJoin('episode', 'mediaItem.lastAiredEpisodeId', 'episode.id')
-      .where((qb) =>
-        qb
-          .orWhere((qb) =>
-            qb
-              .where('mediaItem.mediaType', '<>', 'tv')
-              .where('mediaItem.releaseDate', '<=', currentDateString)
-          )
-          .orWhere((qb) =>
-            qb
-              .where('mediaItem.mediaType', '=', 'tv')
-              .where('episode.releaseDate', '<=', currentDateString)
-          )
-      )
-      .orderByRaw(
-        `CASE
-          WHEN "mediaItem"."mediaType" = 'tv' THEN "episode"."releaseDate"
-          ELSE "mediaItem"."releaseDate"
-        END ${sortOrder} NULLS LAST`
-      );
+    query.orderBy('lastAiringDate', sortOrder, 'last');
   }
 };

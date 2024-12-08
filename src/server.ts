@@ -8,7 +8,7 @@ import os from 'os';
 import path from 'path';
 
 import { Database } from './database.js';
-import { logger } from './logger.js';
+import { initLogger, logger } from './logger.js';
 import { multipartFormDataMiddleware } from './middleware/multipartFormDataMiddleware.js';
 import { configurationRepository } from './repository/configurationRepository.js';
 import { mediaItemRepository } from './repository/mediaItemRepository.js';
@@ -24,7 +24,7 @@ import { MediaTrackerVersion } from './version.js';
 
 import { sendAndScheduledNotificationsForReleases } from './releaseNotifications.js';
 import { setupI18n } from './i18n/i18n.js';
-import { scheduleLastAndUpcomingEpisodeAiringsUpdate } from './lastAndUpcomingEpisodeAirings.js';
+import { scheduleLastAndUpcomingAiringsUpdate } from './lastAndUpcomingAirings.js';
 
 export const startServer = async (args: {
   port: number;
@@ -35,14 +35,20 @@ export const startServer = async (args: {
 }) => {
   const { port, address, protocol, key, cert } = args;
 
+  initLogger();
+
   await Database.runMigrations();
 
   await configurationRepository.createIfDoesNotExists();
 
   const { sessionKey } = await serverInternalSettingsRepository.get();
 
-  await mediaItemRepository.updateLastAndUpcomingEpisodeAirings();
-  await scheduleLastAndUpcomingEpisodeAiringsUpdate();
+  await Database.knex.transaction(async (trx) => {
+    await mediaItemRepository.updateLastAndNextMediaItemAirings({ trx });
+    await mediaItemRepository.updateLastAndUpcomingEpisodeAirings({ trx });
+  });
+
+  await scheduleLastAndUpcomingAiringsUpdate();
 
   setupI18n();
   printRestApiRoutes();

@@ -23,6 +23,7 @@ import {
   mediaItemRepository,
 } from './mediaItemRepository.js';
 import { seenEpisodesCountRepository } from './seenEpisodesCountRepository.js';
+import { hasBeenSeenRepository } from './hasBeenSeenRepository.js';
 
 type ImportEpisodeInfo = {
   episodeNumber: number;
@@ -143,9 +144,11 @@ export const importRepository = {
     const { userId, importData } = args;
 
     logger.debug(
-      `importing data for user ${userId} (seenHistory: ${importData.seenHistory
-        ?.length}, rating: ${importData.ratings
-        ?.length}, watchlist: ${importData.watchlist?.length}, lists: ${
+      `importing data for user ${userId} (seenHistory: ${
+        importData.seenHistory?.length
+      }, rating: ${
+        importData.ratings?.length
+      }, watchlist: ${importData.watchlist?.length}, lists: ${
         importData.lists?.length || 0
       })`
     );
@@ -548,6 +551,15 @@ export const importRepository = {
             .map((item) => item.mediaItemId),
           userId,
         });
+
+        await hasBeenSeenRepository.recalculate({
+          trx,
+          mediaItemIds: itemsToImport.seenEntries
+            .filter(filter)
+            .filter((item) => typeof item.episodeId === 'number')
+            .map((item) => item.mediaItemId),
+          userId,
+        });
       }
 
       if (itemsToImport.ratings) {
@@ -616,9 +628,8 @@ export const importRepository = {
         if (itemsToImport.lists) {
           const listByName = _.keyBy(existingLists, (item) => item.name);
 
-          const listByTraktId = _.keyBy(
-            existingLists,
-            (item) => item.traktId?.toString()
+          const listByTraktId = _.keyBy(existingLists, (item) =>
+            item.traktId?.toString()
           );
           for (const list of itemsToImport.lists) {
             const listName = uniqListName(list.name);

@@ -88,8 +88,14 @@ log.methodFactory = (methodName, logLevel, loggerName) => {
   };
 };
 
-log.setLevel(log.getLevel());
-log.enableAll();
+let enabled = false;
+
+export const initLogger = () => {
+  log.setLevel(log.getLevel());
+  log.enableAll();
+
+  enabled = true;
+};
 
 export class logger {
   static http(msg: HttpLogEntry): void {

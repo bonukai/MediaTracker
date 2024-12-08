@@ -12,6 +12,8 @@ export const findMediaItemOrEpisode = async (args: {
     imdbId?: string | null;
     tmdbId?: number | null;
     tvdbId?: number | null;
+    igdbId?: number | null;
+    audibleId?: string | null;
   };
   title?: string | null;
   releaseYear?: number | null;
