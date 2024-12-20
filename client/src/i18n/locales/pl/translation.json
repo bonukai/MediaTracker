@@ -1,6 +1,7 @@
 {
   "<0><1/> </0>watching": "<0><1/> </0>oglądanie",
   "<0>{0}</0> audiobooks (<1>{1}</1> plays)": "<0>{0}</0> audiobooków (<1>{1}</1> odtworzeń)",
+  "<0>{0}</0> books (<1>{1}</1> reads)": "<0>{0}</0> książki (<1>{1}</1> czytań)",
   "About": "O aplikacji",
   "Access Token": "Token dostępu",
   "Add \"{0}\" to list": "Dodaj \"{0}\" do listy",
