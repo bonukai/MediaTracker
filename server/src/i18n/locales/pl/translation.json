@@ -20,6 +20,7 @@
   "Season {0} of {1} has been canceled": "Sezon {0} z {1} został anulowany",
   "Season {0} of {1} will be released at {2}": "Sezon {0} z {1} zostanie wydany w {2}",
   "Season {seasonNumber} of {0} has been canceled": "Sezon {seasonNumber} z {0} został anulowany",
+  "Season {seasonNumber} of {0} will be released at {releaseDate}": "Sezon {seasonNumber} z {0} zostanie wydany w {releaseDate}",
   "Server closed": "Serwer został zamknięty",
   "Status changed for {0}: \"{1}\"": "Zmieniono status dla {0}: \"{1}\"",
   "Status changed for {0}: \"{status}\"": "Zmieniono status dla {0}: \"{status}\"",
@@ -31,7 +32,9 @@
   "Updating: {title} (last updated at: {date})": "Aktualizacja: {title} (ostatnio zaktualizowano: {date})",
   "User already exists": "Użytkownik już istnieje",
   "Username cannot be empty": "Nazwa użytkownika nie może być pusta",
+  "{0, plural, one {Updating metadata for # item} other {Updating metadata for # items}}": "{0, plural, one {Aktualizacja metadanych dla # przedmiotu} other {Aktualizacja metadanych dla # przedmiotów}}",
   "{0} got a new season": "{0} otrzymał nowy sezon",
   "{0} has been released": "{0} został wydany",
+  "{count, plural, one {# episode for **{title}** has been released} other {# episodes for **{title}** has been released}}": "{count, plural, one {# odcinek dla **{title}** został wydany} other {# odcinki dla **{title}** zostały wydane}}",
   "{title} has been released": "{title} został wydany"
 }
