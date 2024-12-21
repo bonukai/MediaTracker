@@ -211,7 +211,11 @@ const sendNotifications = async (
     });
   }
 
-  if (newMediaItem.mediaType === 'tv') {
+  if (
+    newMediaItem.mediaType === 'tv' &&
+    oldMediaItem.seasons &&
+    newMediaItem.seasons
+  ) {
     const oldMediaItemNonSpecialSeasons = oldMediaItem.seasons
       .filter(TvSeasonFilters.nonSpecialSeason)
       .sort(TvSeasonFilters.seasonNumber);
