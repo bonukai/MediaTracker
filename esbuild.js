@@ -86,4 +86,6 @@ if (watchMode) {
       throw err;
     }
   }
+} else {
+  await rebuild(true);
 }
