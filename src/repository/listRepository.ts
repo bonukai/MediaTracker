@@ -591,8 +591,8 @@ const sortQuery = <T extends object>(
       )
       .orderBy('lastSeen.date', sortOrder);
   } else if (orderBy === 'next-airing') {
-    query.orderBy('nextAiringDate', sortOrder, 'last');
+    query.orderBy('nextAiringDate', sortOrder);
   } else if (orderBy === 'last-airing') {
-    query.orderBy('lastAiringDate', sortOrder, 'last');
+    query.orderBy('lastAiringDate', sortOrder);
   }
 };
