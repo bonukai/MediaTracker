@@ -8,6 +8,7 @@ import { useUser } from 'src/api/user';
 import { Modal } from 'src/components/Modal';
 import { formatEpisodeNumber, formatSeasonNumber, listName } from 'src/utils';
 import { AddListButton } from 'src/components/AddOrEditListButton';
+import { originalAndTranslatedTitle } from 'src/mediaItem';
 
 export const AddToListModal: FunctionComponent<{
   mediaItemId: number;
@@ -54,10 +55,10 @@ export const AddToListModal: FunctionComponent<{
         <Trans>
           Add &quot;
           {episode
-            ? `${mediaItem.title} ${formatEpisodeNumber(episode)}`
+            ? `${originalAndTranslatedTitle(mediaItem)} ${formatEpisodeNumber(episode)}`
             : season
-            ? `${mediaItem.title} ${formatSeasonNumber(season)}`
-            : mediaItem.title}
+            ? `${originalAndTranslatedTitle(mediaItem)} ${formatSeasonNumber(season)}`
+            : originalAndTranslatedTitle(mediaItem)}
           &quot; to list
         </Trans>
       </div>
