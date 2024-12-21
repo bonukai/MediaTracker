@@ -7,6 +7,7 @@ import { Button } from '../components/Button';
 import {
   floxLogo,
   goodreadsLogo,
+  ryotLogo,
   simklLogo,
   traktLogoBlack,
 } from '../components/Logos';
@@ -24,6 +25,7 @@ export const ImportPage: FC = () => {
         <ImportLinkComponent path="trakt" imgSrc={traktLogoBlack} />
         <ImportLinkComponent path="flox" imgSrc={floxLogo} />
         <ImportLinkComponent path="simkl" imgSrc={simklLogo} />
+        <ImportLinkComponent path="ryot" imgSrc={ryotLogo} />
         <ImportLinkComponent path="mediatracker" text="backup" />
       </div>
     </>
