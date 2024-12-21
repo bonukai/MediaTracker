@@ -3,15 +3,13 @@ import { ImportFormFilePage } from '../ImportFromFilePage';
 import { Trans } from '@lingui/macro';
 import { MainTitle } from '../../components/MainTitle';
 
-export const ImportFormMediaTrackerPage: FC = () => {
+export const ImportFormRyotPage: FC = () => {
   return (
     <>
-      <MainTitle
-        elements={[<Trans>Import</Trans>, <Trans>from backup</Trans>]}
-      />
+      <MainTitle elements={[<Trans>Import</Trans>, <Trans>from Ryot</Trans>]} />
 
       <ImportFormFilePage
-        source="MediaTracker"
+        source="Ryot"
         fileType="application/json"
         itemTypes={[
           'movie',
@@ -22,7 +20,7 @@ export const ImportFormMediaTrackerPage: FC = () => {
           'book',
           'video_game',
         ]}
-        instructions={<div>{/* <Trans></Trans> */}</div>}
+        instructions={<div></div>}
       />
     </>
   );
