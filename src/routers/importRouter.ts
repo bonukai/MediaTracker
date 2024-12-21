@@ -5,6 +5,7 @@ import { backupImport } from '../import/backupImport.js';
 import { floxImport } from '../import/floxImport.js';
 import { goodreadsImport } from '../import/goodreadsImport.js';
 import { simklImport } from '../import/simklImport.js';
+import { csvImport } from '../import/csvImport.js';
 import {
   importRepository,
   ImportState,
@@ -17,6 +18,7 @@ const importSourceSchema = z.enum([
   'Goodreads',
   'Simkl',
   'MediaTracker',
+  'CSV'
 ]);
 
 export type ImportSource = z.infer<typeof importSourceSchema>;
@@ -80,7 +82,7 @@ const importFromFileHandler = async (args: {
   });
 
   try {
-    const importData = await mapImportData(source, data);
+    const importData = await mapImportData(userId, source, data);
 
     await importRepository.importDataByExternalIds({
       userId,
@@ -123,7 +125,7 @@ const progressMap = (() => {
   return { set, get, remove, has };
 })();
 
-const mapImportData = async (source: ImportSource, data: string) => {
+const mapImportData = async (userId: number, source: ImportSource, data: string) => {
   switch (source) {
     case 'Flox':
       return floxImport.map(data);
@@ -134,5 +136,7 @@ const mapImportData = async (source: ImportSource, data: string) => {
       return simklImport.map(data);
     case 'MediaTracker':
       return backupImport.map(data);
+    case 'CSV':
+      return csvImport.map(userId, data);
   }
 };
