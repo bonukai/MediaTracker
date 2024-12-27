@@ -7,7 +7,7 @@ jest.mock('@lingui/core', () => ({
   },
 }));
 
-jest.spyOn(Database, 'knex' as never, 'get').mockImplementation(
+jest.spyOn(Database as any, 'knex', 'get').mockImplementation(
   () =>
     ({
       migrate: {
@@ -60,7 +60,7 @@ describe('database config', () => {
     const errorSpy = jest.spyOn(logger, 'error').mockImplementation(jest.fn());
     const warnSpy = jest.spyOn(logger, 'http').mockImplementation(jest.fn());
 
-    jest.spyOn(Database, 'knex' as never, 'get').mockImplementation(
+    jest.spyOn(Database as any, 'knex', 'get').mockImplementation(
       () =>
         ({
           migrate: {
