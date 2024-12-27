@@ -5,6 +5,7 @@ import { useDetails } from 'src/api/details';
 import {
   findEpisodeBySeasonAndEpisodeNumber,
   hasBeenSeenAtLeastOnce,
+  originalAndTranslatedTitle,
 } from 'src/mediaItem';
 import {
   formatEpisodeNumber,
@@ -45,7 +46,7 @@ export const EpisodePage: FunctionComponent = () => {
   return (
     <div>
       <Link className="text-2xl font-bold" to={`/details/${mediaItem.id}`}>
-        {mediaItem.title} {formatEpisodeNumber(episode)}
+        {originalAndTranslatedTitle(mediaItem)} {formatEpisodeNumber(episode)}
       </Link>
       {episode.description && (
         <div className="pt-2">
