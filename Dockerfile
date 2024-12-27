@@ -1,5 +1,5 @@
 # Build libvips
-FROM node:16-alpine3.16 as node-libvips-dev
+FROM node:20-alpine3.20 as node-libvips-dev
 
 ENV VIPS_VERSION=8.13.1
 
@@ -17,7 +17,7 @@ RUN meson compile
 RUN meson install
 
 # Copy libvips and install dependencies
-FROM alpine:3.16 as alpine-libvips
+FROM alpine:3.20 as alpine-libvips
 COPY --from=node-libvips-dev /usr/local/lib/pkgconfig/vips* /usr/local/lib/pkgconfig/
 COPY --from=node-libvips-dev /usr/local/lib/libvips* /usr/local/lib/
 COPY --from=node-libvips-dev /usr/local/lib/girepository-1.0/Vips-8.0.typelib /usr/local/lib/girepository-1.0/Vips-8.0.typelib
@@ -56,7 +56,7 @@ COPY ["server/package.json", "server/package-lock.json*", "./"]
 RUN apk add --no-cache python3 g++ make
 RUN npm install --production
 
-FROM node:16-alpine3.16 as node
+FROM node:20-alpine3.20 as node
 FROM alpine-libvips
 
 RUN apk add --no-cache curl shadow
