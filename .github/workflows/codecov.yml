@@ -7,14 +7,14 @@ jobs:
     concurrency: 
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: Codecov
     steps:
       - uses: actions/checkout@v2
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: 17
+          node-version: 22
       - run: npm ci
       - run: npm run test:coverage
       - name: Upload coverage to Codecov
