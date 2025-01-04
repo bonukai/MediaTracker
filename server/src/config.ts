@@ -11,6 +11,7 @@ import {
   tmdbLang,
   TmdbLang,
 } from 'src/entity/configuration';
+import { validateTmdbApiKey } from './utils';
 
 /**
  * Logger depends on LOGS_PATH, it cannot be used here.
@@ -61,6 +62,7 @@ export class Config {
   static readonly DEMO = process.env.DEMO ? Boolean(process.env.DEMO) : false;
   static readonly IGDB_CLIENT_ID = process.env.IGDB_CLIENT_ID;
   static readonly IGDB_CLIENT_SECRET = process.env.IGDB_CLIENT_SECRET;
+  static readonly TMDB_API_KEY = process.env.TMDB_API_KEY || '779734046efc1e6127485c54d3b29627';
 
   static readonly HOSTNAME = process.env.HOSTNAME || '127.0.0.1';
   static readonly PORT = Number(process.env.PORT) || 7481;
@@ -71,7 +73,7 @@ export class Config {
   static readonly AUDIBLE_LANG =
     process.env.AUDIBLE_LANG?.toLowerCase() as AudibleCountryCode;
 
-  static validate() {
+  static async validate() {
     if (this.SERVER_LANG && !serverLang.includes(this.SERVER_LANG)) {
       throw new Error(
         `SERVER_LANG should be one of: ${serverLang}, received: ${this.SERVER_LANG}`
@@ -88,6 +90,10 @@ export class Config {
       throw new Error(
         `AUDIBLE_LANG should be one of: ${audibleLang}, received: ${this.AUDIBLE_LANG}`
       );
+    }
+    const isTmdbApiKeyValid: boolean = await validateTmdbApiKey(this.TMDB_API_KEY)
+    if(isTmdbApiKeyValid !== true){
+      throw new Error("TMDB_API_KEY is Invalid")
     }
   }
 

@@ -147,3 +147,17 @@ export const generateExternalUrl = (mediaItem: MediaItemBase) => {
 };
 
 export const getImageId = customAlphabet('1234567890abcdef', 32);
+
+export const validateTmdbApiKey = async (tmdbApiKey: string) => {
+  const apiKeyStatus = await axios.get("https://api.themoviedb.org/3/authentication", {
+    params: {
+      api_key: tmdbApiKey,
+    },
+  }).then((res) => {
+    return res.data
+  }).catch((error) => {
+    logger.error(error)
+    return {"success" : false}
+  });
+  return apiKeyStatus?.success
+}
