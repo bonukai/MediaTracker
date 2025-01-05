@@ -301,6 +301,7 @@ router.patch(
         serverLang: {
           oneOf: [{ $ref: '#/definitions/ServerLang' }, { type: 'null' }],
         },
+        tmdbApiKey: { type: ['string', 'null'] },
         igdbClientId: { type: ['string', 'null'] },
         igdbClientSecret: { type: ['string', 'null'] },
       },
