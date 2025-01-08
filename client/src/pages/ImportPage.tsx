@@ -27,6 +27,7 @@ export const ImportPage: FC = () => {
         <ImportLinkComponent path="simkl" imgSrc={simklLogo} />
         <ImportLinkComponent path="ryot" imgSrc={ryotLogo} />
         <ImportLinkComponent path="mediatracker" text="backup" />
+        <ImportLinkComponent path="csv" text="CSV" />
       </div>
     </>
   );

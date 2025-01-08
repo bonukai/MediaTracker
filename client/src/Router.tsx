@@ -12,6 +12,7 @@ import { ImportFromFloxPage } from './pages/import/ImportFromFloxPage';
 import { ImportFromGoodreadsPage } from './pages/import/ImportFromGoodreadsPage';
 import { ImportFromSimklPage } from './pages/import/ImportFromSimklPage';
 import { ImportFromTraktPage } from './pages/import/ImportFromTraktPage';
+import { ImportFromCsvPage } from './pages/import/ImportFromCsvPage';
 import { ImportPage } from './pages/ImportPage';
 import { JellyfinIntegrationPage } from './pages/integrations/JellyfinIntegrationPage';
 import { KodiIntegrationPage } from './pages/integrations/KodiIntegrationPage';
@@ -158,6 +159,10 @@ export const router = createBrowserRouter([
           {
             path: '/import/mediatracker',
             element: <ImportFormMediaTrackerPage />,
+          },
+          {
+            path: '/import/csv',
+            element: <ImportFromCsvPage />,
           },
           {
             path: '/integrations',
