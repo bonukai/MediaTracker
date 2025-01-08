@@ -10,6 +10,7 @@ import { logger } from '../logger.js';
 import { metadataProviders } from '../metadata/metadataProviders.js';
 import { TmdbMovie } from '../metadata/provider/tmdbMovie.js';
 import { TmdbTv } from '../metadata/provider/tmdbTv.js';
+import { IGDB } from '../metadata/provider/igdb.js';
 import { mediaItemRepository } from '../repository/mediaItemRepository.js';
 import { protectedProcedure, router } from '../router.js';
 import { h, is } from '../utils.js';
@@ -32,6 +33,7 @@ export const searchRouter = router({
           narrator: z.string().nullish(),
           imdbId: z.string().nullish(),
           tmdbId: z.number().nullish(),
+          igdbId: z.number().nullish(),
         }),
         mediaType: mediaTypeSchema,
       })
@@ -57,6 +59,9 @@ export const searchRouter = router({
         } else if (query.tmdbId && mediaType === 'movie') {
           logger.debug(h`searching TMDB for a movie by tmdb: ${query.tmdbId}`);
           return [await TmdbMovie.findByTmdbId(query.tmdbId)];
+        } else if (query.igdbId && mediaType === 'video_game') {
+          logger.debug(h`searching IGDB for a game by igdb: ${query.igdbId}`);
+          return [await IGDB.findByIgdbId(query.igdbId)];
         }
 
         const metadataProvider = metadataProviders.get(mediaType);
