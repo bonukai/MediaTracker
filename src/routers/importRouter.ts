@@ -11,6 +11,7 @@ import {
   ImportState,
 } from '../repository/importRepository.js';
 import { protectedProcedure, router } from '../router.js';
+import { ryotImport } from '../import/ryotImport.js';
 
 const importSourceSchema = z.enum([
   'Flox',
@@ -18,7 +19,8 @@ const importSourceSchema = z.enum([
   'Goodreads',
   'Simkl',
   'MediaTracker',
-  'CSV'
+  'CSV',
+  'Ryot',
 ]);
 
 export type ImportSource = z.infer<typeof importSourceSchema>;
@@ -138,5 +140,7 @@ const mapImportData = async (userId: number, source: ImportSource, data: string)
       return backupImport.map(data);
     case 'CSV':
       return csvImport.map(userId, data);
+    case 'Ryot':
+      return ryotImport.map(data);
   }
 };

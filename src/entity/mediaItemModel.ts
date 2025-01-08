@@ -68,7 +68,7 @@ export const mediaItemModelSchema = z.object({
   narrators: z.string().nullish(),
   platform: z.string().nullish(),
   language: z.string().nullish(),
-  numberOfPages: z.number().nullish(),
+  numberOfPages: z.coerce.number().nullish(),
   audibleCountryCode: audibleCountryCodeSchema.nullish(),
   needsDetails: z.coerce.boolean().nullish(),
   upcomingEpisodeId: z.number().nullish(),

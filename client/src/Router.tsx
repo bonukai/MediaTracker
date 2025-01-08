@@ -37,6 +37,7 @@ import { UpcomingPage } from './pages/UpcomingPage';
 import { trpc } from './utils/trpc';
 import { Trans } from '@lingui/macro';
 import { Img, Poster } from './components/Poster';
+import { ImportFormRyotPage } from './pages/import/ImportFormRyot.tsx';
 
 const elementWithParamsFactory = (
   fn: (params: Readonly<Params<string>>) => React.JSX.Element
@@ -57,15 +58,23 @@ const TestPage = () => {
   }
 
   return (
-    <div className='flex gap-3'>
-      <div className='w-80'>
+    <div className="flex gap-3">
+      <div className="w-80">
         <Poster mediaItem={details.data} width={640} />
       </div>
-      <div className='w-80'>
-        <Img alt='poster' aspectRatio='2/3' src='/api/v1/img/get?id=c8ea90e8481a78091fe48406aea535a2&width=640'  />
+      <div className="w-80">
+        <Img
+          alt="poster"
+          aspectRatio="2/3"
+          src="/api/v1/img/get?id=c8ea90e8481a78091fe48406aea535a2&width=640"
+        />
       </div>
-      <div className='w-80'>
-        <Img alt='poster' aspectRatio='2/3' src='/api/v1/img/get?id=13213&width=640'  />
+      <div className="w-80">
+        <Img
+          alt="poster"
+          aspectRatio="2/3"
+          src="/api/v1/img/get?id=13213&width=640"
+        />
       </div>
     </div>
   );
@@ -142,6 +151,10 @@ export const router = createBrowserRouter([
           {
             path: '/import/trakt',
             element: <ImportFromTraktPage />,
+          },
+          {
+            path: '/import/ryot',
+            element: <ImportFormRyotPage />,
           },
           {
             path: '/import/mediatracker',

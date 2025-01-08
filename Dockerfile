@@ -1,8 +1,8 @@
-FROM alpine:3.18 as alpine
-FROM node:21-alpine3.18 as node
+FROM alpine:3.20 AS alpine
+FROM node:23-alpine3.20 AS node
 
 # Build libvips
-FROM node as node-libvips-dev
+FROM node AS node-libvips-dev
 
 RUN apk add --no-cache meson gobject-introspection-dev wget g++ make expat-dev glib-dev python3 libwebp-dev jpeg-dev fftw-dev orc-dev libpng-dev tiff-dev lcms2-dev
 
@@ -20,7 +20,7 @@ RUN meson compile
 RUN meson install
 
 # Copy libvips and install dependencies
-FROM alpine as alpine-libvips
+FROM alpine AS alpine-libvips
 RUN apk add --no-cache expat glib libwebp jpeg fftw orc libpng tiff lcms2
 COPY --from=node-libvips-dev /usr/local/lib/pkgconfig/vips* /usr/local/lib/pkgconfig/
 COPY --from=node-libvips-dev /usr/local/lib/libvips* /usr/local/lib/
@@ -31,24 +31,32 @@ COPY --from=node-libvips-dev /usr/local/include/vips /usr/local/include/vips
 COPY --from=node-libvips-dev /usr/local/share/locale/de/LC_MESSAGES/vips* /usr/local/share/locale/de/LC_MESSAGES/
 COPY --from=node-libvips-dev /usr/local/share/locale/en_GB/LC_MESSAGES/vips* /usr/local/share/locale/en_GB/LC_MESSAGES/
 
-# Build server and client
-FROM node-libvips-dev as build
+# Build server
+FROM node-libvips-dev AS build-server
 
 WORKDIR /app/
 
 COPY ./ /app
 
-RUN npm install && npm run build
-RUN cd client && npm install && npm run build
+RUN npm ci && npm run build
+
+# Build client
+FROM node AS build-client
+
+WORKDIR /app/
+
+COPY ./ /app
+
+RUN cd client && npm ci && npm run build
 
 # Build server for production
-FROM node-libvips-dev as server-build-production
+FROM node-libvips-dev AS build-server-production
 
 WORKDIR /app/
 
 COPY ["package.json", "package-lock.json*", "./"]
 
-RUN npm install --omit=dev
+RUN npm ci --omit=dev
 
 
 FROM alpine-libvips
@@ -71,10 +79,10 @@ WORKDIR /app
 COPY --from=node /usr/local/bin/node /usr/local/bin/
 COPY --from=node /usr/lib/ /usr/lib/
 
-COPY --from=build /app/client/dist  /app/client/dist
-COPY --from=build /app/build /app/build
+COPY --from=build-client /app/client/dist  /app/client/dist
+COPY --from=build-server /app/build /app/build
 
-COPY --from=server-build-production /app/node_modules /app/node_modules
+COPY --from=build-server-production /app/node_modules /app/node_modules
 
 COPY package.json ./
 COPY docker/entrypoint.sh /docker/entrypoint.sh
