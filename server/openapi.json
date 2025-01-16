@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "MediaTracker",
-    "version": "0.2.7",
+    "version": "0.2.8",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
