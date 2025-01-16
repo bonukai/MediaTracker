@@ -8,6 +8,7 @@ import { Modal, useOpenModalRef } from 'src/components/Modal';
 import { SelectSeenDate } from 'src/components/SelectSeenDate';
 import { formatEpisodeNumber, formatSeasonNumber } from 'src/utils';
 import { queryClient } from 'src/App';
+import { originalAndTranslatedTitle } from 'src/mediaItem';
 
 export const StarRating: FunctionComponent<
   | { mediaItem: MediaItemItemsResponse }
@@ -110,7 +111,7 @@ const StarRatingModal: FunctionComponent<
   return (
     <div className="flex flex-col items-center justify-center p-3 text-black select-none bottom-full min-w-max w-96">
       <div className="pb-2 text-4xl font-bold">
-        {mediaItem.title}
+        {originalAndTranslatedTitle(mediaItem)}
         {season && <> {formatSeasonNumber(season)}</>}
         {episode && <> {formatEpisodeNumber(episode)}</>}
       </div>
