@@ -217,7 +217,7 @@ export class Application {
 
   async initialize() {
     Config.migrate();
-    Config.validate();
+    await Config.validate();
     setupI18n(this.#config.serverLang);
     logger.init();
     Database.init();
@@ -288,6 +288,7 @@ export const initialize = async (args: {
   audibleLang: AudibleCountryCode;
   igdbClientId?: string;
   igdbClientSecret?: string;
+  tmdbApiKey: string;
   demo?: boolean;
 }) => {
   const {
@@ -296,10 +297,11 @@ export const initialize = async (args: {
     audibleLang,
     igdbClientId,
     igdbClientSecret,
+    tmdbApiKey,
     demo,
   } = args;
   Config.migrate();
-  Config.validate();
+  await Config.validate();
   logger.init();
   Database.init();
   await Database.runMigrations();
@@ -319,6 +321,7 @@ export const initialize = async (args: {
       audibleLang: audibleLang || 'us',
       igdbClientId: igdbClientId,
       igdbClientSecret: igdbClientSecret,
+      tmdbApiKey: tmdbApiKey
     });
   } else {
     await configurationRepository.update({
@@ -327,6 +330,7 @@ export const initialize = async (args: {
       audibleLang: audibleLang || configuration.audibleLang,
       igdbClientId: igdbClientId || configuration.igdbClientId,
       igdbClientSecret: igdbClientSecret || configuration.igdbClientSecret,
+      tmdbApiKey: tmdbApiKey || configuration.tmdbApiKey
     });
   }
 
@@ -415,6 +419,7 @@ export const createAndStartServer = async () => {
       audibleLang: Config.AUDIBLE_LANG,
       igdbClientId: Config.IGDB_CLIENT_ID,
       igdbClientSecret: Config.IGDB_CLIENT_SECRET,
+      tmdbApiKey : Config.TMDB_API_KEY,
       demo: Config.DEMO,
     });
     server = new Server({
