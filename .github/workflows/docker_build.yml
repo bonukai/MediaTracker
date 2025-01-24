@@ -1,4 +1,4 @@
-vname: Docker build
+name: Docker build
 
 on: "workflow_dispatch"
 
