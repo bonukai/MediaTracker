@@ -1,10 +1,10 @@
-name: Publish release
+name: Docker build
 
 on: "workflow_dispatch"
 
 jobs:
   release:
-    name: Dokcer build
+    name: Docker build
     runs-on: ubuntu-latest
     steps:      
       - if: startsWith(${{ github.event.release.tag_name }}, "v")
