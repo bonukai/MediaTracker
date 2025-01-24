@@ -10,6 +10,10 @@ jobs:
       - if: startsWith(${{ github.event.release.tag_name }}, "v")
         id: version
         run: echo "::set-output name=version::$(echo ${{ github.event.release.tag_name }} | cut -c2-)"
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: main
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
