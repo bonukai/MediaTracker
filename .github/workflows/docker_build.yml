@@ -7,13 +7,12 @@ jobs:
     name: Docker build
     runs-on: ubuntu-latest
     steps:      
-      - name: Get version                
-      - run: echo "PACKAGE_JSON=$(jq -c . < package.json)" >> $GITHUB_ENV
-      - run: echo '${{ fromJson(env.PACKAGE_JSON).version }}'
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: main
+          ref: main      
+      - name: Get version                
+        run: echo '${{ fromJson("package.json").version }}'
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
