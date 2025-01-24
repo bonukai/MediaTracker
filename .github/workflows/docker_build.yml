@@ -1,4 +1,4 @@
-name: Docker build
+vname: Docker build
 
 on: "workflow_dispatch"
 
@@ -13,7 +13,7 @@ jobs:
           ref: main      
       - name: Get version                
         run: |
-          echo "PACKAGE_JSON=$(jq -c . < package.json)" >> $GITHUB_ENV
+          echo "PACKAGE_JSON=$(jq -c . < server/package.json)" >> $GITHUB_ENV
           echo '${{ fromJson(env.PACKAGE_JSON).version }}'          
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
