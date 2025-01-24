@@ -7,14 +7,25 @@ jobs:
     name: Docker build
     runs-on: ubuntu-latest
     steps:      
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: main      
       - name: Get version                
-        run: |
-          echo "PACKAGE_JSON=$(jq -c . < server/package.json)" >> $GITHUB_ENV
-          echo '${{ fromJson(env.PACKAGE_JSON).version }}'          
+        uses: actions/github-script@v6
+        id: version
+        with:
+          result-encoding: string
+          script: |
+            try {
+              const fs = require('fs');
+              const jsonString = fs.readFileSync('./server/package.json');
+              const packageJson = JSON.parse(jsonString);
+              return packageJson.version;              
+            } catch(err) {
+              core.error("Error while reading or parsing the JSON");
+              core.setFailed(err);
+            }
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -30,4 +41,4 @@ jobs:
           context: .
           platforms: linux/amd64, linux/arm64
           push: true
-          tags: bonukai/mediatracker:${{ steps.version.outputs }},bonukai/mediatracker:unstable,bonukai/mediatracker:latest
+          tags: bonukai/mediatracker:${{ steps.version.outputs.result }},bonukai/mediatracker:unstable,bonukai/mediatracker:latest
