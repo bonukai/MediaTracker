@@ -18,7 +18,7 @@ WORKDIR /libvips-build/vips-${VIPS_VERSION}
 RUN meson setup build-dir --buildtype=release --prefix=/libvips
 
 WORKDIR /libvips-build/vips-${VIPS_VERSION}/build-dir 
-RUN meson compile
+RUN meson compile -j 1
 RUN meson install
 
 # Copy libvips and install it's dependencies
