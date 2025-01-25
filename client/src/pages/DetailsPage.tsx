@@ -147,13 +147,13 @@ const JustWatchSingleSection: FC<{
       <div className="text-slate-700">{displayName}</div>
       <div className="flex gap-1">
         {providers.map((item) => (
-          <div key={item.providerName} className="inline-block h-8 w-8">
+          <div key={item.providerName} className="inline-block w-8 h-8">
             <Img
               src={item.providerLogo}
               alt={item.providerName}
               className="object-contain"
-              roundedCorners='all'
-              aspectRatio='1/1'
+              roundedCorners="all"
+              aspectRatio="1/1"
             />
           </div>
         ))}
@@ -305,33 +305,35 @@ const AddToListAction = dialogActionFactory<{ mediaItem: MediaItemResponse }>(
           </Trans>
         </div>
 
-        <div className="flex flex-col gap-2">
-          {listsQuery.data?.map((list) => (
-            <label key={list.id} className="block">
-              <input
-                type="checkbox"
-                checked={setOfMediaItemLists.has(list.id)}
-                onChange={(e) => {
-                  if (!e.currentTarget.checked) {
-                    removeFromListMutation.mutate({
-                      mediaItemId: mediaItem.id,
-                      seasonId: null,
-                      episodeId: null,
-                      listId: list.id,
-                    });
-                  } else {
-                    addToListMutation.mutate({
-                      mediaItemId: mediaItem.id,
-                      seasonId: null,
-                      episodeId: null,
-                      listId: list.id,
-                    });
-                  }
-                }}
-              />{' '}
-              <span className="select-none text-slate-800">{list.name}</span>
-            </label>
-          ))}
+        <div className="flex flex-col gap-2 overflow-y-auto max-h-96">
+          {listsQuery.data
+            ?.sort((a, b) => a.name.localeCompare(b.name))
+            ?.map((list) => (
+              <label key={list.id} className="block">
+                <input
+                  type="checkbox"
+                  checked={setOfMediaItemLists.has(list.id)}
+                  onChange={(e) => {
+                    if (!e.currentTarget.checked) {
+                      removeFromListMutation.mutate({
+                        mediaItemId: mediaItem.id,
+                        seasonId: null,
+                        episodeId: null,
+                        listId: list.id,
+                      });
+                    } else {
+                      addToListMutation.mutate({
+                        mediaItemId: mediaItem.id,
+                        seasonId: null,
+                        episodeId: null,
+                        listId: list.id,
+                      });
+                    }
+                  }}
+                />{' '}
+                <span className="select-none text-slate-800">{list.name}</span>
+              </label>
+            ))}
         </div>
 
         <div className="flex justify-end mt-4">
