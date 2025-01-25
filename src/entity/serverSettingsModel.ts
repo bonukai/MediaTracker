@@ -11,7 +11,7 @@ export const serverInternalSettingsJsonSchema = z.object({
   tmdbMoviePreviousTimeForChangesCheck: z.date({ coerce: true }).nullish(),
   sessionKey: z.object({
     key: z.string(),
-    createdAt: z.number(),
+    createdAt: z.number().nullable(),
   }),
   previousTimesForChangesCheck: z
     .record(mediaTypeSchema, z.date({ coerce: true }))
