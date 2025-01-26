@@ -747,6 +747,7 @@ router.delete(
   }),
   _ProgressController.deleteById
 );
+router.get('/api/progress', validatorHandler({}), _ProgressController.get);
 router.put(
   '/api/rating',
   validatorHandler({

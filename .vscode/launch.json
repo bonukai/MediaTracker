@@ -18,7 +18,10 @@
         "<node_internals>/**",
         "${workspaceFolder}/server/node_modules/**"
       ],
-      "type": "node"
+      "type": "node",
+      "env":{
+        "HOSTNAME": "0.0.0.0"
+      }
     },
     {
       "name": "server:watch [PostgreSQL]",

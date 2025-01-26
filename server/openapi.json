@@ -1196,6 +1196,28 @@
             }
           }
         }
+      },
+      "get": {
+        "description": "Get all progress",
+        "tags": [
+          "Progress"
+        ],
+        "operationId": "get",
+        "responses": {
+          "200": {
+            "description": "List of progress",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Progress"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/progress/by-external-id": {
@@ -4214,6 +4236,54 @@
           "method",
           "type",
           "url"
+        ]
+      },
+      "Progress": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "nullable": true
+          },
+          "date": {
+            "type": "number"
+          },
+          "mediaItemId": {
+            "type": "number"
+          },
+          "episodeId": {
+            "type": "number",
+            "nullable": true
+          },
+          "userId": {
+            "type": "number"
+          },
+          "progress": {
+            "type": "number",
+            "nullable": true
+          },
+          "duration": {
+            "type": "number",
+            "nullable": true
+          },
+          "action": {
+            "enum": [
+              "paused",
+              "playing",
+              null
+            ],
+            "type": "string",
+            "nullable": true
+          },
+          "device": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "date",
+          "mediaItemId",
+          "userId"
         ]
       },
       "LastSeenAt": {

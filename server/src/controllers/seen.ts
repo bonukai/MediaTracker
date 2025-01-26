@@ -300,7 +300,8 @@ export class SeenController {
       });
     });
 
-    res.status(200);
+    res.send();
+    //res.status(200);
   });
 
   /**

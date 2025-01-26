@@ -8,7 +8,7 @@ export const SettingsAboutPage: FunctionComponent = () => {
   return (
     <>
       <div>
-        <Trans>Version</Trans>: {configuration.version}
+        <Trans>Version (cnc)</Trans>: {configuration.version}
       </div>
     </>
   );
