@@ -55,6 +55,7 @@ const SearchPageImpl: FC<{ mediaType: MediaType }> = (props) => {
     narrator: ['audiobook'],
     tmdbId: ['movie', 'tv'],
     imdbId: ['movie', 'tv'],
+    igdbId: ['video_game']
   });
 
   const [query, setQuery] = useState({
@@ -63,6 +64,7 @@ const SearchPageImpl: FC<{ mediaType: MediaType }> = (props) => {
     narrator: searchParams.get('narrator'),
     imdbId: searchParams.get('imdbId'),
     tmdbId: parseInt(searchParams.get('tmdbId') || '') || null,
+    igdbId: parseInt(searchParams.get('igdbId') || '') || null,
   });
 
   const searchQuery = trpc.search.search.useQuery(
@@ -106,6 +108,7 @@ const SearchPageImpl: FC<{ mediaType: MediaType }> = (props) => {
         narrator: string;
         imdbId: string;
         tmdbId: string;
+        igdbId: string;
       }>
         className="flex flex-col gap-5 md:flex-row"
         validation={
@@ -120,9 +123,10 @@ const SearchPageImpl: FC<{ mediaType: MediaType }> = (props) => {
                 },
               }
             : undefined
-        }
+        } 
         initialValues={{
           tmdbId: query.tmdbId?.toString() || undefined,
+          igdbId: query.igdbId?.toString() || undefined,
           author: query.author || undefined,
           imdbId: query.imdbId || undefined,
           narrator: query.narrator || undefined,
@@ -136,6 +140,9 @@ const SearchPageImpl: FC<{ mediaType: MediaType }> = (props) => {
               data.narrator,
               data.tmdbId?.length > 0
                 ? !isNaN(parseInt(data.tmdbId || ''))
+                : false,
+              data.igdbId?.length > 0
+                ? !isNaN(parseInt(data.igdbId || ''))
                 : false,
               data.imdbId,
             ].filter(Boolean).length === 0
@@ -152,6 +159,7 @@ const SearchPageImpl: FC<{ mediaType: MediaType }> = (props) => {
             narrator: data.narrator || null,
             imdbId: data.imdbId || null,
             tmdbId: parseInt(data.tmdbId || '') || null,
+            igdbId: parseInt(data.igdbId || '') || null,
           };
 
           setQuery(newQuery);
@@ -171,7 +179,7 @@ const SearchPageImpl: FC<{ mediaType: MediaType }> = (props) => {
             <input
               type="text"
               autoFocus
-              className="w-full md:w-80"
+              className="w-full md:max-w-80"
               placeholder={t`Query`}
               ref={ref('query')}
               value={q}
@@ -183,6 +191,7 @@ const SearchPageImpl: FC<{ mediaType: MediaType }> = (props) => {
                   narrator: null,
                   query: null,
                   tmdbId: null,
+                  igdbId: null,
                 });
               }}
             />
@@ -190,7 +199,7 @@ const SearchPageImpl: FC<{ mediaType: MediaType }> = (props) => {
             {canUse('author') && (
               <input
                 type="text"
-                className="w-full md:w-80"
+                className="w-full md:max-w-80"
                 aria-label={t`Author`}
                 placeholder={t`Author`}
                 ref={ref('author')}
@@ -199,7 +208,7 @@ const SearchPageImpl: FC<{ mediaType: MediaType }> = (props) => {
             {canUse('narrator') && (
               <input
                 type="text"
-                className="w-full md:w-80"
+                className="w-full md:max-w-80"
                 aria-label={t`Narrator`}
                 placeholder={t`Narrator`}
                 ref={ref('narrator')}
@@ -209,7 +218,7 @@ const SearchPageImpl: FC<{ mediaType: MediaType }> = (props) => {
             {canUse('tmdbId') && (
               <input
                 type="text"
-                className="w-full md:w-80"
+                className="w-full md:max-w-80"
                 aria-label="tmdb"
                 placeholder="tmdb"
                 ref={ref('tmdbId')}
@@ -219,10 +228,20 @@ const SearchPageImpl: FC<{ mediaType: MediaType }> = (props) => {
             {canUse('imdbId') && (
               <input
                 type="text"
-                className="w-full md:w-80"
+                className="w-full md:max-w-80"
                 aria-label="imdb"
                 placeholder="imdb"
                 ref={ref('imdbId')}
+              />
+            )}
+
+            {canUse('igdbId') && (
+              <input
+                type="text"
+                className="w-full md:max-w-80"
+                aria-label="igdb"
+                placeholder="igdb"
+                ref={ref('igdbId')}
               />
             )}
 
