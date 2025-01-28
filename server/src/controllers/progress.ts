@@ -159,7 +159,7 @@ export class ProgressController {
   }>(async (req, res) => {
     const { progressId } = req.params;
 
-    await seenRepository.delete({
+    await progressRepository.delete({
       id: progressId,
     });
 
