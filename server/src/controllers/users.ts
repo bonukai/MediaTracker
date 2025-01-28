@@ -34,7 +34,7 @@ export class UsersController {
       const user = await userRepository.findOne({ id: req.user });
       res.send(user);
     } else {
-      res.send(null);
+      res.sendStatus(401);
     }
   });
 
