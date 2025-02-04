@@ -41,6 +41,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/arm64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: bonukai/mediatracker:${{ steps.version.outputs.result }},bonukai/mediatracker:unstable,bonukai/mediatracker:latest
