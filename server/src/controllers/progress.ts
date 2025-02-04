@@ -5,6 +5,7 @@ import { tvEpisodeRepository } from 'src/repository/episode';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { seenRepository } from 'src/repository/seen';
 import { listItemRepository } from 'src/repository/listItemRepository';
+import { progressRepository } from 'src/repository/progress';
 import { MediaType } from 'src/entity/mediaItem';
 import { findMediaItemOrEpisodeByExternalId } from 'src/metadata/findByExternalId';
 import { logger } from 'src/logger';
@@ -158,7 +159,7 @@ export class ProgressController {
   }>(async (req, res) => {
     const { progressId } = req.params;
 
-    await seenRepository.delete({
+    await progressRepository.delete({
       id: progressId,
     });
 
