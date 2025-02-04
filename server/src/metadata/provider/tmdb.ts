@@ -6,8 +6,6 @@ import { MediaItemForProvider, ExternalIds } from 'src/entity/mediaItem';
 import { MetadataProvider } from 'src/metadata/metadataProvider';
 import { GlobalConfiguration } from 'src/repository/globalSettings';
 
-const TMDB_API_KEY = '779734046efc1e6127485c54d3b29627';
-
 type PosterSize =
   | 'w92'
   | 'w154'
@@ -59,7 +57,7 @@ export class TMDbMovie extends TMDb {
       'https://api.themoviedb.org/3/search/movie',
       {
         params: {
-          api_key: TMDB_API_KEY,
+          api_key: GlobalConfiguration.configuration.tmdbApiKey,
           query: query,
           language: GlobalConfiguration.configuration.tmdbLang,
         },
@@ -76,7 +74,7 @@ export class TMDbMovie extends TMDb {
       `https://api.themoviedb.org/3/movie/${mediaItem.tmdbId}`,
       {
         params: {
-          api_key: TMDB_API_KEY,
+          api_key: GlobalConfiguration.configuration.tmdbApiKey,
           language: GlobalConfiguration.configuration.tmdbLang,
         },
       }
@@ -91,7 +89,7 @@ export class TMDbMovie extends TMDb {
   async findByImdbId(imdbId: string): Promise<MediaItemForProvider> {
     const res = await axios.get(`https://api.themoviedb.org/3/find/${imdbId}`, {
       params: {
-        api_key: TMDB_API_KEY,
+        api_key: GlobalConfiguration.configuration.tmdbApiKey,
         external_source: 'imdb_id',
         language: GlobalConfiguration.configuration.tmdbLang,
       },
@@ -133,7 +131,7 @@ export class TMDbTv extends TMDb {
       'https://api.themoviedb.org/3/search/tv',
       {
         params: {
-          api_key: TMDB_API_KEY,
+          api_key: GlobalConfiguration.configuration.tmdbApiKey,
           query: query,
           language: GlobalConfiguration.configuration.tmdbLang,
         },
@@ -151,7 +149,7 @@ export class TMDbTv extends TMDb {
       `https://api.themoviedb.org/3/tv/${mediaItem.tmdbId}`,
       {
         params: {
-          api_key: TMDB_API_KEY,
+          api_key: GlobalConfiguration.configuration.tmdbApiKey,
           append_to_response: 'external_ids',
           language: GlobalConfiguration.configuration.tmdbLang,
         },
@@ -166,7 +164,7 @@ export class TMDbTv extends TMDb {
           `https://api.themoviedb.org/3/tv/${mediaItem.tmdbId}/season/${season.seasonNumber}`,
           {
             params: {
-              api_key: TMDB_API_KEY,
+              api_key: GlobalConfiguration.configuration.tmdbApiKey,
               append_to_response: 'external_ids',
               language: GlobalConfiguration.configuration.tmdbLang,
             },
@@ -188,7 +186,7 @@ export class TMDbTv extends TMDb {
   async findByImdbId(imdbId: string): Promise<MediaItemForProvider> {
     const res = await axios.get(`https://api.themoviedb.org/3/find/${imdbId}`, {
       params: {
-        api_key: TMDB_API_KEY,
+        api_key: GlobalConfiguration.configuration.tmdbApiKey,
         external_source: 'imdb_id',
         language: GlobalConfiguration.configuration.tmdbLang,
       },
@@ -208,7 +206,7 @@ export class TMDbTv extends TMDb {
   async findByTvdbId(tvdbId: number): Promise<MediaItemForProvider> {
     const res = await axios.get(`https://api.themoviedb.org/3/find/${tvdbId}`, {
       params: {
-        api_key: TMDB_API_KEY,
+        api_key: GlobalConfiguration.configuration.tmdbApiKey,
         external_source: 'tvdb_id',
         language: GlobalConfiguration.configuration.tmdbLang,
       },
@@ -234,7 +232,7 @@ export class TMDbTv extends TMDb {
       `https://api.themoviedb.org/3/find/${episodeImdbId}`,
       {
         params: {
-          api_key: TMDB_API_KEY,
+          api_key: GlobalConfiguration.configuration.tmdbApiKey,
           external_source: 'imdb_id',
           language: GlobalConfiguration.configuration.tmdbLang,
         },
@@ -258,7 +256,7 @@ export class TMDbTv extends TMDb {
       `https://api.themoviedb.org/3/find/${episodeTvdbId}`,
       {
         params: {
-          api_key: TMDB_API_KEY,
+          api_key: GlobalConfiguration.configuration.tmdbApiKey,
           external_source: 'tvdb_id',
           language: GlobalConfiguration.configuration.tmdbLang,
         },

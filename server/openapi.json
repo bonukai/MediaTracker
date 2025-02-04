@@ -104,6 +104,10 @@
                     ],
                     "nullable": true
                   },
+                  "tmdbApiKey": {
+                    "type": "string",
+                    "nullable": true
+                  },
                   "igdbClientId": {
                     "type": "string",
                     "nullable": true
@@ -168,6 +172,10 @@
                               "$ref": "#/components/schemas/ServerLang"
                             }
                           ],
+                          "nullable": true
+                        },
+                        "tmdbApiKey": {
+                          "type": "string",
                           "nullable": true
                         },
                         "igdbClientId": {
