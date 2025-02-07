@@ -9,7 +9,7 @@ import { progressRepository } from 'src/repository/progress';
 import { MediaType } from 'src/entity/mediaItem';
 import { findMediaItemOrEpisodeByExternalId } from 'src/metadata/findByExternalId';
 import { logger } from 'src/logger';
-import { Progress } from 'src/entity/progress';
+import { Progress, ProgressExtended, ProgressAction } from 'src/entity/progress';
 import { Database } from 'src/dbconfig';
 import { Seen } from 'src/entity/seen';
 /**
@@ -176,15 +176,48 @@ export class ProgressController {
     /**
      * @description List of progress
      */
-    responseBody: Progress[];
+    requestQuery: {
+      action?: ProgressAction;
+      extended?: boolean;
+    };
+    responseBody: Progress[] | ProgressExtended[];
   }>(async (req, res) => {
     const userId = Number(req.user);
 
-    const progressList = await progressRepository.find({
-      userId: userId,
-    });
+    const action  = req.query.action;
+    const extended  = req.query.extended;
 
-    res.send(progressList);
+    const list = await Database.knex<Progress | ProgressExtended>('progress')
+      .modify((qb) => {
+        if (extended) {
+          qb
+          .select(
+            'progress.id',
+            'progress.date',
+            'progress.mediaItemId',
+            'progress.episodeId',
+            'progress.userId',
+            'progress.progress',
+            'progress.duration',
+            'progress.action',
+            'progress.device',
+            'mediaItem.mediaType',
+            'mediaItem.tmdbId',
+            'episode.seasonNumber',
+            'episode.episodeNumber',
+          )
+          .leftJoin('mediaItem', 'mediaItem.id', 'progress.mediaItemId')
+          .leftJoin('episode', 'episode.id', 'progress.episodeId')
+        }
+      })
+      .where((qb) => {
+        qb.where('userId', userId)
+        if (action) {
+          qb.where('action', action);
+        }
+      })
+
+    res.send(list);
   });
 }
 

@@ -685,6 +685,9 @@ router.put(
   validatorHandler({
     requestQuerySchema: {
       $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        ProgressAction: { enum: ['paused', 'playing'], type: 'string' },
+      },
       type: 'object',
       properties: {
         mediaItemId: { type: 'number' },
@@ -692,7 +695,9 @@ router.put(
         progress: { type: ['number', 'null'] },
         date: { type: 'number' },
         duration: { type: ['number', 'null'] },
-        action: { enum: ['paused', 'playing', null], type: 'string' },
+        action: {
+          oneOf: [{ $ref: '#/definitions/ProgressAction' }, { type: 'null' }],
+        },
         device: { type: ['string', 'null'] },
       },
       required: ['date', 'mediaItemId'],
@@ -747,7 +752,25 @@ router.delete(
   }),
   _ProgressController.deleteById
 );
-router.get('/api/progress', validatorHandler({}), _ProgressController.get);
+router.get(
+  '/api/progress',
+  validatorHandler({
+    requestQuerySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        ProgressAction: { enum: ['paused', 'playing'], type: 'string' },
+      },
+      type: 'object',
+      properties: {
+        action: {
+          oneOf: [{ $ref: '#/definitions/ProgressAction' }, { type: 'null' }],
+        },
+        extended: { type: ['boolean', 'null'] },
+      },
+    },
+  }),
+  _ProgressController.get
+);
 router.put(
   '/api/rating',
   validatorHandler({

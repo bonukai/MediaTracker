@@ -1167,12 +1167,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "enum": [
-                "paused",
-                "playing",
-                null
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ProgressAction"
+                }
               ],
-              "type": "string",
               "nullable": true
             }
           },
@@ -1203,16 +1202,50 @@
           "Progress"
         ],
         "operationId": "get",
+        "parameters": [
+          {
+            "name": "action",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ProgressAction"
+                }
+              ],
+              "nullable": true
+            }
+          },
+          {
+            "name": "extended",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "List of progress",
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Progress"
-                  }
+                  "oneOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Progress"
+                      }
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ProgressExtended"
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -4238,6 +4271,13 @@
           "url"
         ]
       },
+      "ProgressAction": {
+        "enum": [
+          "paused",
+          "playing"
+        ],
+        "type": "string"
+      },
       "Progress": {
         "type": "object",
         "properties": {
@@ -4267,12 +4307,11 @@
             "nullable": true
           },
           "action": {
-            "enum": [
-              "paused",
-              "playing",
-              null
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProgressAction"
+              }
             ],
-            "type": "string",
             "nullable": true
           },
           "device": {
@@ -4284,6 +4323,36 @@
           "date",
           "mediaItemId",
           "userId"
+        ]
+      },
+      "ProgressExtended": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Progress"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "mediaType": {
+                "$ref": "#/components/schemas/MediaType"
+              },
+              "tmdbId": {
+                "type": "number",
+                "nullable": true
+              },
+              "seasonNumber": {
+                "type": "number",
+                "nullable": true
+              },
+              "episodeNumber": {
+                "type": "number",
+                "nullable": true
+              }
+            },
+            "required": [
+              "mediaType"
+            ]
+          }
         ]
       },
       "LastSeenAt": {
