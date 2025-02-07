@@ -1167,12 +1167,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "enum": [
-                "paused",
-                "playing",
-                null
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ProgressAction"
+                }
               ],
-              "type": "string",
               "nullable": true
             }
           },
@@ -1192,6 +1191,62 @@
             "content": {
               "application/text": {
                 "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "Get all progress",
+        "tags": [
+          "Progress"
+        ],
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "action",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ProgressAction"
+                }
+              ],
+              "nullable": true
+            }
+          },
+          {
+            "name": "extended",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Progress"
+                      }
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ProgressExtended"
+                      }
+                    }
+                  ]
+                }
               }
             }
           }
@@ -4214,6 +4269,90 @@
           "method",
           "type",
           "url"
+        ]
+      },
+      "ProgressAction": {
+        "enum": [
+          "paused",
+          "playing"
+        ],
+        "type": "string"
+      },
+      "Progress": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "nullable": true
+          },
+          "date": {
+            "type": "number"
+          },
+          "mediaItemId": {
+            "type": "number"
+          },
+          "episodeId": {
+            "type": "number",
+            "nullable": true
+          },
+          "userId": {
+            "type": "number"
+          },
+          "progress": {
+            "type": "number",
+            "nullable": true
+          },
+          "duration": {
+            "type": "number",
+            "nullable": true
+          },
+          "action": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProgressAction"
+              }
+            ],
+            "nullable": true
+          },
+          "device": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "date",
+          "mediaItemId",
+          "userId"
+        ]
+      },
+      "ProgressExtended": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Progress"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "mediaType": {
+                "$ref": "#/components/schemas/MediaType"
+              },
+              "tmdbId": {
+                "type": "number",
+                "nullable": true
+              },
+              "seasonNumber": {
+                "type": "number",
+                "nullable": true
+              },
+              "episodeNumber": {
+                "type": "number",
+                "nullable": true
+              }
+            },
+            "required": [
+              "mediaType"
+            ]
+          }
         ]
       },
       "LastSeenAt": {
